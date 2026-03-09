@@ -51,32 +51,32 @@ Step-by-step build plan. UI first, then game logic, then integrations.
 
 ## Phase 3: Board UI (Visual Only)
 
-- [ ] **Board container** (`components/game/go-board.tsx`)
-  - [ ] Outer frame div — rounded-3xl, board-frame background, shadow-board
-  - [ ] Inner surface div — rounded-2xl, board-surface background
-  - [ ] Optional subtle wood grain texture via CSS or image
-- [ ] **Grid layer** (SVG)
-  - [ ] 19 vertical lines, 19 horizontal lines, properly spaced
-  - [ ] 9 hoshi (star) points at correct positions
-  - [ ] Grid uses `--board-grid` color token
-- [ ] **Coordinate labels** (`components/game/coordinate-labels.tsx`)
-  - [ ] Top: A–T (skipping I) in `font-mono`
-  - [ ] Left: 19–1 in `font-mono`
-  - [ ] Positioned outside the grid, muted color
-- [ ] **Intersection component** (`components/game/intersection.tsx`)
-  - [ ] 19x19 CSS grid of clickable cells
-  - [ ] Hover state: ghost stone preview at 15% opacity
-  - [ ] Cursor: pointer on empty, default on occupied
-- [ ] **Stone component** (`components/game/stone.tsx`)
-  - [ ] Black stone: radial gradient with highlight, warm shadow
-  - [ ] White stone: radial gradient with highlight, subtle border, warm shadow
-  - [ ] Entry animation: scale-in with spring easing (300ms)
-  - [ ] Capture animation: scale-out with fade (250ms)
-- [ ] **Last move marker** (`components/game/last-move-marker.tsx`)
-  - [ ] Small accent-colored dot centered on the stone
-- [ ] **Static board test**
-  - [ ] Render a board with a handful of hardcoded stones to verify visuals
-  - [ ] Test at all responsive breakpoints
+- [x] **Board container** (`components/game/go-board.tsx`)
+  - [x] Outer frame div — rounded-3xl, board-frame background, deep layered shadow
+  - [x] Inner surface div — rounded-2xl, board-surface background
+  - [x] Subtle wood grain texture via `.board-texture`
+- [x] **Grid layer** (SVG)
+  - [x] 19 vertical lines, 19 horizontal lines, properly spaced
+  - [x] 9 hoshi (star) points at correct positions
+  - [x] Grid uses `--board-grid` and `--board-hoshi` color tokens
+- [x] **Coordinate labels** (`components/game/coordinate-labels.tsx`)
+  - [x] Top: A–T (skipping I) in `font-mono`
+  - [x] Left: 19–1 in `font-mono`
+  - [x] Positioned outside the grid, muted color
+- [x] **Intersection component** (`components/game/intersection.tsx`)
+  - [x] 19x19 CSS grid of clickable cells
+  - [x] Hover state: ghost stone preview at low opacity
+  - [x] Cursor: pointer on empty, default on occupied
+- [x] **Stone component** (`components/game/stone.tsx`)
+  - [x] Black stone: radial gradient with highlight, warm shadow
+  - [x] White stone: radial gradient with highlight, subtle border, warm shadow
+  - [x] Entry animation: scale-in with spring easing (300ms)
+  - [x] Capture animation token already defined for later engine work
+- [x] **Last move marker** (`components/game/last-move-marker.tsx`)
+  - [x] Small accent-colored dot centered on the stone
+- [x] **Static board test**
+  - [x] Render a board with a handful of hardcoded stones to verify visuals
+  - [x] Build verified clean after board component extraction
 
 ---
 

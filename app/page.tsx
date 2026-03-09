@@ -1,4 +1,5 @@
 import { GameLayout } from "@/components/layout/game-layout"
+import { GoBoard } from "@/components/game/go-board"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -6,95 +7,66 @@ import { Badge } from "@/components/ui/badge"
 export default function Home() {
   return (
     <GameLayout
-      board={<BoardPlaceholder />}
+      board={<BoardPreview />}
       sidebar={<SidebarPlaceholder />}
     />
   )
 }
 
-function BoardPlaceholder() {
+function BoardPreview() {
   return (
-    <div className="rounded-3xl bg-board-frame p-4 shadow-[0_16px_48px_var(--stone-shadow),0_4px_12px_var(--stone-shadow)] md:p-6">
-      <div className="relative rounded-2xl bg-board-surface board-texture">
-        {/* Coordinate labels — top */}
-        <div className="flex justify-around px-4 pb-0 pt-2">
-          {"ABCDEFGHJ".split("").map((l) => (
-            <span
-              key={l}
-              className="text-[10px] font-semibold text-board-grid/60 font-mono"
-            >
-              {l}
-            </span>
-          ))}
-        </div>
-
-        <div className="flex">
-          {/* Coordinate labels — left */}
-          <div className="flex flex-col justify-around py-1 pl-2 pr-0">
-            {Array.from({ length: 9 }, (_, i) => (
-              <span
-                key={i}
-                className="text-[10px] font-semibold text-board-grid/60 font-mono"
-              >
-                {9 - i}
-              </span>
-            ))}
-          </div>
-
-          {/* 9×9 grid */}
-          <div className="grid flex-1 grid-cols-9 grid-rows-9 aspect-square p-1">
-            {Array.from({ length: 81 }).map((_, i) => {
-              const x = i % 9
-              const y = Math.floor(i / 9)
-              const isHoshi =
-                (x === 2 && y === 2) ||
-                (x === 6 && y === 2) ||
-                (x === 4 && y === 4) ||
-                (x === 2 && y === 6) ||
-                (x === 6 && y === 6)
-              const hasBlack =
-                (x === 3 && y === 2) ||
-                (x === 5 && y === 3) ||
-                (x === 4 && y === 5) ||
-                (x === 3 && y === 6) ||
-                (x === 2 && y === 4)
-              const hasWhite =
-                (x === 5 && y === 2) ||
-                (x === 4 && y === 3) ||
-                (x === 5 && y === 5) ||
-                (x === 6 && y === 4) ||
-                (x === 5 && y === 6)
-              const isLastMove = x === 5 && y === 6
-
-              return (
-                <div
-                  key={i}
-                  className="relative flex items-center justify-center border-[0.5px] border-board-grid/30"
-                >
-                  {isHoshi && !hasBlack && !hasWhite && (
-                    <div className="absolute h-1.5 w-1.5 rounded-full bg-board-hoshi/70" />
-                  )}
-                  {hasBlack && (
-                    <div className="animate-stone-place relative h-[85%] w-[85%] rounded-full bg-[radial-gradient(circle_at_30%_30%,_var(--stone-black-highlight),_var(--stone-black))] shadow-[1px_2px_4px_var(--stone-shadow)]">
-                      <div className="absolute left-[15%] top-[12%] h-[20%] w-[20%] rounded-full bg-white/10" />
-                    </div>
-                  )}
-                  {hasWhite && (
-                    <div className="animate-stone-place relative h-[85%] w-[85%] rounded-full border border-stone-white/60 bg-[radial-gradient(circle_at_30%_30%,_var(--stone-white-highlight),_var(--stone-white))] shadow-[1px_2px_4px_var(--stone-shadow)]">
-                      <div className="absolute left-[15%] top-[12%] h-[20%] w-[20%] rounded-full bg-white/40" />
-                      {isLastMove && (
-                        <div className="animate-marker-appear absolute left-1/2 top-1/2 h-[30%] w-[30%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent shadow-[0_0_4px_var(--accent)]" />
-                      )}
-                    </div>
-                  )}
-                </div>
-              )
-            })}
-          </div>
-        </div>
-      </div>
-    </div>
+    <GoBoard
+      board={createSampleBoard()}
+      size={19}
+      currentPlayer="black"
+      lastMove={{ x: 10, y: 10 }}
+    />
   )
+}
+
+function createSampleBoard() {
+  const board = Array.from({ length: 19 }, () =>
+    Array.from({ length: 19 }, () => null as "black" | "white" | null)
+  )
+
+  const blackStones = [
+    [3, 3],
+    [4, 3],
+    [15, 3],
+    [3, 9],
+    [8, 8],
+    [9, 8],
+    [9, 9],
+    [10, 9],
+    [11, 10],
+    [7, 12],
+    [3, 15],
+    [15, 15],
+  ]
+
+  const whiteStones = [
+    [14, 3],
+    [15, 4],
+    [4, 9],
+    [10, 8],
+    [8, 9],
+    [10, 10],
+    [11, 9],
+    [12, 10],
+    [8, 12],
+    [4, 15],
+    [14, 15],
+  ]
+
+  blackStones.forEach(([x, y]) => {
+    board[y][x] = "black"
+  })
+
+  whiteStones.forEach(([x, y]) => {
+    board[y][x] = "white"
+  })
+
+  return board
 }
 
 function SidebarPlaceholder() {
