@@ -1,11 +1,11 @@
 "use client"
 
 import { useMemo, useState } from "react"
-
 import { cn } from "@/lib/utils"
-import { CoordinateLabels } from "@/components/game/coordinate-labels"
 import { Intersection } from "@/components/game/intersection"
 import type { StoneColor } from "@/components/game/stone"
+
+const LETTERS = "ABCDEFGHJKLMNOPQRST".split("")
 
 type BoardCell = StoneColor | null
 
@@ -23,31 +23,75 @@ export function GoBoard({
   className?: string
 }) {
   const [hovered, setHovered] = useState<{ x: number; y: number } | null>(null)
-
   const hoshiPoints = useMemo(() => getHoshiPoints(size), [size])
+  const letters = LETTERS.slice(0, size)
+  const numbers = Array.from({ length: size }, (_, i) => size - i)
 
   return (
-    <div className={cn("w-full max-w-[42rem]", className)}>
-      <div className="rounded-[2rem] border border-white/5 bg-board-frame p-4 shadow-[0_30px_80px_var(--stone-shadow),0_8px_20px_var(--stone-shadow)] md:p-5">
-        <div className="rounded-[1.5rem] border border-white/8 bg-board-surface board-texture px-3 pb-3 pt-4 md:px-5 md:pb-5 md:pt-5">
-          <div className="grid grid-cols-[auto_1fr] grid-rows-[auto_1fr] gap-3">
-            <CoordinateLabels size={size} />
+    <div className={cn("w-full max-w-2xl", className)}>
+      {/* Frame */}
+      <div className="rounded-[2rem] border border-white/5 bg-board-frame p-4 shadow-[0_24px_64px_oklch(0_0_0/30%),0_6px_16px_oklch(0_0_0/20%)] md:p-5">
+        {/* Surface */}
+        <div className="rounded-[1.5rem] bg-board-surface board-texture p-4 md:p-5">
 
-            <div className="relative aspect-square w-full overflow-hidden rounded-[1rem]">
+          {/* 2×2 coordinate + board grid
+              col: [label-width] [board]
+              row: [label-height] [board] */}
+          <div
+            className="grid gap-x-2 gap-y-1"
+            style={{ gridTemplateColumns: "1.25rem 1fr", gridTemplateRows: "1.25rem 1fr" }}
+          >
+            {/* [0,0] — empty corner */}
+            <div />
+
+            {/* [0,1] — column letters (A B C … T) */}
+            <div
+              className="grid"
+              style={{ gridTemplateColumns: `repeat(${size}, 1fr)` }}
+            >
+              {letters.map((letter) => (
+                <span
+                  key={letter}
+                  className="text-center font-mono text-[9px] font-semibold leading-none text-board-grid/55 md:text-[10px]"
+                >
+                  {letter}
+                </span>
+              ))}
+            </div>
+
+            {/* [1,0] — row numbers (19 … 1) */}
+            <div
+              className="grid"
+              style={{ gridTemplateRows: `repeat(${size}, 1fr)` }}
+            >
+              {numbers.map((number) => (
+                <span
+                  key={number}
+                  className="flex items-center justify-end font-mono text-[9px] font-semibold leading-none text-board-grid/55 md:text-[10px]"
+                >
+                  {number}
+                </span>
+              ))}
+            </div>
+
+            {/* [1,1] — the actual board */}
+            <div className="relative aspect-square w-full rounded-md">
+              {/* SVG grid lines + hoshi */}
               <GridLayer size={size} hoshiPoints={hoshiPoints} />
 
+              {/* Intersection grid */}
               <div
-                className={cn(
-                  "relative z-10 grid h-full w-full",
-                  size === 9 && "grid-cols-9 grid-rows-9",
-                  size === 13 && "grid-cols-13 grid-rows-13",
-                  size === 19 && "grid-cols-19 grid-rows-19"
-                )}
+                className="absolute inset-0 z-10 grid h-full w-full"
+                style={{
+                  gridTemplateColumns: `repeat(${size}, 1fr)`,
+                  gridTemplateRows: `repeat(${size}, 1fr)`,
+                }}
               >
                 {board.map((row, y) =>
                   row.map((stone, x) => (
                     <div
                       key={`${x}-${y}`}
+                      className="h-full w-full"
                       onMouseEnter={() => setHovered({ x, y })}
                       onMouseLeave={() => setHovered(null)}
                     >
@@ -63,6 +107,7 @@ export function GoBoard({
               </div>
             </div>
           </div>
+
         </div>
       </div>
     </div>
@@ -76,7 +121,9 @@ function GridLayer({
   size: 9 | 13 | 19
   hoshiPoints: Array<{ x: number; y: number }>
 }) {
-  const positions = Array.from({ length: size }, (_, i) => (i / (size - 1)) * 100)
+  const cellPct = 100 / (size - 1)
+  const positions = Array.from({ length: size }, (_, i) => i * cellPct)
+  const hoshiR = size === 19 ? 0.9 : 1.1
 
   return (
     <svg
@@ -85,38 +132,34 @@ function GridLayer({
       viewBox="0 0 100 100"
       preserveAspectRatio="none"
     >
-      {positions.map((position) => (
+      {positions.map((p) => (
         <line
-          key={`v-${position}`}
-          x1={position}
-          x2={position}
-          y1="0"
-          y2="100"
+          key={`v-${p}`}
+          x1={p} x2={p} y1="0" y2="100"
           stroke="var(--board-grid)"
-          strokeOpacity="0.48"
-          strokeWidth="0.32"
+          strokeOpacity="0.5"
+          strokeWidth="0.25"
+          vectorEffect="non-scaling-stroke"
         />
       ))}
-      {positions.map((position) => (
+      {positions.map((p) => (
         <line
-          key={`h-${position}`}
-          y1={position}
-          y2={position}
-          x1="0"
-          x2="100"
+          key={`h-${p}`}
+          x1="0" x2="100" y1={p} y2={p}
           stroke="var(--board-grid)"
-          strokeOpacity="0.48"
-          strokeWidth="0.32"
+          strokeOpacity="0.5"
+          strokeWidth="0.25"
+          vectorEffect="non-scaling-stroke"
         />
       ))}
-      {hoshiPoints.map((point, index) => (
+      {hoshiPoints.map((pt, i) => (
         <circle
-          key={`hoshi-${index}`}
-          cx={(point.x / (size - 1)) * 100}
-          cy={(point.y / (size - 1)) * 100}
-          r={size === 19 ? 0.95 : 1.15}
+          key={`hoshi-${i}`}
+          cx={(pt.x / (size - 1)) * 100}
+          cy={(pt.y / (size - 1)) * 100}
+          r={hoshiR}
           fill="var(--board-hoshi)"
-          fillOpacity="0.72"
+          fillOpacity="0.7"
         />
       ))}
     </svg>
@@ -126,33 +169,21 @@ function GridLayer({
 function getHoshiPoints(size: 9 | 13 | 19) {
   if (size === 9) {
     return [
-      { x: 2, y: 2 },
-      { x: 6, y: 2 },
+      { x: 2, y: 2 }, { x: 6, y: 2 },
       { x: 4, y: 4 },
-      { x: 2, y: 6 },
-      { x: 6, y: 6 },
+      { x: 2, y: 6 }, { x: 6, y: 6 },
     ]
   }
-
   if (size === 13) {
     return [
-      { x: 3, y: 3 },
-      { x: 9, y: 3 },
+      { x: 3, y: 3 }, { x: 9, y: 3 },
       { x: 6, y: 6 },
-      { x: 3, y: 9 },
-      { x: 9, y: 9 },
+      { x: 3, y: 9 }, { x: 9, y: 9 },
     ]
   }
-
   return [
-    { x: 3, y: 3 },
-    { x: 9, y: 3 },
-    { x: 15, y: 3 },
-    { x: 3, y: 9 },
-    { x: 9, y: 9 },
-    { x: 15, y: 9 },
-    { x: 3, y: 15 },
-    { x: 9, y: 15 },
-    { x: 15, y: 15 },
+    { x: 3, y: 3 },  { x: 9, y: 3 },  { x: 15, y: 3 },
+    { x: 3, y: 9 },  { x: 9, y: 9 },  { x: 15, y: 9 },
+    { x: 3, y: 15 }, { x: 9, y: 15 }, { x: 15, y: 15 },
   ]
 }

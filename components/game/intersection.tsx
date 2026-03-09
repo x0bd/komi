@@ -17,7 +17,7 @@ export function Intersection({
   return (
     <div
       className={cn(
-        "relative z-10 flex items-center justify-center",
+        "relative z-10 flex h-full w-full items-center justify-center",
         stone ? "cursor-default" : "cursor-pointer"
       )}
     >
