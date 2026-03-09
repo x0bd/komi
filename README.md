@@ -1,36 +1,78 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Komi
+
+A modern multiplayer implementation of **Go**, designed for the web with a focus on elegance, learning, and real-time play.
+
+The name *Komi* refers to the points given to the white player in Go to compensate for black's first-move advantage — a symbol of balance and fairness in gameplay.
+
+## What It Does
+
+- **Real-time multiplayer** — Room-based Go matches with turn synchronization and presence indicators
+- **AI tutor** — A Duolingo-style assistant that explains moves, mistakes, and strategy using engine analysis + LLM explanations
+- **Game analysis** — Territory prediction, win probability, move suggestions, and post-game review
+- **Replay system** — Move-by-move timeline navigation with SGF export
+- **Polished UI** — Smooth stone animations, warm tactile board, responsive layout across devices
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Framework | Next.js, React 19, TypeScript |
+| Styling | Tailwind CSS v4, shadcn/ui (`base-maia`) |
+| State | Zustand |
+| Data Fetching | TanStack Query |
+| Animation | GSAP, tw-animate-css |
+| Icons | Hugeicons |
+| Realtime | Liveblocks |
+| Game Engine | TypeScript rules engine (liberties, captures, ko, scoring) |
+| AI Analysis | KataGo + OpenAI API |
+| Database | Neon (serverless PostgreSQL) + Prisma ORM |
+| Auth | Neon Auth |
+| Deployment | Vercel (frontend), Fly.io / Cloudflare (game services) |
 
 ## Getting Started
 
-First, run the development server:
-
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm install
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to see the app.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+app/                  # Next.js app router pages and layouts
+components/
+├── ui/               # shadcn/ui primitives (auto-generated)
+├── game/             # board, stones, player cards, timers, controls
+├── learning/         # AI tutor chat, XP bar, tip system
+└── layout/           # page structure, responsive containers
+lib/                  # utilities, game engine, helpers
+hooks/                # custom React hooks
+public/               # static assets, visual inspiration references
+```
 
-## Learn More
+## Design
 
-To learn more about Next.js, take a look at the following resources:
+The visual identity is **modern wabi-sabi** — warm, earthy tones honoring Go's tradition, paired with clean spatial hierarchy and tactile micro-interactions.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+See [`design-sys.md`](./design-sys.md) for the full design system covering colors, typography, component patterns, animation specs, and shadcn/ui integration.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Data Format
 
-## Deploy on Vercel
+Games use a flat board representation for real-time sync and SGF for storage/export:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```ts
+type Stone = 0 | 1 | 2   // empty, black, white
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+type GameState = {
+  board: Stone[]
+  turn: "black" | "white"
+  moveNumber: number
+  captured: { black: number; white: number }
+}
+```
+
+## License
+
+Private project.
