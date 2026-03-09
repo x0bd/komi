@@ -8,11 +8,14 @@ A comprehensive design system for Komi — a modern multiplayer Go platform. Thi
 
 Komi's visual identity lives at the intersection of three qualities:
 
-1. **Warmth** — Earthy, wood-inspired tones that honor Go's centuries-old tradition. The board should feel like a physical object you want to touch.
+1. **Washi** — Textured, tactile, handcrafted. Surfaces feel like Japanese handmade paper — cream and parchment in light mode, charcoal slate in dark. The board is the one object anchored in warm wood.
 2. **Clarity** — Clean spatial hierarchy with generous whitespace. Every element has purpose. Information is glanceable, never cluttered.
-3. **Delight** — Tactile micro-interactions, smooth stone animations, and playful flourishes that reward attention without distracting from gameplay.
+3. **Delight** — Tactile micro-interactions, smooth stone animations, and restrained flourishes that reward attention without distracting from gameplay.
 
-The aesthetic is **modern wabi-sabi** — refined imperfection. Not sterile tech-product UI, not cartoonish. Think: a beautifully crafted wooden board on a clean concrete desk, lit by warm afternoon light.
+The aesthetic is **washi meets sumi-e** — refined imperfection rooted in Japanese craft.
+
+- **Light mode**: Warm washi paper — unbleached cream backgrounds, sumi ink text, honey-wood board, kintsugi gold accents. Think: afternoon sun on a paper screen.
+- **Dark mode**: Ink stone — cool near-black slate with the faintest blue undertone, ivory text like light washi, desaturated wood board, muted gold. Think: a Go board on a slate table at dusk. No brown anywhere in the UI chrome — only the board itself carries warmth.
 
 ---
 
@@ -20,78 +23,60 @@ The aesthetic is **modern wabi-sabi** — refined imperfection. Not sterile tech
 
 ### Semantic Tokens (CSS Custom Properties)
 
-The palette is built on warm neutrals with intentional accent punctuation. All colors use `oklch` for perceptual uniformity and are mapped to shadcn's token system.
+The palette is built on two distinct moods unified by shared accent colors. All colors use `oklch` for perceptual uniformity and map to shadcn's token system.
 
-#### Light Theme (Default)
+#### Light Theme — Warm Washi Paper
+
+Unbleached parchment surfaces, sumi ink text, honey wood board, kintsugi gold accents.
 
 ```css
 :root {
-  /* ── Surface Hierarchy ── */
-  --background: oklch(0.97 0.005 85);          /* warm off-white, faint cream */
-  --foreground: oklch(0.22 0.02 50);            /* deep espresso brown */
-  --card: oklch(0.99 0.003 85);                 /* slightly warmer white */
-  --card-foreground: oklch(0.22 0.02 50);
-  --popover: oklch(0.99 0.003 85);
-  --popover-foreground: oklch(0.22 0.02 50);
+  --background: oklch(0.965 0.007 85);          /* washi cream */
+  --foreground: oklch(0.18 0.01 70);            /* sumi ink — near-black, barely warm */
+  --card: oklch(0.985 0.005 85);                /* lighter washi */
 
-  /* ── Brand / Primary ── */
-  --primary: oklch(0.35 0.05 50);               /* rich umber brown */
-  --primary-foreground: oklch(0.97 0.005 85);
+  --primary: oklch(0.22 0.01 70);               /* sumi ink */
+  --primary-foreground: oklch(0.965 0.007 85);
 
-  /* ── Secondary ── */
-  --secondary: oklch(0.94 0.01 75);             /* warm sand */
-  --secondary-foreground: oklch(0.35 0.05 50);
+  --secondary: oklch(0.935 0.012 80);           /* raw linen */
+  --muted-foreground: oklch(0.52 0.015 70);     /* weathered ink */
 
-  /* ── Muted ── */
-  --muted: oklch(0.93 0.01 80);                 /* light warm gray */
-  --muted-foreground: oklch(0.55 0.03 55);      /* medium brown */
+  --accent: oklch(0.78 0.14 75);                /* kintsugi gold */
+  --destructive: oklch(0.58 0.22 25);           /* vermilion — hanko stamp red */
 
-  /* ── Accent ── */
-  --accent: oklch(0.80 0.14 75);                /* warm amber gold */
-  --accent-foreground: oklch(0.25 0.04 50);
-
-  /* ── Destructive ── */
-  --destructive: oklch(0.62 0.20 30);           /* burnt terracotta */
-
-  /* ── Borders & Inputs ── */
-  --border: oklch(0.88 0.015 70);               /* warm light border */
-  --input: oklch(0.90 0.012 75);
-  --ring: oklch(0.70 0.08 65);                  /* warm focus ring */
-
-  /* ── Radius ── */
+  --border: oklch(0.88 0.01 80);                /* paper edge */
   --radius: 0.75rem;
 }
 ```
 
-#### Dark Theme
+#### Dark Theme — Sumi-e / Ink Stone
+
+Cool near-black slate, ivory washi text, desaturated wood board, muted gold accents. No brown in UI chrome.
 
 ```css
 .dark {
-  --background: oklch(0.16 0.015 55);           /* deep warm charcoal */
-  --foreground: oklch(0.93 0.01 80);            /* warm off-white */
-  --card: oklch(0.20 0.015 55);                 /* elevated surface */
-  --card-foreground: oklch(0.93 0.01 80);
-  --popover: oklch(0.22 0.015 55);
-  --popover-foreground: oklch(0.93 0.01 80);
+  --background: oklch(0.13 0.005 260);          /* cool near-black, faint blue undertone */
+  --foreground: oklch(0.92 0.006 85);           /* warm ivory — light washi */
+  --card: oklch(0.17 0.005 260);                /* lifted slate */
 
-  --primary: oklch(0.80 0.10 75);               /* warm gold */
-  --primary-foreground: oklch(0.16 0.015 55);
+  --primary: oklch(0.92 0.006 85);              /* ivory — inverted from light */
+  --primary-foreground: oklch(0.13 0.005 260);
 
-  --secondary: oklch(0.25 0.015 55);
-  --secondary-foreground: oklch(0.90 0.01 80);
+  --secondary: oklch(0.20 0.005 260);           /* dark slate */
+  --muted-foreground: oklch(0.58 0.008 250);    /* cool gray — no brown */
 
-  --muted: oklch(0.25 0.015 55);
-  --muted-foreground: oklch(0.65 0.03 65);
+  --accent: oklch(0.72 0.11 75);                /* muted kintsugi gold */
+  --destructive: oklch(0.65 0.18 25);           /* soft vermilion */
 
-  --accent: oklch(0.72 0.12 70);                /* muted gold */
-  --accent-foreground: oklch(0.16 0.015 55);
-
-  --destructive: oklch(0.65 0.18 28);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 12%);
-  --ring: oklch(0.55 0.06 60);
+  --border: oklch(1 0 0 / 8%);                  /* barely-there white edge */
 }
 ```
+
+**Key dark mode principles:**
+- **No brown** in UI chrome — surfaces are cool charcoal-slate with a faint blue shift
+- **Ivory text** on dark slate creates high-contrast editorial feel
+- **Board is the exception** — retains a desaturated warm wood tone to stay recognizable
+- **Accents stay warm** — gold and vermilion punctuate the cool surface
 
 ### Extended Palette (Game-Specific)
 
@@ -106,47 +91,45 @@ Beyond shadcn's semantic tokens, Komi needs game-specific colors:
   --board-hoshi: oklch(0.30 0.04 55);           /* star points */
 
   /* ── Stones ── */
-  --stone-black: oklch(0.20 0.02 50);           /* near-black with warm shift */
-  --stone-black-highlight: oklch(0.35 0.02 50); /* specular on black stone */
-  --stone-white: oklch(0.97 0.005 85);          /* warm white */
-  --stone-white-highlight: oklch(1.0 0 0);      /* pure white specular */
-  --stone-white-border: oklch(0.88 0.01 75);    /* subtle edge definition */
-  --stone-shadow: oklch(0.20 0.02 50 / 25%);    /* drop shadow under stones */
+  --stone-black: oklch(0.16 0.005 70);          /* slate black, barely warm */
+  --stone-black-highlight: oklch(0.32 0.005 70);
+  --stone-white: oklch(0.96 0.005 85);          /* washi white */
+  --stone-white-highlight: oklch(1.0 0 0);
+  --stone-white-border: oklch(0.86 0.008 80);
+  --stone-shadow: oklch(0.16 0.005 70 / 25%);
 
   /* ── Status / Feedback ── */
-  --status-active: oklch(0.72 0.15 145);        /* sage green — player active */
-  --status-waiting: oklch(0.65 0.03 65);        /* muted — waiting */
-  --status-capture: oklch(0.70 0.16 50);        /* warm coral — captures */
-  --status-territory: oklch(0.75 0.12 145);     /* soft green — territory */
-  --status-danger: oklch(0.62 0.20 30);         /* terracotta — low time, resign */
+  --status-active: oklch(0.70 0.13 150);        /* muted sage green */
+  --status-capture: oklch(0.68 0.15 50);        /* warm coral */
+  --status-territory: oklch(0.72 0.10 150);
+  --status-danger: oklch(0.58 0.22 25);         /* vermilion — matches destructive */
 
   /* ── AI Tutor ── */
-  --tutor-surface: oklch(0.92 0.04 165);        /* soft teal tint */
-  --tutor-accent: oklch(0.70 0.12 170);         /* teal */
-  --tutor-foreground: oklch(0.25 0.03 55);
+  --tutor-surface: oklch(0.93 0.03 165);
+  --tutor-accent: oklch(0.65 0.10 170);         /* teal */
+  --tutor-foreground: oklch(0.22 0.015 70);
 
   /* ── XP / Gamification ── */
-  --xp-bar-bg: oklch(0.94 0.01 80);
-  --xp-bar-fill-start: oklch(0.72 0.15 145);   /* green */
-  --xp-bar-fill-end: oklch(0.82 0.15 95);      /* gold */
-  --xp-streak: oklch(0.68 0.18 45);             /* warm orange */
+  --xp-bar-fill-start: oklch(0.70 0.13 150);   /* sage → gold gradient */
+  --xp-bar-fill-end: oklch(0.78 0.14 85);
+  --xp-streak: oklch(0.66 0.16 45);
 }
 ```
 
 ### Color Usage Guidelines
 
-| Context | Token | Notes |
-|---------|-------|-------|
-| Page background | `--background` | Warm cream, never pure white |
-| Board wood | `--board-surface` | The heart of the visual identity |
-| Primary actions | `--primary` | Rich brown — buttons, links |
-| Gold accent | `--accent` | Highlights, active states, badges |
-| Black stones | `--stone-black` | With radial gradient for 3D depth |
-| White stones | `--stone-white` | With subtle border + soft shadow |
-| Active player indicator | `--status-active` | Green glow/border |
-| Capture count | `--status-capture` | Coral badge |
-| AI Tutor chat | `--tutor-surface` | Distinct from game UI |
-| Destructive actions | `--destructive` | Resign, leave game |
+| Context | Token | Light | Dark |
+|---------|-------|-------|------|
+| Page background | `--background` | Washi cream | Cool near-black slate |
+| Board wood | `--board-surface` | Honey wood | Desaturated dark wood |
+| Primary actions | `--primary` | Sumi ink (dark) | Ivory (light) |
+| Gold accent | `--accent` | Kintsugi gold | Muted gold |
+| Black stones | `--stone-black` | Slate black | True near-black |
+| White stones | `--stone-white` | Washi white | Ivory |
+| Active indicator | `--status-active` | Sage green | Sage green (dimmed) |
+| Capture count | `--status-capture` | Warm coral | Warm coral |
+| AI Tutor | `--tutor-surface` | Soft teal tint | Dark teal |
+| Destructive | `--destructive` | Vermilion | Soft vermilion |
 
 ---
 
@@ -903,9 +886,10 @@ components/
 
 | Principle | Implementation |
 |-----------|---------------|
-| **Warm, not sterile** | oklch colors with warm undertones, wood-inspired board, cream backgrounds |
+| **Washi, not sterile** | Light: cream parchment surfaces, sumi ink text. Dark: cool slate, ivory text — no brown in chrome |
 | **Tactile, not flat** | Radial gradient stones, layered shadows, bouncy spring animations |
 | **Clear, not cluttered** | Generous spacing, type hierarchy, muted inactive states |
-| **Playful, not cartoonish** | Bricolage Grotesque over Fredoka, refined shadows over chunky offsets |
+| **Restrained, not cartoonish** | Bricolage Grotesque over Fredoka, refined shadows over chunky offsets, kintsugi gold over bright yellow |
+| **Dual personality** | Light mode is warm afternoon paper; dark mode is dusk ink stone — unified by gold accents and vermilion |
 | **Accessible, not exclusionary** | Shape + color distinction, keyboard nav, screen reader labels |
 | **shadcn-native** | Every non-game element maps to a shadcn primitive, themed via CSS variables |

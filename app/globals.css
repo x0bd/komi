@@ -87,164 +87,180 @@
 }
 
 /* ══════════════════════════════════════════════
-   Light Theme
+   Light Theme — Warm Washi Paper
+   Unbleached parchment, sumi ink, honey wood
    ══════════════════════════════════════════════ */
 
 :root {
   /* ── Surface Hierarchy ── */
-  --background: oklch(0.97 0.005 85);
-  --foreground: oklch(0.22 0.02 50);
-  --card: oklch(0.99 0.003 85);
-  --card-foreground: oklch(0.22 0.02 50);
-  --popover: oklch(0.99 0.003 85);
-  --popover-foreground: oklch(0.22 0.02 50);
+  --background: oklch(0.965 0.007 85);          /* warm washi cream */
+  --foreground: oklch(0.18 0.01 70);            /* sumi ink — near-black, barely warm */
+  --card: oklch(0.985 0.005 85);                /* slightly lighter washi */
+  --card-foreground: oklch(0.18 0.01 70);
+  --popover: oklch(0.985 0.005 85);
+  --popover-foreground: oklch(0.18 0.01 70);
 
-  /* ── Primary (Rich Umber) ── */
-  --primary: oklch(0.35 0.05 50);
-  --primary-foreground: oklch(0.97 0.005 85);
+  /* ── Primary (Sumi Ink) ── */
+  --primary: oklch(0.22 0.01 70);
+  --primary-foreground: oklch(0.965 0.007 85);
 
-  /* ── Secondary (Warm Sand) ── */
-  --secondary: oklch(0.94 0.012 75);
-  --secondary-foreground: oklch(0.35 0.05 50);
+  /* ── Secondary (Raw Linen) ── */
+  --secondary: oklch(0.935 0.012 80);
+  --secondary-foreground: oklch(0.30 0.015 70);
 
   /* ── Muted ── */
-  --muted: oklch(0.93 0.01 80);
-  --muted-foreground: oklch(0.55 0.03 55);
+  --muted: oklch(0.925 0.008 80);
+  --muted-foreground: oklch(0.52 0.015 70);
 
-  /* ── Accent (Warm Amber Gold) ── */
-  --accent: oklch(0.80 0.14 75);
-  --accent-foreground: oklch(0.25 0.04 50);
+  /* ── Accent (Warm Amber / Kintsugi Gold) ── */
+  --accent: oklch(0.78 0.14 75);
+  --accent-foreground: oklch(0.22 0.02 60);
 
-  /* ── Destructive (Burnt Terracotta) ── */
-  --destructive: oklch(0.62 0.20 30);
+  /* ── Destructive (Vermilion Red — hanko stamp) ── */
+  --destructive: oklch(0.58 0.22 25);
 
   /* ── Borders & Focus ── */
-  --border: oklch(0.88 0.015 70);
-  --input: oklch(0.90 0.012 75);
-  --ring: oklch(0.70 0.08 65);
+  --border: oklch(0.88 0.01 80);
+  --input: oklch(0.90 0.008 80);
+  --ring: oklch(0.60 0.06 75);
   --radius: 0.75rem;
 
   /* ── Chart ── */
-  --chart-1: oklch(0.72 0.15 145);
-  --chart-2: oklch(0.80 0.14 75);
-  --chart-3: oklch(0.68 0.18 45);
-  --chart-4: oklch(0.62 0.20 30);
-  --chart-5: oklch(0.55 0.03 55);
+  --chart-1: oklch(0.70 0.12 145);
+  --chart-2: oklch(0.78 0.14 75);
+  --chart-3: oklch(0.65 0.16 45);
+  --chart-4: oklch(0.58 0.22 25);
+  --chart-5: oklch(0.52 0.015 70);
 
   /* ── Sidebar ── */
-  --sidebar: oklch(0.95 0.008 80);
-  --sidebar-foreground: oklch(0.22 0.02 50);
-  --sidebar-primary: oklch(0.35 0.05 50);
-  --sidebar-primary-foreground: oklch(0.97 0.005 85);
-  --sidebar-accent: oklch(0.94 0.012 75);
-  --sidebar-accent-foreground: oklch(0.35 0.05 50);
-  --sidebar-border: oklch(0.88 0.015 70);
-  --sidebar-ring: oklch(0.70 0.08 65);
+  --sidebar: oklch(0.955 0.007 82);
+  --sidebar-foreground: oklch(0.18 0.01 70);
+  --sidebar-primary: oklch(0.22 0.01 70);
+  --sidebar-primary-foreground: oklch(0.965 0.007 85);
+  --sidebar-accent: oklch(0.935 0.012 80);
+  --sidebar-accent-foreground: oklch(0.30 0.015 70);
+  --sidebar-border: oklch(0.88 0.01 80);
+  --sidebar-ring: oklch(0.60 0.06 75);
 
   /* ── Board ── */
-  --board-surface: oklch(0.82 0.08 80);
-  --board-frame: oklch(0.60 0.10 55);
-  --board-grid: oklch(0.35 0.04 55);
-  --board-hoshi: oklch(0.30 0.04 55);
+  --board-surface: oklch(0.82 0.08 80);         /* honey wood */
+  --board-frame: oklch(0.58 0.08 60);           /* darker wood frame */
+  --board-grid: oklch(0.32 0.03 65);            /* dark grid lines */
+  --board-hoshi: oklch(0.28 0.03 65);
 
   /* ── Stones ── */
-  --stone-black: oklch(0.20 0.02 50);
-  --stone-black-highlight: oklch(0.35 0.02 50);
-  --stone-white: oklch(0.97 0.005 85);
+  --stone-black: oklch(0.16 0.005 70);          /* slate black, barely warm */
+  --stone-black-highlight: oklch(0.32 0.005 70);
+  --stone-white: oklch(0.96 0.005 85);          /* washi white */
   --stone-white-highlight: oklch(1.0 0 0);
-  --stone-white-border: oklch(0.88 0.01 75);
-  --stone-shadow: oklch(0.20 0.02 50 / 25%);
+  --stone-white-border: oklch(0.86 0.008 80);
+  --stone-shadow: oklch(0.16 0.005 70 / 25%);
 
   /* ── Status ── */
-  --status-active: oklch(0.72 0.15 145);
-  --status-waiting: oklch(0.65 0.03 65);
-  --status-capture: oklch(0.70 0.16 50);
-  --status-territory: oklch(0.75 0.12 145);
-  --status-danger: oklch(0.62 0.20 30);
+  --status-active: oklch(0.70 0.13 150);        /* muted sage green */
+  --status-waiting: oklch(0.60 0.015 70);
+  --status-capture: oklch(0.68 0.15 50);        /* warm coral */
+  --status-territory: oklch(0.72 0.10 150);
+  --status-danger: oklch(0.58 0.22 25);         /* matches destructive */
 
   /* ── AI Tutor ── */
-  --tutor-surface: oklch(0.92 0.04 165);
-  --tutor-accent: oklch(0.70 0.12 170);
-  --tutor-foreground: oklch(0.25 0.03 55);
+  --tutor-surface: oklch(0.93 0.03 165);
+  --tutor-accent: oklch(0.65 0.10 170);
+  --tutor-foreground: oklch(0.22 0.015 70);
 
   /* ── XP / Gamification ── */
-  --xp-bar-bg: oklch(0.94 0.01 80);
-  --xp-bar-fill-start: oklch(0.72 0.15 145);
-  --xp-bar-fill-end: oklch(0.82 0.15 95);
-  --xp-streak: oklch(0.68 0.18 45);
+  --xp-bar-bg: oklch(0.925 0.008 80);
+  --xp-bar-fill-start: oklch(0.70 0.13 150);
+  --xp-bar-fill-end: oklch(0.78 0.14 85);
+  --xp-streak: oklch(0.66 0.16 45);
 }
 
 /* ══════════════════════════════════════════════
-   Dark Theme
+   Dark Theme — Sumi-e / Ink Stone
+   Charcoal slate, ivory text, restrained gold
    ══════════════════════════════════════════════ */
 
 .dark {
-  --background: oklch(0.16 0.015 55);
-  --foreground: oklch(0.93 0.01 80);
-  --card: oklch(0.20 0.015 55);
-  --card-foreground: oklch(0.93 0.01 80);
-  --popover: oklch(0.22 0.015 55);
-  --popover-foreground: oklch(0.93 0.01 80);
+  /* ── Surface Hierarchy ── */
+  --background: oklch(0.13 0.005 260);          /* cool near-black, faint blue undertone */
+  --foreground: oklch(0.92 0.006 85);           /* warm ivory — like light washi */
+  --card: oklch(0.17 0.005 260);                /* slightly lifted slate */
+  --card-foreground: oklch(0.92 0.006 85);
+  --popover: oklch(0.19 0.005 260);
+  --popover-foreground: oklch(0.92 0.006 85);
 
-  --primary: oklch(0.80 0.10 75);
-  --primary-foreground: oklch(0.16 0.015 55);
+  /* ── Primary (Ivory) ── */
+  --primary: oklch(0.92 0.006 85);
+  --primary-foreground: oklch(0.13 0.005 260);
 
-  --secondary: oklch(0.25 0.015 55);
-  --secondary-foreground: oklch(0.90 0.01 80);
+  /* ── Secondary ── */
+  --secondary: oklch(0.20 0.005 260);
+  --secondary-foreground: oklch(0.82 0.006 85);
 
-  --muted: oklch(0.25 0.015 55);
-  --muted-foreground: oklch(0.65 0.03 65);
+  /* ── Muted ── */
+  --muted: oklch(0.22 0.005 260);
+  --muted-foreground: oklch(0.58 0.008 250);    /* cool gray */
 
-  --accent: oklch(0.72 0.12 70);
-  --accent-foreground: oklch(0.16 0.015 55);
+  /* ── Accent (Muted Gold / Kintsugi) ── */
+  --accent: oklch(0.72 0.11 75);
+  --accent-foreground: oklch(0.13 0.005 260);
 
-  --destructive: oklch(0.65 0.18 28);
+  /* ── Destructive (Soft Vermilion) ── */
+  --destructive: oklch(0.65 0.18 25);
 
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 12%);
-  --ring: oklch(0.55 0.06 60);
+  /* ── Borders & Focus ── */
+  --border: oklch(1 0 0 / 8%);
+  --input: oklch(1 0 0 / 10%);
+  --ring: oklch(0.50 0.008 250);
 
-  --chart-1: oklch(0.72 0.15 145);
-  --chart-2: oklch(0.72 0.12 70);
-  --chart-3: oklch(0.68 0.18 45);
-  --chart-4: oklch(0.65 0.18 28);
-  --chart-5: oklch(0.65 0.03 65);
+  /* ── Chart ── */
+  --chart-1: oklch(0.70 0.12 150);
+  --chart-2: oklch(0.72 0.11 75);
+  --chart-3: oklch(0.65 0.15 45);
+  --chart-4: oklch(0.65 0.18 25);
+  --chart-5: oklch(0.58 0.008 250);
 
-  --sidebar: oklch(0.20 0.015 55);
-  --sidebar-foreground: oklch(0.93 0.01 80);
-  --sidebar-primary: oklch(0.80 0.10 75);
-  --sidebar-primary-foreground: oklch(0.16 0.015 55);
-  --sidebar-accent: oklch(0.25 0.015 55);
-  --sidebar-accent-foreground: oklch(0.90 0.01 80);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.55 0.06 60);
+  /* ── Sidebar ── */
+  --sidebar: oklch(0.15 0.005 260);
+  --sidebar-foreground: oklch(0.92 0.006 85);
+  --sidebar-primary: oklch(0.92 0.006 85);
+  --sidebar-primary-foreground: oklch(0.13 0.005 260);
+  --sidebar-accent: oklch(0.20 0.005 260);
+  --sidebar-accent-foreground: oklch(0.82 0.006 85);
+  --sidebar-border: oklch(1 0 0 / 8%);
+  --sidebar-ring: oklch(0.50 0.008 250);
 
-  --board-surface: oklch(0.38 0.06 65);
-  --board-frame: oklch(0.28 0.04 55);
-  --board-grid: oklch(0.55 0.04 60);
-  --board-hoshi: oklch(0.60 0.04 60);
+  /* ── Board ── */
+  --board-surface: oklch(0.30 0.015 70);        /* dark muted wood, desaturated */
+  --board-frame: oklch(0.22 0.008 260);         /* near-black slate frame */
+  --board-grid: oklch(0.50 0.008 70);           /* warm gray lines */
+  --board-hoshi: oklch(0.55 0.008 70);
 
-  --stone-black: oklch(0.15 0.01 50);
-  --stone-black-highlight: oklch(0.30 0.02 50);
-  --stone-white: oklch(0.90 0.005 85);
-  --stone-white-highlight: oklch(0.98 0 0);
-  --stone-white-border: oklch(0.70 0.01 75);
-  --stone-shadow: oklch(0.05 0.01 50 / 40%);
+  /* ── Stones ── */
+  --stone-black: oklch(0.10 0.003 260);         /* true near-black */
+  --stone-black-highlight: oklch(0.25 0.005 260);
+  --stone-white: oklch(0.90 0.006 85);          /* ivory */
+  --stone-white-highlight: oklch(0.97 0.003 85);
+  --stone-white-border: oklch(0.65 0.006 250);
+  --stone-shadow: oklch(0.0 0 0 / 50%);
 
-  --status-active: oklch(0.72 0.15 145);
-  --status-waiting: oklch(0.55 0.02 60);
-  --status-capture: oklch(0.70 0.16 50);
-  --status-territory: oklch(0.70 0.12 145);
-  --status-danger: oklch(0.65 0.18 28);
+  /* ── Status ── */
+  --status-active: oklch(0.68 0.12 150);
+  --status-waiting: oklch(0.45 0.008 250);
+  --status-capture: oklch(0.68 0.14 50);
+  --status-territory: oklch(0.65 0.10 150);
+  --status-danger: oklch(0.65 0.18 25);
 
-  --tutor-surface: oklch(0.24 0.03 165);
-  --tutor-accent: oklch(0.65 0.10 170);
-  --tutor-foreground: oklch(0.90 0.01 80);
+  /* ── AI Tutor ── */
+  --tutor-surface: oklch(0.20 0.02 170);
+  --tutor-accent: oklch(0.60 0.08 170);
+  --tutor-foreground: oklch(0.90 0.006 85);
 
-  --xp-bar-bg: oklch(0.25 0.015 55);
-  --xp-bar-fill-start: oklch(0.65 0.12 145);
-  --xp-bar-fill-end: oklch(0.72 0.12 85);
-  --xp-streak: oklch(0.72 0.18 45);
+  /* ── XP / Gamification ── */
+  --xp-bar-bg: oklch(0.20 0.005 260);
+  --xp-bar-fill-start: oklch(0.65 0.10 150);
+  --xp-bar-fill-end: oklch(0.72 0.11 85);
+  --xp-streak: oklch(0.70 0.15 45);
 }
 
 /* ══════════════════════════════════════════════
