@@ -22,10 +22,8 @@ export function ThemeToggle({ className }: { className?: string }) {
       aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
       className={cn(
         "group relative flex h-9 w-9 items-center justify-center overflow-hidden rounded-full",
-        "border border-border bg-background/80 backdrop-blur-md",
-        "shadow-[0_2px_8px_oklch(0_0_0/10%)] transition-all duration-200",
-        "hover:scale-105 hover:shadow-[0_4px_16px_oklch(0_0_0/14%)]",
-        "active:scale-95",
+        "transition-all duration-200",
+        "hover:scale-110 active:scale-95",
         className
       )}
     >
@@ -42,7 +40,7 @@ export function ThemeToggle({ className }: { className?: string }) {
           icon={Moon01Icon}
           size={16}
           color="currentColor"
-          strokeWidth={1.75}
+          strokeWidth={2.25}
           className="text-foreground"
         />
       </span>
@@ -59,7 +57,7 @@ export function ThemeToggle({ className }: { className?: string }) {
           icon={Sun01Icon}
           size={16}
           color="currentColor"
-          strokeWidth={1.75}
+          strokeWidth={2.25}
           className="text-foreground"
         />
       </span>
