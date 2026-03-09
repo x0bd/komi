@@ -32,16 +32,20 @@ Step-by-step build plan. UI first, then game logic, then integrations.
 
 ## Phase 2: Layout Shell
 
-- [ ] **Game layout component** (`components/layout/game-layout.tsx`)
-  - [ ] Two-column flex layout (board area + sidebar)
-  - [ ] Responsive breakpoints — side-by-side on desktop, stacked on mobile
-  - [ ] Board area: flex-1, centered content
-  - [ ] Sidebar: fixed width (380px desktop, 320px tablet, full-width mobile)
-- [ ] **Page route** (`app/page.tsx`)
-  - [ ] Replace boilerplate with `<GameLayout />` shell
-  - [ ] Warm background (`bg-background`) with subtle texture/pattern
-- [ ] **Background decoration**
-  - [ ] Subtle decorative blobs or grain overlay (optional, low priority polish)
+- [x] **Game layout component** (`components/layout/game-layout.tsx`)
+  - [x] Two-column flex layout (board area + sidebar)
+  - [x] Responsive breakpoints — side-by-side on desktop (`lg:`), stacked on mobile
+  - [x] Board area: flex-1, centered content
+  - [x] Sidebar: fixed width 380px on desktop, full-width on mobile
+  - [x] Sidebar scrollable when content overflows (`max-h-[calc(100svh-4rem)]`)
+- [x] **Page route** (`app/page.tsx`)
+  - [x] Replace boilerplate with `<GameLayout />` shell
+  - [x] Washi background with placeholder board and sidebar
+  - [x] Board placeholder: 9×9 grid with stones, hoshi points, coordinates, last-move marker
+  - [x] Sidebar placeholder: mode toggle, player cards, move history, controls
+- [x] **Background decoration** (`WashiTexture` component)
+  - [x] SVG fractal noise overlay for washi paper grain
+  - [x] Ambient gradient blobs (warm accent + sage, adapts to dark mode)
 
 ---
 
