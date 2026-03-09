@@ -1,6 +1,7 @@
 "use client"
 
 import { cn } from "@/lib/utils"
+import { ThemeToggle } from "@/components/ui/theme-toggle"
 
 export function GameLayout({
   board,
@@ -14,22 +15,33 @@ export function GameLayout({
   return (
     <div
       className={cn(
-        "relative flex min-h-svh items-center justify-center overflow-hidden bg-background",
+        "relative flex min-h-svh flex-col overflow-hidden bg-background",
         className
       )}
     >
       <WashiTexture />
 
-      <div className="relative z-10 flex w-full max-w-[1440px] items-start gap-8 px-6 py-8 max-lg:flex-col max-lg:items-center max-lg:gap-6 lg:px-10">
-        {/* Board area */}
-        <main className="flex flex-1 items-center justify-center max-lg:w-full">
-          {board}
-        </main>
+      {/* Floating topbar — logo left, theme toggle right */}
+      <header className="pointer-events-none absolute inset-x-0 top-0 z-20 flex items-center justify-between px-6 py-4 lg:px-10">
+        <span className="pointer-events-auto font-display text-sm font-bold tracking-[0.12em] text-foreground/40 select-none uppercase">
+          Komi
+        </span>
+        <ThemeToggle className="pointer-events-auto" />
+      </header>
 
-        {/* Sidebar */}
-        <aside className="flex w-full flex-col gap-4 lg:w-[380px] lg:min-w-[340px] lg:max-h-[calc(100svh-4rem)] lg:overflow-y-auto lg:pr-1">
-          {sidebar}
-        </aside>
+      {/* Vertically + horizontally centered main area */}
+      <div className="relative z-10 flex flex-1 items-center justify-center px-6 py-16 lg:px-10">
+        <div className="flex w-full max-w-[1440px] items-center gap-8 max-lg:flex-col max-lg:gap-6">
+          {/* Board — takes remaining space, centered */}
+          <main className="flex flex-1 items-center justify-center max-lg:w-full">
+            {board}
+          </main>
+
+          {/* Sidebar — fixed width, vertically scrollable if needed */}
+          <aside className="flex w-full flex-col gap-4 lg:w-[380px] lg:min-w-[340px] lg:max-h-[calc(100svh-8rem)] lg:overflow-y-auto lg:pr-1">
+            {sidebar}
+          </aside>
+        </div>
       </div>
     </div>
   )
@@ -38,7 +50,7 @@ export function GameLayout({
 function WashiTexture() {
   return (
     <>
-      {/* Subtle noise grain — gives the washi paper feel */}
+      {/* Subtle noise grain */}
       <div
         className="pointer-events-none fixed inset-0 z-0 opacity-[0.03] mix-blend-multiply dark:mix-blend-soft-light dark:opacity-[0.04]"
         style={{
@@ -46,10 +58,9 @@ function WashiTexture() {
           backgroundSize: "200px 200px",
         }}
       />
-
-      {/* Ambient glow — warm in light, cool in dark */}
-      <div className="pointer-events-none fixed -top-[20%] -right-[10%] z-0 h-[600px] w-[600px] rounded-full bg-accent/5 blur-[120px] dark:bg-accent/[0.03]" />
-      <div className="pointer-events-none fixed -bottom-[15%] -left-[10%] z-0 h-[500px] w-[500px] rounded-full bg-status-active/5 blur-[100px] dark:bg-status-active/[0.02]" />
+      {/* Ambient warm glow */}
+      <div className="pointer-events-none fixed -top-[20%] -right-[10%] z-0 h-[600px] w-[600px] rounded-full bg-accent/5 blur-[120px] dark:bg-accent/3" />
+      <div className="pointer-events-none fixed -bottom-[15%] -left-[10%] z-0 h-[500px] w-[500px] rounded-full bg-status-active/5 blur-[100px] dark:bg-status-active/2" />
     </>
   )
 }
