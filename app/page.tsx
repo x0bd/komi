@@ -109,22 +109,48 @@ export default function Home() {
           </CardContent>
         </Card>
 
-        {/* Grid check */}
+        {/* Board preview */}
         <Card>
           <CardHeader>
             <CardTitle className="font-display text-lg font-bold">
-              9×9 Grid Preview
+              9×9 Board Preview
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="mx-auto grid h-48 w-48 grid-cols-9 grid-rows-9 rounded-xl bg-board-surface p-1">
-              {Array.from({ length: 81 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="border-[0.5px] border-board-grid/40"
-                />
-              ))}
+          <CardContent className="flex flex-col items-center gap-4">
+            <div className="rounded-2xl bg-board-frame p-3 shadow-lg">
+              <div className="relative grid h-52 w-52 grid-cols-9 grid-rows-9 rounded-xl bg-board-surface board-texture">
+                {Array.from({ length: 81 }).map((_, i) => {
+                  const x = i % 9
+                  const y = Math.floor(i / 9)
+                  const hasBlack =
+                    (x === 2 && y === 2) ||
+                    (x === 6 && y === 2) ||
+                    (x === 4 && y === 4) ||
+                    (x === 3 && y === 5)
+                  const hasWhite =
+                    (x === 2 && y === 6) ||
+                    (x === 6 && y === 6) ||
+                    (x === 5 && y === 4) ||
+                    (x === 4 && y === 3)
+                  return (
+                    <div
+                      key={i}
+                      className="relative flex items-center justify-center border-[0.5px] border-board-grid/40"
+                    >
+                      {hasBlack && (
+                        <div className="animate-stone-place h-[85%] w-[85%] rounded-full bg-stone-black shadow-[1px_2px_4px_var(--stone-shadow)]" />
+                      )}
+                      {hasWhite && (
+                        <div className="animate-stone-place h-[85%] w-[85%] rounded-full border border-stone-white/80 bg-stone-white shadow-[1px_2px_4px_var(--stone-shadow)]" />
+                      )}
+                    </div>
+                  )
+                })}
+              </div>
             </div>
+            <p className="text-xs text-muted-foreground">
+              Board frame + surface + stones with washi tokens
+            </p>
           </CardContent>
         </Card>
       </div>

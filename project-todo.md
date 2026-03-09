@@ -6,23 +6,27 @@ Step-by-step build plan. UI first, then game logic, then integrations.
 
 ## Phase 1: Foundation & Design System Setup
 
-- [ ] **Typography & fonts**
-  - [ ] Replace Geist/Figtree with Bricolage Grotesque, DM Sans, JetBrains Mono in `layout.tsx`
-  - [ ] Map font variables (`--font-display`, `--font-body`, `--font-mono`) in `globals.css`
-  - [ ] Update `@theme inline` block with new font references
-- [ ] **Color tokens**
-  - [ ] Replace default shadcn neutral palette with Komi warm palette (`:root` and `.dark`) in `globals.css`
-  - [ ] Add game-specific extended tokens (board, stones, status, tutor, xp)
-- [ ] **Metadata**
-  - [ ] Update `layout.tsx` metadata — title, description, favicon
-- [ ] **Tailwind extensions**
-  - [ ] Add `grid-cols-19` / `grid-rows-19` custom values
-  - [ ] Add custom shadow tokens (shadow-board, shadow-offset)
-  - [ ] Add stone-place / stone-capture keyframe animations
-- [ ] **shadcn component theming**
-  - [ ] Verify Button, Card, Badge, Dialog, Avatar, ScrollArea render correctly with new tokens
-  - [ ] Add `accent` button variant
-  - [ ] Ensure `rounded-2xl` / `rounded-3xl` defaults on Card, Dialog
+- [x] **Typography & fonts**
+  - [x] Replace Geist/Figtree with Bricolage Grotesque, DM Sans, JetBrains Mono in `layout.tsx`
+  - [x] Map font variables (`--font-display`, `--font-body`, `--font-mono`) in `globals.css`
+  - [x] Update `@theme inline` block with new font references
+- [x] **Color tokens**
+  - [x] Replace default shadcn neutral palette with Komi washi palette (`:root` and `.dark`) in `globals.css`
+  - [x] Add game-specific extended tokens (board, stones, status, tutor, xp)
+  - [x] Washi light theme (cream parchment, sumi ink, honey wood, kintsugi gold)
+  - [x] Sumi-e dark theme (cool slate, ivory text, desaturated wood, no brown in chrome)
+- [x] **Metadata**
+  - [x] Update `layout.tsx` metadata — title, description
+- [x] **Tailwind extensions**
+  - [x] Add `grid-cols-19` / `grid-rows-19` custom values
+  - [x] Add stone-place / stone-capture / pulse-gentle / marker-appear keyframe animations
+  - [x] Add `.board-texture` utility class
+- [x] **shadcn component theming**
+  - [x] Verify Button, Card, Badge render correctly with new tokens
+  - [x] Add `accent` button variant
+- [x] **Infrastructure**
+  - [x] Wire `next-themes` provider (`components/providers.tsx`)
+  - [x] Fix pre-existing `spinner.tsx` type error
 
 ---
 
