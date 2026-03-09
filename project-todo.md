@@ -37,15 +37,23 @@ Step-by-step build plan. UI first, then game logic, then integrations.
   - [x] Responsive breakpoints — side-by-side on desktop (`lg:`), stacked on mobile
   - [x] Board area: flex-1, centered content
   - [x] Sidebar: fixed width 380px on desktop, full-width on mobile
-  - [x] Sidebar scrollable when content overflows (`max-h-[calc(100svh-4rem)]`)
+  - [x] Sidebar scrollable when content overflows (`max-h-[calc(100svh-8rem)]`)
+  - [x] Vertical centering fixed — `flex-1` main area with `items-center justify-center`, board+sidebar pair centered in viewport
+  - [x] Floating topbar: absolute-positioned header with Komi wordmark (left) and theme toggle (right)
 - [x] **Page route** (`app/page.tsx`)
   - [x] Replace boilerplate with `<GameLayout />` shell
   - [x] Washi background with placeholder board and sidebar
-  - [x] Board placeholder: 9×9 grid with stones, hoshi points, coordinates, last-move marker
+  - [x] Board placeholder: 19×19 grid with stones, hoshi points, coordinates, last-move marker
   - [x] Sidebar placeholder: mode toggle, player cards, move history, controls
 - [x] **Background decoration** (`WashiTexture` component)
   - [x] SVG fractal noise overlay for washi paper grain
   - [x] Ambient gradient blobs (warm accent + sage, adapts to dark mode)
+- [x] **Theme toggle** (`components/ui/theme-toggle.tsx`)
+  - [x] `useTheme` from `next-themes` — reads and sets light/dark
+  - [x] `Sun01Icon` / `Moon01Icon` from `@hugeicons/core-free-icons` via `HugeiconsIcon`
+  - [x] Spring-easing icon swap animation (slide + rotate in/out)
+  - [x] Hydration-safe `mounted` guard
+  - [x] Frosted-glass pill button with hover scale + shadow
 
 ---
 
@@ -55,6 +63,9 @@ Step-by-step build plan. UI first, then game logic, then integrations.
   - [x] Outer frame div — rounded-3xl, board-frame background, deep layered shadow
   - [x] Inner surface div — rounded-2xl, board-surface background
   - [x] Subtle wood grain texture via `.board-texture`
+  - [x] Layout rewritten as proper 2×2 CSS grid — corner, top labels, left labels, board as direct children (no fragment)
+  - [x] All grid templates use inline `style` props — no dependency on Tailwind `grid-cols-19` class generation
+  - [x] Board colors updated: light = washi cream (`oklch(0.925 0.018 82)`), dark = cool slate (`oklch(0.21 0.007 260)`) — no more brown/wood
 - [x] **Grid layer** (SVG)
   - [x] 19 vertical lines, 19 horizontal lines, properly spaced
   - [x] 9 hoshi (star) points at correct positions
@@ -63,8 +74,10 @@ Step-by-step build plan. UI first, then game logic, then integrations.
   - [x] Top: A–T (skipping I) in `font-mono`
   - [x] Left: 19–1 in `font-mono`
   - [x] Positioned outside the grid, muted color
+  - [x] Labels inlined directly into `go-board.tsx` via inline-style grids (fragment bug fixed)
 - [x] **Intersection component** (`components/game/intersection.tsx`)
-  - [x] 19x19 CSS grid of clickable cells
+  - [x] 19×19 CSS grid of clickable cells
+  - [x] `h-full w-full` added so cells fill their grid slots correctly
   - [x] Hover state: ghost stone preview at low opacity
   - [x] Cursor: pointer on empty, default on occupied
 - [x] **Stone component** (`components/game/stone.tsx`)
