@@ -5,7 +5,7 @@ import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from 
 import { Button } from "@/components/ui/button"
 import { MoveHistory, type MoveEntry } from "@/components/game/move-history"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { History02Icon } from "@hugeicons/core-free-icons"
+import { SearchIcon } from "@hugeicons/core-free-icons"
 import { cn } from "@/lib/utils"
 
 export function MoveHistorySection({
@@ -33,7 +33,7 @@ export function MoveHistorySection({
             variant="outline"
             className="min-h-[48px] w-full justify-start gap-3 px-4 font-display lg:hidden"
           >
-            <HugeiconsIcon icon={History02Icon} strokeWidth={2} className="size-5" />
+            <HugeiconsIcon icon={SearchIcon} strokeWidth={2} className="size-5" />
             <span>History</span>
             <span className="ml-auto font-mono text-xs font-bold tabular-nums text-muted-foreground">
               {moveCount} moves

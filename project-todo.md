@@ -123,10 +123,10 @@ Step-by-step build plan. UI first, then game logic, then integrations.
   - [x] Stack: mode toggle → player 1 card → player 2 card → move history → controls
   - [x] Verify spacing and scroll behavior when history grows
   - [x] Resign button opens Game Over dialog (visual demo)
-- [ ] **Mobile adaptation**
-  - [ ] Compact player bars for mobile
-  - [ ] Move history in a Drawer (slide-up)
-  - [ ] Test touch targets on all interactive elements
+- [x] **Mobile adaptation**
+  - [x] Compact player bars for mobile
+  - [x] Move history in a Drawer (slide-up)
+  - [x] Test touch targets on all interactive elements (min 48px height on primary controls)
 
 ---
 
