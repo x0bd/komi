@@ -15,27 +15,48 @@ export type MoveEntry = {
 export function MoveHistory({
   moves,
   moveCount = 0,
+  variant = "default",
   className,
 }: {
   moves: MoveEntry[]
   moveCount?: number
+  variant?: "default" | "embedded"
   className?: string
 }) {
+  const isEmbedded = variant === "embedded"
+
   return (
-    <Card className={cn("flex flex-1 flex-col min-h-0", className)}>
-      <CardHeader className="pb-3 shrink-0">
-        <div className="flex items-center justify-between">
-          <CardTitle className="font-display text-base font-bold">
-            History
-          </CardTitle>
-          <Badge variant="outline" className="font-mono text-[10px]">
-            Moves: {moveCount}
-          </Badge>
-        </div>
-      </CardHeader>
-      <CardContent className="flex-1 min-h-0 p-0 pt-0">
-        <ScrollArea className="h-[200px] lg:h-[240px]">
-          <div className="flex flex-col gap-1.5 px-6 pb-6">
+    <Card
+      className={cn(
+        "flex flex-1 flex-col min-h-0",
+        isEmbedded && "border-0 shadow-none rounded-none bg-transparent",
+        className
+      )}
+    >
+      {!isEmbedded && (
+        <CardHeader className="pb-3 shrink-0">
+          <div className="flex items-center justify-between">
+            <CardTitle className="font-display text-base font-bold">
+              History
+            </CardTitle>
+            <Badge variant="outline" className="font-mono text-[10px]">
+              Moves: {moveCount}
+            </Badge>
+          </div>
+        </CardHeader>
+      )}
+      <CardContent className={cn("flex-1 min-h-0 p-0", !isEmbedded && "pt-0")}>
+        <ScrollArea
+          className={cn(
+            isEmbedded ? "h-[min(55vh,380px)]" : "h-[200px] lg:h-[240px]"
+          )}
+        >
+          <div
+            className={cn(
+              "flex flex-col gap-1.5 pb-6",
+              isEmbedded ? "px-4 pt-2" : "px-6"
+            )}
+          >
             <div className="flex items-center rounded-lg bg-secondary/50 px-3 py-2 text-xs text-muted-foreground justify-center">
               Game started
             </div>

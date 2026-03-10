@@ -39,11 +39,11 @@ export function PlayerCard({
         className
       )}
     >
-      <CardContent className="flex items-center gap-4 p-5">
-        <Avatar size="lg" className="shrink-0">
+      <CardContent className="flex items-center gap-3 p-3 lg:gap-4 lg:p-5">
+        <Avatar className="size-9 shrink-0 lg:!size-12">
           <AvatarFallback
             className={cn(
-              "font-display text-lg font-bold text-white",
+              "font-display text-sm font-bold text-white lg:text-lg",
               isActive ? "bg-status-active" : "bg-status-capture"
             )}
           >
@@ -52,8 +52,8 @@ export function PlayerCard({
         </Avatar>
 
         <div className="min-w-0 flex-1">
-          <p className="font-display text-base font-bold truncate">{name}</p>
-          <div className="mt-1 flex flex-wrap gap-2">
+          <p className="font-display text-sm font-bold truncate lg:text-base">{name}</p>
+          <div className="mt-0.5 flex flex-wrap gap-1.5 lg:mt-1 lg:gap-2">
             <Badge variant={stoneColor === "black" ? "default" : "secondary"}>
               {stoneColor === "black" ? "Black" : "White"}
             </Badge>

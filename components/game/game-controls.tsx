@@ -18,7 +18,8 @@ export function GameControls({
     <div className={cn("flex gap-3", className)}>
       <Button
         variant="secondary"
-        className="flex-1 font-display"
+        size="lg"
+        className="min-h-[48px] flex-1 font-display"
         onClick={onPass}
         disabled={disabled}
       >
@@ -26,7 +27,8 @@ export function GameControls({
       </Button>
       <Button
         variant="destructive"
-        className="flex-1 font-display"
+        size="lg"
+        className="min-h-[48px] flex-1 font-display"
         onClick={onResign}
         disabled={disabled}
       >

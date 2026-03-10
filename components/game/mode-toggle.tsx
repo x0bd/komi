@@ -22,6 +22,7 @@ export function ModeToggle({
       spacing={0}
       className={cn(
         "w-full rounded-full border border-border bg-secondary p-1",
+        "[&_[data-slot=toggle-group-item]]:min-h-[48px]",
         "[&_[data-slot=toggle-group-item][data-state=on]]:bg-primary [&_[data-slot=toggle-group-item][data-state=on]]:text-primary-foreground [&_[data-slot=toggle-group-item][data-state=on]]:shadow-sm",
         "[&_[data-slot=toggle-group-item]:not([data-state=on])]:text-muted-foreground [&_[data-slot=toggle-group-item]:not([data-state=on])]:hover:bg-transparent",
         className

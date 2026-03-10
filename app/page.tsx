@@ -5,7 +5,7 @@ import { GameLayout } from "@/components/layout/game-layout"
 import { GoBoard } from "@/components/game/go-board"
 import { ModeToggle } from "@/components/game/mode-toggle"
 import { PlayerCard } from "@/components/game/player-card"
-import { MoveHistory, type MoveEntry } from "@/components/game/move-history"
+import { MoveHistorySection, type MoveEntry } from "@/components/game/move-history-section"
 import { GameControls } from "@/components/game/game-controls"
 import { GameOverDialog } from "@/components/game/game-over-dialog"
 
@@ -91,7 +91,7 @@ function Sidebar({
         seconds={0}
       />
 
-      <MoveHistory moves={sampleMoves} moveCount={10} />
+      <MoveHistorySection moves={sampleMoves} moveCount={10} />
 
       <GameControls onResign={onResign} />
     </>
