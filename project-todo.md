@@ -95,33 +95,34 @@ Step-by-step build plan. UI first, then game logic, then integrations.
 
 ## Phase 4: Sidebar UI (Visual Only)
 
-- [ ] **Mode toggle** (`components/game/mode-toggle.tsx`)
-  - [ ] shadcn ToggleGroup in a pill container
-  - [ ] Options: Local, Versus AI (Online deferred)
-  - [ ] Active state: primary fill, inactive: transparent
-- [ ] **Player card** (`components/game/player-card.tsx`)
-  - [ ] shadcn Card with Avatar, name, stone-color badge, capture count badge, timer
-  - [ ] Active state: accent border, slight elevation, subtle lift
-  - [ ] Inactive state: muted opacity, flat
-- [ ] **Timer display** (`components/game/timer.tsx`)
-  - [ ] Static display in `font-mono`, tabular-nums
-  - [ ] Low-time warning style (red, pulse) — visual only for now
-- [ ] **Move history panel** (`components/game/move-history.tsx`)
-  - [ ] shadcn Card with ScrollArea
-  - [ ] Header: "History" label + move count badge
-  - [ ] Move items: number, stone color dot, player name, coordinate
-  - [ ] "Game started" placeholder item
-  - [ ] Pass moves styled differently (muted)
-- [ ] **Game controls** (`components/game/game-controls.tsx`)
-  - [ ] Pass button (secondary variant)
-  - [ ] Resign button (destructive variant)
-  - [ ] Both full-width in a flex row
-- [ ] **Game over dialog** (`components/game/game-over-dialog.tsx`)
-  - [ ] shadcn Dialog — result text, Play Again button (accent variant)
-  - [ ] Frosted overlay backdrop
-- [ ] **Assemble sidebar**
-  - [ ] Stack: mode toggle → player 1 card → player 2 card → move history → controls
-  - [ ] Verify spacing and scroll behavior when history grows
+- [x] **Mode toggle** (`components/game/mode-toggle.tsx`)
+  - [x] shadcn ToggleGroup in a pill container
+  - [x] Options: Local, Versus AI (Online deferred)
+  - [x] Active state: primary fill, inactive: transparent
+- [x] **Player card** (`components/game/player-card.tsx`)
+  - [x] shadcn Card with Avatar, name, stone-color badge, capture count badge, timer
+  - [x] Active state: accent border, slight elevation, subtle lift
+  - [x] Inactive state: muted opacity, flat
+- [x] **Timer display** (`components/game/timer.tsx`)
+  - [x] Static display in `font-mono`, tabular-nums
+  - [x] Low-time warning style (red, pulse) — visual only for now
+- [x] **Move history panel** (`components/game/move-history.tsx`)
+  - [x] shadcn Card with ScrollArea
+  - [x] Header: "History" label + move count badge
+  - [x] Move items: number, stone color dot, player name, coordinate
+  - [x] "Game started" placeholder item
+  - [x] Pass moves styled differently (muted)
+- [x] **Game controls** (`components/game/game-controls.tsx`)
+  - [x] Pass button (secondary variant)
+  - [x] Resign button (destructive variant)
+  - [x] Both full-width in a flex row
+- [x] **Game over dialog** (`components/game/game-over-dialog.tsx`)
+  - [x] shadcn Dialog — result text, Play Again button (accent variant)
+  - [x] Frosted overlay backdrop
+- [x] **Assemble sidebar**
+  - [x] Stack: mode toggle → player 1 card → player 2 card → move history → controls
+  - [x] Verify spacing and scroll behavior when history grows
+  - [x] Resign button opens Game Over dialog (visual demo)
 - [ ] **Mobile adaptation**
   - [ ] Compact player bars for mobile
   - [ ] Move history in a Drawer (slide-up)
