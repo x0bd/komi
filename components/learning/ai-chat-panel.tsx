@@ -18,7 +18,7 @@ export function AIChatPanel({
   onTipClick?: (tip: string) => void
 }) {
   return (
-    <Card className="flex flex-col rounded-2xl overflow-hidden border-[--tutor-accent]/30 shadow-sm transition-all h-[240px]">
+    <Card className="flex flex-col shrink-0 rounded-2xl overflow-hidden border-[--tutor-accent]/30 shadow-sm transition-all h-[240px] min-h-[240px]">
       {/* Header */}
       <div className="bg-tutor-accent px-4 py-3 flex items-center gap-3 shrink-0">
         <Avatar className="h-8 w-8 border border-white/20">
@@ -29,18 +29,18 @@ export function AIChatPanel({
       </div>
 
       {/* Messages */}
-      <ScrollArea className="flex-1 p-3 bg-card/50">
+      <div className="flex-1 overflow-y-auto min-h-0 p-3 bg-card/50">
         <div className="flex flex-col gap-2 pb-2">
           {messages.map((msg) => (
             <div
               key={msg.id}
-              className="rounded-xl rounded-bl-sm px-3 py-2 text-xs bg-tutor-surface text-tutor-foreground max-w-[90%] leading-relaxed"
+              className="rounded-xl rounded-bl-sm px-3 py-2 text-xs bg-tutor-surface text-tutor-foreground w-max max-w-[90%] leading-relaxed"
             >
               {msg.text}
             </div>
           ))}
         </div>
-      </ScrollArea>
+      </div>
 
       {/* Quick Tips */}
       <div className="flex gap-1.5 px-3 pb-3 pt-2 bg-card shrink-0 flex-wrap border-t border-border/50">
