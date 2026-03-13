@@ -17,10 +17,10 @@ export function Stone({
   return (
     <div
       className={cn(
-        "animate-stone-place relative h-[84%] w-[84%] rounded-full transition-opacity duration-150",
+        "animate-stone-place relative h-[92%] w-[92%] rounded-full transition-opacity duration-150",
         color === "black"
-          ? "bg-[radial-gradient(circle_at_30%_30%,_var(--stone-black-highlight),_var(--stone-black))] shadow-[0_6px_14px_var(--stone-shadow),0_2px_4px_var(--stone-shadow)]"
-          : "border border-stone-white/70 bg-[radial-gradient(circle_at_30%_30%,_var(--stone-white-highlight),_var(--stone-white))] shadow-[0_6px_14px_var(--stone-shadow),0_2px_4px_var(--stone-shadow)]",
+          ? "bg-[radial-gradient(circle_at_30%_30%,_var(--stone-black-highlight),_var(--stone-black))] shadow-[2px_3px_6px_var(--stone-shadow)]"
+          : "border border-[--stone-white-border] bg-[radial-gradient(circle_at_30%_30%,_var(--stone-white-highlight),_var(--stone-white))] shadow-[2px_3px_6px_var(--stone-shadow)]",
         ghost && "opacity-20"
       )}
     >

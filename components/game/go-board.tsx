@@ -30,9 +30,9 @@ export function GoBoard({
   return (
     <div className={cn("w-full max-w-2xl", className)}>
       {/* Frame */}
-      <div className="rounded-[2rem] border border-white/5 bg-board-frame p-4 shadow-[0_24px_64px_oklch(0_0_0/30%),0_6px_16px_oklch(0_0_0/20%)] md:p-5">
+      <div className="relative rounded-3xl border-2 border-primary/15 bg-board-frame p-6 shadow-board md:p-8">
         {/* Surface */}
-        <div className="rounded-[1.5rem] bg-board-surface board-texture p-4 md:p-5">
+        <div className="board-texture relative overflow-hidden rounded-2xl bg-board-surface p-4 md:p-5">
 
           {/* 2×2 coordinate + board grid
               col: [label-width] [board]

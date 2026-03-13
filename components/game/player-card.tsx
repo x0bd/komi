@@ -32,18 +32,18 @@ export function PlayerCard({
   return (
     <Card
       className={cn(
-        "transition-all duration-200",
+        "transition-all duration-300",
         isActive
-          ? "border-accent shadow-lg -translate-y-0.5 ring-1 ring-accent/20"
-          : "opacity-75",
+          ? "border-accent shadow-lg -translate-y-0.5 bg-card ring-1 ring-accent/20"
+          : "border-border shadow-sm opacity-85",
         className
       )}
     >
-      <CardContent className="flex items-center gap-3 p-3 lg:gap-4 lg:p-5">
-        <Avatar className="size-9 shrink-0 lg:!size-12">
+      <CardContent className="flex items-center gap-4 p-5">
+        <Avatar className="size-14 shrink-0 border-2 border-primary/20">
           <AvatarFallback
             className={cn(
-              "font-display text-sm font-bold text-white lg:text-lg",
+              "font-display text-lg font-bold text-white",
               isActive ? "bg-status-active" : "bg-status-capture"
             )}
           >
