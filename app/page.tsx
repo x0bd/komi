@@ -10,6 +10,9 @@ import { GameOverDialog } from "@/components/game/game-over-dialog"
 import { useGameStore, type GameMode } from "@/lib/stores/game-store"
 import { useTimer } from "@/hooks/use-timer"
 import { useAITurn } from "@/hooks/use-ai-turn"
+import { AIChatPanel } from "@/components/learning/ai-chat-panel"
+import { XPBar } from "@/components/learning/xp-bar"
+import { useLearningStore } from "@/lib/stores/learning-store"
 
 const LETTERS = "ABCDEFGHJKLMNOPQRST".split("")
 
@@ -56,6 +59,7 @@ function BoardView() {
 function Sidebar() {
   const store = useGameStore()
   const { gameState, moveHistory, mode, passTurn, resign, setMode } = store
+  const learningStore = useLearningStore()
   
   const blackTimer = useTimer(15 * 60, gameState.turn === "black" && !store.isGameOver)
   const whiteTimer = useTimer(15 * 60, gameState.turn === "white" && !store.isGameOver)
@@ -103,6 +107,16 @@ function Sidebar() {
       />
 
       <MoveHistorySection moves={mappedMoves} moveCount={mappedMoves.length} />
+
+      <AIChatPanel
+        messages={learningStore.chatMessages}
+        onTipClick={learningStore.requestTip}
+      />
+
+      <XPBar
+        streak={learningStore.streak}
+        xpPercent={(learningStore.xp / 1000) * 100}
+      />
 
       <GameControls 
         onPass={passTurn} 

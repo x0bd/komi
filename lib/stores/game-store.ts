@@ -4,6 +4,7 @@ import { createInitialState } from "../engine/game"
 import { applyMove, applyPass } from "../engine/rules"
 import { calculateScore, type ScoreResult } from "../engine/scoring"
 import { gameToSGF } from "../engine/sgf"
+import { useLearningStore } from "./learning-store"
 
 export type GameMode = "local" | "versus-ai" | "online"
 
@@ -51,6 +52,21 @@ export const useGameStore = create<KomiStore>((set, get) => ({
     const nextState = applyMove(gameState, size, x, y, currentPlayer)
     
     if (!nextState) return false // Invalid move
+    
+    // Distribute XP base
+    let xpGained = 10
+    
+    // Check if captures actually occurred using tracking
+    let previousCaptures = currentPlayer === "black" ? gameState.captured.black : gameState.captured.white
+    let currentCaptures = currentPlayer === "black" ? nextState.captured.black : nextState.captured.white
+    
+    if (currentCaptures > previousCaptures) {
+      xpGained += (currentCaptures - previousCaptures) * 50 // Huge XP for capturing!
+    }
+    
+    if(currentPlayer === "black"){ // Assuming player is black initially
+       useLearningStore.getState().addXP(xpGained)
+    }
 
     const move: Move = { x, y, player: currentPlayer, isPass: false }
 
