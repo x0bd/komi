@@ -7,25 +7,38 @@ import type { StoneColor } from "@/components/game/stone"
 
 const LETTERS = "ABCDEFGHJKLMNOPQRST".split("")
 
-type BoardCell = StoneColor | null
-
 export function GoBoard({
   size = 19,
   board,
   currentPlayer = "black",
   lastMove,
+  onIntersectionClick,
   className,
 }: {
   size?: 9 | 13 | 19
-  board: BoardCell[][]
+  board: number[]
   currentPlayer?: StoneColor
   lastMove?: { x: number; y: number }
+  onIntersectionClick?: (x: number, y: number) => void
   className?: string
 }) {
   const [hovered, setHovered] = useState<{ x: number; y: number } | null>(null)
   const hoshiPoints = useMemo(() => getHoshiPoints(size), [size])
   const letters = LETTERS.slice(0, size)
   const numbers = Array.from({ length: size }, (_, i) => size - i)
+
+  // Convert 1D BoardState to 2D for rendering
+  const rows = useMemo(() => {
+    const result: number[][] = []
+    for (let y = 0; y < size; y++) {
+      const row: number[] = []
+      for (let x = 0; x < size; x++) {
+        row.push(board[y * size + x])
+      }
+      result.push(row)
+    }
+    return result
+  }, [board, size])
 
   return (
     <div className={cn("w-full max-w-2xl", className)}>
@@ -87,22 +100,26 @@ export function GoBoard({
                   gridTemplateRows: `repeat(${size}, 1fr)`,
                 }}
               >
-                {board.map((row, y) =>
-                  row.map((stone, x) => (
-                    <div
-                      key={`${x}-${y}`}
-                      className="h-full w-full"
-                      onMouseEnter={() => setHovered({ x, y })}
-                      onMouseLeave={() => setHovered(null)}
-                    >
-                      <Intersection
-                        stone={stone ?? undefined}
-                        ghostColor={!stone ? currentPlayer : undefined}
-                        hovered={!stone && hovered?.x === x && hovered?.y === y}
-                        isLastMove={lastMove?.x === x && lastMove?.y === y}
-                      />
-                    </div>
-                  ))
+                {rows.map((row, y) =>
+                  row.map((stoneValue, x) => {
+                    const stoneColor = stoneValue === 1 ? "black" : stoneValue === 2 ? "white" : undefined
+                    return (
+                      <div
+                        key={`${x}-${y}`}
+                        className="h-full w-full"
+                        onMouseEnter={() => setHovered({ x, y })}
+                        onMouseLeave={() => setHovered(null)}
+                        onClick={() => onIntersectionClick?.(x, y)}
+                      >
+                        <Intersection
+                          stone={stoneColor}
+                          ghostColor={!stoneColor ? currentPlayer : undefined}
+                          hovered={!stoneColor && hovered?.x === x && hovered?.y === y}
+                          isLastMove={lastMove?.x === x && lastMove?.y === y}
+                        />
+                      </div>
+                    )
+                  })
                 )}
               </div>
             </div>

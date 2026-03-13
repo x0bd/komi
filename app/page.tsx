@@ -1,6 +1,5 @@
 "use client"
 
-import { useState } from "react"
 import { GameLayout } from "@/components/layout/game-layout"
 import { GoBoard } from "@/components/game/go-board"
 import { ModeToggle } from "@/components/game/mode-toggle"
@@ -8,118 +7,104 @@ import { PlayerCard } from "@/components/game/player-card"
 import { MoveHistorySection, type MoveEntry } from "@/components/game/move-history-section"
 import { GameControls } from "@/components/game/game-controls"
 import { GameOverDialog } from "@/components/game/game-over-dialog"
+import { useGameStore, type GameMode } from "@/lib/stores/game-store"
+import { useTimer } from "@/hooks/use-timer"
+
+const LETTERS = "ABCDEFGHJKLMNOPQRST".split("")
 
 export default function Home() {
-  const [mode, setMode] = useState<"local" | "versus-ai">("local")
-  const [showGameOver, setShowGameOver] = useState(false)
-
+  const store = useGameStore()
+  
   return (
     <>
       <GameLayout
-        board={<BoardPreview />}
-        sidebar={
-          <Sidebar
-            mode={mode}
-            onModeChange={setMode}
-            onResign={() => setShowGameOver(true)}
-          />
-        }
+        board={<BoardView />}
+        sidebar={<Sidebar />}
       />
       <GameOverDialog
-        open={showGameOver}
-        onOpenChange={setShowGameOver}
-        result="resignation"
-        onPlayAgain={() => setShowGameOver(false)}
+        open={store.isGameOver}
+        onOpenChange={() => {}}
+        result={store.scoreResult?.winner === "draw" ? "draw" : store.scoreResult?.margin === Infinity ? "resignation" : (store.scoreResult?.winner === "black" ? "black-wins" : "white-wins")}
+        onPlayAgain={() => store.resetGame()}
       />
     </>
   )
 }
 
-function BoardPreview() {
+function BoardView() {
+  const { gameState, size, placeStone } = useGameStore()
+  const { board, turn } = gameState
+  
+  const moveHistory = useGameStore(state => state.moveHistory)
+  const lastMove = moveHistory.length > 0 ? moveHistory[moveHistory.length - 1] : undefined
+
   return (
     <GoBoard
-      board={createSampleBoard()}
-      size={19}
-      currentPlayer="black"
-      lastMove={{ x: 10, y: 10 }}
+      board={board}
+      size={size}
+      currentPlayer={turn}
+      lastMove={lastMove && !lastMove.isPass ? { x: lastMove.x, y: lastMove.y } : undefined}
+      onIntersectionClick={(x, y) => placeStone(x, y)}
     />
   )
 }
 
-function Sidebar({
-  mode,
-  onModeChange,
-  onResign,
-}: {
-  mode: "local" | "versus-ai"
-  onModeChange: (mode: "local" | "versus-ai") => void
-  onResign?: () => void
-}) {
-  const sampleMoves: MoveEntry[] = [
-    { moveNumber: 1, player: "black", coordinate: "D7" },
-    { moveNumber: 2, player: "white", coordinate: "F7" },
-    { moveNumber: 3, player: "black", coordinate: "E4" },
-    { moveNumber: 4, player: "white", coordinate: "E6" },
-    { moveNumber: 5, player: "black", coordinate: "C5" },
-    { moveNumber: 6, player: "white", coordinate: "G5" },
-    { moveNumber: 7, player: "black", coordinate: "D3" },
-    { moveNumber: 8, player: "white", coordinate: "F4" },
-    { moveNumber: 9, player: "black", coordinate: "E2" },
-    { moveNumber: 10, player: "white", coordinate: "F3" },
-  ]
+function Sidebar() {
+  const store = useGameStore()
+  const { gameState, moveHistory, mode, passTurn, resign, setMode } = store
+  
+  const blackTimer = useTimer(15 * 60, gameState.turn === "black" && !store.isGameOver)
+  const whiteTimer = useTimer(15 * 60, gameState.turn === "white" && !store.isGameOver)
+
+  // Map engine moves to UI MoveEntry format
+  const mappedMoves: MoveEntry[] = moveHistory.map((m, idx) => {
+    let coordinate = "—"
+    if (!m.isPass) {
+      const col = LETTERS[m.x]
+      const row = store.size - m.y
+      coordinate = `${col}${row}`
+    }
+    return {
+      moveNumber: idx + 1,
+      player: m.player,
+      isPass: m.isPass,
+      coordinate
+    }
+  })
 
   return (
     <>
-      <ModeToggle value={mode} onValueChange={onModeChange} />
+      <ModeToggle value={mode as "local" | "versus-ai"} onValueChange={(val) => setMode(val as GameMode)} />
 
       <PlayerCard
-        name="You"
-        initial="Y"
+        name="Player 1"
+        initial="P1"
         stoneColor="black"
-        captures={0}
-        minutes={15}
-        seconds={0}
-        isActive
+        captures={gameState.captured.black}
+        minutes={blackTimer.minutes}
+        seconds={blackTimer.seconds}
+        isActive={gameState.turn === "black" && !store.isGameOver}
+        isLowTime={blackTimer.isLowTime}
       />
 
       <PlayerCard
-        name="Player 2"
-        initial="P"
+        name={mode === "versus-ai" ? "Sensei AI" : "Player 2"}
+        initial={mode === "versus-ai" ? "🤖" : "P2"}
         stoneColor="white"
-        captures={0}
-        minutes={15}
-        seconds={0}
+        captures={gameState.captured.white}
+        minutes={whiteTimer.minutes}
+        seconds={whiteTimer.seconds}
+        isActive={gameState.turn === "white" && !store.isGameOver}
+        isLowTime={whiteTimer.isLowTime}
       />
 
-      <MoveHistorySection moves={sampleMoves} moveCount={10} />
+      <MoveHistorySection moves={mappedMoves} moveCount={mappedMoves.length} />
 
-      <GameControls onResign={onResign} />
+      <GameControls 
+        onPass={passTurn} 
+        onResign={resign} 
+        disabled={store.isGameOver} 
+      />
     </>
   )
-}
-
-function createSampleBoard() {
-  const board = Array.from({ length: 19 }, () =>
-    Array.from({ length: 19 }, () => null as "black" | "white" | null)
-  )
-
-  const blackStones = [
-    [3, 3], [4, 3], [15, 3], [3, 9], [8, 8], [9, 8], [9, 9], [10, 9], [11, 10],
-    [7, 12], [3, 15], [15, 15],
-  ]
-
-  const whiteStones = [
-    [14, 3], [15, 4], [4, 9], [10, 8], [8, 9], [10, 10], [11, 9], [12, 10],
-    [8, 12], [4, 15], [14, 15],
-  ]
-
-  blackStones.forEach(([x, y]) => {
-    board[y][x] = "black"
-  })
-
-  whiteStones.forEach(([x, y]) => {
-    board[y][x] = "white"
-  })
-
-  return board
 }
