@@ -9,11 +9,15 @@ import { GameControls } from "@/components/game/game-controls"
 import { GameOverDialog } from "@/components/game/game-over-dialog"
 import { useGameStore, type GameMode } from "@/lib/stores/game-store"
 import { useTimer } from "@/hooks/use-timer"
+import { useAITurn } from "@/hooks/use-ai-turn"
 
 const LETTERS = "ABCDEFGHJKLMNOPQRST".split("")
 
 export default function Home() {
   const store = useGameStore()
+  
+  // Attach AI turn listener
+  useAITurn()
   
   return (
     <>
@@ -88,7 +92,7 @@ function Sidebar() {
       />
 
       <PlayerCard
-        name={mode === "versus-ai" ? "Sensei AI" : "Player 2"}
+        name={mode === "versus-ai" ? (gameState.turn === "white" && !store.isGameOver ? "Sensei AI (Thinking...)" : "Sensei AI") : "Player 2"}
         initial={mode === "versus-ai" ? "🤖" : "P2"}
         stoneColor="white"
         captures={gameState.captured.white}
