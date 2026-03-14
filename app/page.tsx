@@ -83,7 +83,7 @@ function Sidebar() {
   })
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-5">
       <ModeToggle value={mode as "local" | "versus-ai"} onValueChange={(val) => setMode(val as GameMode)} />
 
       <PlayerCard

@@ -31,7 +31,7 @@ export function AIChatPanel({
   return (
     <Card
       className={cn(
-        "flex h-[260px] min-h-[260px] w-full flex-col shrink-0 overflow-hidden rounded-[1.6rem] border border-[--tutor-accent]/25 bg-card/95 shadow-md transition-all",
+      "flex h-[280px] min-h-[280px] w-full flex-col shrink-0 overflow-hidden rounded-[1.75rem] border border-[--tutor-accent]/25 bg-card/95 shadow-[0_24px_70px_-40px_rgba(0,0,0,0.75)] ring-1 ring-white/6 transition-all",
         className
       )}
     >

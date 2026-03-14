@@ -38,11 +38,11 @@ export function GameLayout({
           </main>
 
           {/* Sidebar — fixed width, vertically scrollable if needed */}
-          <aside className="w-full lg:w-[380px] lg:min-w-[340px] lg:max-h-[calc(100svh-8rem)] lg:overflow-y-auto lg:overflow-x-visible lg:pr-1">
-            <div className="flex flex-col rounded-[1.75rem] border border-border/70 bg-card/35 p-3 shadow-md backdrop-blur-md lg:p-4">
-              {sidebar}
-            </div>
-          </aside>
+      <aside className="w-full px-3 pb-24 lg:w-[396px] lg:min-w-[356px] lg:max-h-[calc(100svh-8rem)] lg:self-start lg:overflow-y-auto lg:overflow-x-visible lg:px-0 lg:pb-0">
+        <div className="flex flex-col rounded-[2rem] border border-border/70 bg-card/[0.4] p-4 shadow-[0_28px_80px_-38px_rgba(0,0,0,0.72)] ring-1 ring-white/[0.05] backdrop-blur-xl lg:p-5">
+          {sidebar}
+        </div>
+      </aside>
         </div>
       </div>
     </div>
