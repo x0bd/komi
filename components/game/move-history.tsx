@@ -135,15 +135,15 @@ export function MoveHistory({
                 ))}
               </div>
             ) : (
-              <div className="mt-4 flex flex-1 flex-col items-center justify-center rounded-[1.4rem] border border-dashed border-border/65 bg-gradient-to-b from-secondary/35 via-secondary/20 to-transparent px-6 text-center">
-                <div className="mb-4 flex size-12 items-center justify-center rounded-2xl border border-border/60 bg-background/[0.72] text-primary shadow-sm">
-                  <LuSparkles className="size-5" />
+              <div className="mt-3 flex flex-1 flex-col items-center justify-center rounded-[1.4rem] border border-dashed border-border/65 bg-gradient-to-b from-secondary/35 via-secondary/20 to-transparent px-5 text-center">
+                <div className="mb-3 flex size-10 items-center justify-center rounded-2xl border border-border/60 bg-background/[0.72] text-primary shadow-sm">
+                  <LuSparkles className="size-[18px]" />
                 </div>
-                <p className="font-display text-lg font-semibold tracking-[-0.02em] text-foreground/[0.88]">
-                  Waiting for the opening move
+                <p className="font-display text-base font-semibold tracking-[-0.02em] text-foreground/[0.88]">
+                  No moves yet
                 </p>
-                <p className="mt-2 max-w-[16rem] text-sm leading-6 text-muted-foreground">
-                  Stones, passes, and captures will build a clear replay log here as the game unfolds.
+                <p className="mt-1.5 max-w-[14rem] text-sm leading-5 text-muted-foreground">
+                  The replay log will fill as the game begins.
                 </p>
               </div>
             )}
