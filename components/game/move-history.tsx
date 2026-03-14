@@ -34,7 +34,7 @@ export function MoveHistory({
       )}
     >
       {!isEmbedded && (
-        <CardHeader className="pb-3 shrink-0">
+        <CardHeader className="shrink-0 pb-2">
           <div className="flex items-center justify-between">
             <CardTitle className="font-display text-base font-bold">
               History
@@ -48,13 +48,13 @@ export function MoveHistory({
       <CardContent className={cn("flex-1 min-h-0 p-0", !isEmbedded && "pt-0")}>
         <ScrollArea
           className={cn(
-            isEmbedded ? "h-[min(55vh,380px)]" : "h-[200px] lg:h-[240px]"
+            isEmbedded ? "h-[min(55vh,380px)]" : "h-[188px] lg:h-[196px]"
           )}
         >
           <div
             className={cn(
-              "flex flex-col gap-1.5 pb-6",
-              isEmbedded ? "px-4 pt-2" : "px-6"
+              "flex flex-col gap-1.5 pb-4",
+              isEmbedded ? "px-4 pt-2" : "px-5"
             )}
           >
             <div className="flex items-center rounded-lg bg-secondary/50 px-3 py-2 text-xs text-muted-foreground justify-center">
