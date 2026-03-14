@@ -12,7 +12,6 @@ import { useTimer } from "@/hooks/use-timer"
 import { useAITurn } from "@/hooks/use-ai-turn"
 import { ChatDock } from "@/components/learning/chat-dock"
 import { XPBar } from "@/components/learning/xp-bar"
-import { useLearningStore } from "@/lib/stores/learning-store"
 import { LuBot } from "react-icons/lu"
 
 const LETTERS = "ABCDEFGHJKLMNOPQRST".split("")
@@ -61,7 +60,6 @@ function BoardView() {
 function Sidebar() {
   const store = useGameStore()
   const { gameState, moveHistory, mode, passTurn, resign, setMode } = store
-  const learningStore = useLearningStore()
   
   const blackTimer = useTimer(15 * 60, gameState.turn === "black" && !store.isGameOver)
   const whiteTimer = useTimer(15 * 60, gameState.turn === "white" && !store.isGameOver)
@@ -120,10 +118,7 @@ function Sidebar() {
       </div>
 
       <div className="mt-auto flex flex-col gap-4 pt-1">
-        <XPBar
-          streak={learningStore.streak}
-          xpPercent={(learningStore.xp / 1000) * 100}
-        />
+        <XPBar />
 
         <GameControls
           onPass={passTurn}

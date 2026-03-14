@@ -1,5 +1,5 @@
 import { create } from "zustand"
-import type { GameState, Move, PlayerColor } from "../engine/types"
+import type { GameState, Move } from "../engine/types"
 import { createInitialState } from "../engine/game"
 import { applyMove, applyPass } from "../engine/rules"
 import { calculateScore, type ScoreResult } from "../engine/scoring"
@@ -57,15 +57,29 @@ export const useGameStore = create<KomiStore>((set, get) => ({
     let xpGained = 10
     
     // Check if captures actually occurred using tracking
-    let previousCaptures = currentPlayer === "black" ? gameState.captured.black : gameState.captured.white
-    let currentCaptures = currentPlayer === "black" ? nextState.captured.black : nextState.captured.white
+    const previousCaptures = currentPlayer === "black" ? gameState.captured.black : gameState.captured.white
+    const currentCaptures = currentPlayer === "black" ? nextState.captured.black : nextState.captured.white
+    const capturedCount = currentCaptures - previousCaptures
     
-    if (currentCaptures > previousCaptures) {
-      xpGained += (currentCaptures - previousCaptures) * 50 // Huge XP for capturing!
+    if (capturedCount > 0) {
+      xpGained += capturedCount * 50 // Huge XP for capturing!
     }
-    
-    if(currentPlayer === "black"){ // Assuming player is black initially
-       useLearningStore.getState().addXP(xpGained)
+
+    const learningStore = useLearningStore.getState()
+
+    if (currentPlayer === "black") { // Assuming player is black initially
+      learningStore.addXP(xpGained)
+      learningStore.registerStreakEvent(
+        capturedCount > 0
+          ? { type: "player-capture", count: capturedCount }
+          : { type: "player-stone" }
+      )
+    } else {
+      learningStore.registerStreakEvent(
+        capturedCount > 0
+          ? { type: "opponent-capture", count: capturedCount }
+          : { type: "opponent-stone" }
+      )
     }
 
     const move: Move = { x, y, player: currentPlayer, isPass: false }
@@ -96,6 +110,21 @@ export const useGameStore = create<KomiStore>((set, get) => ({
        scoreResult = calculateScore(nextState.board, size, nextState.captured, komi)
     }
 
+    const learningStore = useLearningStore.getState()
+    if (gameOver && scoreResult) {
+      learningStore.registerStreakEvent(
+        scoreResult.winner === "black"
+          ? { type: "player-win" }
+          : { type: "player-loss" }
+      )
+    } else {
+      learningStore.registerStreakEvent(
+        currentPlayer === "black"
+          ? { type: "player-pass" }
+          : { type: "opponent-pass" }
+      )
+    }
+
     set((state) => ({
       gameState: nextState,
       moveHistory: [...state.moveHistory, move],
@@ -108,6 +137,10 @@ export const useGameStore = create<KomiStore>((set, get) => ({
   resign: () => {
     const { isGameOver, gameState } = get()
     if (isGameOver) return
+
+    useLearningStore
+      .getState()
+      .registerStreakEvent(gameState.turn === "black" ? { type: "player-loss" } : { type: "player-win" })
 
     set({
       isGameOver: true,
@@ -129,6 +162,8 @@ export const useGameStore = create<KomiStore>((set, get) => ({
   resetGame: (newSize, newKomi) => {
     const size = newSize ?? get().size
     const komi = newKomi ?? get().komi
+
+    useLearningStore.getState().resetLiveStreak()
     
     set({
       size,
