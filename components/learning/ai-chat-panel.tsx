@@ -2,8 +2,8 @@
 
 import { Card } from "@/components/ui/card"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { ScrollArea } from "@/components/ui/scroll-area"
 import { Badge } from "@/components/ui/badge"
+import { LuBot } from "react-icons/lu"
 
 export type ChatMessage = {
   id: string
@@ -22,7 +22,9 @@ export function AIChatPanel({
       {/* Header */}
       <div className="bg-tutor-accent px-4 py-3 flex items-center gap-3 shrink-0">
         <Avatar className="h-8 w-8 border border-white/20">
-          <AvatarFallback className="bg-primary text-xl">🤖</AvatarFallback>
+          <AvatarFallback className="bg-primary text-white">
+            <LuBot className="size-4.5" />
+          </AvatarFallback>
         </Avatar>
         <span className="font-display font-bold text-sm text-white flex-1">Sensei</span>
         <span className="h-2 w-2 rounded-full bg-green-300 shadow-[0_0_6px] shadow-green-300" />

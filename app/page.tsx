@@ -13,6 +13,7 @@ import { useAITurn } from "@/hooks/use-ai-turn"
 import { AIChatPanel } from "@/components/learning/ai-chat-panel"
 import { XPBar } from "@/components/learning/xp-bar"
 import { useLearningStore } from "@/lib/stores/learning-store"
+import { LuBot } from "react-icons/lu"
 
 const LETTERS = "ABCDEFGHJKLMNOPQRST".split("")
 
@@ -97,7 +98,8 @@ function Sidebar() {
 
       <PlayerCard
         name={mode === "versus-ai" ? (gameState.turn === "white" && !store.isGameOver ? "Sensei AI (Thinking...)" : "Sensei AI") : "Player 2"}
-        initial={mode === "versus-ai" ? "🤖" : "P2"}
+        initial={mode === "versus-ai" ? "AI" : "P2"}
+        avatarIcon={mode === "versus-ai" ? <LuBot /> : undefined}
         stoneColor="white"
         captures={gameState.captured.white}
         minutes={whiteTimer.minutes}

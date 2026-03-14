@@ -1,5 +1,6 @@
 "use client"
 
+import type { ReactNode } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
@@ -11,6 +12,7 @@ export type StoneColor = "black" | "white"
 export function PlayerCard({
   name,
   initial,
+  avatarIcon,
   stoneColor,
   captures = 0,
   minutes,
@@ -21,6 +23,7 @@ export function PlayerCard({
 }: {
   name: string
   initial: string
+  avatarIcon?: ReactNode
   stoneColor: StoneColor
   captures?: number
   minutes: number
@@ -47,7 +50,13 @@ export function PlayerCard({
               isActive ? "bg-status-active" : "bg-status-capture"
             )}
           >
-            {initial}
+            {avatarIcon ? (
+              <span className="flex items-center justify-center text-xl">
+                {avatarIcon}
+              </span>
+            ) : (
+              initial
+            )}
           </AvatarFallback>
         </Avatar>
 

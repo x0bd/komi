@@ -13,7 +13,7 @@ function Card({
       data-size={size}
       className={cn(
         // Keep Card as a light container; spacing belongs to CardHeader/Content/Footer.
-        "group/card overflow-hidden rounded-2xl bg-card text-sm text-card-foreground ring-1 ring-foreground/10",
+        "group/card rounded-2xl bg-card text-sm text-card-foreground ring-1 ring-foreground/10",
         className
       )}
       {...props}

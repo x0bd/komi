@@ -2,6 +2,7 @@
 
 import { Card, CardContent } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
+import { LuFlame } from "react-icons/lu"
 
 export function XPBar({
   streak = 0,
@@ -13,7 +14,9 @@ export function XPBar({
   return (
     <Card className="rounded-2xl shadow-sm border-border bg-card">
       <CardContent className="flex items-center gap-3 p-4">
-        <span className="text-xl leading-none">🔥</span>
+        <span className="flex size-9 items-center justify-center rounded-full bg-accent/12 text-accent">
+          <LuFlame className="size-4.5" />
+        </span>
         <div className="flex-1">
           <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-1">
             Today's Streak
