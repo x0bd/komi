@@ -7,6 +7,13 @@ import { gameToSGF } from "../engine/sgf"
 import { useLearningStore } from "./learning-store"
 
 export type GameMode = "local" | "versus-ai" | "online"
+const LETTERS = "ABCDEFGHJKLMNOPQRST"
+
+function toCoordinate(x: number, y: number, size: number) {
+  const col = LETTERS[x] ?? "?"
+  const row = size - y
+  return `${col}${row}`
+}
 
 interface KomiStore {
   // Config
@@ -66,6 +73,7 @@ export const useGameStore = create<KomiStore>((set, get) => ({
     }
 
     const learningStore = useLearningStore.getState()
+    const coordinate = toCoordinate(x, y, size)
 
     if (currentPlayer === "black") { // Assuming player is black initially
       learningStore.addXP(xpGained)
@@ -74,11 +82,21 @@ export const useGameStore = create<KomiStore>((set, get) => ({
           ? { type: "player-capture", count: capturedCount }
           : { type: "player-stone" }
       )
+      learningStore.registerTutorEvent(
+        capturedCount > 0
+          ? { type: "player-capture", count: capturedCount, coordinate }
+          : { type: "player-stone", coordinate }
+      )
     } else {
       learningStore.registerStreakEvent(
         capturedCount > 0
           ? { type: "opponent-capture", count: capturedCount }
           : { type: "opponent-stone" }
+      )
+      learningStore.registerTutorEvent(
+        capturedCount > 0
+          ? { type: "opponent-capture", count: capturedCount, coordinate }
+          : { type: "opponent-stone", coordinate }
       )
     }
 
@@ -117,8 +135,18 @@ export const useGameStore = create<KomiStore>((set, get) => ({
           ? { type: "player-win" }
           : { type: "player-loss" }
       )
+      learningStore.registerTutorEvent(
+        scoreResult.winner === "black"
+          ? { type: "player-win" }
+          : { type: "player-loss" }
+      )
     } else {
       learningStore.registerStreakEvent(
+        currentPlayer === "black"
+          ? { type: "player-pass" }
+          : { type: "opponent-pass" }
+      )
+      learningStore.registerTutorEvent(
         currentPlayer === "black"
           ? { type: "player-pass" }
           : { type: "opponent-pass" }
@@ -138,9 +166,9 @@ export const useGameStore = create<KomiStore>((set, get) => ({
     const { isGameOver, gameState } = get()
     if (isGameOver) return
 
-    useLearningStore
-      .getState()
-      .registerStreakEvent(gameState.turn === "black" ? { type: "player-loss" } : { type: "player-win" })
+    const learningStore = useLearningStore.getState()
+    learningStore.registerStreakEvent(gameState.turn === "black" ? { type: "player-loss" } : { type: "player-win" })
+    learningStore.registerTutorEvent(gameState.turn === "black" ? { type: "player-loss" } : { type: "player-win" })
 
     set({
       isGameOver: true,
@@ -164,6 +192,7 @@ export const useGameStore = create<KomiStore>((set, get) => ({
     const komi = newKomi ?? get().komi
 
     useLearningStore.getState().resetLiveStreak()
+    useLearningStore.getState().registerTutorEvent({ type: "reset" })
     
     set({
       size,

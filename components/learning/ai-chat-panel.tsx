@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils"
 export type ChatMessage = {
   id: string
   text: string
+  tone?: "coach" | "tip" | "warning" | "celebrate"
 }
 
 const QUICK_TIPS = [
@@ -22,12 +23,27 @@ const QUICK_TIPS = [
 export function AIChatPanel({
   messages,
   onTipClick,
+  coachMood = "focus",
+  coachGoal = "Build influence from the corners and keep stones connected.",
+  coachCue = "Play near your strongest group and avoid thin cuts.",
   className,
 }: {
   messages: ChatMessage[]
   onTipClick?: (tip: string) => void
+  coachMood?: "calm" | "focus" | "warning" | "celebrate"
+  coachGoal?: string
+  coachCue?: string
   className?: string
 }) {
+  const moodBadgeClass =
+    coachMood === "celebrate"
+      ? "border-status-active/35 bg-status-active/12 text-status-active"
+      : coachMood === "warning"
+        ? "border-destructive/30 bg-destructive/10 text-destructive"
+        : coachMood === "calm"
+          ? "border-border/60 bg-secondary/35 text-muted-foreground"
+          : "border-primary/30 bg-primary/10 text-primary"
+
   return (
     <Card
       className={cn(
@@ -62,6 +78,26 @@ export function AIChatPanel({
         </div>
       </div>
 
+      {/* Active Coaching */}
+      <div className="shrink-0 border-b border-border/60 bg-background/50 px-3 py-3">
+        <div className="rounded-2xl border border-border/60 bg-background/70 p-3">
+          <div className="mb-2 flex items-center justify-between gap-2">
+            <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
+              Coach Mission
+            </p>
+            <span className={cn("rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em]", moodBadgeClass)}>
+              {coachMood}
+            </span>
+          </div>
+          <p className="font-display text-sm font-semibold leading-snug text-foreground/90">
+            {coachGoal}
+          </p>
+          <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
+            {coachCue}
+          </p>
+        </div>
+      </div>
+
       {/* Messages */}
       <ScrollArea className="flex-1 bg-[linear-gradient(180deg,color-mix(in_oklab,var(--card)_82%,transparent),color-mix(in_oklab,var(--secondary)_28%,transparent))]">
         <div className="flex flex-col gap-3 p-3 pb-4">
@@ -71,7 +107,14 @@ export function AIChatPanel({
           {messages.map((msg) => (
             <div
               key={msg.id}
-              className="w-full max-w-[92%] rounded-2xl rounded-bl-md border border-border/60 bg-tutor-surface/75 px-3 py-2.5 text-xs leading-relaxed text-tutor-foreground shadow-sm"
+              className={cn(
+                "w-full max-w-[92%] rounded-2xl rounded-bl-md border px-3 py-2.5 text-xs leading-relaxed shadow-sm",
+                msg.tone === "warning"
+                  ? "border-destructive/30 bg-destructive/8 text-foreground"
+                  : msg.tone === "celebrate"
+                    ? "border-status-active/30 bg-status-active/10 text-foreground"
+                    : "border-border/60 bg-tutor-surface/75 text-tutor-foreground"
+              )}
             >
               {msg.text}
             </div>
