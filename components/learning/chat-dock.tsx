@@ -2,8 +2,6 @@
 
 import { useEffect, useRef, useState } from "react"
 import { gsap } from "gsap"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { AiChat01Icon, BotIcon } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
 import { AIChatPanel } from "@/components/learning/ai-chat-panel"
 import { useLearningStore } from "@/lib/stores/learning-store"
@@ -14,7 +12,11 @@ export function ChatDock({ className }: { className?: string }) {
   const [open, setOpen] = useState(false)
   const [canHover, setCanHover] = useState(false)
   const [hovered, setHovered] = useState(false)
-  const learningStore = useLearningStore()
+  const chatMessages = useLearningStore((state) => state.chatMessages)
+  const requestTip = useLearningStore((state) => state.requestTip)
+  const tutorMood = useLearningStore((state) => state.tutorMood)
+  const tutorGoal = useLearningStore((state) => state.tutorGoal)
+  const tutorCue = useLearningStore((state) => state.tutorCue)
   const buttonRef = useRef<HTMLButtonElement | null>(null)
   const contentRef = useRef<HTMLSpanElement | null>(null)
   const iconRef = useRef<HTMLSpanElement | null>(null)
@@ -100,8 +102,11 @@ export function ChatDock({ className }: { className?: string }) {
         {open ? (
           <div className="w-[min(28rem,calc(100vw-1.5rem))] rounded-[2rem] border border-border/70 bg-background/88 p-3 shadow-[0_28px_90px_-42px_rgba(0,0,0,0.72)] ring-1 ring-white/8 backdrop-blur-2xl">
             <AIChatPanel
-              messages={learningStore.chatMessages}
-              onTipClick={learningStore.requestTip}
+              messages={chatMessages}
+              onTipClick={requestTip}
+              coachMood={tutorMood}
+              coachGoal={tutorGoal}
+              coachCue={tutorCue}
               className="h-[380px] min-h-[380px] rounded-[1.6rem] border border-border/60 shadow-none"
             />
           </div>
@@ -133,11 +138,7 @@ export function ChatDock({ className }: { className?: string }) {
                 open ? "bg-primary text-primary-foreground" : "bg-accent/20 text-accent"
               )}
             >
-              <HugeiconsIcon
-                icon={open ? BotIcon : AiChat01Icon}
-                strokeWidth={2}
-                className="size-[18px]"
-              />
+              <LuSparkles className="size-[18px]" />
             </span>
             <span
               ref={contentRef}
