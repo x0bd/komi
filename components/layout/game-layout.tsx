@@ -29,20 +29,20 @@ export function GameLayout({
         <ThemeToggle className="pointer-events-auto" />
       </header>
 
-      {/* Vertically + horizontally centered main area */}
-      <div className="relative z-10 flex flex-1 items-center justify-center px-6 py-16 lg:px-10">
-        <div className="flex w-full max-w-[1440px] items-center gap-8 max-lg:flex-col max-lg:gap-6">
+      {/* Main area */}
+      <div className="relative z-10 flex flex-1 justify-center px-6 py-16 lg:px-10 lg:py-8">
+        <div className="flex w-full max-w-[1380px] items-start gap-8 max-lg:flex-col max-lg:gap-6">
           {/* Board — takes remaining space, centered */}
-          <main className="flex flex-1 items-center justify-center max-lg:w-full">
+          <main className="flex flex-1 items-center justify-center pt-4 max-lg:w-full lg:min-h-[calc(100svh-4rem)] lg:pt-8">
             {board}
           </main>
 
-          {/* Sidebar — fixed width, vertically scrollable if needed */}
-      <aside className="w-full px-3 pb-24 lg:w-[396px] lg:min-w-[356px] lg:max-h-[calc(100svh-8rem)] lg:self-start lg:overflow-y-auto lg:overflow-x-visible lg:px-0 lg:pb-0">
-        <div className="flex flex-col rounded-[2rem] border border-border/70 bg-card/[0.4] p-4 shadow-[0_28px_80px_-38px_rgba(0,0,0,0.72)] ring-1 ring-white/[0.05] backdrop-blur-xl lg:p-5">
-          {sidebar}
-        </div>
-      </aside>
+          {/* Sidebar — fixed rail */}
+          <aside className="relative z-20 w-full px-3 pb-24 lg:w-[360px] lg:min-w-[340px] lg:self-stretch lg:px-0 lg:pb-0">
+            <div className="flex h-full min-h-[calc(100svh-6.5rem)] flex-col rounded-[2rem] border border-border/70 bg-card/[0.46] p-4 shadow-[0_28px_80px_-38px_rgba(0,0,0,0.72)] ring-1 ring-white/[0.05] backdrop-blur-xl lg:p-5">
+              {sidebar}
+            </div>
+          </aside>
         </div>
       </div>
     </div>

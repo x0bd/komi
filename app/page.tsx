@@ -83,43 +83,50 @@ function Sidebar() {
   })
 
   return (
-    <div className="flex flex-col gap-5">
-      <ModeToggle value={mode as "local" | "versus-ai"} onValueChange={(val) => setMode(val as GameMode)} />
+    <div className="flex min-h-[calc(100svh-8rem)] flex-col gap-4">
+      <div className="flex flex-col gap-4">
+        <ModeToggle value={mode as "local" | "versus-ai"} onValueChange={(val) => setMode(val as GameMode)} />
 
-      <PlayerCard
-        name="Player 1"
-        initial="P1"
-        stoneColor="black"
-        captures={gameState.captured.black}
-        minutes={blackTimer.minutes}
-        seconds={blackTimer.seconds}
-        isActive={gameState.turn === "black" && !store.isGameOver}
-        isLowTime={blackTimer.isLowTime}
-      />
+        <PlayerCard
+          name="Player 1"
+          initial="P1"
+          stoneColor="black"
+          captures={gameState.captured.black}
+          minutes={blackTimer.minutes}
+          seconds={blackTimer.seconds}
+          isActive={gameState.turn === "black" && !store.isGameOver}
+          isLowTime={blackTimer.isLowTime}
+        />
 
-      <PlayerCard
-        name={mode === "versus-ai" ? (gameState.turn === "white" && !store.isGameOver ? "Sensei AI (Thinking...)" : "Sensei AI") : "Player 2"}
-        initial={mode === "versus-ai" ? "AI" : "P2"}
-        avatarIcon={mode === "versus-ai" ? <LuBot /> : undefined}
-        stoneColor="white"
-        captures={gameState.captured.white}
-        minutes={whiteTimer.minutes}
-        seconds={whiteTimer.seconds}
-        isActive={gameState.turn === "white" && !store.isGameOver}
-        isLowTime={whiteTimer.isLowTime}
-      />
+        <PlayerCard
+          name={mode === "versus-ai" ? (gameState.turn === "white" && !store.isGameOver ? "Sensei AI (Thinking...)" : "Sensei AI") : "Player 2"}
+          initial={mode === "versus-ai" ? "AI" : "P2"}
+          avatarIcon={mode === "versus-ai" ? <LuBot /> : undefined}
+          stoneColor="white"
+          captures={gameState.captured.white}
+          minutes={whiteTimer.minutes}
+          seconds={whiteTimer.seconds}
+          isActive={gameState.turn === "white" && !store.isGameOver}
+          isLowTime={whiteTimer.isLowTime}
+        />
+      </div>
 
-      <MoveHistorySection moves={mappedMoves} moveCount={mappedMoves.length} />
-      <XPBar
-        streak={learningStore.streak}
-        xpPercent={(learningStore.xp / 1000) * 100}
-      />
+      <div className="min-h-0 flex-1">
+        <MoveHistorySection moves={mappedMoves} moveCount={mappedMoves.length} />
+      </div>
 
-      <GameControls 
-        onPass={passTurn} 
-        onResign={resign} 
-        disabled={store.isGameOver} 
-      />
+      <div className="mt-auto flex flex-col gap-4 pt-1">
+        <XPBar
+          streak={learningStore.streak}
+          xpPercent={(learningStore.xp / 1000) * 100}
+        />
+
+        <GameControls
+          onPass={passTurn}
+          onResign={resign}
+          disabled={store.isGameOver}
+        />
+      </div>
     </div>
   )
 }
