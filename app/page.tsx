@@ -111,7 +111,7 @@ function Sidebar() {
         />
       </div>
 
-      <div className="min-h-0 flex-1">
+      <div className="flex min-h-0 flex-col gap-4">
         <MoveHistorySection
           moves={mappedMoves}
           moveCount={mappedMoves.length}
@@ -119,18 +119,18 @@ function Sidebar() {
           onToggle={() =>
             setExpandedPanel((current) => (current === "history" ? null : "history"))
           }
-          className="lg:h-full"
+          className={expandedPanel === "history" ? "lg:h-full lg:flex-1" : "lg:flex-none"}
         />
-      </div>
 
-      <div className="mt-auto flex flex-col gap-4 pt-1">
         <XPBar
           collapsed={expandedPanel !== "streak"}
           onToggle={() =>
             setExpandedPanel((current) => (current === "streak" ? null : "streak"))
           }
         />
+      </div>
 
+      <div className="mt-auto pt-1">
         <GameControls
           onPass={passTurn}
           onResign={resign}
