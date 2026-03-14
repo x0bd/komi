@@ -2,11 +2,13 @@
 
 import { useEffect, useRef, useState } from "react"
 import { gsap } from "gsap"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { AiChat01Icon, BotIcon } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
 import { AIChatPanel } from "@/components/learning/ai-chat-panel"
 import { useLearningStore } from "@/lib/stores/learning-store"
 import { cn } from "@/lib/utils"
-import { LuBot, LuBrainCircuit, LuChevronDown, LuSparkles } from "react-icons/lu"
+import { LuChevronDown, LuSparkles } from "react-icons/lu"
 
 export function ChatDock({ className }: { className?: string }) {
   const [open, setOpen] = useState(false)
@@ -16,7 +18,6 @@ export function ChatDock({ className }: { className?: string }) {
   const buttonRef = useRef<HTMLButtonElement | null>(null)
   const contentRef = useRef<HTMLSpanElement | null>(null)
   const iconRef = useRef<HTMLSpanElement | null>(null)
-  const ringRef = useRef<HTMLSpanElement | null>(null)
   const labelRef = useRef<HTMLSpanElement | null>(null)
 
   useEffect(() => {
@@ -33,13 +34,12 @@ export function ChatDock({ className }: { className?: string }) {
     const button = buttonRef.current
     const content = contentRef.current
     const icon = iconRef.current
-    const ring = ringRef.current
     const label = labelRef.current
-    if (!button || !content || !icon || !ring || !label) return
+    if (!button || !content || !icon || !label) return
 
     const shouldExpand = open || hovered || !canHover
 
-    gsap.killTweensOf([button, content, icon, ring, label])
+    gsap.killTweensOf([button, content, icon, label])
 
     const timeline = gsap.timeline({
       defaults: {
@@ -83,15 +83,6 @@ export function ChatDock({ className }: { className?: string }) {
       0
     )
 
-    timeline.to(
-      ring,
-      {
-        opacity: shouldExpand ? 1 : 0.72,
-        scale: shouldExpand ? 1.08 : 1,
-      },
-      0
-    )
-
     return () => timeline.kill()
   }, [canHover, hovered, open])
 
@@ -123,7 +114,7 @@ export function ChatDock({ className }: { className?: string }) {
           aria-expanded={open}
           aria-label={buttonLabel}
           className={cn(
-            "h-[58px] w-[58px] justify-start overflow-hidden rounded-full border border-border/70 px-0 shadow-[0_18px_45px_-24px_rgba(0,0,0,0.65)] ring-1 ring-white/8 backdrop-blur-xl",
+            "h-[58px] w-[58px] justify-start overflow-hidden rounded-full px-0 shadow-[0_16px_36px_-24px_rgba(0,0,0,0.55)] backdrop-blur-xl",
             shouldShowPill
               ? "bg-[linear-gradient(90deg,color-mix(in_oklab,var(--accent)_22%,var(--background)),var(--background))]"
               : "bg-background/90"
@@ -138,15 +129,15 @@ export function ChatDock({ className }: { className?: string }) {
             <span
               ref={iconRef}
               className={cn(
-                "relative flex size-11 shrink-0 items-center justify-center rounded-full border border-white/20 shadow-[0_0_24px_-8px_rgba(255,255,255,0.35)]",
+                "relative flex size-11 shrink-0 items-center justify-center rounded-full shadow-[0_0_20px_-10px_rgba(255,255,255,0.3)]",
                 open ? "bg-primary text-primary-foreground" : "bg-accent/20 text-accent"
               )}
             >
-              <span
-                ref={ringRef}
-                className="absolute inset-0 rounded-full border border-white/20 opacity-80"
+              <HugeiconsIcon
+                icon={open ? BotIcon : AiChat01Icon}
+                strokeWidth={2}
+                className="size-[18px]"
               />
-              {open ? <LuBot className="size-[18px]" /> : <LuBrainCircuit className="size-[18px]" />}
             </span>
             <span
               ref={contentRef}
