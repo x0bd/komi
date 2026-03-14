@@ -102,14 +102,14 @@ export function ChatDock({ className }: { className?: string }) {
         >
             <div className="pointer-events-auto flex flex-col items-start gap-3">
                 {open ? (
-                    <div className="w-[min(28rem,calc(100vw-1.5rem))] rounded-3xl border border-border bg-card p-3 shadow-lg">
+                    <div className="w-[min(28rem,calc(100vw-1.5rem))] drop-shadow-xl">
                         <AIChatPanel
                             messages={chatMessages}
                             onTipClick={requestTip}
                             coachMood={tutorMood}
                             coachGoal={tutorGoal}
                             coachCue={tutorCue}
-                            className="h-[380px] min-h-[380px] rounded-2xl border-none shadow-none"
+                            className="h-[420px] min-h-[420px]"
                         />
                     </div>
                 ) : null}
@@ -120,10 +120,10 @@ export function ChatDock({ className }: { className?: string }) {
                     aria-expanded={open}
                     aria-label={buttonLabel}
                     className={cn(
-                        "h-[56px] w-[56px] justify-start overflow-hidden rounded-full px-0 shadow-md transition-all duration-300 border hover:-translate-y-0.5",
+                        "h-[60px] w-[60px] justify-start overflow-hidden rounded-full px-0 transition-all duration-300 border-[3px] hover:-translate-y-1 hover:translate-x-[2px]",
                         open
-                            ? "bg-card border-border"
-                            : "bg-secondary/40 border-border/50 hover:bg-secondary/60 hover:shadow-lg",
+                            ? "bg-card border-primary shadow-[6px_6px_0_theme(colors.primary.DEFAULT)] hover:shadow-[4px_4px_0_theme(colors.primary.DEFAULT)]"
+                            : "bg-secondary border-primary shadow-[6px_6px_0_theme(colors.primary.DEFAULT)] hover:shadow-[4px_4px_0_theme(colors.primary.DEFAULT)] text-foreground",
                     )}
                     onMouseEnter={() => setHovered(true)}
                     onMouseLeave={() => setHovered(false)}
@@ -135,13 +135,13 @@ export function ChatDock({ className }: { className?: string }) {
                         <span
                             ref={iconRef}
                             className={cn(
-                                "relative flex size-11 shrink-0 items-center justify-center rounded-full shadow-sm",
+                                "relative flex size-10 shrink-0 items-center justify-center rounded-full border-2 border-primary",
                                 open
                                     ? "bg-primary text-primary-foreground"
-                                    : "bg-card text-accent border border-border",
+                                    : "bg-accent text-primary-foreground",
                             )}
                         >
-                            <LuSparkles className="size-[18px]" />
+                            <LuSparkles className="size-[20px]" />
                         </span>
                         <span
                             ref={contentRef}
@@ -152,16 +152,12 @@ export function ChatDock({ className }: { className?: string }) {
                                     ref={labelRef}
                                     className="flex flex-col items-start leading-none opacity-0"
                                 >
-                                    <span className="font-display text-sm font-semibold">
+                                    <span className="font-display text-[15px] font-bold tracking-wide">
                                         {buttonLabel}
-                                    </span>
-                                    <span className="mt-1 flex items-center gap-1.5 text-[11px] text-muted-foreground">
-                                        <LuSparkles className="size-3" />
-                                        Sensei Coach
                                     </span>
                                 </span>
                                 {open ? (
-                                    <LuChevronDown className="size-4 text-muted-foreground" />
+                                    <LuChevronDown className="size-4 text-foreground/50" />
                                 ) : null}
                             </span>
                         </span>

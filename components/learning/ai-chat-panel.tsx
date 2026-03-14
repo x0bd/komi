@@ -1,9 +1,6 @@
 "use client";
 
 import { Card } from "@/components/ui/card";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
     LuBot,
@@ -41,97 +38,67 @@ export function AIChatPanel({
     coachCue?: string;
     className?: string;
 }) {
-    const moodBadgeClass =
-        coachMood === "celebrate"
-            ? "border-status-active/35 bg-status-active/12 text-status-active"
-            : coachMood === "warning"
-              ? "border-destructive/30 bg-destructive/10 text-destructive"
-              : coachMood === "calm"
-                ? "border-border/60 bg-secondary/35 text-muted-foreground"
-                : "border-primary/30 bg-primary/10 text-primary";
-
     return (
         <Card
             className={cn(
-                "flex h-[280px] min-h-[280px] w-full flex-col shrink-0 overflow-hidden rounded-[1.75rem] border border-[--tutor-accent]/30 bg-card shadow-md transition-all",
+                "flex flex-col w-full shrink-0 overflow-hidden rounded-[2rem] border-[3px] border-primary bg-card shadow-[8px_8px_0_theme(colors.primary.DEFAULT)]",
                 className,
             )}
         >
-            {/* Header */}
-            <div className="relative shrink-0 overflow-hidden border-b border-[--tutor-accent]/20 bg-[--tutor-accent] px-4 py-3.5 text-white">
-                <div className="pointer-events-none absolute inset-0 bg-white/5" />
-                <div className="relative flex items-center gap-3">
-                    {" "}
-                    <Avatar className="h-9 w-9 border border-white/15">
-                        <AvatarFallback className="bg-primary text-white">
-                            <LuBot className="size-4.5" />
-                        </AvatarFallback>
-                    </Avatar>
-                    <div className="min-w-0 flex-1">
-                        <div className="flex items-center gap-2">
-                            <span className="font-display text-sm font-bold tracking-wide">
-                                Sensei
-                            </span>
-                            <Badge className="border-white/15 bg-white/12 px-2 text-[10px] text-white">
-                                Live Tutor
-                            </Badge>
+            {/* Header - Bold Sumi Ink */}
+            <div className="relative shrink-0 border-b-[3px] border-primary bg-primary px-5 py-4 text-primary-foreground">
+                <div className="relative flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <div className="flex size-11 items-center justify-center rounded-full border-2 border-primary-foreground/20 bg-primary-foreground/10 text-accent">
+                            <LuBot className="size-6" />
                         </div>
-                        <p className="mt-0.5 text-[11px] text-white/80">
-                            Shape, captures, territory, and review prompts while
-                            you play.
-                        </p>
+                        <div>
+                            <h3 className="font-display text-xl font-extrabold tracking-wide">
+                                Sensei AI
+                            </h3>
+                            <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-primary-foreground/70">
+                                <span className="size-2 rounded-full bg-status-active shadow-[0_0_8px_theme(colors.status.active)] animate-pulse-gentle" />
+                                Live Tutor
+                            </p>
+                        </div>
                     </div>
-                    <span className="flex items-center gap-2 text-[11px] text-white/80">
-                        <span className="h-2 w-2 rounded-full bg-green-300 shadow-[0_0_10px] shadow-green-300" />
-                        Ready
-                    </span>
+                    <div className="flex size-10 items-center justify-center rounded-full bg-primary-foreground/10 text-accent">
+                        <LuSparkles className="size-5" />
+                    </div>
                 </div>
             </div>
 
-            {/* Active Coaching */}
-            <div className="shrink-0 border-b border-border/60 bg-secondary/10 px-3 py-3">
-                <div className="rounded-2xl border border-border/50 bg-card p-3 shadow-sm">
-                    {" "}
-                    <div className="mb-2 flex items-center justify-between gap-2">
-                        <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
-                            Coach Mission
-                        </p>
-                        <span
-                            className={cn(
-                                "rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em]",
-                                moodBadgeClass,
-                            )}
-                        >
-                            {coachMood}
-                        </span>
+            {/* Active Coaching - Hanko Stamp Vibe */}
+            <div className="shrink-0 border-b-[3px] border-primary/10 bg-secondary/40 px-5 py-5">
+                <div className="relative rounded-2xl border-[3px] border-accent bg-card px-4 py-4 shadow-[4px_4px_0_theme(colors.accent.DEFAULT)]">
+                    <div className="absolute -top-3 left-4 flex items-center gap-1.5 bg-card px-2 font-display text-[11px] font-black uppercase tracking-[0.2em] text-destructive">
+                        <LuTarget className="size-3.5" />
+                        Mission
                     </div>
-                    <p className="font-display text-sm font-semibold leading-snug text-foreground/90">
+                    <p className="font-display text-base font-bold leading-tight text-foreground">
                         {coachGoal}
                     </p>
-                    <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
+                    <p className="mt-2 text-sm font-medium leading-relaxed text-muted-foreground">
                         {coachCue}
                     </p>
                 </div>
             </div>
 
             {/* Messages */}
-            <ScrollArea className="flex-1 bg-background/30">
-                {" "}
-                <div className="flex flex-col gap-3 p-3 pb-4">
-                    <div className="rounded-2xl border border-border/60 bg-background/60 px-3 py-2 text-[11px] text-muted-foreground">
-                        Sensei keeps the tutoring lightweight during play. Tap a
-                        prompt when you want a quick nudge.
+            <ScrollArea className="flex-1 bg-background/50">
+                <div className="flex flex-col gap-4 p-5">
+                    <div className="self-center rounded-full border-2 border-border border-dashed bg-secondary/50 px-4 py-1.5 text-xs font-bold text-muted-foreground uppercase tracking-widest">
+                        Game Started
                     </div>
                     {messages.map((msg) => (
                         <div
                             key={msg.id}
                             className={cn(
-                                "w-full max-w-[92%] rounded-2xl rounded-bl-md border px-3 py-2.5 text-xs leading-relaxed shadow-sm",
-                                msg.tone === "warning"
-                                    ? "border-destructive/30 bg-destructive/8 text-foreground"
-                                    : msg.tone === "celebrate"
-                                      ? "border-status-active/30 bg-status-active/10 text-foreground"
-                                      : "border-border/60 bg-tutor-surface/75 text-tutor-foreground",
+                                "self-start max-w-[88%] rounded-2xl rounded-tl-sm border-[2.5px] border-primary/15 bg-card px-4 py-3 text-[14px] font-semibold text-foreground shadow-sm",
+                                msg.tone === "warning" &&
+                                    "border-destructive/40 bg-destructive/10 text-destructive",
+                                msg.tone === "celebrate" &&
+                                    "border-status-active/40 bg-status-active/10 text-status-active",
                             )}
                         >
                             {msg.text}
@@ -140,27 +107,22 @@ export function AIChatPanel({
                 </div>
             </ScrollArea>
 
-            {/* Quick Tips */}
-            <div className="shrink-0 border-t border-border/60 bg-card px-3 py-3">
-                {" "}
-                <div className="mb-2 flex items-center gap-2 px-1 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
-                    <LuSparkles className="size-3" />
-                    Quick Prompts
-                </div>
-                <div className="flex flex-wrap gap-2">
+            {/* Quick Tips - Tactile Pills */}
+            <div className="shrink-0 border-t-[3px] border-primary/10 bg-card px-5 py-4">
+                <p className="mb-3 font-display text-[11px] font-black uppercase tracking-[0.15em] text-muted-foreground">
+                    Ask Sensei
+                </p>
+                <div className="flex flex-wrap gap-2.5">
                     {QUICK_TIPS.map(({ label, icon: Icon }) => (
-                        <Button
+                        <button
                             key={label}
                             type="button"
-                            variant="outline"
-                            size="xs"
-                            className="h-8 rounded-full border-border/70 bg-secondary/30 px-3 text-[11px] font-medium hover:bg-secondary/60 hover:shadow-sm transition-all"
+                            className="group flex items-center gap-2 rounded-xl border-2 border-border bg-secondary/50 px-3 py-2 font-display text-xs font-bold text-foreground transition-all hover:-translate-y-0.5 hover:border-primary hover:bg-accent hover:text-primary hover:shadow-[3px_3px_0_theme(colors.primary.DEFAULT)]"
                             onClick={() => onTipClick?.(label)}
                         >
-                            {" "}
-                            <Icon className="size-3.5" />
+                            <Icon className="size-4 opacity-70 group-hover:opacity-100" />
                             {label}
-                        </Button>
+                        </button>
                     ))}
                 </div>
             </div>
