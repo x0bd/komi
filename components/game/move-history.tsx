@@ -33,32 +33,36 @@ export function MoveHistory({
   const lastMove = hasMoves ? moves[moves.length - 1] : null
   const summaryText = lastMove
     ? lastMove.isPass
-      ? `${lastMove.player === "black" ? "Black" : "White"} passed`
-      : `${lastMove.player === "black" ? "Black" : "White"} · ${lastMove.coordinate ?? "—"}`
-    : "Opening position ready"
+      ? `Last move: ${lastMove.player === "black" ? "Black" : "White"} passed`
+      : `Last move: ${lastMove.coordinate ?? "—"}`
+    : "Opening ready"
 
   if (collapsed && !isEmbedded) {
     return (
       <button
         type="button"
         onClick={onToggle}
-        className="w-full text-left"
+        className="group w-full text-left"
       >
-        <Card className="overflow-hidden rounded-[1.8rem] border border-border/70 bg-gradient-to-b from-card via-card to-card/[0.96] shadow-[0_18px_50px_-38px_rgba(0,0,0,0.55)] transition-transform duration-200 hover:-translate-y-0.5">
-          <CardContent className="px-5 py-4">
-            <div className="flex items-center justify-between gap-3">
-              <div className="flex min-w-0 items-center gap-3">
-                <div className="flex size-10 items-center justify-center rounded-2xl border border-border/70 bg-secondary/55 text-foreground/[0.75] shadow-inner">
-                  <LuHistory className="size-[18px]" />
-                </div>
-                <div className="min-w-0">
-                  <p className="font-display text-[1.7rem] font-bold leading-none tracking-[-0.03em] text-foreground/[0.92]">
+        <Card className="overflow-hidden rounded-[1.8rem] border border-border/70 bg-gradient-to-b from-card via-card to-card/[0.96] shadow-[0_18px_50px_-38px_rgba(0,0,0,0.55)] transition-transform duration-200 group-hover:-translate-y-0.5">
+          <CardContent className="px-5 py-3.5">
+            <div className="grid grid-cols-[auto_1fr_auto] items-center gap-3">
+              <div className="flex size-11 items-center justify-center rounded-[1.15rem] border border-border/70 bg-secondary/55 text-foreground/[0.75] shadow-inner">
+                <LuHistory className="size-[18px]" />
+              </div>
+
+              <div className="min-w-0">
+                <div className="flex items-center gap-2">
+                  <p className="font-display text-[1.45rem] font-semibold leading-none tracking-[-0.03em] text-foreground/[0.92]">
                     History
                   </p>
-                  <p className="mt-1 truncate text-sm text-muted-foreground">
-                    {summaryText}
-                  </p>
+                  <span className="hidden rounded-full border border-border/60 bg-secondary/35 px-2 py-0.5 text-[10px] font-medium tracking-[0.12em] text-muted-foreground uppercase min-[430px]:inline-flex">
+                    Replay
+                  </span>
                 </div>
+                <p className="mt-1 truncate pr-2 text-sm text-muted-foreground">
+                  {summaryText}
+                </p>
               </div>
 
               <div className="flex items-center gap-2">
@@ -66,9 +70,9 @@ export function MoveHistory({
                   variant="outline"
                   className="h-8 rounded-full border-border/80 bg-background/75 px-3 font-mono text-[11px] tracking-[0.08em] shadow-sm"
                 >
-                  Moves: {moveCount}
+                  {moveCount}
                 </Badge>
-                <span className="flex size-9 items-center justify-center rounded-full border border-border/65 bg-background/70 text-muted-foreground shadow-sm">
+                <span className="flex size-9 items-center justify-center rounded-full border border-border/65 bg-background/70 text-muted-foreground shadow-sm transition-colors group-hover:text-foreground">
                   <LuChevronDown className="size-4" />
                 </span>
               </div>
@@ -96,10 +100,10 @@ export function MoveHistory({
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-center gap-3">
               <div className="flex size-10 items-center justify-center rounded-2xl border border-border/70 bg-secondary/55 text-foreground/[0.75] shadow-inner">
-                <LuHistory className="size-[18px]" />
+                  <LuHistory className="size-[18px]" />
               </div>
               <div className="space-y-0.5">
-                <CardTitle className="font-display text-[1.85rem] font-bold leading-none tracking-[-0.03em]">
+                <CardTitle className="font-display text-[1.55rem] font-bold leading-none tracking-[-0.03em]">
                   History
                 </CardTitle>
                 <p className="text-[11px] font-medium tracking-[0.14em] text-muted-foreground uppercase">
@@ -108,10 +112,10 @@ export function MoveHistory({
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <Badge
-                variant="outline"
-                className="h-8 rounded-full border-border/80 bg-background/75 px-3 font-mono text-[11px] tracking-[0.08em] shadow-sm"
-              >
+                <Badge
+                  variant="outline"
+                  className="h-8 rounded-full border-border/80 bg-background/75 px-3 font-mono text-[11px] tracking-[0.08em] shadow-sm"
+                >
                 Moves: {moveCount}
               </Badge>
               {onToggle ? (
