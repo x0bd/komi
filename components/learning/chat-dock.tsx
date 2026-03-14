@@ -20,11 +20,11 @@ export function ChatDock({ className }: { className?: string }) {
     >
       <div className="pointer-events-auto flex flex-col items-start gap-3">
         {open ? (
-          <div className="w-[min(24rem,calc(100vw-2rem))] rounded-[1.75rem] border border-border/70 bg-background/85 p-2 shadow-board backdrop-blur-xl">
+          <div className="w-[min(26rem,calc(100vw-2rem))] rounded-[1.85rem] border border-border/70 bg-background/86 p-2.5 shadow-board backdrop-blur-xl">
             <AIChatPanel
               messages={learningStore.chatMessages}
               onTipClick={learningStore.requestTip}
-              className="h-[320px] min-h-[320px] shadow-none"
+              className="h-[360px] min-h-[360px] rounded-[1.45rem] shadow-none"
             />
           </div>
         ) : null}
@@ -32,13 +32,13 @@ export function ChatDock({ className }: { className?: string }) {
         <Button
           variant={open ? "secondary" : "accent"}
           size="lg"
-          className="min-h-[54px] rounded-full px-4 shadow-lg shadow-foreground/8"
+          className="min-h-[56px] rounded-[1.35rem] border border-border/70 px-4 shadow-lg shadow-foreground/8 backdrop-blur-md"
           onClick={() => setOpen((current) => !current)}
         >
           <span className="flex items-center gap-3">
             <span
               className={cn(
-                "flex size-8 items-center justify-center rounded-full border border-white/20",
+                "flex size-9 items-center justify-center rounded-full border border-white/20",
                 open ? "bg-primary text-primary-foreground" : "bg-primary/15 text-primary"
               )}
             >
@@ -50,7 +50,7 @@ export function ChatDock({ className }: { className?: string }) {
               </span>
               <span className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
                 <LuSparkles className="size-3" />
-                Tips and learning prompts
+                Designed for quick coaching
               </span>
             </span>
             {open ? <LuChevronDown className="size-4 text-muted-foreground" /> : null}

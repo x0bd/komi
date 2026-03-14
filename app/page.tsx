@@ -83,7 +83,7 @@ function Sidebar() {
   })
 
   return (
-    <>
+    <div className="flex flex-col gap-4">
       <ModeToggle value={mode as "local" | "versus-ai"} onValueChange={(val) => setMode(val as GameMode)} />
 
       <PlayerCard
@@ -120,6 +120,6 @@ function Sidebar() {
         onResign={resign} 
         disabled={store.isGameOver} 
       />
-    </>
+    </div>
   )
 }
