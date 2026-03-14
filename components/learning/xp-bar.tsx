@@ -19,7 +19,7 @@ export function XPBar({
         </span>
         <div className="flex-1">
           <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-1">
-            Today's Streak
+            Today&apos;s Streak
           </p>
           <Progress
             value={xpPercent}

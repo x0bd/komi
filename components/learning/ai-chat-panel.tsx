@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { LuBot } from "react-icons/lu"
+import { cn } from "@/lib/utils"
 
 export type ChatMessage = {
   id: string
@@ -13,12 +14,19 @@ export type ChatMessage = {
 export function AIChatPanel({
   messages,
   onTipClick,
+  className,
 }: {
   messages: ChatMessage[]
   onTipClick?: (tip: string) => void
+  className?: string
 }) {
   return (
-    <Card className="flex flex-col shrink-0 rounded-2xl overflow-hidden border-[--tutor-accent]/30 shadow-sm transition-all h-[240px] min-h-[240px]">
+    <Card
+      className={cn(
+        "flex h-[240px] min-h-[240px] w-full flex-col shrink-0 overflow-hidden rounded-2xl border-[--tutor-accent]/30 shadow-sm transition-all",
+        className
+      )}
+    >
       {/* Header */}
       <div className="bg-tutor-accent px-4 py-3 flex items-center gap-3 shrink-0">
         <Avatar className="h-8 w-8 border border-white/20">

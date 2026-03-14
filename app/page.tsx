@@ -10,7 +10,7 @@ import { GameOverDialog } from "@/components/game/game-over-dialog"
 import { useGameStore, type GameMode } from "@/lib/stores/game-store"
 import { useTimer } from "@/hooks/use-timer"
 import { useAITurn } from "@/hooks/use-ai-turn"
-import { AIChatPanel } from "@/components/learning/ai-chat-panel"
+import { ChatDock } from "@/components/learning/chat-dock"
 import { XPBar } from "@/components/learning/xp-bar"
 import { useLearningStore } from "@/lib/stores/learning-store"
 import { LuBot } from "react-icons/lu"
@@ -29,6 +29,7 @@ export default function Home() {
         board={<BoardView />}
         sidebar={<Sidebar />}
       />
+      <ChatDock />
       <GameOverDialog
         open={store.isGameOver}
         onOpenChange={() => {}}
@@ -109,12 +110,6 @@ function Sidebar() {
       />
 
       <MoveHistorySection moves={mappedMoves} moveCount={mappedMoves.length} />
-
-      <AIChatPanel
-        messages={learningStore.chatMessages}
-        onTipClick={learningStore.requestTip}
-      />
-
       <XPBar
         streak={learningStore.streak}
         xpPercent={(learningStore.xp / 1000) * 100}
