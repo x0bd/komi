@@ -1,92 +1,101 @@
-"use client"
+"use client";
 
-import type { ReactNode } from "react"
-import { Card, CardContent } from "@/components/ui/card"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
-import { Timer } from "@/components/game/timer"
-import { cn } from "@/lib/utils"
+import type { ReactNode } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Timer } from "@/components/game/timer";
+import { cn } from "@/lib/utils";
 
-export type StoneColor = "black" | "white"
+export type StoneColor = "black" | "white";
 
 export function PlayerCard({
-  name,
-  initial,
-  avatarIcon,
-  stoneColor,
-  captures = 0,
-  minutes,
-  seconds,
-  isActive = false,
-  isLowTime = false,
-  className,
+    name,
+    initial,
+    avatarIcon,
+    stoneColor,
+    captures = 0,
+    minutes,
+    seconds,
+    isActive = false,
+    isLowTime = false,
+    className,
 }: {
-  name: string
-  initial: string
-  avatarIcon?: ReactNode
-  stoneColor: StoneColor
-  captures?: number
-  minutes: number
-  seconds: number
-  isActive?: boolean
-  isLowTime?: boolean
-  className?: string
+    name: string;
+    initial: string;
+    avatarIcon?: ReactNode;
+    stoneColor: StoneColor;
+    captures?: number;
+    minutes: number;
+    seconds: number;
+    isActive?: boolean;
+    isLowTime?: boolean;
+    className?: string;
 }) {
-  return (
-    <Card
-      className={cn(
-        "transition-all duration-300",
-        isActive
-          ? "border-accent shadow-lg -translate-y-0.5 bg-card ring-1 ring-accent/20"
-          : "border-border shadow-sm opacity-85",
-        className
-      )}
-    >
-      <CardContent className="flex items-center gap-4 p-5">
-        <Avatar className="size-14 shrink-0 border-2 border-primary/20">
-          <AvatarFallback
+    return (
+        <Card
             className={cn(
-              "font-display text-lg font-bold text-white",
-              isActive ? "bg-status-active" : "bg-status-capture"
+                "rounded-2xl transition-all duration-300",
+                isActive
+                    ? "border-2 border-accent shadow-lg -translate-y-1 bg-card"
+                    : "border border-border shadow-md opacity-85 hover:border-border/80 hover:opacity-100",
+                className,
             )}
-          >
-            {avatarIcon ? (
-              <span className="flex items-center justify-center text-xl">
-                {avatarIcon}
-              </span>
-            ) : (
-              initial
-            )}
-          </AvatarFallback>
-        </Avatar>
+        >
+            <CardContent className="flex items-center gap-4 p-5">
+                <Avatar className="size-14 shrink-0 border-2 border-primary/20 bg-card">
+                    <AvatarFallback
+                        className={cn(
+                            "font-display text-lg font-bold text-white",
+                            stoneColor === "black"
+                                ? "bg-status-active"
+                                : "bg-status-capture",
+                            avatarIcon && "bg-primary",
+                        )}
+                    >
+                        {avatarIcon ? (
+                            <span className="flex items-center justify-center text-xl">
+                                {avatarIcon}
+                            </span>
+                        ) : (
+                            initial
+                        )}
+                    </AvatarFallback>
+                </Avatar>
 
-        <div className="min-w-0 flex-1">
-          <p className="font-display text-sm font-bold truncate lg:text-base">{name}</p>
-          <div className="mt-0.5 flex flex-wrap gap-1.5 lg:mt-1 lg:gap-2">
-            <Badge variant={stoneColor === "black" ? "default" : "secondary"}>
-              {stoneColor === "black" ? "Black" : "White"}
-            </Badge>
-            <Badge variant="secondary" className="gap-1">
-              <span
-                className={cn(
-                  "inline-block h-2.5 w-2.5 shrink-0 rounded-full",
-                  stoneColor === "black"
-                    ? "bg-stone-black"
-                    : "bg-stone-white border border-border"
-                )}
-              />
-              {captures}
-            </Badge>
-          </div>
-        </div>
+                <div className="min-w-0 flex-1">
+                    <p className="font-display text-sm font-bold truncate lg:text-base">
+                        {name}
+                    </p>
+                    <div className="mt-0.5 flex flex-wrap gap-1.5 lg:mt-1 lg:gap-2">
+                        <Badge
+                            variant={
+                                stoneColor === "black" ? "default" : "secondary"
+                            }
+                        >
+                            {stoneColor === "black" ? "Black" : "White"}
+                        </Badge>
+                        <Badge variant="secondary" className="gap-1">
+                            <span
+                                className={cn(
+                                    "inline-block h-2.5 w-2.5 shrink-0 rounded-full",
+                                    stoneColor === "black"
+                                        ? "bg-stone-black"
+                                        : "bg-stone-white border border-border",
+                                )}
+                            />
+                            {captures}
+                        </Badge>
+                    </div>
+                </div>
 
-        <Timer
-          minutes={minutes}
-          seconds={seconds}
-          isLowTime={isLowTime}
-          className={cn(!isActive && "text-muted-foreground")}
-        />
-      </CardContent>
-    </Card>
-  )
+                <Timer
+                    minutes={minutes}
+                    seconds={seconds}
+                    isLowTime={isLowTime}
+                    className={cn(!isActive && "text-muted-foreground")}
+                />
+            </CardContent>
+        </Card>
+    );
 }

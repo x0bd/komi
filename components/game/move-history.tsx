@@ -1,223 +1,217 @@
-"use client"
+"use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Badge } from "@/components/ui/badge"
-import { cn } from "@/lib/utils"
-import { LuChevronDown, LuChevronUp, LuHistory, LuSparkles } from "react-icons/lu"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
+import {
+    LuChevronDown,
+    LuChevronUp,
+    LuHistory,
+    LuSparkles,
+} from "react-icons/lu";
 
 export type MoveEntry = {
-  moveNumber: number
-  player: "black" | "white"
-  coordinate?: string
-  isPass?: boolean
-}
+    moveNumber: number;
+    player: "black" | "white";
+    coordinate?: string;
+    isPass?: boolean;
+};
 
 export function MoveHistory({
-  moves,
-  moveCount = 0,
-  variant = "default",
-  collapsed = false,
-  onToggle,
-  className,
+    moves,
+    moveCount = 0,
+    variant = "default",
+    collapsed = false,
+    onToggle,
+    className,
 }: {
-  moves: MoveEntry[]
-  moveCount?: number
-  variant?: "default" | "embedded"
-  collapsed?: boolean
-  onToggle?: () => void
-  className?: string
+    moves: MoveEntry[];
+    moveCount?: number;
+    variant?: "default" | "embedded";
+    collapsed?: boolean;
+    onToggle?: () => void;
+    className?: string;
 }) {
-  const isEmbedded = variant === "embedded"
-  const hasMoves = moves.length > 0
-  const lastMove = hasMoves ? moves[moves.length - 1] : null
-  const summaryText = lastMove
-    ? lastMove.isPass
-      ? `Last move: ${lastMove.player === "black" ? "Black" : "White"} passed`
-      : `Last move: ${lastMove.coordinate ?? "—"}`
-    : "Opening ready"
+    const isEmbedded = variant === "embedded";
+    const hasMoves = moves.length > 0;
+    const lastMove = hasMoves ? moves[moves.length - 1] : null;
+    const summaryText = lastMove
+        ? lastMove.isPass
+            ? `Last move: ${lastMove.player === "black" ? "Black" : "White"} passed`
+            : `Last move: ${lastMove.coordinate ?? "—"}`
+        : "Opening ready";
 
-  if (collapsed && !isEmbedded) {
+    if (collapsed && !isEmbedded) {
+        return (
+            <button
+                type="button"
+                onClick={onToggle}
+                className="group w-full text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-2xl"
+            >
+                <Card className="rounded-2xl border border-border shadow-md bg-card transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg">
+                    <CardContent className="px-5 py-4">
+                        <div className="flex items-center justify-between gap-3">
+                            <div className="flex items-center gap-3 min-w-0">
+                                <div className="flex size-10 items-center justify-center rounded-full bg-secondary text-primary">
+                                    <LuHistory className="size-5" />
+                                </div>
+                                <div className="min-w-0">
+                                    <p className="font-display text-lg font-bold text-foreground">
+                                        History
+                                    </p>
+                                    <p className="truncate text-sm text-muted-foreground font-body">
+                                        {summaryText}
+                                    </p>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-2 shrink-0">
+                                <Badge
+                                    variant="secondary"
+                                    className="rounded-full font-mono text-xs shadow-sm px-2.5 py-0.5"
+                                >
+                                    {moveCount}
+                                </Badge>
+                                <LuChevronDown className="size-5 text-muted-foreground transition-colors group-hover:text-foreground" />
+                            </div>
+                        </div>
+                    </CardContent>
+                </Card>
+            </button>
+        );
+    }
+
     return (
-      <button
-        type="button"
-        onClick={onToggle}
-        className="group w-full text-left"
-      >
-        <Card className="overflow-hidden rounded-[1.8rem] border border-border/70 bg-gradient-to-b from-card via-card to-card/[0.96] shadow-[0_18px_50px_-38px_rgba(0,0,0,0.55)] transition-transform duration-200 group-hover:-translate-y-0.5">
-          <CardContent className="px-5 py-3.5">
-            <div className="grid grid-cols-[auto_1fr_auto] items-center gap-3">
-              <div className="flex size-11 items-center justify-center rounded-[1.15rem] border border-border/70 bg-secondary/55 text-foreground/[0.75] shadow-inner">
-                <LuHistory className="size-[18px]" />
-              </div>
-
-              <div className="min-w-0">
-                <div className="flex items-center gap-2">
-                  <p className="font-display text-[1.45rem] font-semibold leading-none tracking-[-0.03em] text-foreground/[0.92]">
-                    History
-                  </p>
-                  <span className="hidden rounded-full border border-border/60 bg-secondary/35 px-2 py-0.5 text-[10px] font-medium tracking-[0.12em] text-muted-foreground uppercase min-[430px]:inline-flex">
-                    Replay
-                  </span>
-                </div>
-                <p className="mt-1 truncate pr-2 text-sm text-muted-foreground">
-                  {summaryText}
-                </p>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <Badge
-                  variant="outline"
-                  className="h-8 rounded-full border-border/80 bg-background/75 px-3 font-mono text-[11px] tracking-[0.08em] shadow-sm"
-                >
-                  {moveCount}
-                </Badge>
-                <span className="flex size-9 items-center justify-center rounded-full border border-border/65 bg-background/70 text-muted-foreground shadow-sm transition-colors group-hover:text-foreground">
-                  <LuChevronDown className="size-4" />
-                </span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </button>
-    )
-  }
-
-  return (
-    <Card
-      className={cn(
-        "relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-[1.8rem] border border-border/70 bg-gradient-to-b from-card via-card to-card/[0.94] shadow-[0_24px_60px_-44px_rgba(0,0,0,0.55)]",
-        isEmbedded && "rounded-none border-0 bg-transparent shadow-none",
-        className
-      )}
-    >
-      {!isEmbedded ? (
-        <div className="pointer-events-none absolute inset-x-5 top-0 h-px bg-gradient-to-r from-transparent via-foreground/12 to-transparent" />
-      ) : null}
-
-      {!isEmbedded && (
-        <CardHeader className="shrink-0 px-5 pb-3 pt-5">
-          <div className="flex items-start justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <div className="flex size-10 items-center justify-center rounded-2xl border border-border/70 bg-secondary/55 text-foreground/[0.75] shadow-inner">
-                  <LuHistory className="size-[18px]" />
-              </div>
-              <div className="space-y-0.5">
-                <CardTitle className="font-display text-[1.55rem] font-bold leading-none tracking-[-0.03em]">
-                  History
-                </CardTitle>
-                <p className="text-[11px] font-medium tracking-[0.14em] text-muted-foreground uppercase">
-                  Replay Log
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-                <Badge
-                  variant="outline"
-                  className="h-8 rounded-full border-border/80 bg-background/75 px-3 font-mono text-[11px] tracking-[0.08em] shadow-sm"
-                >
-                Moves: {moveCount}
-              </Badge>
-              {onToggle ? (
-                <button
-                  type="button"
-                  onClick={onToggle}
-                  aria-label="Collapse history"
-                  className="flex size-9 items-center justify-center rounded-full border border-border/65 bg-background/70 text-muted-foreground shadow-sm transition-colors hover:text-foreground"
-                >
-                  <LuChevronUp className="size-4" />
-                </button>
-              ) : null}
-            </div>
-          </div>
-        </CardHeader>
-      )}
-
-      <CardContent className={cn("min-h-0 flex-1 p-0", !isEmbedded && "pt-0")}>
-        <ScrollArea
-          className={cn(
-            isEmbedded ? "h-[min(55vh,380px)]" : "h-[188px] lg:h-full lg:min-h-[220px]"
-          )}
-        >
-          <div
+        <Card
             className={cn(
-              "flex min-h-full flex-col",
-              isEmbedded ? "px-4 pb-6 pt-2" : "px-5 pb-5"
+                "flex flex-col overflow-hidden rounded-2xl border border-border shadow-md bg-card transition-all duration-300",
+                isEmbedded &&
+                    "rounded-none border-0 shadow-none bg-transparent",
+                className,
             )}
-          >
-            <div className="flex items-center justify-center rounded-[1.05rem] border border-border/50 bg-secondary/45 px-3 py-2.5 text-center text-xs font-medium text-muted-foreground shadow-inner">
-              Game started
-            </div>
-
-            {hasMoves ? (
-              <div className="mt-3 flex flex-col gap-2">
-                {moves.map((m) => (
-                  <div
-                    key={m.moveNumber}
-                    className={cn(
-                      "flex items-center gap-3 rounded-[1.15rem] border px-3 py-3 transition-colors",
-                      m.isPass
-                        ? "border-border/45 bg-secondary/20 text-muted-foreground"
-                        : "border-border/55 bg-background/65 shadow-[0_10px_24px_-22px_rgba(0,0,0,0.55)]"
-                    )}
-                  >
-                    <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-secondary font-mono text-[10px] font-bold text-muted-foreground shadow-inner">
-                      {m.moveNumber}
-                    </span>
-                    <span
-                      className={cn(
-                        "flex size-8 shrink-0 items-center justify-center rounded-full border shadow-sm",
-                        m.player === "black"
-                          ? "border-stone-black/80 bg-stone-black/10"
-                          : "border-border bg-stone-white/90"
-                      )}
-                    >
-                      <span
-                        className={cn(
-                          "inline-block h-3 w-3 rounded-full",
-                          m.player === "black"
-                            ? "bg-stone-black"
-                            : "border border-border bg-stone-white"
-                        )}
-                      />
-                    </span>
-                    <div className="min-w-0">
-                      <p className="text-sm font-semibold text-foreground/[0.88]">
-                        {m.player === "black" ? "Black" : "White"}
-                      </p>
-                      <p className="text-[11px] font-medium tracking-[0.08em] text-muted-foreground uppercase">
-                        {m.isPass ? "Pass turn" : "Placed stone"}
-                      </p>
+        >
+            {!isEmbedded && (
+                <CardHeader className="shrink-0 px-5 pb-3 pt-5 border-b border-border/40">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                            <div className="flex size-10 items-center justify-center rounded-full bg-secondary text-primary">
+                                <LuHistory className="size-5" />
+                            </div>
+                            <div className="space-y-0.5">
+                                <CardTitle className="font-display text-xl font-bold leading-none">
+                                    History
+                                </CardTitle>
+                                <p className="text-[11px] font-medium tracking-[0.14em] text-muted-foreground uppercase">
+                                    Replay Log
+                                </p>
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <Badge
+                                variant="secondary"
+                                className="rounded-full font-mono text-xs shadow-sm px-2.5 py-0.5"
+                            >
+                                Moves: {moveCount}
+                            </Badge>
+                            {onToggle && (
+                                <button
+                                    type="button"
+                                    onClick={onToggle}
+                                    aria-label="Collapse history"
+                                    className="flex size-8 items-center justify-center rounded-full bg-secondary text-muted-foreground transition-colors hover:text-foreground hover:bg-secondary/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                                >
+                                    <LuChevronUp className="size-4" />
+                                </button>
+                            )}
+                        </div>
                     </div>
-                    <span
-                      className={cn(
-                        "ml-auto rounded-full border px-3 py-1 font-mono text-[11px] font-bold tracking-[0.08em]",
-                        m.isPass
-                          ? "border-border/55 bg-transparent text-muted-foreground"
-                          : "border-border/55 bg-secondary/55 text-foreground"
-                      )}
-                    >
-                      {m.isPass ? "Pass" : m.coordinate ?? "—"}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="mt-3 flex flex-1 flex-col items-center justify-center rounded-[1.4rem] border border-dashed border-border/65 bg-gradient-to-b from-secondary/35 via-secondary/20 to-transparent px-5 text-center">
-                <div className="mb-3 flex size-10 items-center justify-center rounded-2xl border border-border/60 bg-background/[0.72] text-primary shadow-sm">
-                  <LuSparkles className="size-[18px]" />
-                </div>
-                <p className="font-display text-base font-semibold tracking-[-0.02em] text-foreground/[0.88]">
-                  No moves yet
-                </p>
-                <p className="mt-1.5 max-w-[14rem] text-sm leading-5 text-muted-foreground">
-                  The replay log will fill as the game begins.
-                </p>
-              </div>
+                </CardHeader>
             )}
-          </div>
-        </ScrollArea>
-      </CardContent>
-    </Card>
-  )
+
+            <CardContent
+                className={cn("min-h-0 flex-1 p-0", !isEmbedded && "pt-0")}
+            >
+                <ScrollArea
+                    className={cn(
+                        isEmbedded
+                            ? "h-[min(55vh,380px)]"
+                            : "h-[200px] lg:h-full lg:min-h-[260px]",
+                    )}
+                >
+                    <div
+                        className={cn(
+                            "flex flex-col gap-2",
+                            isEmbedded ? "px-4 pb-6 pt-4" : "p-5",
+                        )}
+                    >
+                        <div className="flex items-center justify-center rounded-xl bg-secondary/50 px-3 py-2 text-center text-xs font-medium text-muted-foreground">
+                            Game started
+                        </div>
+
+                        {hasMoves ? (
+                            moves.map((m) => (
+                                <div
+                                    key={m.moveNumber}
+                                    className={cn(
+                                        "flex items-center gap-3 rounded-xl border p-3 transition-colors",
+                                        m.isPass
+                                            ? "border-border/40 bg-secondary/30"
+                                            : "border-border/60 bg-card hover:border-border shadow-sm",
+                                    )}
+                                >
+                                    <span className="w-6 text-center font-mono text-xs font-bold text-muted-foreground">
+                                        {m.moveNumber}
+                                    </span>
+                                    <div className="flex items-center gap-2 flex-1">
+                                        <span
+                                            className={cn(
+                                                "inline-block size-3.5 rounded-full shadow-sm",
+                                                m.player === "black"
+                                                    ? "bg-stone-black"
+                                                    : "bg-stone-white border border-border",
+                                            )}
+                                        />
+                                        <div className="flex flex-col">
+                                            <span className="text-sm font-semibold font-body leading-none">
+                                                {m.player === "black"
+                                                    ? "Black"
+                                                    : "White"}
+                                            </span>
+                                            {m.isPass && (
+                                                <span className="text-[10px] text-muted-foreground uppercase tracking-widest mt-0.5">
+                                                    Passed
+                                                </span>
+                                            )}
+                                        </div>
+                                    </div>
+                                    <span
+                                        className={cn(
+                                            "font-mono text-sm font-bold",
+                                            m.isPass
+                                                ? "text-muted-foreground"
+                                                : "text-foreground",
+                                        )}
+                                    >
+                                        {m.isPass
+                                            ? "Pass"
+                                            : (m.coordinate ?? "—")}
+                                    </span>
+                                </div>
+                            ))
+                        ) : (
+                            <div className="mt-4 flex flex-col items-center justify-center text-center opacity-60">
+                                <LuSparkles className="size-6 text-muted-foreground mb-2" />
+                                <p className="font-display text-sm font-semibold">
+                                    No moves yet
+                                </p>
+                                <p className="text-xs text-muted-foreground">
+                                    Place a stone to begin
+                                </p>
+                            </div>
+                        )}
+                    </div>
+                </ScrollArea>
+            </CardContent>
+        </Card>
+    );
 }
