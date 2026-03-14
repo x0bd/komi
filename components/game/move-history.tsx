@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
-import { LuHistory, LuSparkles } from "react-icons/lu"
+import { LuChevronDown, LuChevronUp, LuHistory, LuSparkles } from "react-icons/lu"
 
 export type MoveEntry = {
   moveNumber: number
@@ -17,15 +17,67 @@ export function MoveHistory({
   moves,
   moveCount = 0,
   variant = "default",
+  collapsed = false,
+  onToggle,
   className,
 }: {
   moves: MoveEntry[]
   moveCount?: number
   variant?: "default" | "embedded"
+  collapsed?: boolean
+  onToggle?: () => void
   className?: string
 }) {
   const isEmbedded = variant === "embedded"
   const hasMoves = moves.length > 0
+  const lastMove = hasMoves ? moves[moves.length - 1] : null
+  const summaryText = lastMove
+    ? lastMove.isPass
+      ? `${lastMove.player === "black" ? "Black" : "White"} passed`
+      : `${lastMove.player === "black" ? "Black" : "White"} · ${lastMove.coordinate ?? "—"}`
+    : "Opening position ready"
+
+  if (collapsed && !isEmbedded) {
+    return (
+      <button
+        type="button"
+        onClick={onToggle}
+        className="w-full text-left"
+      >
+        <Card className="overflow-hidden rounded-[1.8rem] border border-border/70 bg-gradient-to-b from-card via-card to-card/[0.96] shadow-[0_18px_50px_-38px_rgba(0,0,0,0.55)] transition-transform duration-200 hover:-translate-y-0.5">
+          <CardContent className="px-5 py-4">
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex min-w-0 items-center gap-3">
+                <div className="flex size-10 items-center justify-center rounded-2xl border border-border/70 bg-secondary/55 text-foreground/[0.75] shadow-inner">
+                  <LuHistory className="size-[18px]" />
+                </div>
+                <div className="min-w-0">
+                  <p className="font-display text-[1.7rem] font-bold leading-none tracking-[-0.03em] text-foreground/[0.92]">
+                    History
+                  </p>
+                  <p className="mt-1 truncate text-sm text-muted-foreground">
+                    {summaryText}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <Badge
+                  variant="outline"
+                  className="h-8 rounded-full border-border/80 bg-background/75 px-3 font-mono text-[11px] tracking-[0.08em] shadow-sm"
+                >
+                  Moves: {moveCount}
+                </Badge>
+                <span className="flex size-9 items-center justify-center rounded-full border border-border/65 bg-background/70 text-muted-foreground shadow-sm">
+                  <LuChevronDown className="size-4" />
+                </span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </button>
+    )
+  }
 
   return (
     <Card
@@ -55,12 +107,24 @@ export function MoveHistory({
                 </p>
               </div>
             </div>
-            <Badge
-              variant="outline"
-              className="h-8 rounded-full border-border/80 bg-background/75 px-3 font-mono text-[11px] tracking-[0.08em] shadow-sm"
-            >
-              Moves: {moveCount}
-            </Badge>
+            <div className="flex items-center gap-2">
+              <Badge
+                variant="outline"
+                className="h-8 rounded-full border-border/80 bg-background/75 px-3 font-mono text-[11px] tracking-[0.08em] shadow-sm"
+              >
+                Moves: {moveCount}
+              </Badge>
+              {onToggle ? (
+                <button
+                  type="button"
+                  onClick={onToggle}
+                  aria-label="Collapse history"
+                  className="flex size-9 items-center justify-center rounded-full border border-border/65 bg-background/70 text-muted-foreground shadow-sm transition-colors hover:text-foreground"
+                >
+                  <LuChevronUp className="size-4" />
+                </button>
+              ) : null}
+            </div>
           </div>
         </CardHeader>
       )}

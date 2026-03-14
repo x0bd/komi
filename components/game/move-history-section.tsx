@@ -11,10 +11,14 @@ import { cn } from "@/lib/utils"
 export function MoveHistorySection({
   moves,
   moveCount = 0,
+  collapsed = false,
+  onToggle,
   className,
 }: {
   moves: MoveEntry[]
   moveCount?: number
+  collapsed?: boolean
+  onToggle?: () => void
   className?: string
 }) {
   const [open, setOpen] = useState(false)
@@ -23,7 +27,12 @@ export function MoveHistorySection({
     <>
       {/* Desktop: inline card */}
       <div className={cn("hidden min-h-0 flex-1 flex-col lg:flex", className)}>
-        <MoveHistory moves={moves} moveCount={moveCount} />
+        <MoveHistory
+          moves={moves}
+          moveCount={moveCount}
+          collapsed={collapsed}
+          onToggle={onToggle}
+        />
       </div>
 
       {/* Mobile: drawer trigger + slide-up drawer */}

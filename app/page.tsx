@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import { GameLayout } from "@/components/layout/game-layout"
 import { GoBoard } from "@/components/game/go-board"
 import { ModeToggle } from "@/components/game/mode-toggle"
@@ -58,6 +59,7 @@ function BoardView() {
 }
 
 function Sidebar() {
+  const [expandedPanel, setExpandedPanel] = useState<"history" | "streak" | null>(null)
   const store = useGameStore()
   const { gameState, moveHistory, mode, passTurn, resign, setMode } = store
   
@@ -113,12 +115,21 @@ function Sidebar() {
         <MoveHistorySection
           moves={mappedMoves}
           moveCount={mappedMoves.length}
+          collapsed={expandedPanel !== "history"}
+          onToggle={() =>
+            setExpandedPanel((current) => (current === "history" ? null : "history"))
+          }
           className="lg:h-full"
         />
       </div>
 
       <div className="mt-auto flex flex-col gap-4 pt-1">
-        <XPBar />
+        <XPBar
+          collapsed={expandedPanel !== "streak"}
+          onToggle={() =>
+            setExpandedPanel((current) => (current === "streak" ? null : "streak"))
+          }
+        />
 
         <GameControls
           onPass={passTurn}

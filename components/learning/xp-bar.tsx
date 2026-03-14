@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef } from "react"
 import { gsap } from "gsap"
-import { LuActivity, LuFlame, LuSparkles } from "react-icons/lu"
+import { LuActivity, LuChevronDown, LuChevronUp, LuFlame, LuSparkles } from "react-icons/lu"
 import { Card, CardContent } from "@/components/ui/card"
 import { useLearningStore } from "@/lib/stores/learning-store"
 import { cn } from "@/lib/utils"
@@ -22,7 +22,13 @@ function getMomentumTone(energy: number) {
   return "Low pressure"
 }
 
-export function XPBar() {
+export function XPBar({
+  collapsed = false,
+  onToggle,
+}: {
+  collapsed?: boolean
+  onToggle?: () => void
+}) {
   const streak = useLearningStore((state) => state.streak)
   const xp = useLearningStore((state) => state.xp)
   const liveStreak = useLearningStore((state) => state.liveStreak)
@@ -52,7 +58,11 @@ export function XPBar() {
     })
   }, [energy])
 
+  const compactBars = bars.slice(0, 6)
+
   useEffect(() => {
+    if (collapsed) return
+
     const activeBars = barRefs.current.filter((bar): bar is HTMLDivElement => Boolean(bar))
     if (!activeBars.length) return
 
@@ -104,7 +114,70 @@ export function XPBar() {
     }
 
     return () => timeline.kill()
-  }, [bars, lastStreakDelta, streakPulseKey])
+  }, [bars, collapsed, lastStreakDelta, streakPulseKey])
+
+  if (collapsed) {
+    return (
+      <button type="button" onClick={onToggle} className="w-full text-left">
+        <Card className="overflow-hidden rounded-[1.8rem] border border-border/70 bg-gradient-to-br from-card via-card to-secondary/25 shadow-[0_18px_50px_-38px_rgba(0,0,0,0.55)] transition-transform duration-200 hover:-translate-y-0.5">
+          <CardContent className="px-5 py-4">
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex min-w-0 items-center gap-3">
+                <span className="flex size-11 items-center justify-center rounded-[1.15rem] border border-border/70 bg-secondary/60 text-accent shadow-inner">
+                  <LuFlame className="size-[18px]" />
+                </span>
+                <div className="min-w-0">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground">
+                    Live Streak
+                  </p>
+                  <p className="font-display text-[1.45rem] font-semibold leading-none tracking-[-0.03em] text-foreground/[0.9]">
+                    {momentumTone}
+                  </p>
+                  <p className="mt-1 truncate text-sm text-muted-foreground">
+                    {lastStreakEvent}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <div className="hidden min-[420px]:flex items-end gap-1">
+                  {compactBars.map((bar, index) => (
+                    <span
+                      key={index}
+                      className={cn(
+                        "w-2.5 rounded-full bg-gradient-to-t",
+                        bar.isActive
+                          ? "from-status-active via-accent to-xp-streak"
+                          : "from-border/45 via-border/30 to-border/10"
+                      )}
+                      style={{
+                        height: `${Math.max(10, Math.round(bar.height * 0.55))}px`,
+                        opacity: bar.opacity,
+                      }}
+                    />
+                  ))}
+                </div>
+
+                <div className="text-right">
+                  <p className="font-display text-3xl font-extrabold leading-none tracking-[-0.05em] text-xp-streak">
+                    {streak}
+                  </p>
+                  <div className="mt-2 flex items-center justify-end gap-2">
+                    <p className="text-[11px] font-medium text-muted-foreground">
+                      {energy}% live
+                    </p>
+                    <span className="flex size-9 items-center justify-center rounded-full border border-border/65 bg-background/70 text-muted-foreground shadow-sm">
+                      <LuChevronDown className="size-4" />
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </button>
+    )
+  }
 
   return (
     <Card className="overflow-hidden rounded-[1.9rem] border border-border/70 bg-gradient-to-br from-card via-card to-secondary/35 shadow-[0_24px_60px_-40px_rgba(0,0,0,0.6)]">
@@ -131,13 +204,25 @@ export function XPBar() {
               </div>
             </div>
 
-            <div ref={valueRef} className="text-right">
-              <div className="font-display text-3xl font-extrabold leading-none tracking-[-0.05em] text-xp-streak">
-                {streak}
+            <div className="flex items-start gap-2">
+              <div ref={valueRef} className="text-right">
+                <div className="font-display text-3xl font-extrabold leading-none tracking-[-0.05em] text-xp-streak">
+                  {streak}
+                </div>
+                <p className="mt-1 text-[11px] font-medium text-muted-foreground">
+                  {energy}% live
+                </p>
               </div>
-              <p className="mt-1 text-[11px] font-medium text-muted-foreground">
-                {energy}% live
-              </p>
+              {onToggle ? (
+                <button
+                  type="button"
+                  onClick={onToggle}
+                  aria-label="Collapse live streak"
+                  className="flex size-9 items-center justify-center rounded-full border border-border/65 bg-background/70 text-muted-foreground shadow-sm transition-colors hover:text-foreground"
+                >
+                  <LuChevronUp className="size-4" />
+                </button>
+              ) : null}
             </div>
           </div>
 
