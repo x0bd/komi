@@ -22,7 +22,7 @@ export function MoveHistorySection({
   return (
     <>
       {/* Desktop: inline card */}
-      <div className={cn("hidden flex-col min-h-0 lg:flex", className)}>
+      <div className={cn("hidden min-h-0 flex-1 flex-col lg:flex", className)}>
         <MoveHistory moves={moves} moveCount={moveCount} />
       </div>
 

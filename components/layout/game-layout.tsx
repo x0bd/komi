@@ -31,15 +31,15 @@ export function GameLayout({
 
       {/* Main area */}
       <div className="relative z-10 flex flex-1 justify-center px-6 py-16 lg:px-10 lg:py-8">
-        <div className="flex w-full max-w-[1416px] items-start gap-8 max-lg:flex-col max-lg:gap-6">
+        <div className="flex w-full max-w-[1416px] gap-8 max-lg:flex-col max-lg:gap-6 lg:items-center">
           {/* Board — takes remaining space, centered */}
-          <main className="flex flex-1 items-center justify-center pt-4 max-lg:w-full lg:min-h-[calc(100svh-4rem)] lg:pt-8">
+          <main className="flex flex-1 items-center justify-center pt-4 max-lg:w-full lg:min-h-[calc(100svh-5rem)] lg:pt-0">
             {board}
           </main>
 
           {/* Sidebar — fixed rail */}
-          <aside className="relative z-20 w-full px-3 pb-24 lg:mt-7 lg:w-[396px] lg:min-w-[374px] lg:self-start lg:px-0 lg:pb-0">
-            <div className="flex flex-col rounded-[2rem] border border-border/70 bg-card/[0.46] p-4 shadow-[0_28px_80px_-38px_rgba(0,0,0,0.72)] ring-1 ring-white/[0.05] backdrop-blur-xl lg:p-5">
+          <aside className="relative z-20 w-full px-3 pb-24 lg:w-[396px] lg:min-w-[374px] lg:self-center lg:px-0 lg:pb-0">
+            <div className="flex flex-col rounded-[2rem] border border-border/70 bg-card/[0.46] p-4 shadow-[0_28px_80px_-38px_rgba(0,0,0,0.72)] ring-1 ring-white/[0.05] backdrop-blur-xl lg:h-[calc(100svh-10rem)] lg:max-h-[840px] lg:min-h-[700px] lg:p-5">
               {sidebar}
             </div>
           </aside>

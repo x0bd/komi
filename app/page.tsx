@@ -83,7 +83,7 @@ function Sidebar() {
   })
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 lg:h-full lg:min-h-0">
       <div className="flex flex-col gap-4">
         <ModeToggle value={mode as "local" | "versus-ai"} onValueChange={(val) => setMode(val as GameMode)} />
 
@@ -111,15 +111,15 @@ function Sidebar() {
         />
       </div>
 
-      <div className="min-h-0">
+      <div className="min-h-0 flex-1">
         <MoveHistorySection
           moves={mappedMoves}
           moveCount={mappedMoves.length}
-          className="lg:flex-none"
+          className="lg:h-full"
         />
       </div>
 
-      <div className="flex flex-col gap-4 pt-1">
+      <div className="mt-auto flex flex-col gap-4 pt-1">
         <XPBar
           streak={learningStore.streak}
           xpPercent={(learningStore.xp / 1000) * 100}

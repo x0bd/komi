@@ -28,7 +28,7 @@ export function MoveHistory({
   return (
     <Card
       className={cn(
-        "flex flex-1 flex-col min-h-0",
+        "flex min-h-0 flex-1 flex-col lg:min-h-[240px]",
         isEmbedded && "border-0 shadow-none rounded-none bg-transparent",
         className
       )}
@@ -48,7 +48,7 @@ export function MoveHistory({
       <CardContent className={cn("flex-1 min-h-0 p-0", !isEmbedded && "pt-0")}>
         <ScrollArea
           className={cn(
-            isEmbedded ? "h-[min(55vh,380px)]" : "h-[188px] lg:h-[196px]"
+            isEmbedded ? "h-[min(55vh,380px)]" : "h-[188px] lg:h-full lg:min-h-[220px]"
           )}
         >
           <div
