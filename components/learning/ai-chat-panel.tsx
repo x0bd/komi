@@ -41,86 +41,96 @@ export function AIChatPanel({
     return (
         <Card
             className={cn(
-                "flex flex-col w-full shrink-0 overflow-hidden rounded-[2rem] border-[3px] border-primary bg-card shadow-[8px_8px_0_theme(colors.primary.DEFAULT)]",
+                "flex flex-col w-full shrink-0 overflow-hidden rounded-[2rem] border border-border bg-card shadow-xl",
                 className,
             )}
         >
-            {/* Header - Bold Sumi Ink */}
-            <div className="relative shrink-0 border-b-[3px] border-primary bg-primary px-5 py-4 text-primary-foreground">
-                <div className="relative flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                        <div className="flex size-11 items-center justify-center rounded-full border-2 border-primary-foreground/20 bg-primary-foreground/10 text-accent">
-                            <LuBot className="size-6" />
-                        </div>
-                        <div>
-                            <h3 className="font-display text-xl font-extrabold tracking-wide">
-                                Sensei AI
-                            </h3>
-                            <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-primary-foreground/70">
-                                <span className="size-2 rounded-full bg-status-active shadow-[0_0_8px_theme(colors.status.active)] animate-pulse-gentle" />
-                                Live Tutor
-                            </p>
-                        </div>
+            {/* Header - Friendly & Playful (Teal Accent) */}
+            <div className="relative shrink-0 bg-tutor-accent px-5 py-4 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                    <div className="relative flex size-12 items-center justify-center rounded-full border-[2.5px] border-white/20 bg-white/20 text-white shadow-sm">
+                        <LuBot className="size-7" />
+                        {/* Online status indicator */}
+                        <span className="absolute bottom-0 right-0 size-3.5 rounded-full border-2 border-tutor-accent bg-[#4ade80]" />
                     </div>
-                    <div className="flex size-10 items-center justify-center rounded-full bg-primary-foreground/10 text-accent">
-                        <LuSparkles className="size-5" />
+                    <div>
+                        <h3 className="font-display text-xl font-bold tracking-wide text-white">
+                            Sensei
+                        </h3>
+                        <p className="font-medium text-white/80 text-xs uppercase tracking-widest">
+                            Live Tutor
+                        </p>
+                    </div>
+                </div>
+                <div className="flex size-10 items-center justify-center rounded-full bg-white/15 text-white backdrop-blur-md">
+                    <LuSparkles className="size-5" />
+                </div>
+            </div>
+
+            {/* Active Coaching / Current Goal - Like a Duolingo lesson hint */}
+            <div className="shrink-0 bg-tutor-surface/40 px-5 py-4 border-b border-border/50">
+                <div className="flex gap-4">
+                    <div className="mt-1 flex size-8 shrink-0 items-center justify-center rounded-full bg-tutor-accent/20 text-tutor-accent">
+                        <LuTarget className="size-4" />
+                    </div>
+                    <div className="flex flex-col gap-1">
+                        <p className="font-display text-[12px] font-bold uppercase tracking-widest text-tutor-accent">
+                            Current Focus
+                        </p>
+                        <p className="text-[15px] font-medium leading-snug text-foreground">
+                            {coachGoal}
+                        </p>
+                        <p className="text-sm font-normal text-muted-foreground">
+                            {coachCue}
+                        </p>
                     </div>
                 </div>
             </div>
 
-            {/* Active Coaching - Hanko Stamp Vibe */}
-            <div className="shrink-0 border-b-[3px] border-primary/10 bg-secondary/40 px-5 py-5">
-                <div className="relative rounded-2xl border-[3px] border-accent bg-card px-4 py-4 shadow-[4px_4px_0_theme(colors.accent.DEFAULT)]">
-                    <div className="absolute -top-3 left-4 flex items-center gap-1.5 bg-card px-2 font-display text-[11px] font-black uppercase tracking-[0.2em] text-destructive">
-                        <LuTarget className="size-3.5" />
-                        Mission
+            {/* Messages Chat Area */}
+            <ScrollArea className="flex-1 bg-background/40">
+                <div className="flex flex-col gap-5 p-5">
+                    <div className="self-center rounded-full bg-secondary/80 px-4 py-1.5 text-[11px] font-bold text-muted-foreground uppercase tracking-widest">
+                        Match Started
                     </div>
-                    <p className="font-display text-base font-bold leading-tight text-foreground">
-                        {coachGoal}
-                    </p>
-                    <p className="mt-2 text-sm font-medium leading-relaxed text-muted-foreground">
-                        {coachCue}
-                    </p>
-                </div>
-            </div>
 
-            {/* Messages */}
-            <ScrollArea className="flex-1 bg-background/50">
-                <div className="flex flex-col gap-4 p-5">
-                    <div className="self-center rounded-full border-2 border-border border-dashed bg-secondary/50 px-4 py-1.5 text-xs font-bold text-muted-foreground uppercase tracking-widest">
-                        Game Started
-                    </div>
-                    {messages.map((msg) => (
-                        <div
-                            key={msg.id}
-                            className={cn(
-                                "self-start max-w-[88%] rounded-2xl rounded-tl-sm border-[2.5px] border-primary/15 bg-card px-4 py-3 text-[14px] font-semibold text-foreground shadow-sm",
-                                msg.tone === "warning" &&
-                                    "border-destructive/40 bg-destructive/10 text-destructive",
-                                msg.tone === "celebrate" &&
-                                    "border-status-active/40 bg-status-active/10 text-status-active",
-                            )}
-                        >
-                            {msg.text}
+                    {messages.map((msg, idx) => (
+                        <div key={msg.id} className="flex gap-3 max-w-[92%]">
+                            {/* Only show avatar on the last message in a cluster or if it's the only one */}
+                            <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-tutor-surface text-tutor-accent mt-auto">
+                                <LuBot className="size-[18px]" />
+                            </div>
+                            <div
+                                className={cn(
+                                    "relative rounded-2xl rounded-bl-sm px-4 py-3 text-[14.5px] font-medium leading-relaxed shadow-sm",
+                                    msg.tone === "warning"
+                                        ? "bg-destructive/10 text-destructive border border-destructive/20"
+                                        : msg.tone === "celebrate"
+                                          ? "bg-status-active/10 text-status-active border border-status-active/20"
+                                          : "bg-tutor-surface text-tutor-foreground border border-tutor-accent/10",
+                                )}
+                            >
+                                {msg.text}
+                            </div>
                         </div>
                     ))}
                 </div>
             </ScrollArea>
 
-            {/* Quick Tips - Tactile Pills */}
-            <div className="shrink-0 border-t-[3px] border-primary/10 bg-card px-5 py-4">
-                <p className="mb-3 font-display text-[11px] font-black uppercase tracking-[0.15em] text-muted-foreground">
-                    Ask Sensei
+            {/* Quick Tips Area */}
+            <div className="shrink-0 border-t border-border bg-card px-5 py-4">
+                <p className="mb-3 font-display text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
+                    Ask a question
                 </p>
                 <div className="flex flex-wrap gap-2.5">
                     {QUICK_TIPS.map(({ label, icon: Icon }) => (
                         <button
                             key={label}
                             type="button"
-                            className="group flex items-center gap-2 rounded-xl border-2 border-border bg-secondary/50 px-3 py-2 font-display text-xs font-bold text-foreground transition-all hover:-translate-y-0.5 hover:border-primary hover:bg-accent hover:text-primary hover:shadow-[3px_3px_0_theme(colors.primary.DEFAULT)]"
+                            className="group flex items-center gap-2 rounded-2xl border border-border bg-card px-4 py-2.5 text-[13px] font-semibold text-foreground transition-all hover:-translate-y-0.5 hover:border-tutor-accent/40 hover:bg-tutor-surface/40 hover:text-tutor-foreground hover:shadow-sm active:translate-y-0 active:shadow-none"
                             onClick={() => onTipClick?.(label)}
                         >
-                            <Icon className="size-4 opacity-70 group-hover:opacity-100" />
+                            <Icon className="size-4 text-tutor-accent/70 group-hover:text-tutor-accent" />
                             {label}
                         </button>
                     ))}
