@@ -120,10 +120,10 @@ export function ChatDock({ className }: { className?: string }) {
                     aria-expanded={open}
                     aria-label={buttonLabel}
                     className={cn(
-                        "h-[60px] w-[60px] justify-start overflow-hidden rounded-full px-0 transition-all duration-300 border-[3px] hover:-translate-y-1 hover:translate-x-[2px]",
+                        "h-[60px] w-[60px] justify-start overflow-hidden rounded-full px-0 transition-all duration-300",
                         open
-                            ? "bg-card border-primary shadow-[6px_6px_0_theme(colors.primary.DEFAULT)] hover:shadow-[4px_4px_0_theme(colors.primary.DEFAULT)]"
-                            : "bg-secondary border-primary shadow-[6px_6px_0_theme(colors.primary.DEFAULT)] hover:shadow-[4px_4px_0_theme(colors.primary.DEFAULT)] text-foreground",
+                            ? "bg-card border-2 border-accent shadow-lg -translate-y-0.5 text-foreground"
+                            : "bg-card border border-border shadow-md hover:shadow-lg hover:-translate-y-0.5 text-muted-foreground hover:text-foreground hover:border-accent/50",
                     )}
                     onMouseEnter={() => setHovered(true)}
                     onMouseLeave={() => setHovered(false)}
@@ -135,10 +135,10 @@ export function ChatDock({ className }: { className?: string }) {
                         <span
                             ref={iconRef}
                             className={cn(
-                                "relative flex size-10 shrink-0 items-center justify-center rounded-full border-2 border-primary",
+                                "relative flex size-10 shrink-0 items-center justify-center rounded-full shadow-sm transition-colors",
                                 open
                                     ? "bg-primary text-primary-foreground"
-                                    : "bg-accent text-primary-foreground",
+                                    : "bg-accent text-accent-foreground",
                             )}
                         >
                             <LuSparkles className="size-[20px]" />
