@@ -132,7 +132,9 @@ export function XPBar({
             );
         }
 
-        return () => timeline.kill();
+        return () => {
+            timeline.kill();
+        };
     }, [bars, collapsed, lastStreakDelta, streakPulseKey]);
 
     if (collapsed) {

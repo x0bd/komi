@@ -16,7 +16,6 @@ export function ModeToggle({
 }) {
     return (
         <ToggleGroup
-            type="single"
             value={value ? [value] : []}
             onValueChange={(v) => v?.[0] && onValueChange?.(v[0] as GameMode)}
             className={cn(

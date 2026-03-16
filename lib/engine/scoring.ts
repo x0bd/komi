@@ -1,32 +1,53 @@
-import type { BoardState, Stone } from "./types"
+import type { BoardState, ScoringRuleset, Stone } from "./types"
 import { getNeighbors } from "./board"
 
 export type ScoreResult = {
   black: {
     territory: number
     captures: number
+    stones: number
     total: number
   }
   white: {
     territory: number
     captures: number
+    stones: number
     komi: number
     total: number
   }
   winner: "black" | "white" | "draw"
   margin: number
+  ruleset: ScoringRuleset
   territoryMap: Stone[] // Map of which player owns which empty intersection
+}
+
+type ScoreOptions = {
+  ruleset?: ScoringRuleset
+}
+
+function countPlacedStones(board: BoardState) {
+  let black = 0
+  let white = 0
+
+  for (const intersection of board) {
+    if (intersection === 1) black++
+    if (intersection === 2) white++
+  }
+
+  return { black, white }
 }
 
 export function calculateScore(
   board: BoardState,
   size: number,
   captures: { black: number; white: number },
-  komi: number = 6.5
+  komi: number = 6.5,
+  options: ScoreOptions = {}
 ): ScoreResult {
+  const ruleset = options.ruleset ?? "japanese"
   const territoryMap = [...board]
   const visited = new Set<number>()
-  
+
   let blackTerritory = 0
   let whiteTerritory = 0
 
@@ -66,8 +87,15 @@ export function calculateScore(
     }
   }
 
-  const blackTotal = blackTerritory + captures.black
-  const whiteTotal = whiteTerritory + captures.white + komi
+  const stones = countPlacedStones(board)
+  const blackTotal =
+    ruleset === "chinese"
+      ? blackTerritory + stones.black
+      : blackTerritory + captures.black
+  const whiteTotal =
+    ruleset === "chinese"
+      ? whiteTerritory + stones.white + komi
+      : whiteTerritory + captures.white + komi
 
   let winner: "black" | "white" | "draw" = "draw"
   let margin = 0
@@ -81,10 +109,22 @@ export function calculateScore(
   }
 
   return {
-    black: { territory: blackTerritory, captures: captures.black, total: blackTotal },
-    white: { territory: whiteTerritory, captures: captures.white, komi, total: whiteTotal },
+    black: {
+      territory: blackTerritory,
+      captures: captures.black,
+      stones: stones.black,
+      total: blackTotal,
+    },
+    white: {
+      territory: whiteTerritory,
+      captures: captures.white,
+      stones: stones.white,
+      komi,
+      total: whiteTotal,
+    },
     winner,
     margin,
+    ruleset,
     territoryMap,
   }
 }

@@ -1,6 +1,6 @@
 import { create } from "zustand"
 import type { GameState, Move } from "../engine/types"
-import { createInitialState } from "../engine/game"
+import { createInitialState, isGameOver } from "../engine/game"
 import { applyMove, applyPass } from "../engine/rules"
 import { calculateScore, type ScoreResult } from "../engine/scoring"
 import { gameToSGF } from "../engine/sgf"
@@ -105,23 +105,23 @@ export const useGameStore = create<KomiStore>((set, get) => ({
     set((state) => ({
       gameState: nextState,
       moveHistory: [...state.moveHistory, move],
-      consecutivePasses: 0, // Reset passes since a stone was placed
+      consecutivePasses: nextState.consecutivePasses,
     }))
 
     return true
   },
 
   passTurn: () => {
-    const { gameState, size, komi, consecutivePasses, isGameOver } = get()
+    const { gameState, size, komi, isGameOver: gameAlreadyOver } = get()
     
-    if (isGameOver) return
+    if (gameAlreadyOver) return
 
     const currentPlayer = gameState.turn
     const nextState = applyPass(gameState)
     const move: Move = { x: -1, y: -1, player: currentPlayer, isPass: true }
     
-    const nextPasses = consecutivePasses + 1
-    const gameOver = nextPasses >= 2
+    const nextPasses = nextState.consecutivePasses
+    const gameOver = isGameOver(nextState)
     
     let scoreResult = null
     if (gameOver) {
@@ -175,8 +175,9 @@ export const useGameStore = create<KomiStore>((set, get) => ({
       scoreResult: {
         winner: gameState.turn === "black" ? "white" : "black", // Current turn player resigns
         margin: Infinity,
-        black: { territory: 0, captures: 0, total: 0 },
-        white: { territory: 0, captures: 0, komi: 0, total: 0 },
+        black: { territory: 0, captures: 0, stones: 0, total: 0 },
+        white: { territory: 0, captures: 0, stones: 0, komi: 0, total: 0 },
+        ruleset: "japanese",
         territoryMap: []
       }
     })

@@ -91,6 +91,7 @@ export function applyMove(state: GameState, size: number, x: number, y: number, 
     board: newBoard,
     turn: nextTurn,
     moveNumber: state.moveNumber + 1,
+    consecutivePasses: 0,
     captured: newCaptured,
     ko: koPos,
     history: newHistory,
@@ -103,6 +104,7 @@ export function applyPass(state: GameState): GameState {
     ...state,
     turn: nextTurn,
     moveNumber: state.moveNumber + 1,
+    consecutivePasses: state.consecutivePasses + 1,
     ko: null, // Ko implies immediate recapture
   }
 }

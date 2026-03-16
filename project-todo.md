@@ -132,46 +132,46 @@ Step-by-step build plan. UI first, then game logic, then integrations.
 
 ## Phase 5: Core Game Engine (TypeScript)
 
-- [ ] **Board data model** (`lib/engine/types.ts`)
-  - [ ] `Stone` type (0 = empty, 1 = black, 2 = white)
-  - [ ] `GameState` type (board, turn, moveNumber, captured, ko, history)
-  - [ ] `Move` type (x, y, player, pass flag)
-  - [ ] `Group` type (stones set, liberties count)
-- [ ] **Board utilities** (`lib/engine/board.ts`)
-  - [ ] `createEmptyBoard(size)` — returns flat or 2D array
-  - [ ] `getNeighbors(index, size)` — returns adjacent positions
-  - [ ] `boardToString(board)` / `stringToBoard(str)` — for hashing (ko detection)
-- [ ] **Group & liberty analysis** (`lib/engine/groups.ts`)
-  - [ ] `findGroup(board, position)` — flood-fill to find connected stones
-  - [ ] `countLiberties(board, group)` — count empty adjacent positions
-  - [ ] `getCapturedGroups(board, color)` — find all groups of `color` with 0 liberties
-- [ ] **Move validation** (`lib/engine/rules.ts`)
-  - [ ] `isValidMove(state, x, y)` — checks:
-    - [ ] Position is empty
-    - [ ] Not a suicide move (unless it captures)
-    - [ ] Not a ko violation (positional superko)
-  - [ ] `applyMove(state, x, y)` — returns new state after:
-    - [ ] Placing stone
-    - [ ] Removing captured opponent groups
-    - [ ] Updating capture count
-    - [ ] Updating ko position
-    - [ ] Advancing turn
-  - [ ] `applyPass(state)` — pass turn, track consecutive passes
-- [ ] **Game flow** (`lib/engine/game.ts`)
-  - [ ] `isGameOver(state)` — two consecutive passes
-  - [ ] `getValidMoves(state)` — all legal positions for current player
-- [ ] **Scoring** (`lib/engine/scoring.ts`)
-  - [ ] Territory counting (flood-fill empty regions, assign to surrounding color)
-  - [ ] Area scoring (Chinese rules) and territory scoring (Japanese rules)
-  - [ ] Komi application (6.5 default)
-  - [ ] Final score calculation
-- [ ] **SGF support** (`lib/engine/sgf.ts`)
-  - [ ] `gameToSGF(state, metadata)` — export game as SGF string
-  - [ ] `sgfToGame(sgfString)` — parse SGF into game state
-- [ ] **Engine tests**
-  - [ ] Unit tests for liberty counting, capture detection, ko rule, suicide rule
-  - [ ] Test scoring with known board positions
-  - [ ] Test SGF round-trip (export → import → compare)
+- [x] **Board data model** (`lib/engine/types.ts`)
+  - [x] `Stone` type (0 = empty, 1 = black, 2 = white)
+  - [x] `GameState` type (board, turn, moveNumber, captured, ko, history)
+  - [x] `Move` type (x, y, player, pass flag)
+  - [x] `Group` type (stones set, liberties count)
+- [x] **Board utilities** (`lib/engine/board.ts`)
+  - [x] `createEmptyBoard(size)` — returns flat or 2D array
+  - [x] `getNeighbors(index, size)` — returns adjacent positions
+  - [x] `boardToString(board)` / `stringToBoard(str)` — for hashing (ko detection)
+- [x] **Group & liberty analysis** (`lib/engine/groups.ts`)
+  - [x] `findGroup(board, position)` — flood-fill to find connected stones
+  - [x] `countLiberties(board, group)` — count empty adjacent positions
+  - [x] `getCapturedGroups(board, color)` — find all groups of `color` with 0 liberties
+- [x] **Move validation** (`lib/engine/rules.ts`)
+  - [x] `isValidMove(state, x, y)` — checks:
+    - [x] Position is empty
+    - [x] Not a suicide move (unless it captures)
+    - [x] Not a ko violation (positional superko)
+  - [x] `applyMove(state, x, y)` — returns new state after:
+    - [x] Placing stone
+    - [x] Removing captured opponent groups
+    - [x] Updating capture count
+    - [x] Updating ko position
+    - [x] Advancing turn
+  - [x] `applyPass(state)` — pass turn, track consecutive passes
+- [x] **Game flow** (`lib/engine/game.ts`)
+  - [x] `isGameOver(state)` — two consecutive passes
+  - [x] `getValidMoves(state)` — all legal positions for current player
+- [x] **Scoring** (`lib/engine/scoring.ts`)
+  - [x] Territory counting (flood-fill empty regions, assign to surrounding color)
+  - [x] Area scoring (Chinese rules) and territory scoring (Japanese rules)
+  - [x] Komi application (6.5 default)
+  - [x] Final score calculation
+- [x] **SGF support** (`lib/engine/sgf.ts`)
+  - [x] `gameToSGF(state, metadata)` — export game as SGF string
+  - [x] `sgfToGame(sgfString)` — parse SGF into game state
+- [x] **Engine tests**
+  - [x] Unit tests for liberty counting, capture detection, ko rule, suicide rule
+  - [x] Test scoring with known board positions
+  - [x] Test SGF round-trip (export → import → compare)
 
 ---
 

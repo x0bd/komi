@@ -8,6 +8,7 @@ export function createInitialState(size: number): GameState {
     board: emptyBoard,
     turn: "black",
     moveNumber: 0,
+    consecutivePasses: 0,
     captured: {
       black: 0,
       white: 0,
@@ -31,6 +32,8 @@ export function getValidMoves(state: GameState, size: number, player: PlayerColo
   return moves
 }
 
-export function isGameOver(consecutivePasses: number): boolean {
+export function isGameOver(state: GameState | number): boolean {
+  const consecutivePasses =
+    typeof state === "number" ? state : state.consecutivePasses
   return consecutivePasses >= 2
 }
