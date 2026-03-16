@@ -49,8 +49,9 @@ export default function Home() {
 }
 
 function BoardView() {
-    const { gameState, size, placeStone } = useGameStore();
-    const { board, turn } = gameState;
+    const { gameState, size, placeStone, currentPlayer, validMoves } =
+        useGameStore();
+    const { board } = gameState;
 
     const moveHistory = useGameStore((state) => state.moveHistory);
     const lastMove =
@@ -62,7 +63,8 @@ function BoardView() {
         <GoBoard
             board={board}
             size={size}
-            currentPlayer={turn}
+            currentPlayer={currentPlayer}
+            validMoves={validMoves}
             lastMove={
                 lastMove && !lastMove.isPass
                     ? { x: lastMove.x, y: lastMove.y }

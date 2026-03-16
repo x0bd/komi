@@ -177,36 +177,36 @@ Step-by-step build plan. UI first, then game logic, then integrations.
 
 ## Phase 6: Wire UI to Engine (Playable Local Game)
 
-- [ ] **Game store** (`lib/stores/game-store.ts`)
-  - [ ] Zustand store wrapping the game engine
+- [~] **Game store** (`lib/stores/game-store.ts`)
+  - [x] Zustand store wrapping the game engine
   - [ ] State: gameState, moveHistory, timers, gameMode, isGameOver, winner
-  - [ ] Actions: placeStone, pass, resign, resetGame, setMode
-  - [ ] Derived: currentPlayer, validMoves, scores
-- [ ] **Connect board to store**
-  - [ ] Intersection click → `placeStone(x, y)` through store
-  - [ ] Board reads `gameState.board` from store
-  - [ ] Only show hover ghost on valid moves
-  - [ ] Stone entry animation triggers on new placements
+  - [x] Actions: placeStone, pass, resign, resetGame, setMode
+  - [~] Derived: currentPlayer, validMoves, scores
+- [~] **Connect board to store**
+  - [x] Intersection click → `placeStone(x, y)` through store
+  - [x] Board reads `gameState.board` from store
+  - [x] Only show hover ghost on valid moves
+  - [x] Stone entry animation triggers on new placements
   - [ ] Capture animation triggers on removed stones
-- [ ] **Connect sidebar to store**
-  - [ ] Player cards read current turn, captures, timer
-  - [ ] Move history reads from store's move list
-  - [ ] Pass/Resign buttons dispatch store actions
-  - [ ] Mode toggle resets game and switches mode
+- [x] **Connect sidebar to store**
+  - [x] Player cards read current turn, captures, timer
+  - [x] Move history reads from store's move list
+  - [x] Pass/Resign buttons dispatch store actions
+  - [x] Mode toggle resets game and switches mode
 - [ ] **Timer logic** (`hooks/use-timer.ts`)
   - [ ] Countdown hook — tracks time per player
   - [ ] Pauses on non-active player
   - [ ] Triggers game-over on timeout
   - [ ] Low-time warning threshold (60s, 30s, 10s)
-- [ ] **Game over flow**
+- [~] **Game over flow**
   - [ ] Detect: two passes, resignation, timeout
-  - [ ] Calculate final score (on two passes)
-  - [ ] Show game-over dialog with result
-  - [ ] Play Again resets everything
-- [ ] **Keyboard navigation**
-  - [ ] Arrow keys to move intersection focus
-  - [ ] Enter/Space to place stone
-  - [ ] Focus ring visible on active intersection
+  - [x] Calculate final score (on two passes)
+  - [x] Show game-over dialog with result
+  - [x] Play Again resets everything
+- [x] **Keyboard navigation**
+  - [x] Arrow keys to move intersection focus
+  - [x] Enter/Space to place stone
+  - [x] Focus ring visible on active intersection
 - [ ] **Sound effects** (optional, low priority)
   - [ ] Stone placement click
   - [ ] Capture sound

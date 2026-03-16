@@ -1,6 +1,6 @@
 import { create } from "zustand"
 import type { GameState, Move } from "../engine/types"
-import { createInitialState, isGameOver } from "../engine/game"
+import { createInitialState, getValidMoves, isGameOver } from "../engine/game"
 import { applyMove, applyPass } from "../engine/rules"
 import { calculateScore, type ScoreResult } from "../engine/scoring"
 import { gameToSGF } from "../engine/sgf"
@@ -25,6 +25,8 @@ interface KomiStore {
   gameState: GameState
   moveHistory: Move[]
   consecutivePasses: number
+  currentPlayer: GameState["turn"]
+  validMoves: Array<{ x: number; y: number }>
   isGameOver: boolean
   scoreResult: ScoreResult | null
   
@@ -39,14 +41,22 @@ interface KomiStore {
   exportSGF: () => string
 }
 
+function deriveValidMoves(state: GameState, size: 9 | 13 | 19) {
+  return getValidMoves(state, size, state.turn)
+}
+
+const initialState = createInitialState(19)
+
 export const useGameStore = create<KomiStore>((set, get) => ({
   size: 19,
   komi: 6.5,
   mode: "local",
   
-  gameState: createInitialState(19),
+  gameState: initialState,
   moveHistory: [],
   consecutivePasses: 0,
+  currentPlayer: initialState.turn,
+  validMoves: deriveValidMoves(initialState, 19),
   isGameOver: false,
   scoreResult: null,
 
@@ -106,6 +116,8 @@ export const useGameStore = create<KomiStore>((set, get) => ({
       gameState: nextState,
       moveHistory: [...state.moveHistory, move],
       consecutivePasses: nextState.consecutivePasses,
+      currentPlayer: nextState.turn,
+      validMoves: deriveValidMoves(nextState, size),
     }))
 
     return true
@@ -157,6 +169,8 @@ export const useGameStore = create<KomiStore>((set, get) => ({
       gameState: nextState,
       moveHistory: [...state.moveHistory, move],
       consecutivePasses: nextPasses,
+      currentPlayer: nextState.turn,
+      validMoves: gameOver ? [] : deriveValidMoves(nextState, size),
       isGameOver: gameOver,
       scoreResult,
     }))
@@ -171,6 +185,8 @@ export const useGameStore = create<KomiStore>((set, get) => ({
     learningStore.registerTutorEvent(gameState.turn === "black" ? { type: "player-loss" } : { type: "player-win" })
 
     set({
+      currentPlayer: gameState.turn === "black" ? "white" : "black",
+      validMoves: [],
       isGameOver: true,
       scoreResult: {
         winner: gameState.turn === "black" ? "white" : "black", // Current turn player resigns
@@ -191,6 +207,7 @@ export const useGameStore = create<KomiStore>((set, get) => ({
   resetGame: (newSize, newKomi) => {
     const size = newSize ?? get().size
     const komi = newKomi ?? get().komi
+    const nextState = createInitialState(size)
 
     useLearningStore.getState().resetLiveStreak()
     useLearningStore.getState().registerTutorEvent({ type: "reset" })
@@ -198,9 +215,11 @@ export const useGameStore = create<KomiStore>((set, get) => ({
     set({
       size,
       komi,
-      gameState: createInitialState(size),
+      gameState: nextState,
       moveHistory: [],
       consecutivePasses: 0,
+      currentPlayer: nextState.turn,
+      validMoves: deriveValidMoves(nextState, size),
       isGameOver: false,
       scoreResult: null,
     })
