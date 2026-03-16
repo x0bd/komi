@@ -1,9 +1,18 @@
-import type { GameState, PlayerColor, Move } from "../engine/types"
+import type { GameState, PlayerColor } from "../engine/types"
 import { getValidMoves } from "../engine/game"
+import type { AIDifficulty } from "../stores/game-store"
 
-export async function getRandomAIMove(state: GameState, size: number, player: PlayerColor): Promise<{ x: number; y: number; isPass: boolean }> {
+export async function getRandomAIMove(
+  state: GameState,
+  size: number,
+  player: PlayerColor,
+  difficulty: AIDifficulty = "easy"
+): Promise<{ x: number; y: number; isPass: boolean }> {
   // Artificial delay for UI feel (300-600ms)
-  const delayMs = Math.floor(Math.random() * 300) + 300
+  const delayMs =
+    difficulty === "easy"
+      ? Math.floor(Math.random() * 300) + 300
+      : Math.floor(Math.random() * 300) + 300
   await new Promise(resolve => setTimeout(resolve, delayMs))
 
   const validMoves = getValidMoves(state, size, player)

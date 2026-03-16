@@ -5,14 +5,20 @@ import { getRandomAIMove } from "../lib/ai/random"
 export function useAITurn() {
   const gameState = useGameStore((state) => state.gameState)
   const turn = useGameStore((state) => state.gameState.turn)
+  const moveNumber = useGameStore((state) => state.gameState.moveNumber)
   const mode = useGameStore((state) => state.mode)
+  const aiDifficulty = useGameStore((state) => state.aiDifficulty)
   const size = useGameStore((state) => state.size)
   const isGameOver = useGameStore((state) => state.isGameOver)
   const placeStone = useGameStore((state) => state.placeStone)
   const passTurn = useGameStore((state) => state.passTurn)
   const isProcessingRef = useRef(false)
+  const requestIdRef = useRef(0)
 
   useEffect(() => {
+    requestIdRef.current += 1
+    const requestId = requestIdRef.current
+
     if (mode !== "versus-ai" || isGameOver) {
       isProcessingRef.current = false
       return
@@ -24,7 +30,25 @@ export function useAITurn() {
 
       const processAITurn = async () => {
         try {
-          const move = await getRandomAIMove(gameState, size, "white")
+          const move = await getRandomAIMove(
+            gameState,
+            size,
+            "white",
+            aiDifficulty,
+          )
+          if (requestId !== requestIdRef.current) {
+            return
+          }
+
+          const latest = useGameStore.getState()
+          if (
+            latest.mode !== "versus-ai" ||
+            latest.isGameOver ||
+            latest.gameState.turn !== "white" ||
+            latest.gameState.moveNumber !== moveNumber
+          ) {
+            return
+          }
           
           if (move.isPass) {
             passTurn()
@@ -32,11 +56,29 @@ export function useAITurn() {
             placeStone(move.x, move.y)
           }
         } finally {
-          isProcessingRef.current = false
+          if (requestId === requestIdRef.current) {
+            isProcessingRef.current = false
+          }
         }
       }
 
       processAITurn()
     }
-  }, [turn, mode, isGameOver, gameState, size, placeStone, passTurn])
+
+    return () => {
+      if (requestId === requestIdRef.current) {
+        isProcessingRef.current = false
+      }
+    }
+  }, [
+    turn,
+    moveNumber,
+    mode,
+    aiDifficulty,
+    isGameOver,
+    gameState,
+    size,
+    placeStone,
+    passTurn,
+  ])
 }

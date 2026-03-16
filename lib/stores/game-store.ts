@@ -8,6 +8,7 @@ import { useLearningStore } from "./learning-store"
 import type { StoneColor } from "@/components/game/stone"
 
 export type GameMode = "local" | "versus-ai" | "online"
+export type AIDifficulty = "easy" | "medium" | "hard"
 const LETTERS = "ABCDEFGHJKLMNOPQRST"
 
 function toCoordinate(x: number, y: number, size: number) {
@@ -21,6 +22,7 @@ interface KomiStore {
   size: 9 | 13 | 19
   komi: number
   mode: GameMode
+  aiDifficulty: AIDifficulty
   
   // State
   gameState: GameState
@@ -43,6 +45,7 @@ interface KomiStore {
   passTurn: () => void
   resign: () => void
   setMode: (mode: GameMode) => void
+  setAIDifficulty: (difficulty: AIDifficulty) => void
   resetGame: (size?: 9|13|19, komi?: number) => void
   tickActiveTimer: (elapsedSeconds?: number) => void
   
@@ -86,6 +89,7 @@ export const useGameStore = create<KomiStore>((set, get) => ({
   size: 19,
   komi: 6.5,
   mode: "local",
+  aiDifficulty: "easy",
   
   gameState: initialState,
   moveHistory: [],
@@ -272,6 +276,10 @@ export const useGameStore = create<KomiStore>((set, get) => ({
   setMode: (mode) => {
     set({ mode })
     get().resetGame() // Changing mode resets the game for now
+  },
+
+  setAIDifficulty: (aiDifficulty) => {
+    set({ aiDifficulty })
   },
 
   resetGame: (newSize, newKomi) => {

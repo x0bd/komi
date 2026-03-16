@@ -16,5 +16,14 @@ Original prompt: lets continue building
   - Timeout now ends the game and surfaces a timeout-specific game-over reason.
   - Tightened store subscriptions in `page.tsx` and `use-ai-turn.ts` to avoid dragging the whole UI on every timer tick.
   - Added transient capture animation state in the store and a board overlay so captured stones animate out instead of disappearing instantly.
+- Phase 7 pass:
+  - Added `aiDifficulty` state to the game store.
+  - Added an AI difficulty selector to the sidebar for `Versus AI`.
+  - Kept `Easy` active and left `Medium` / `Hard` visually reserved for later KataGo work.
+  - Hardened `use-ai-turn.ts` so async AI moves are ignored if the game resets, mode changes, or turn state changes before the move resolves.
+  - Threaded the difficulty value through the random AI entry point so the placeholder state is wired, not dead.
 - Remaining high-value Phase 6 work:
   - Optionally expose live score preview from the store if we want the sidebar to show score context before game end.
+- Remaining high-value next steps:
+  - Add live score preview / score breakdown into the sidebar.
+  - Decide whether to start Phase 8 polish next or deepen Phase 7 with better AI heuristics before KataGo.

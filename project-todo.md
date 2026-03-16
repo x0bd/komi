@@ -216,19 +216,19 @@ Step-by-step build plan. UI first, then game logic, then integrations.
 
 ## Phase 7: AI Opponent (Local)
 
-- [ ] **Random AI** (`lib/ai/random.ts`)
-  - [ ] Picks a random valid move from `getValidMoves()`
-  - [ ] Passes if no valid moves
-  - [ ] 300–600ms artificial delay for feel
-- [ ] **AI turn hook** (`hooks/use-ai-turn.ts`)
-  - [ ] Watches store — when it's AI's turn, triggers AI move after delay
-  - [ ] Shows "thinking" state on AI player card
-- [ ] **Wire to mode toggle**
-  - [ ] "Versus AI" mode: AI plays white
-  - [ ] "Local" mode: both players are human
-- [ ] **AI difficulty placeholder**
-  - [ ] UI selector (Easy / Medium / Hard) — only Easy (random) works for now
-  - [ ] Medium and Hard slots reserved for KataGo integration
+- [x] **Random AI** (`lib/ai/random.ts`)
+  - [x] Picks a random valid move from `getValidMoves()`
+  - [x] Passes if no valid moves
+  - [x] 300–600ms artificial delay for feel
+- [x] **AI turn hook** (`hooks/use-ai-turn.ts`)
+  - [x] Watches store — when it's AI's turn, triggers AI move after delay
+  - [x] Shows "thinking" state on AI player card
+- [x] **Wire to mode toggle**
+  - [x] "Versus AI" mode: AI plays white
+  - [x] "Local" mode: both players are human
+- [x] **AI difficulty placeholder**
+  - [x] UI selector (Easy / Medium / Hard) — only Easy (random) works for now
+  - [x] Medium and Hard slots reserved for KataGo integration
 
 ---
 

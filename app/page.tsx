@@ -4,6 +4,7 @@ import { useState } from "react";
 import { GameLayout } from "@/components/layout/game-layout";
 import { GoBoard } from "@/components/game/go-board";
 import { ModeToggle } from "@/components/game/mode-toggle";
+import { AIDifficultySelector } from "@/components/game/ai-difficulty-selector";
 import { PlayerCard } from "@/components/game/player-card";
 import {
     MoveHistorySection,
@@ -94,6 +95,8 @@ function Sidebar() {
     const passTurn = useGameStore((state) => state.passTurn);
     const resign = useGameStore((state) => state.resign);
     const setMode = useGameStore((state) => state.setMode);
+    const aiDifficulty = useGameStore((state) => state.aiDifficulty);
+    const setAIDifficulty = useGameStore((state) => state.setAIDifficulty);
     const size = useGameStore((state) => state.size);
     const isGameOver = useGameStore((state) => state.isGameOver);
     const timers = useGameStore((state) => state.timers);
@@ -124,6 +127,13 @@ function Sidebar() {
                     value={mode as "local" | "versus-ai"}
                     onValueChange={(val) => setMode(val as GameMode)}
                 />
+
+                {mode === "versus-ai" ? (
+                    <AIDifficultySelector
+                        value={aiDifficulty}
+                        onValueChange={setAIDifficulty}
+                    />
+                ) : null}
 
                 <PlayerCard
                     name="Player 1"
