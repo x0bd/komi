@@ -16,6 +16,7 @@ import { useGameStore, type GameMode } from "@/lib/stores/game-store";
 import { splitClock, useGameClock } from "@/hooks/use-timer";
 import { useAITurn } from "@/hooks/use-ai-turn";
 import { AIReaction } from "@/components/learning/ai-reaction";
+import { AIChatPanel } from "@/components/learning/ai-chat-panel";
 import { XPBar } from "@/components/learning/xp-bar";
 import { LuBot } from "react-icons/lu";
 
@@ -87,7 +88,7 @@ function BoardView() {
 
 function Sidebar() {
     const [expandedPanel, setExpandedPanel] = useState<
-        "history" | "streak" | null
+        "history" | "sensei" | "streak" | null
     >(null);
     const gameState = useGameStore((state) => state.gameState);
     const moveHistory = useGameStore((state) => state.moveHistory);
@@ -179,6 +180,15 @@ function Sidebar() {
                         expandedPanel === "history"
                             ? "lg:h-full lg:flex-1"
                             : "lg:flex-none"
+                    }
+                />
+
+                <AIChatPanel
+                    collapsed={expandedPanel !== "sensei"}
+                    onToggle={() =>
+                        setExpandedPanel((current) =>
+                            current === "sensei" ? null : "sensei",
+                        )
                     }
                 />
 

@@ -22,8 +22,16 @@ Original prompt: lets continue building
   - Kept `Easy` active and left `Medium` / `Hard` visually reserved for later KataGo work.
   - Hardened `use-ai-turn.ts` so async AI moves are ignored if the game resets, mode changes, or turn state changes before the move resolves.
   - Threaded the difficulty value through the random AI entry point so the placeholder state is wired, not dead.
+- Phase 8 pass:
+  - Added a compact `Sensei` sidebar card with collapsed and expanded states.
+  - The expanded tutor card now shows current goal, cue, recent coaching notes, and quick tip chips.
+  - Restored the missing `ai-chat-panel.tsx` module so learning message types and UI are aligned again.
+  - Added one-shot tutor tip flags for first capture and territory phase.
+  - Wired first-capture and move-50 territory tips into the game flow.
 - Remaining high-value Phase 6 work:
   - Optionally expose live score preview from the store if we want the sidebar to show score context before game end.
 - Remaining high-value next steps:
+  - Polish the new `Sensei` card visual direction to match the strongest sidebar surfaces.
+  - Decide whether to keep the tutor inside the sidebar or also reintroduce a mobile-only tutor sheet/FAB.
   - Add live score preview / score breakdown into the sidebar.
   - Decide whether to start Phase 8 polish next or deepen Phase 7 with better AI heuristics before KataGo.

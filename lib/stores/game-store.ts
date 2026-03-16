@@ -143,6 +143,10 @@ export const useGameStore = create<KomiStore>((set, get) => ({
           ? { type: "player-capture", count: capturedCount, coordinate }
           : { type: "player-stone", coordinate }
       )
+      if (capturedCount > 0 && !learningStore.tipFlags.firstCapture) {
+        learningStore.requestTip("How to capture")
+        learningStore.markTipShown("firstCapture")
+      }
     } else {
       learningStore.registerStreakEvent(
         capturedCount > 0
@@ -154,6 +158,11 @@ export const useGameStore = create<KomiStore>((set, get) => ({
           ? { type: "opponent-capture", count: capturedCount, coordinate }
           : { type: "opponent-stone", coordinate }
       )
+    }
+
+    if (nextState.moveNumber >= 50 && !learningStore.tipFlags.territory) {
+      learningStore.requestTip("Territory")
+      learningStore.markTipShown("territory")
     }
 
     const move: Move = { x, y, player: currentPlayer, isPass: false }

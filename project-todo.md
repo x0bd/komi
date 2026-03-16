@@ -234,23 +234,23 @@ Step-by-step build plan. UI first, then game logic, then integrations.
 
 ## Phase 8: Learning & Gamification UI
 
-- [ ] **AI tutor panel** (`components/learning/ai-chat-panel.tsx`)
-  - [ ] Chat-style message list with scroll
+- [~] **AI tutor panel** (`components/learning/ai-chat-panel.tsx`)
+  - [~] Chat-style message list with scroll
   - [ ] Teal header with Sensei avatar and online indicator
-  - [ ] Quick tip chips: "Opening tips", "How to capture", "Territory"
-  - [ ] Static tips for now (hardcoded tip dictionary from go-3 inspo)
-- [ ] **XP bar** (`components/learning/xp-bar.tsx`)
-  - [ ] Streak counter with fire icon
-  - [ ] Progress bar (shadcn Progress, gradient fill)
-  - [ ] Increments on captures, game completions
-- [ ] **Tip triggers**
-  - [ ] Show opening tip on game start
-  - [ ] Show capture tip on first capture
-  - [ ] Show territory tip after move 50
-  - [ ] Show contextual AI move commentary (placeholder text)
-- [ ] **Sidebar integration**
-  - [ ] XP bar and AI tutor panel slot into sidebar below move history
-  - [ ] Collapsible on smaller screens
+  - [x] Quick tip chips: "Opening tips", "How to capture", "Territory"
+  - [x] Static tips for now (hardcoded tip dictionary from go-3 inspo)
+- [x] **XP bar** (`components/learning/xp-bar.tsx`)
+  - [x] Streak counter with fire icon
+  - [x] Progress bar (shadcn Progress, gradient fill)
+  - [x] Increments on captures, game completions
+- [~] **Tip triggers**
+  - [~] Show opening tip on game start
+  - [x] Show capture tip on first capture
+  - [x] Show territory tip after move 50
+  - [x] Show contextual AI move commentary (placeholder text)
+- [~] **Sidebar integration**
+  - [x] XP bar and AI tutor panel slot into sidebar below move history
+  - [x] Collapsible on smaller screens
   - [ ] Mobile: AI tutor becomes a FAB → Sheet
 
 ---

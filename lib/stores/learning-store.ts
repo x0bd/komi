@@ -37,6 +37,10 @@ interface LearningStore {
   tutorCue: string
   tutorPulseKey: number
   tutorEventCount: number
+  tipFlags: {
+    firstCapture: boolean
+    territory: boolean
+  }
   
   // AI Chat
   chatMessages: ChatMessage[]
@@ -48,6 +52,7 @@ interface LearningStore {
   resetLiveStreak: () => void
   addMessage: (text: string) => void
   requestTip: (topic: string) => void
+  markTipShown: (tip: "firstCapture" | "territory") => void
   clearMessages: () => void
 }
 
@@ -200,6 +205,10 @@ export const useLearningStore = create<LearningStore>()(
       tutorCue: "Play shape first, then attack.",
       tutorPulseKey: 0,
       tutorEventCount: 0,
+      tipFlags: {
+        firstCapture: false,
+        territory: false,
+      },
       chatMessages: [
         { id: "msg-0", text: "Konnichiwa! I am Sensei. I will coach your decisions move by move.", tone: "coach" }
       ],
@@ -264,6 +273,10 @@ export const useLearningStore = create<LearningStore>()(
           tutorCue: "Play shape first, then attack.",
           tutorPulseKey: 0,
           tutorEventCount: 0,
+          tipFlags: {
+            firstCapture: false,
+            territory: false,
+          },
         }),
 
       addMessage: (text) => {
@@ -289,6 +302,14 @@ export const useLearningStore = create<LearningStore>()(
             addMessage(`I don't have a specific tip for "${topic}" yet, but keep practicing!`)
         }
       },
+
+      markTipShown: (tip) =>
+        set((state) => ({
+          tipFlags: {
+            ...state.tipFlags,
+            [tip]: true,
+          },
+        })),
 
       clearMessages: () => set({ chatMessages: [] })
     }),
