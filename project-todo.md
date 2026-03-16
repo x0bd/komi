@@ -179,27 +179,27 @@ Step-by-step build plan. UI first, then game logic, then integrations.
 
 - [~] **Game store** (`lib/stores/game-store.ts`)
   - [x] Zustand store wrapping the game engine
-  - [ ] State: gameState, moveHistory, timers, gameMode, isGameOver, winner
+  - [x] State: gameState, moveHistory, timers, gameMode, isGameOver, winner
   - [x] Actions: placeStone, pass, resign, resetGame, setMode
-  - [~] Derived: currentPlayer, validMoves, scores
+  - [x] Derived: currentPlayer, validMoves, scores
 - [~] **Connect board to store**
   - [x] Intersection click → `placeStone(x, y)` through store
   - [x] Board reads `gameState.board` from store
   - [x] Only show hover ghost on valid moves
   - [x] Stone entry animation triggers on new placements
-  - [ ] Capture animation triggers on removed stones
+  - [x] Capture animation triggers on removed stones
 - [x] **Connect sidebar to store**
   - [x] Player cards read current turn, captures, timer
   - [x] Move history reads from store's move list
   - [x] Pass/Resign buttons dispatch store actions
   - [x] Mode toggle resets game and switches mode
-- [ ] **Timer logic** (`hooks/use-timer.ts`)
-  - [ ] Countdown hook — tracks time per player
-  - [ ] Pauses on non-active player
-  - [ ] Triggers game-over on timeout
-  - [ ] Low-time warning threshold (60s, 30s, 10s)
-- [~] **Game over flow**
-  - [ ] Detect: two passes, resignation, timeout
+- [x] **Timer logic** (`hooks/use-timer.ts`)
+  - [x] Countdown hook — tracks time per player
+  - [x] Pauses on non-active player
+  - [x] Triggers game-over on timeout
+  - [x] Low-time warning threshold (60s, 30s, 10s)
+- [x] **Game over flow**
+  - [x] Detect: two passes, resignation, timeout
   - [x] Calculate final score (on two passes)
   - [x] Show game-over dialog with result
   - [x] Play Again resets everything

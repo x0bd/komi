@@ -12,7 +12,7 @@ import {
 import { GameControls } from "@/components/game/game-controls";
 import { GameOverDialog } from "@/components/game/game-over-dialog";
 import { useGameStore, type GameMode } from "@/lib/stores/game-store";
-import { useTimer } from "@/hooks/use-timer";
+import { splitClock, useGameClock } from "@/hooks/use-timer";
 import { useAITurn } from "@/hooks/use-ai-turn";
 import { AIReaction } from "@/components/learning/ai-reaction";
 import { XPBar } from "@/components/learning/xp-bar";
@@ -21,43 +21,51 @@ import { LuBot } from "react-icons/lu";
 const LETTERS = "ABCDEFGHJKLMNOPQRST".split("");
 
 export default function Home() {
-    const store = useGameStore();
+    const isGameOver = useGameStore((state) => state.isGameOver);
+    const scoreResult = useGameStore((state) => state.scoreResult);
+    const gameOverReason = useGameStore((state) => state.gameOverReason);
+    const resetGame = useGameStore((state) => state.resetGame);
 
     // Attach AI turn listener
     useAITurn();
+    useGameClock();
+
+    const result =
+        !scoreResult || scoreResult.winner === "draw"
+            ? "draw"
+            : scoreResult?.winner === "black"
+              ? "black-wins"
+              : "white-wins";
 
     return (
         <>
             <GameLayout board={<BoardView />} sidebar={<Sidebar />} />
             <AIReaction />
             <GameOverDialog
-                open={store.isGameOver}
+                open={isGameOver}
                 onOpenChange={() => {}}
-                result={
-                    store.scoreResult?.winner === "draw"
-                        ? "draw"
-                        : store.scoreResult?.margin === Infinity
-                          ? "resignation"
-                          : store.scoreResult?.winner === "black"
-                            ? "black-wins"
-                            : "white-wins"
-                }
-                onPlayAgain={() => store.resetGame()}
+                result={result}
+                reason={gameOverReason ?? "score"}
+                onPlayAgain={() => resetGame()}
             />
         </>
     );
 }
 
 function BoardView() {
-    const { gameState, size, placeStone, currentPlayer, validMoves } =
-        useGameStore();
-    const { board } = gameState;
-
-    const moveHistory = useGameStore((state) => state.moveHistory);
+    const board = useGameStore((state) => state.gameState.board);
+    const size = useGameStore((state) => state.size);
+    const placeStone = useGameStore((state) => state.placeStone);
+    const currentPlayer = useGameStore((state) => state.currentPlayer);
+    const validMoves = useGameStore((state) => state.validMoves);
+    const recentCaptures = useGameStore((state) => state.recentCaptures);
     const lastMove =
-        moveHistory.length > 0
-            ? moveHistory[moveHistory.length - 1]
-            : undefined;
+        useGameStore((state) => {
+            const moveHistory = state.moveHistory;
+            return moveHistory.length > 0
+                ? moveHistory[moveHistory.length - 1]
+                : undefined;
+        });
 
     return (
         <GoBoard
@@ -65,6 +73,7 @@ function BoardView() {
             size={size}
             currentPlayer={currentPlayer}
             validMoves={validMoves}
+            capturedStones={recentCaptures}
             lastMove={
                 lastMove && !lastMove.isPass
                     ? { x: lastMove.x, y: lastMove.y }
@@ -79,24 +88,25 @@ function Sidebar() {
     const [expandedPanel, setExpandedPanel] = useState<
         "history" | "streak" | null
     >(null);
-    const store = useGameStore();
-    const { gameState, moveHistory, mode, passTurn, resign, setMode } = store;
+    const gameState = useGameStore((state) => state.gameState);
+    const moveHistory = useGameStore((state) => state.moveHistory);
+    const mode = useGameStore((state) => state.mode);
+    const passTurn = useGameStore((state) => state.passTurn);
+    const resign = useGameStore((state) => state.resign);
+    const setMode = useGameStore((state) => state.setMode);
+    const size = useGameStore((state) => state.size);
+    const isGameOver = useGameStore((state) => state.isGameOver);
+    const timers = useGameStore((state) => state.timers);
 
-    const blackTimer = useTimer(
-        15 * 60,
-        gameState.turn === "black" && !store.isGameOver,
-    );
-    const whiteTimer = useTimer(
-        15 * 60,
-        gameState.turn === "white" && !store.isGameOver,
-    );
+    const blackTimer = splitClock(timers.black);
+    const whiteTimer = splitClock(timers.white);
 
     // Map engine moves to UI MoveEntry format
     const mappedMoves: MoveEntry[] = moveHistory.map((m, idx) => {
         let coordinate = "—";
         if (!m.isPass) {
             const col = LETTERS[m.x];
-            const row = store.size - m.y;
+            const row = size - m.y;
             coordinate = `${col}${row}`;
         }
         return {
@@ -122,14 +132,14 @@ function Sidebar() {
                     captures={gameState.captured.black}
                     minutes={blackTimer.minutes}
                     seconds={blackTimer.seconds}
-                    isActive={gameState.turn === "black" && !store.isGameOver}
+                    isActive={gameState.turn === "black" && !isGameOver}
                     isLowTime={blackTimer.isLowTime}
                 />
 
                 <PlayerCard
                     name={
                         mode === "versus-ai"
-                            ? gameState.turn === "white" && !store.isGameOver
+                            ? gameState.turn === "white" && !isGameOver
                                 ? "Sensei AI (Thinking...)"
                                 : "Sensei AI"
                             : "Player 2"
@@ -140,7 +150,7 @@ function Sidebar() {
                     captures={gameState.captured.white}
                     minutes={whiteTimer.minutes}
                     seconds={whiteTimer.seconds}
-                    isActive={gameState.turn === "white" && !store.isGameOver}
+                    isActive={gameState.turn === "white" && !isGameOver}
                     isLowTime={whiteTimer.isLowTime}
                 />
             </div>
@@ -176,7 +186,7 @@ function Sidebar() {
                 <GameControls
                     onPass={passTurn}
                     onResign={resign}
-                    disabled={store.isGameOver}
+                    disabled={isGameOver}
                 />
             </div>
         </div>

@@ -5,6 +5,7 @@ import { applyMove, applyPass } from "../engine/rules"
 import { calculateScore, type ScoreResult } from "../engine/scoring"
 import { gameToSGF } from "../engine/sgf"
 import { useLearningStore } from "./learning-store"
+import type { StoneColor } from "@/components/game/stone"
 
 export type GameMode = "local" | "versus-ai" | "online"
 const LETTERS = "ABCDEFGHJKLMNOPQRST"
@@ -27,7 +28,14 @@ interface KomiStore {
   consecutivePasses: number
   currentPlayer: GameState["turn"]
   validMoves: Array<{ x: number; y: number }>
+  recentCaptures: Array<{ x: number; y: number; color: StoneColor; key: string }>
+  timers: {
+    black: number
+    white: number
+  }
   isGameOver: boolean
+  winner: "black" | "white" | "draw" | null
+  gameOverReason: "score" | "resignation" | "timeout" | null
   scoreResult: ScoreResult | null
   
   // Actions
@@ -36,6 +44,7 @@ interface KomiStore {
   resign: () => void
   setMode: (mode: GameMode) => void
   resetGame: (size?: 9|13|19, komi?: number) => void
+  tickActiveTimer: (elapsedSeconds?: number) => void
   
   // Derived / Utility
   exportSGF: () => string
@@ -46,6 +55,32 @@ function deriveValidMoves(state: GameState, size: 9 | 13 | 19) {
 }
 
 const initialState = createInitialState(19)
+const DEFAULT_TIME_SECONDS = 15 * 60
+let captureClearTimeout: ReturnType<typeof setTimeout> | null = null
+
+function deriveCapturedStones(
+  previousBoard: GameState["board"],
+  nextBoard: GameState["board"],
+  size: 9 | 13 | 19,
+  moveNumber: number
+) {
+  const captures: Array<{ x: number; y: number; color: StoneColor; key: string }> = []
+
+  for (let index = 0; index < previousBoard.length; index++) {
+    if (previousBoard[index] !== 0 && nextBoard[index] === 0) {
+      const x = index % size
+      const y = Math.floor(index / size)
+      captures.push({
+        x,
+        y,
+        color: previousBoard[index] === 1 ? "black" : "white",
+        key: `capture-${moveNumber}-${index}`,
+      })
+    }
+  }
+
+  return captures
+}
 
 export const useGameStore = create<KomiStore>((set, get) => ({
   size: 19,
@@ -57,7 +92,14 @@ export const useGameStore = create<KomiStore>((set, get) => ({
   consecutivePasses: 0,
   currentPlayer: initialState.turn,
   validMoves: deriveValidMoves(initialState, 19),
+  recentCaptures: [],
+  timers: {
+    black: DEFAULT_TIME_SECONDS,
+    white: DEFAULT_TIME_SECONDS,
+  },
   isGameOver: false,
+  winner: null,
+  gameOverReason: null,
   scoreResult: null,
 
   placeStone: (x, y) => {
@@ -111,6 +153,12 @@ export const useGameStore = create<KomiStore>((set, get) => ({
     }
 
     const move: Move = { x, y, player: currentPlayer, isPass: false }
+    const recentCaptures = deriveCapturedStones(
+      gameState.board,
+      nextState.board,
+      size,
+      nextState.moveNumber,
+    )
 
     set((state) => ({
       gameState: nextState,
@@ -118,7 +166,19 @@ export const useGameStore = create<KomiStore>((set, get) => ({
       consecutivePasses: nextState.consecutivePasses,
       currentPlayer: nextState.turn,
       validMoves: deriveValidMoves(nextState, size),
+      recentCaptures,
     }))
+
+    if (captureClearTimeout) {
+      clearTimeout(captureClearTimeout)
+      captureClearTimeout = null
+    }
+    if (recentCaptures.length > 0) {
+      captureClearTimeout = setTimeout(() => {
+        useGameStore.setState({ recentCaptures: [] })
+        captureClearTimeout = null
+      }, 260)
+    }
 
     return true
   },
@@ -171,7 +231,10 @@ export const useGameStore = create<KomiStore>((set, get) => ({
       consecutivePasses: nextPasses,
       currentPlayer: nextState.turn,
       validMoves: gameOver ? [] : deriveValidMoves(nextState, size),
+      recentCaptures: [],
       isGameOver: gameOver,
+      winner: gameOver && scoreResult ? scoreResult.winner : null,
+      gameOverReason: gameOver ? "score" : null,
       scoreResult,
     }))
   },
@@ -179,6 +242,10 @@ export const useGameStore = create<KomiStore>((set, get) => ({
   resign: () => {
     const { isGameOver, gameState } = get()
     if (isGameOver) return
+    if (captureClearTimeout) {
+      clearTimeout(captureClearTimeout)
+      captureClearTimeout = null
+    }
 
     const learningStore = useLearningStore.getState()
     learningStore.registerStreakEvent(gameState.turn === "black" ? { type: "player-loss" } : { type: "player-win" })
@@ -187,7 +254,10 @@ export const useGameStore = create<KomiStore>((set, get) => ({
     set({
       currentPlayer: gameState.turn === "black" ? "white" : "black",
       validMoves: [],
+      recentCaptures: [],
       isGameOver: true,
+      winner: gameState.turn === "black" ? "white" : "black",
+      gameOverReason: "resignation",
       scoreResult: {
         winner: gameState.turn === "black" ? "white" : "black", // Current turn player resigns
         margin: Infinity,
@@ -208,6 +278,10 @@ export const useGameStore = create<KomiStore>((set, get) => ({
     const size = newSize ?? get().size
     const komi = newKomi ?? get().komi
     const nextState = createInitialState(size)
+    if (captureClearTimeout) {
+      clearTimeout(captureClearTimeout)
+      captureClearTimeout = null
+    }
 
     useLearningStore.getState().resetLiveStreak()
     useLearningStore.getState().registerTutorEvent({ type: "reset" })
@@ -220,8 +294,82 @@ export const useGameStore = create<KomiStore>((set, get) => ({
       consecutivePasses: 0,
       currentPlayer: nextState.turn,
       validMoves: deriveValidMoves(nextState, size),
+      recentCaptures: [],
+      timers: {
+        black: DEFAULT_TIME_SECONDS,
+        white: DEFAULT_TIME_SECONDS,
+      },
       isGameOver: false,
+      winner: null,
+      gameOverReason: null,
       scoreResult: null,
+    })
+  },
+
+  tickActiveTimer: (elapsedSeconds = 1) => {
+    const {
+      currentPlayer,
+      isGameOver,
+      timers,
+      gameState,
+    } = get()
+
+    if (isGameOver || elapsedSeconds <= 0) return
+
+    const nextTime = Math.max(0, timers[currentPlayer] - elapsedSeconds)
+    if (nextTime > 0) {
+      set({
+        timers: {
+          ...timers,
+          [currentPlayer]: nextTime,
+        },
+      })
+      return
+    }
+
+    const winner = currentPlayer === "black" ? "white" : "black"
+    const learningStore = useLearningStore.getState()
+    learningStore.registerStreakEvent(
+      currentPlayer === "black"
+        ? { type: "player-loss" }
+        : { type: "player-win" }
+    )
+    learningStore.registerTutorEvent(
+      currentPlayer === "black"
+        ? { type: "player-loss" }
+        : { type: "player-win" }
+    )
+
+    set({
+      timers: {
+        ...timers,
+        [currentPlayer]: 0,
+      },
+      validMoves: [],
+      recentCaptures: [],
+      isGameOver: true,
+      winner,
+      currentPlayer: gameState.turn,
+      gameOverReason: "timeout",
+      scoreResult: {
+        winner,
+        margin: Infinity,
+        black: {
+          territory: 0,
+          captures: gameState.captured.black,
+          stones: 0,
+          total: 0,
+        },
+        white: {
+          territory: 0,
+          captures: gameState.captured.white,
+          stones: 0,
+          komi: 0,
+          total: 0,
+        },
+        ruleset: "japanese",
+        territoryMap: [],
+      },
     })
   },
 

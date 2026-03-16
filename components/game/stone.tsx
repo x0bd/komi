@@ -9,15 +9,18 @@ export function Stone({
   color,
   isLastMove = false,
   ghost = false,
+  capture = false,
 }: {
   color: StoneColor
   isLastMove?: boolean
   ghost?: boolean
+  capture?: boolean
 }) {
   return (
     <div
       className={cn(
-        "animate-stone-place relative h-[92%] w-[92%] rounded-full transition-opacity duration-150",
+        "relative h-[92%] w-[92%] rounded-full transition-opacity duration-150",
+        capture ? "animate-stone-capture" : "animate-stone-place",
         color === "black"
           ? "bg-[radial-gradient(circle_at_30%_30%,_var(--stone-black-highlight),_var(--stone-black))] shadow-[2px_3px_6px_var(--stone-shadow)]"
           : "border border-[--stone-white-border] bg-[radial-gradient(circle_at_30%_30%,_var(--stone-white-highlight),_var(--stone-white))] shadow-[2px_3px_6px_var(--stone-shadow)]",

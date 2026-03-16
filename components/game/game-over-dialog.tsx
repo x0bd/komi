@@ -14,23 +14,30 @@ export function GameOverDialog({
   open,
   onOpenChange,
   result,
+  reason = "score",
   onPlayAgain,
   className,
 }: {
   open: boolean
   onOpenChange?: (open: boolean) => void
-  result: "black-wins" | "white-wins" | "draw" | "resignation"
+  result: "black-wins" | "white-wins" | "draw"
+  reason?: "score" | "resignation" | "timeout"
   onPlayAgain?: () => void
   className?: string
 }) {
-  const resultText =
+  const winnerText =
     result === "black-wins"
       ? "Black wins"
       : result === "white-wins"
         ? "White wins"
-        : result === "draw"
-          ? "Draw"
-          : "Game over (resignation)"
+        : "Draw"
+
+  const resultText =
+    reason === "resignation"
+      ? `${winnerText} by resignation`
+      : reason === "timeout"
+        ? `${winnerText} on time`
+        : winnerText
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

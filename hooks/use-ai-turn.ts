@@ -3,7 +3,13 @@ import { useGameStore } from "../lib/stores/game-store"
 import { getRandomAIMove } from "../lib/ai/random"
 
 export function useAITurn() {
-  const { gameState, mode, size, isGameOver, placeStone, passTurn } = useGameStore()
+  const gameState = useGameStore((state) => state.gameState)
+  const turn = useGameStore((state) => state.gameState.turn)
+  const mode = useGameStore((state) => state.mode)
+  const size = useGameStore((state) => state.size)
+  const isGameOver = useGameStore((state) => state.isGameOver)
+  const placeStone = useGameStore((state) => state.placeStone)
+  const passTurn = useGameStore((state) => state.passTurn)
   const isProcessingRef = useRef(false)
 
   useEffect(() => {
@@ -13,7 +19,7 @@ export function useAITurn() {
     }
 
     // AI plays White
-    if (gameState.turn === "white" && !isProcessingRef.current) {
+    if (turn === "white" && !isProcessingRef.current) {
       isProcessingRef.current = true
 
       const processAITurn = async () => {
@@ -32,5 +38,5 @@ export function useAITurn() {
 
       processAITurn()
     }
-  }, [gameState.turn, mode, isGameOver, gameState, size, placeStone, passTurn])
+  }, [turn, mode, isGameOver, gameState, size, placeStone, passTurn])
 }

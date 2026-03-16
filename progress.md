@@ -9,7 +9,12 @@ Original prompt: lets continue building
   - Legal-move hover now only appears on playable intersections.
   - Illegal clicks are ignored at the board edge instead of surfacing ghost stones.
   - Added arrow-key navigation, Enter/Space placement, and a visible focus ring on intersections.
+- Additional pass:
+  - Moved match timers into the game store.
+  - Added a single game clock hook in `hooks/use-timer.ts` instead of separate local card timers.
+  - Sidebar timers now render from store state.
+  - Timeout now ends the game and surfaces a timeout-specific game-over reason.
+  - Tightened store subscriptions in `page.tsx` and `use-ai-turn.ts` to avoid dragging the whole UI on every timer tick.
+  - Added transient capture animation state in the store and a board overlay so captured stones animate out instead of disappearing instantly.
 - Remaining high-value Phase 6 work:
-  - Move timer state into the game store and handle timeout game-over.
-  - Add capture removal animation instead of stones disappearing instantly.
   - Optionally expose live score preview from the store if we want the sidebar to show score context before game end.

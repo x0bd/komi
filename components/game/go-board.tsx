@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from "react"
 import { cn } from "@/lib/utils"
 import { Intersection } from "@/components/game/intersection"
-import type { StoneColor } from "@/components/game/stone"
+import { Stone, type StoneColor } from "@/components/game/stone"
 
 const LETTERS = "ABCDEFGHJKLMNOPQRST".split("")
 
@@ -12,6 +12,7 @@ export function GoBoard({
   board,
   currentPlayer = "black",
   validMoves = [],
+  capturedStones = [],
   lastMove,
   onIntersectionClick,
   className,
@@ -20,6 +21,7 @@ export function GoBoard({
   board: number[]
   currentPlayer?: StoneColor
   validMoves?: Array<{ x: number; y: number }>
+  capturedStones?: Array<{ x: number; y: number; color: StoneColor; key: string }>
   lastMove?: { x: number; y: number }
   onIntersectionClick?: (x: number, y: number) => void
   className?: string
@@ -159,6 +161,21 @@ export function GoBoard({
             <div className="relative aspect-square w-full rounded-md">
               {/* SVG grid lines + hoshi */}
               <GridLayer size={size} hoshiPoints={hoshiPoints} />
+
+              {capturedStones.map((capture) => (
+                <div
+                  key={capture.key}
+                  className="pointer-events-none absolute z-20 flex items-center justify-center"
+                  style={{
+                    left: `${(capture.x / size) * 100}%`,
+                    top: `${(capture.y / size) * 100}%`,
+                    width: `${100 / size}%`,
+                    height: `${100 / size}%`,
+                  }}
+                >
+                  <Stone color={capture.color} capture />
+                </div>
+              ))}
 
               {/* Intersection grid */}
               <div
