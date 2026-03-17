@@ -69,3 +69,11 @@ Original prompt: lets continue building
 - 2026-03-17: Phase 9 prep.
   - Added `.env.example` with `DATABASE_URL` (pooled Neon) and `DIRECT_URL` (direct Neon) placeholders for Prisma runtime + migrations.
   - Constraint preserved: no tests/build/lint were run in this pass.
+
+- 2026-03-17: Phase 9 Prisma scaffold started.
+  - Added `prisma/schema.prisma` with `User`, `Game`, and `Move` models + relations.
+  - Added `lib/db.ts` Prisma singleton client.
+  - Added Prisma scripts to `package.json`: `prisma:generate`, `prisma:migrate`, `prisma:push`, `prisma:studio`.
+  - Added Prisma dependencies entries in `package.json` (`@prisma/client`, `prisma`).
+  - Blocker: package installation command timed out in this environment, so lockfile/dependency install still needs to be completed locally.
+  - Constraint preserved: no tests/build/lint were run in this pass.

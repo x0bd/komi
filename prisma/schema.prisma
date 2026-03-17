@@ -1,0 +1,54 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String?
+  email     String   @unique
+  avatar    String?
+  rating    Int      @default(1200)
+  createdAt DateTime @default(now())
+
+  gamesAsBlack Game[] @relation("BlackGames")
+  gamesAsWhite Game[] @relation("WhiteGames")
+}
+
+model Game {
+  id            String    @id @default(cuid())
+  blackPlayerId String
+  whitePlayerId String
+  result        String?
+  sgf           String?
+  startedAt     DateTime  @default(now())
+  endedAt       DateTime?
+
+  blackPlayer User   @relation("BlackGames", fields: [blackPlayerId], references: [id], onDelete: Restrict)
+  whitePlayer User   @relation("WhiteGames", fields: [whitePlayerId], references: [id], onDelete: Restrict)
+  moves       Move[]
+
+  @@index([blackPlayerId, startedAt])
+  @@index([whitePlayerId, startedAt])
+}
+
+model Move {
+  id         String   @id @default(cuid())
+  gameId     String
+  moveNumber Int
+  player     String
+  x          Int?
+  y          Int?
+  isPass     Boolean  @default(false)
+  timestamp  DateTime @default(now())
+
+  game Game @relation(fields: [gameId], references: [id], onDelete: Cascade)
+
+  @@unique([gameId, moveNumber])
+  @@index([gameId, timestamp])
+}

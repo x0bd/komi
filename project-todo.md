@@ -260,13 +260,13 @@ Step-by-step build plan. UI first, then game logic, then integrations.
 - [ ] **Neon database setup**
   - [ ] Provision Neon serverless PostgreSQL instance
   - [ ] Configure connection string in `.env.local`
-- [ ] **Prisma schema** (`prisma/schema.prisma`)
-  - [ ] `User` — id, name, email, avatar, rating, createdAt
-  - [ ] `Game` — id, blackPlayerId, whitePlayerId, result, sgf, startedAt, endedAt
-  - [ ] `Move` — id, gameId, moveNumber, player, x, y, isPass, timestamp
-  - [ ] Relations: User ↔ Game (as black/white), Game ↔ Move
-- [ ] **Prisma client** (`lib/db.ts`)
-  - [ ] Singleton client instance
+- [x] **Prisma schema** (`prisma/schema.prisma`)
+  - [x] `User` — id, name, email, avatar, rating, createdAt
+  - [x] `Game` — id, blackPlayerId, whitePlayerId, result, sgf, startedAt, endedAt
+  - [x] `Move` — id, gameId, moveNumber, player, x, y, isPass, timestamp
+  - [x] Relations: User ↔ Game (as black/white), Game ↔ Move
+- [~] **Prisma client** (`lib/db.ts`)
+  - [x] Singleton client instance
   - [ ] Run initial migration
 - [ ] **Auth setup**
   - [ ] Neon Auth integration
