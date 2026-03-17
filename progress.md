@@ -75,5 +75,9 @@ Original prompt: lets continue building
   - Added `lib/db.ts` Prisma singleton client.
   - Added Prisma scripts to `package.json`: `prisma:generate`, `prisma:migrate`, `prisma:push`, `prisma:studio`.
   - Added Prisma dependencies entries in `package.json` (`@prisma/client`, `prisma`).
-  - Blocker: package installation command timed out in this environment, so lockfile/dependency install still needs to be completed locally.
+  - Package install was completed manually by user in their terminal.
+  - Ran `pnpm prisma generate` successfully (Prisma Client v6.19.2).
+  - Ran initial migration (`init_phase9`) successfully against Neon.
+  - Created/applied migration at `prisma/migrations/20260317162645_init_phase9/migration.sql`.
+  - Note: Prisma CLI did not auto-read `.env.local`; migration was run by exporting env vars from `.env.local` into the shell first.
   - Constraint preserved: no tests/build/lint were run in this pass.

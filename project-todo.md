@@ -257,9 +257,9 @@ Step-by-step build plan. UI first, then game logic, then integrations.
 
 ## Phase 9: Database & Auth
 
-- [ ] **Neon database setup**
-  - [ ] Provision Neon serverless PostgreSQL instance
-  - [ ] Configure connection string in `.env.local`
+- [x] **Neon database setup**
+  - [x] Provision Neon serverless PostgreSQL instance
+  - [x] Configure connection string in `.env.local`
 - [x] **Prisma schema** (`prisma/schema.prisma`)
   - [x] `User` — id, name, email, avatar, rating, createdAt
   - [x] `Game` — id, blackPlayerId, whitePlayerId, result, sgf, startedAt, endedAt
@@ -267,7 +267,7 @@ Step-by-step build plan. UI first, then game logic, then integrations.
   - [x] Relations: User ↔ Game (as black/white), Game ↔ Move
 - [~] **Prisma client** (`lib/db.ts`)
   - [x] Singleton client instance
-  - [ ] Run initial migration
+  - [x] Run initial migration
 - [ ] **Auth setup**
   - [ ] Neon Auth integration
   - [ ] Sign up / sign in flow
