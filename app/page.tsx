@@ -18,6 +18,7 @@ import { useAITurn } from "@/hooks/use-ai-turn";
 import { AIReaction } from "@/components/learning/ai-reaction";
 import { AIChatPanel } from "@/components/learning/ai-chat-panel";
 import { XPBar } from "@/components/learning/xp-bar";
+import { MobileSenseiFab } from "@/components/learning/mobile-sensei-fab";
 import { LuBot } from "react-icons/lu";
 
 const LETTERS = "ABCDEFGHJKLMNOPQRST".split("");
@@ -43,6 +44,7 @@ export default function Home() {
         <>
             <GameLayout board={<BoardView />} sidebar={<Sidebar />} />
             <AIReaction />
+            <MobileSenseiFab />
             <GameOverDialog
                 open={isGameOver}
                 onOpenChange={() => {}}
@@ -190,6 +192,7 @@ function Sidebar() {
                             current === "sensei" ? null : "sensei",
                         )
                     }
+                    className="hidden lg:block"
                 />
 
                 <XPBar

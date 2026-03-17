@@ -35,3 +35,11 @@ Original prompt: lets continue building
   - Decide whether to keep the tutor inside the sidebar or also reintroduce a mobile-only tutor sheet/FAB.
   - Add live score preview / score breakdown into the sidebar.
   - Decide whether to start Phase 8 polish next or deepen Phase 7 with better AI heuristics before KataGo.
+
+- 2026-03-17: Phase 8 tutor polish continuation.
+  - Upgraded `AIChatPanel` expanded state with a tutor-accent header (avatar, online signal, notes counter) and improved visual hierarchy.
+  - Converted tutor notes into a true scrollable chat feed (`ScrollArea`) while preserving quick-tip chips and contextual goal/cue.
+  - Added a mobile-only Sensei FAB (`components/learning/mobile-sensei-fab.tsx`) at bottom-left that animates into a pill on hover/focus using GSAP.
+  - Wired FAB to open a bottom Sheet with the full tutor panel for mobile play sessions.
+  - Kept sidebar tutor card desktop-only (`lg`) so mobile layout no longer overloads vertical space.
+  - Constraint preserved: no tests/build/lint were run in this pass.

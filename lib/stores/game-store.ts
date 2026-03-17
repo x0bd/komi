@@ -35,6 +35,7 @@ interface KomiStore {
     black: number
     white: number
   }
+  liveScore: ScoreResult
   isGameOver: boolean
   winner: "black" | "white" | "draw" | null
   gameOverReason: "score" | "resignation" | "timeout" | null
@@ -59,6 +60,12 @@ function deriveValidMoves(state: GameState, size: 9 | 13 | 19) {
 
 const initialState = createInitialState(19)
 const DEFAULT_TIME_SECONDS = 15 * 60
+const INITIAL_SCORE = calculateScore(
+  initialState.board,
+  19,
+  initialState.captured,
+  6.5,
+)
 let captureClearTimeout: ReturnType<typeof setTimeout> | null = null
 
 function deriveCapturedStones(
@@ -101,6 +108,7 @@ export const useGameStore = create<KomiStore>((set, get) => ({
     black: DEFAULT_TIME_SECONDS,
     white: DEFAULT_TIME_SECONDS,
   },
+  liveScore: INITIAL_SCORE,
   isGameOver: false,
   winner: null,
   gameOverReason: null,
@@ -180,6 +188,7 @@ export const useGameStore = create<KomiStore>((set, get) => ({
       currentPlayer: nextState.turn,
       validMoves: deriveValidMoves(nextState, size),
       recentCaptures,
+      liveScore: calculateScore(nextState.board, size, nextState.captured, get().komi),
     }))
 
     if (captureClearTimeout) {
@@ -245,6 +254,7 @@ export const useGameStore = create<KomiStore>((set, get) => ({
       currentPlayer: nextState.turn,
       validMoves: gameOver ? [] : deriveValidMoves(nextState, size),
       recentCaptures: [],
+      liveScore: calculateScore(nextState.board, size, nextState.captured, komi),
       isGameOver: gameOver,
       winner: gameOver && scoreResult ? scoreResult.winner : null,
       gameOverReason: gameOver ? "score" : null,
@@ -271,6 +281,7 @@ export const useGameStore = create<KomiStore>((set, get) => ({
       isGameOver: true,
       winner: gameState.turn === "black" ? "white" : "black",
       gameOverReason: "resignation",
+      liveScore: calculateScore(gameState.board, get().size, gameState.captured, get().komi),
       scoreResult: {
         winner: gameState.turn === "black" ? "white" : "black", // Current turn player resigns
         margin: Infinity,
@@ -316,6 +327,7 @@ export const useGameStore = create<KomiStore>((set, get) => ({
         black: DEFAULT_TIME_SECONDS,
         white: DEFAULT_TIME_SECONDS,
       },
+      liveScore: calculateScore(nextState.board, size, nextState.captured, komi),
       isGameOver: false,
       winner: null,
       gameOverReason: null,
@@ -368,6 +380,7 @@ export const useGameStore = create<KomiStore>((set, get) => ({
       winner,
       currentPlayer: gameState.turn,
       gameOverReason: "timeout",
+      liveScore: calculateScore(gameState.board, get().size, gameState.captured, get().komi),
       scoreResult: {
         winner,
         margin: Infinity,

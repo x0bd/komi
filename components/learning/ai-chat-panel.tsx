@@ -8,6 +8,7 @@ import {
     LuSparkles,
 } from "react-icons/lu";
 import { Card, CardContent } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { useLearningStore } from "@/lib/stores/learning-store";
 import { cn } from "@/lib/utils";
 
@@ -50,7 +51,7 @@ export function AIChatPanel({
     const requestTip = useLearningStore((state) => state.requestTip);
 
     const latestMessage = chatMessages[chatMessages.length - 1];
-    const recentMessages = chatMessages.slice(-4).reverse();
+    const visibleMessages = chatMessages.slice(-12);
 
     const moodLabel =
         tutorMood === "celebrate"
@@ -118,17 +119,18 @@ export function AIChatPanel({
             )}
         >
             <CardContent className="p-0">
-                <div className="px-5 py-4">
-                    <div className="flex items-start justify-between gap-4">
+                <div className="relative overflow-hidden bg-tutor-accent px-5 py-4 text-tutor-foreground">
+                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-black/10 via-transparent to-white/10" />
+                    <div className="relative flex items-start justify-between gap-4">
                         <div className="flex items-center gap-3">
-                            <span className="flex size-11 items-center justify-center rounded-full bg-secondary text-accent shadow-sm">
-                                <LuBot className="size-[18px]" />
+                            <span className="flex size-11 items-center justify-center rounded-full bg-tutor-foreground/15 text-tutor-foreground shadow-sm">
+                                <LuBot className="size-[18px] drop-shadow-sm" />
                             </span>
                             <div>
-                                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground">
+                                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-tutor-foreground/70">
                                     Sensei
                                 </p>
-                                <p className="font-display text-[1.35rem] font-semibold leading-none tracking-[-0.03em] text-foreground/[0.92]">
+                                <p className="font-display text-[1.35rem] font-semibold leading-none tracking-[-0.03em] text-tutor-foreground">
                                     {moodLabel}
                                 </p>
                             </div>
@@ -136,10 +138,10 @@ export function AIChatPanel({
 
                         <div className="flex items-start gap-2">
                             <div className="text-right">
-                                <p className="font-display text-2xl font-extrabold leading-none tracking-[-0.05em] text-accent">
+                                <p className="font-display text-2xl font-extrabold leading-none tracking-[-0.05em] text-tutor-foreground">
                                     {chatMessages.length}
                                 </p>
-                                <p className="mt-1 text-[11px] font-medium text-muted-foreground">
+                                <p className="mt-1 text-[11px] font-medium text-tutor-foreground/70">
                                     notes
                                 </p>
                             </div>
@@ -148,15 +150,17 @@ export function AIChatPanel({
                                     type="button"
                                     onClick={onToggle}
                                     aria-label="Collapse Sensei panel"
-                                    className="flex size-9 items-center justify-center rounded-full border border-border/65 bg-background/70 text-muted-foreground shadow-sm transition-colors hover:text-foreground"
+                                    className="flex size-9 items-center justify-center rounded-full border border-tutor-foreground/30 bg-tutor-foreground/10 text-tutor-foreground/80 shadow-sm transition-colors hover:text-tutor-foreground"
                                 >
                                     <LuChevronUp className="size-4" />
                                 </button>
                             ) : null}
                         </div>
                     </div>
+                </div>
 
-                    <div className="mt-4 rounded-xl border border-border/60 bg-secondary/25 p-4">
+                <div className="px-5 py-4">
+                    <div className="rounded-xl border border-border/60 bg-secondary/25 p-4">
                         <div className="flex items-start gap-3">
                             <span className="mt-0.5 flex size-8 items-center justify-center rounded-full bg-background/80 text-accent shadow-sm">
                                 <LuSparkles className="size-[14px]" />
@@ -175,26 +179,37 @@ export function AIChatPanel({
                         </div>
                     </div>
 
-                    <div className="mt-4 space-y-2">
-                        {recentMessages.map((message) => (
-                            <div
-                                key={message.id}
-                                className={cn(
-                                    "rounded-2xl border px-3.5 py-3 text-sm leading-relaxed shadow-sm",
-                                    getToneClasses(message.tone),
-                                )}
-                            >
-                                <div className="mb-1 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
-                                    <LuMessageSquareQuote className="size-3.5" />
-                                    <span>
-                                        {message.tone === "coach"
-                                            ? "Coach note"
-                                            : message.tone}
-                                    </span>
+                    <div className="mt-4 overflow-hidden rounded-xl border border-border/60 bg-secondary/15">
+                        <ScrollArea className="h-[210px]">
+                            <div className="space-y-2 p-3">
+                                {visibleMessages.map((message) => (
+                                    <div
+                                        key={message.id}
+                                        className={cn(
+                                            "rounded-2xl border px-3.5 py-3 text-sm leading-relaxed shadow-sm",
+                                            getToneClasses(message.tone),
+                                        )}
+                                    >
+                                        <div className="mb-1 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
+                                            <LuMessageSquareQuote className="size-3.5" />
+                                            <span>
+                                                {message.tone === "coach"
+                                                    ? "Coach note"
+                                                    : message.tone}
+                                            </span>
+                                        </div>
+                                        <p className="text-pretty">
+                                            {message.text}
+                                        </p>
+                                    </div>
+                                ))}
+                                {!visibleMessages.length ? (
+                                    <p className="px-1 py-4 text-center text-sm text-muted-foreground">
+                                        Sensei will react after your next move.
+                                    </p>
+                                ) : null}
                                 </div>
-                                <p className="text-pretty">{message.text}</p>
-                            </div>
-                        ))}
+                        </ScrollArea>
                     </div>
 
                     <div className="mt-4 flex flex-wrap gap-2">

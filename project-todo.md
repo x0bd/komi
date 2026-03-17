@@ -235,8 +235,8 @@ Step-by-step build plan. UI first, then game logic, then integrations.
 ## Phase 8: Learning & Gamification UI
 
 - [~] **AI tutor panel** (`components/learning/ai-chat-panel.tsx`)
-  - [~] Chat-style message list with scroll
-  - [ ] Teal header with Sensei avatar and online indicator
+  - [x] Chat-style message list with scroll
+  - [x] Teal header with Sensei avatar and online indicator
   - [x] Quick tip chips: "Opening tips", "How to capture", "Territory"
   - [x] Static tips for now (hardcoded tip dictionary from go-3 inspo)
 - [x] **XP bar** (`components/learning/xp-bar.tsx`)
@@ -251,7 +251,7 @@ Step-by-step build plan. UI first, then game logic, then integrations.
 - [~] **Sidebar integration**
   - [x] XP bar and AI tutor panel slot into sidebar below move history
   - [x] Collapsible on smaller screens
-  - [ ] Mobile: AI tutor becomes a FAB → Sheet
+  - [x] Mobile: AI tutor becomes a FAB → Sheet
 
 ---
 
