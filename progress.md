@@ -81,3 +81,11 @@ Original prompt: lets continue building
   - Created/applied migration at `prisma/migrations/20260317162645_init_phase9/migration.sql`.
   - Note: Prisma CLI did not auto-read `.env.local`; migration was run by exporting env vars from `.env.local` into the shell first.
   - Constraint preserved: no tests/build/lint were run in this pass.
+
+- 2026-03-17: Neon Auth server scaffold added.
+  - Added `lib/auth/server.ts` using `createNeonAuth` from `@neondatabase/auth/next/server`.
+  - Added auth route handler: `app/api/auth/[...path]/route.ts`.
+  - Added client helper: `lib/auth/client.ts` (`createAuthClient`).
+  - Added auth env placeholders to `.env.example`: `NEON_AUTH_BASE_URL`, `NEON_AUTH_COOKIE_SECRET`.
+  - Added `@neondatabase/auth` dependency entry to `package.json`.
+  - Constraint preserved: no tests/build/lint were run in this pass.

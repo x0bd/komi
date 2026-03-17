@@ -268,8 +268,8 @@ Step-by-step build plan. UI first, then game logic, then integrations.
 - [~] **Prisma client** (`lib/db.ts`)
   - [x] Singleton client instance
   - [x] Run initial migration
-- [ ] **Auth setup**
-  - [ ] Neon Auth integration
+- [~] **Auth setup**
+  - [x] Neon Auth integration
   - [ ] Sign up / sign in flow
   - [ ] Session management
   - [ ] Protected routes (game pages require auth)
