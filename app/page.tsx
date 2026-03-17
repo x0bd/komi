@@ -6,6 +6,7 @@ import { GoBoard } from "@/components/game/go-board";
 import { ModeToggle } from "@/components/game/mode-toggle";
 import { AIDifficultySelector } from "@/components/game/ai-difficulty-selector";
 import { PlayerCard } from "@/components/game/player-card";
+import { LiveScoreCard } from "@/components/game/live-score-card";
 import {
     MoveHistorySection,
     type MoveEntry,
@@ -103,6 +104,7 @@ function Sidebar() {
     const size = useGameStore((state) => state.size);
     const isGameOver = useGameStore((state) => state.isGameOver);
     const timers = useGameStore((state) => state.timers);
+    const liveScore = useGameStore((state) => state.liveScore);
 
     const blackTimer = splitClock(timers.black);
     const whiteTimer = splitClock(timers.white);
@@ -169,6 +171,12 @@ function Sidebar() {
             </div>
 
             <div className="flex min-h-0 flex-col gap-4">
+                <LiveScoreCard
+                    score={liveScore}
+                    moveCount={mappedMoves.length}
+                    isGameOver={isGameOver}
+                />
+
                 <MoveHistorySection
                     moves={mappedMoves}
                     moveCount={mappedMoves.length}

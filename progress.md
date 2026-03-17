@@ -43,3 +43,9 @@ Original prompt: lets continue building
   - Wired FAB to open a bottom Sheet with the full tutor panel for mobile play sessions.
   - Kept sidebar tutor card desktop-only (`lg`) so mobile layout no longer overloads vertical space.
   - Constraint preserved: no tests/build/lint were run in this pass.
+
+- 2026-03-17: Live score preview added to sidebar.
+  - Added `components/game/live-score-card.tsx` to visualize real-time score estimate from store `liveScore`.
+  - Card shows current lead text, black/white totals, and a compact proportional bar.
+  - Wired score card into sidebar flow above move history for constant visibility.
+  - Constraint preserved: no tests/build/lint were run in this pass.
