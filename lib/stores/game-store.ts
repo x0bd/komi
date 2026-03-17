@@ -311,8 +311,15 @@ export const useGameStore = create<KomiStore>((set, get) => ({
       captureClearTimeout = null
     }
 
-    useLearningStore.getState().resetLiveStreak()
-    useLearningStore.getState().registerTutorEvent({ type: "reset" })
+    const learningStore = useLearningStore.getState()
+    learningStore.resetLiveStreak()
+    learningStore.registerTutorEvent({ type: "reset" })
+
+    const refreshedLearningStore = useLearningStore.getState()
+    if (!refreshedLearningStore.tipFlags.opening) {
+      refreshedLearningStore.requestTip("Opening tips")
+      refreshedLearningStore.markTipShown("opening")
+    }
     
     set({
       size,

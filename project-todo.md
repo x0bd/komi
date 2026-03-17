@@ -227,14 +227,14 @@ Step-by-step build plan. UI first, then game logic, then integrations.
   - [x] "Versus AI" mode: AI plays white
   - [x] "Local" mode: both players are human
 - [x] **AI difficulty placeholder**
-  - [x] UI selector (Easy / Medium / Hard) — only Easy (random) works for now
-  - [x] Medium and Hard slots reserved for KataGo integration
+  - [x] UI selector (Easy / Medium / Hard)
+  - [x] Easy = random, Medium/Hard = heuristic policy until KataGo integration
 
 ---
 
 ## Phase 8: Learning & Gamification UI
 
-- [~] **AI tutor panel** (`components/learning/ai-chat-panel.tsx`)
+- [x] **AI tutor panel** (`components/learning/ai-chat-panel.tsx`)
   - [x] Chat-style message list with scroll
   - [x] Teal header with Sensei avatar and online indicator
   - [x] Quick tip chips: "Opening tips", "How to capture", "Territory"
@@ -243,12 +243,12 @@ Step-by-step build plan. UI first, then game logic, then integrations.
   - [x] Streak counter with fire icon
   - [x] Progress bar (shadcn Progress, gradient fill)
   - [x] Increments on captures, game completions
-- [~] **Tip triggers**
-  - [~] Show opening tip on game start
+- [x] **Tip triggers**
+  - [x] Show opening tip on game start
   - [x] Show capture tip on first capture
   - [x] Show territory tip after move 50
   - [x] Show contextual AI move commentary (placeholder text)
-- [~] **Sidebar integration**
+- [x] **Sidebar integration**
   - [x] XP bar and AI tutor panel slot into sidebar below move history
   - [x] Collapsible on smaller screens
   - [x] Mobile: AI tutor becomes a FAB → Sheet

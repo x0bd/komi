@@ -49,3 +49,19 @@ Original prompt: lets continue building
   - Card shows current lead text, black/white totals, and a compact proportional bar.
   - Wired score card into sidebar flow above move history for constant visibility.
   - Constraint preserved: no tests/build/lint were run in this pass.
+
+- 2026-03-17: AI difficulty behavior upgraded.
+  - Reworked `lib/ai/random.ts` so difficulty levels are behaviorally distinct:
+    - `easy`: random valid move.
+    - `medium`: weighted heuristic policy (captures, liberties, pressure, opening shape).
+    - `hard`: stronger heuristic with simple one-ply counter-capture risk penalty.
+  - Enabled `medium` and `hard` options in `components/game/ai-difficulty-selector.tsx`.
+  - Updated roadmap wording in `project-todo.md` to reflect heuristic medium/hard prior to KataGo.
+  - Constraint preserved: no tests/build/lint were run in this pass.
+
+- 2026-03-17: Opening tip trigger completed.
+  - Added `opening` tip flag in `learning-store` and wired it into `markTipShown`.
+  - Reset flow now reliably triggers `Opening tips` once per new game start via `game-store.resetGame`.
+  - Added a concise opening tip seed message for first load and shortened tip copy so tutor notes stay compact.
+  - Marked remaining Phase 8 checklist items complete (AI tutor panel, Tip triggers, Sidebar integration).
+  - Constraint preserved: no tests/build/lint were run in this pass.

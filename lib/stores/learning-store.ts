@@ -38,6 +38,7 @@ interface LearningStore {
   tutorPulseKey: number
   tutorEventCount: number
   tipFlags: {
+    opening: boolean
     firstCapture: boolean
     territory: boolean
   }
@@ -52,7 +53,7 @@ interface LearningStore {
   resetLiveStreak: () => void
   addMessage: (text: string) => void
   requestTip: (topic: string) => void
-  markTipShown: (tip: "firstCapture" | "territory") => void
+  markTipShown: (tip: "opening" | "firstCapture" | "territory") => void
   clearMessages: () => void
 }
 
@@ -206,11 +207,13 @@ export const useLearningStore = create<LearningStore>()(
       tutorPulseKey: 0,
       tutorEventCount: 0,
       tipFlags: {
+        opening: false,
         firstCapture: false,
         territory: false,
       },
       chatMessages: [
-        { id: "msg-0", text: "Konnichiwa! I am Sensei. I will coach your decisions move by move.", tone: "coach" }
+        { id: "msg-0", text: "Konnichiwa! I am Sensei. I will coach your decisions move by move.", tone: "coach" },
+        { id: "msg-1", text: "Opening tip: take corners first, then sides, and keep your stones connected.", tone: "tip" },
       ],
 
       addXP: (amount) => {
@@ -274,6 +277,7 @@ export const useLearningStore = create<LearningStore>()(
           tutorPulseKey: 0,
           tutorEventCount: 0,
           tipFlags: {
+            opening: false,
             firstCapture: false,
             territory: false,
           },
@@ -290,13 +294,13 @@ export const useLearningStore = create<LearningStore>()(
         
         switch (topic) {
           case "Opening tips":
-            addMessage("In the opening, prioritize the corners first. They are the easiest places to surround territory. The sequence goes: Corners, Sides, then center.")
+            addMessage("Opening tip: take corners first, then sides, and keep your stones connected.")
             break
           case "How to capture":
-            addMessage("To capture a stone, you must surround it completely by filling all of its adjacent empty intersections (liberties).")
+            addMessage("Capture by taking all liberties of a group. Count liberties before you fight.")
             break
           case "Territory":
-            addMessage("Points are scored by surrounding empty intersections with your stones. Focus on building secure borders!")
+            addMessage("Secure territory with stable borders first, then reduce your opponent's weak areas.")
             break
           default:
             addMessage(`I don't have a specific tip for "${topic}" yet, but keep practicing!`)

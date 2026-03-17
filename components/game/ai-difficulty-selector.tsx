@@ -10,8 +10,8 @@ const OPTIONS: Array<{
     enabled: boolean;
 }> = [
     { value: "easy", label: "Easy", enabled: true },
-    { value: "medium", label: "Medium", enabled: false },
-    { value: "hard", label: "Hard", enabled: false },
+    { value: "medium", label: "Medium", enabled: true },
+    { value: "hard", label: "Hard", enabled: true },
 ];
 
 export function AIDifficultySelector({
