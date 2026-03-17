@@ -65,3 +65,7 @@ Original prompt: lets continue building
   - Added a concise opening tip seed message for first load and shortened tip copy so tutor notes stay compact.
   - Marked remaining Phase 8 checklist items complete (AI tutor panel, Tip triggers, Sidebar integration).
   - Constraint preserved: no tests/build/lint were run in this pass.
+
+- 2026-03-17: Phase 9 prep.
+  - Added `.env.example` with `DATABASE_URL` (pooled Neon) and `DIRECT_URL` (direct Neon) placeholders for Prisma runtime + migrations.
+  - Constraint preserved: no tests/build/lint were run in this pass.
