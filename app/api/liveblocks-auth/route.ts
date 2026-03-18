@@ -1,53 +1,50 @@
-import { getSession } from "@/lib/auth/session"
-import { db } from "@/lib/db"
-import { getLiveblocksServer, LiveblocksConfigError } from "@/lib/liveblocks/server"
+import { randomUUID } from "node:crypto"
 
-export async function POST() {
-  let liveblocks
+import { NextRequest, NextResponse } from "next/server"
+
+import { LiveblocksConfigError, getLiveblocksServer } from "@/lib/liveblocks/server"
+
+export async function POST(request: NextRequest) {
+  let liveblocks: ReturnType<typeof getLiveblocksServer>
+
   try {
     liveblocks = getLiveblocksServer()
   } catch (error) {
     if (error instanceof LiveblocksConfigError) {
-      return new Response(error.message, { status: 503 })
+      return NextResponse.json({ error: error.message }, { status: 503 })
     }
+
     throw error
   }
 
-  const session = await getSession()
-  const authUser = session?.user as
-    | { id?: string; email?: string | null; name?: string | null; image?: string | null }
-    | undefined
+  const body = (await request.json().catch(() => ({}))) as { room?: string }
+  const room = body.room?.trim()
 
-  if (!authUser?.id || !authUser.email) {
-    return new Response("Unauthorized", { status: 401 })
+  if (!room) {
+    return NextResponse.json({ error: "room is required" }, { status: 400 })
   }
 
-  const user = await db.user.upsert({
-    where: { email: authUser.email },
-    update: {
-      name: authUser.name ?? undefined,
-      avatar: authUser.image ?? undefined,
-    },
-    create: {
-      email: authUser.email,
-      name: authUser.name ?? undefined,
-      avatar: authUser.image ?? undefined,
-    },
-  })
+  let userId = request.headers.get("x-user-id") ?? `guest-${randomUUID().slice(0, 8)}`
 
-  const { status, body } = await liveblocks.identifyUser(
-    {
-      userId: user.id,
-      groupIds: [],
-    },
-    {
-      userInfo: {
-        name: user.name ?? "Komi Player",
-        avatar: user.avatar ?? undefined,
-        email: user.email,
-      },
+  try {
+    const authModule = await import("@/lib/auth/server")
+    const auth = (authModule as any).auth
+
+    if (auth && typeof auth.getSession === "function") {
+      const session = await auth.getSession(request)
+      const signedInUserId = session?.user?.id ?? session?.id
+
+      if (typeof signedInUserId === "string" && signedInUserId.length > 0) {
+        userId = signedInUserId
+      }
     }
-  )
+  } catch {
+    // Keep guest fallback user id when auth module or session is unavailable.
+  }
 
-  return new Response(body, { status })
+  const session = (liveblocks as any).prepareSession(userId)
+  session.allow(room, session.FULL_ACCESS)
+  const { status, body: authBody } = await session.authorize()
+
+  return new Response(authBody, { status })
 }
