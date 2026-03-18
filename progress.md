@@ -103,3 +103,19 @@ Original prompt: lets continue building
   - Added session helper `lib/auth/session.ts` with `getSession()` and `requireSession()`.
   - Updated `project-todo.md` Phase 9 auth/prisma checklist items to complete.
   - Constraint preserved: no tests/build/lint were run in this pass.
+
+- 2026-03-18: Phase 9 user profile + DB user sync completed.
+  - Split game route into server wrapper + client component:
+    - `app/page.tsx` is now server-rendered and calls `ensureDbUser()` before rendering.
+    - Prior client game implementation moved to `components/pages/home-page-client.tsx`.
+  - Extended `lib/auth/session.ts`:
+    - Added `requireSessionUser()` for typed auth user access.
+    - Added `ensureDbUser()` to upsert user by email into Prisma and sync name/avatar.
+  - Added protected profile page at `app/profile/page.tsx` with:
+    - Display name, avatar, email, rating
+    - Win/loss/draw summary stats
+    - Recent games table from Prisma (`Game` relation history)
+  - Added profile quick-link in topbar (`components/layout/game-layout.tsx`).
+  - Expanded middleware protection to include `/profile/:path*` in `proxy.ts`.
+  - Updated `project-todo.md` to mark Phase 9 user profile checklist complete.
+  - Constraint preserved: no tests/build/lint were run in this pass.
