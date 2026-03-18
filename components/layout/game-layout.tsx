@@ -1,6 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 export function GameLayout({
@@ -26,7 +28,17 @@ export function GameLayout({
                 <span className="pointer-events-auto font-display text-sm font-bold tracking-[0.12em] text-foreground/40 select-none uppercase">
                     Komi
                 </span>
-                <ThemeToggle className="pointer-events-auto" />
+                <div className="pointer-events-auto flex items-center gap-2">
+                    <Button
+                        render={<Link href="/profile" />}
+                        variant="outline"
+                        size="sm"
+                        className="hidden sm:inline-flex"
+                    >
+                        Profile
+                    </Button>
+                    <ThemeToggle className="pointer-events-auto" />
+                </div>
             </header>
 
             {/* Main area */}

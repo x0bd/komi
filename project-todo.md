@@ -274,9 +274,9 @@ Step-by-step build plan. UI first, then game logic, then integrations.
   - [x] Session management
   - [x] Protected routes (game pages require auth)
 - [ ] **User profile**
-  - [ ] Display name, avatar
-  - [ ] Game history list
-  - [ ] Win/loss record, rating
+  - [x] Display name, avatar
+  - [x] Game history list
+  - [x] Win/loss record, rating
 
 ---
 
