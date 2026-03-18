@@ -1,8 +1,14 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { RoomProvider } from "@liveblocks/react";
+import {
+    RoomProvider,
+    useOthers,
+    useSelf,
+    useStatus,
+    useUpdateMyPresence,
+} from "@liveblocks/react";
 import { GameLayout } from "@/components/layout/game-layout";
 import { GoBoard } from "@/components/game/go-board";
 import { ModeToggle } from "@/components/game/mode-toggle";
@@ -24,8 +30,11 @@ import { AIChatPanel } from "@/components/learning/ai-chat-panel";
 import { XPBar } from "@/components/learning/xp-bar";
 import { MobileSenseiFab } from "@/components/learning/mobile-sensei-fab";
 import type { ScoreResult } from "@/lib/engine/scoring";
+import type { GameState, Move } from "@/lib/engine/types";
 import { useMultiplayerStore } from "@/lib/stores/multiplayer-store";
 import { LuBot } from "react-icons/lu";
+import { OnlineRoomSync } from "@/components/game/online-room-sync";
+import type { StoneColor } from "@/components/game/stone";
 
 const LETTERS = "ABCDEFGHJKLMNOPQRST".split("");
 
@@ -61,6 +70,7 @@ export default function HomePageClient() {
     const mode = useGameStore((state) => state.mode);
     const setMode = useGameStore((state) => state.setMode);
     const size = useGameStore((state) => state.size);
+    const gameState = useGameStore((state) => state.gameState);
     const timers = useGameStore((state) => state.timers);
     const moveHistory = useGameStore((state) => state.moveHistory);
     const exportSGF = useGameStore((state) => state.exportSGF);
@@ -73,7 +83,7 @@ export default function HomePageClient() {
 
     // Attach AI turn listener
     useAITurn();
-    useGameClock();
+    useGameClock(mode !== "online");
 
     const result =
         !scoreResult || scoreResult.winner === "draw"
@@ -148,9 +158,23 @@ export default function HomePageClient() {
             mode={mode}
             roomId={roomId}
             size={size}
+            gameState={gameState}
+            moveHistory={moveHistory}
             timers={timers}
+            isGameOver={isGameOver}
+            winner={winner}
+            gameOverReason={gameOverReason}
         >
-            <GameLayout board={<BoardView />} sidebar={<Sidebar />} />
+            <GameLayout
+                board={
+                    mode === "online" && roomId ? (
+                        <OnlineBoardView />
+                    ) : (
+                        <LocalBoardView />
+                    )
+                }
+                sidebar={<Sidebar />}
+            />
             <AIReaction />
             <MobileSenseiFab />
             <GameOverDialog
@@ -168,13 +192,23 @@ function OnlineRoomShell({
     mode,
     roomId,
     size,
+    gameState,
+    moveHistory,
     timers,
+    isGameOver,
+    winner,
+    gameOverReason,
     children,
 }: {
     mode: GameMode;
     roomId: string | null;
     size: 9 | 13 | 19;
+    gameState: GameState;
+    moveHistory: Move[];
     timers: { black: number; white: number };
+    isGameOver: boolean;
+    winner: "black" | "white" | "draw" | null;
+    gameOverReason: "score" | "resignation" | "timeout" | null;
     children: React.ReactNode;
 }) {
     if (mode !== "online" || !roomId) {
@@ -188,21 +222,33 @@ function OnlineRoomShell({
                 cursor: null,
                 hoveredIntersection: null,
                 connectionQuality: "good",
+                stoneColor: null,
             }}
             initialStorage={{
-                board: Array(size * size).fill(0),
-                turn: "black",
-                captured: { black: 0, white: 0 },
-                moveNumber: 0,
+                board: [...gameState.board],
+                turn: gameState.turn,
+                captured: {
+                    black: gameState.captured.black,
+                    white: gameState.captured.white,
+                },
+                moveNumber: gameState.moveNumber,
+                consecutivePasses: gameState.consecutivePasses,
+                ko: gameState.ko,
+                history: [...gameState.history],
+                moveHistory: moveHistory.map((move) => ({ ...move })),
                 timers: { black: timers.black, white: timers.white },
+                isGameOver,
+                winner,
+                gameOverReason,
             }}
         >
+            <OnlineRoomSync />
             {children}
         </RoomProvider>
     );
 }
 
-function BoardView() {
+function LocalBoardView() {
     const board = useGameStore((state) => state.gameState.board);
     const size = useGameStore((state) => state.size);
     const placeStone = useGameStore((state) => state.placeStone);
@@ -229,6 +275,100 @@ function BoardView() {
                     ? { x: lastMove.x, y: lastMove.y }
                     : undefined
             }
+            onIntersectionClick={(x, y) => placeStone(x, y)}
+        />
+    );
+}
+
+function OnlineBoardView() {
+    const board = useGameStore((state) => state.gameState.board);
+    const size = useGameStore((state) => state.size);
+    const placeStone = useGameStore((state) => state.placeStone);
+    const currentPlayer = useGameStore((state) => state.currentPlayer);
+    const validMoves = useGameStore((state) => state.validMoves);
+    const recentCaptures = useGameStore((state) => state.recentCaptures);
+    const lastMove =
+        useGameStore((state) => {
+            const history = state.moveHistory;
+            return history.length > 0 ? history[history.length - 1] : undefined;
+        });
+
+    const others = useOthers();
+    const selfConnectionId = useSelf((me) => me.connectionId);
+    const status = useStatus();
+    const updateMyPresence = useUpdateMyPresence();
+
+    const myAssignedColor = useMemo<StoneColor | null>(() => {
+        if (selfConnectionId === null) {
+            return null;
+        }
+
+        const ids = [selfConnectionId, ...others.map((other) => other.connectionId)]
+            .sort((a, b) => a - b)
+            .slice(0, 2);
+
+        if (ids.length === 0) {
+            return null;
+        }
+
+        return ids[0] === selfConnectionId ? "black" : "white";
+    }, [others, selfConnectionId]);
+
+    const opponentHover = useMemo(() => {
+        const hovered = others.find((other) => other.presence.hoveredIntersection);
+        const intersection = hovered?.presence.hoveredIntersection;
+
+        if (!hovered || !intersection) {
+            return null;
+        }
+
+        const fallbackColor: StoneColor =
+            myAssignedColor === "black" ? "white" : "black";
+
+        return {
+            x: intersection.x,
+            y: intersection.y,
+            color: hovered.presence.stoneColor ?? fallbackColor,
+        };
+    }, [myAssignedColor, others]);
+
+    useEffect(() => {
+        const connectionQuality =
+            status === "connected"
+                ? "good"
+                : status === "reconnecting"
+                  ? "poor"
+                  : "offline";
+
+        updateMyPresence({
+            stoneColor: myAssignedColor,
+            connectionQuality,
+        });
+    }, [myAssignedColor, status, updateMyPresence]);
+
+    useEffect(
+        () => () => {
+            updateMyPresence({ hoveredIntersection: null });
+        },
+        [updateMyPresence],
+    );
+
+    return (
+        <GoBoard
+            board={board}
+            size={size}
+            currentPlayer={currentPlayer}
+            validMoves={validMoves}
+            capturedStones={recentCaptures}
+            opponentHover={opponentHover}
+            lastMove={
+                lastMove && !lastMove.isPass
+                    ? { x: lastMove.x, y: lastMove.y }
+                    : undefined
+            }
+            onHoverIntersectionChange={(next) => {
+                updateMyPresence({ hoveredIntersection: next });
+            }}
             onIntersectionClick={(x, y) => placeStone(x, y)}
         />
     );

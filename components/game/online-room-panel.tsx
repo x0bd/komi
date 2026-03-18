@@ -93,6 +93,14 @@ function ConnectedRoomDetails({
     return "Disconnected"
   }, [status])
 
+  const connectionQuality = useMemo(() => {
+    if (status === "connected") return "Good"
+    if (status === "reconnecting") return "Poor"
+    return "Offline"
+  }, [status])
+
+  const opponentStatus = otherConnectionIds.length > 0 ? "Online" : "Waiting"
+
   return (
     <div className="space-y-2 rounded-xl bg-muted/30 p-3">
       <div className="flex items-center justify-between">
@@ -101,6 +109,12 @@ function ConnectedRoomDetails({
       </div>
       <p className="text-xs text-muted-foreground">
         Players in room: {otherConnectionIds.length + 1}
+      </p>
+      <p className="text-xs text-muted-foreground">
+        Opponent: {opponentStatus}
+      </p>
+      <p className="text-xs text-muted-foreground">
+        Connection quality: {connectionQuality}
       </p>
       {shareUrl ? (
         <a
@@ -115,4 +129,3 @@ function ConnectedRoomDetails({
     </div>
   )
 }
-

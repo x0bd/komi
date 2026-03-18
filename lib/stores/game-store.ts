@@ -9,6 +9,27 @@ import type { StoneColor } from "@/components/game/stone"
 
 export type GameMode = "local" | "versus-ai" | "online"
 export type AIDifficulty = "easy" | "medium" | "hard"
+
+export type MultiplayerSnapshot = {
+  board: number[]
+  turn: GameState["turn"]
+  moveNumber: number
+  consecutivePasses: number
+  captured: {
+    black: number
+    white: number
+  }
+  ko: number | null
+  history: string[]
+  moveHistory: Move[]
+  timers: {
+    black: number
+    white: number
+  }
+  isGameOver: boolean
+  winner: "black" | "white" | "draw" | null
+  gameOverReason: "score" | "resignation" | "timeout" | null
+}
 const LETTERS = "ABCDEFGHJKLMNOPQRST"
 
 function toCoordinate(x: number, y: number, size: number) {
@@ -49,6 +70,7 @@ interface KomiStore {
   setAIDifficulty: (difficulty: AIDifficulty) => void
   resetGame: (size?: 9|13|19, komi?: number) => void
   tickActiveTimer: (elapsedSeconds?: number) => void
+  hydrateFromMultiplayer: (snapshot: MultiplayerSnapshot) => void
   
   // Derived / Utility
   exportSGF: () => string
@@ -407,6 +429,75 @@ export const useGameStore = create<KomiStore>((set, get) => ({
         ruleset: "japanese",
         territoryMap: [],
       },
+    })
+  },
+
+  hydrateFromMultiplayer: (snapshot) => {
+    const size = get().size
+    const komi = get().komi
+    const nextGameState: GameState = {
+      board: [...snapshot.board] as GameState["board"],
+      turn: snapshot.turn,
+      moveNumber: snapshot.moveNumber,
+      consecutivePasses: snapshot.consecutivePasses,
+      captured: {
+        black: snapshot.captured.black,
+        white: snapshot.captured.white,
+      },
+      ko: snapshot.ko,
+      history: [...snapshot.history],
+    }
+
+    const liveScore = calculateScore(
+      nextGameState.board,
+      size,
+      nextGameState.captured,
+      komi,
+    )
+
+    let scoreResult: ScoreResult | null = null
+    if (snapshot.isGameOver) {
+      if (snapshot.gameOverReason === "score") {
+        scoreResult = liveScore
+      } else if (snapshot.winner) {
+        scoreResult = {
+          winner: snapshot.winner,
+          margin: Infinity,
+          black: {
+            territory: 0,
+            captures: nextGameState.captured.black,
+            stones: 0,
+            total: 0,
+          },
+          white: {
+            territory: 0,
+            captures: nextGameState.captured.white,
+            stones: 0,
+            komi: 0,
+            total: 0,
+          },
+          ruleset: "japanese",
+          territoryMap: [],
+        }
+      }
+    }
+
+    set({
+      gameState: nextGameState,
+      moveHistory: [...snapshot.moveHistory],
+      consecutivePasses: snapshot.consecutivePasses,
+      currentPlayer: snapshot.turn,
+      validMoves: snapshot.isGameOver ? [] : deriveValidMoves(nextGameState, size),
+      recentCaptures: [],
+      timers: {
+        black: snapshot.timers.black,
+        white: snapshot.timers.white,
+      },
+      liveScore,
+      isGameOver: snapshot.isGameOver,
+      winner: snapshot.winner,
+      gameOverReason: snapshot.gameOverReason,
+      scoreResult,
     })
   },
 

@@ -15,6 +15,8 @@ export function GoBoard({
   capturedStones = [],
   lastMove,
   onIntersectionClick,
+  onHoverIntersectionChange,
+  opponentHover,
   className,
 }: {
   size?: 9 | 13 | 19
@@ -24,6 +26,8 @@ export function GoBoard({
   capturedStones?: Array<{ x: number; y: number; color: StoneColor; key: string }>
   lastMove?: { x: number; y: number }
   onIntersectionClick?: (x: number, y: number) => void
+  onHoverIntersectionChange?: (next: { x: number; y: number } | null) => void
+  opponentHover?: { x: number; y: number; color: StoneColor } | null
   className?: string
 }) {
   const [hovered, setHovered] = useState<{ x: number; y: number } | null>(null)
@@ -65,8 +69,9 @@ export function GoBoard({
 
     if (!validMoveSet.has(`${hovered.x}:${hovered.y}`)) {
       setHovered(null)
+      onHoverIntersectionChange?.(null)
     }
-  }, [hovered, validMoveSet])
+  }, [hovered, onHoverIntersectionChange, validMoveSet])
 
   function focusCell(x: number, y: number) {
     const nextX = clampCoordinate(x, size)
@@ -212,13 +217,16 @@ export function GoBoard({
                         onMouseEnter={() => {
                           if (isPlayable) {
                             setHovered({ x, y })
+                            onHoverIntersectionChange?.({ x, y })
                           } else if (hovered?.x === x && hovered?.y === y) {
                             setHovered(null)
+                            onHoverIntersectionChange?.(null)
                           }
                         }}
                         onMouseLeave={() => {
                           if (hovered?.x === x && hovered?.y === y) {
                             setHovered(null)
+                            onHoverIntersectionChange?.(null)
                           }
                         }}
                         onClick={() => {
@@ -231,7 +239,13 @@ export function GoBoard({
                         <Intersection
                           stone={stoneColor}
                           ghostColor={isPlayable ? currentPlayer : undefined}
+                          remoteGhostColor={opponentHover?.color}
                           hovered={isPlayable && hovered?.x === x && hovered?.y === y}
+                          remoteHovered={
+                            !stoneColor &&
+                            opponentHover?.x === x &&
+                            opponentHover?.y === y
+                          }
                           isLastMove={lastMove?.x === x && lastMove?.y === y}
                           interactive={isPlayable}
                           isFocused={isFocused}

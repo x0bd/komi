@@ -161,3 +161,28 @@ Original prompt: lets continue building
       - Wraps gameplay in `RoomProvider` when online room is available.
   - Updated `project-todo.md` to mark Phase 10 setup/bootstrap/lobby items now done.
   - Constraint preserved: no tests/build/lint were run in this pass.
+
+- 2026-03-18: Phase 10 realtime room sync + presence pass completed.
+  - Added `components/game/online-room-sync.tsx` to keep online gameplay state mirrored through Liveblocks room storage.
+    - Sync scope now includes board, turn, captured counts, move number, ko/history, move history, timers, and game-over fields.
+    - Added loop-avoidance guards so local optimistic changes do not immediately get overwritten by stale remote snapshots.
+  - Extended multiplayer schema in `liveblocks.config.ts`:
+    - Presence now tracks `stoneColor` in addition to hover/cursor/connection quality.
+    - Storage now includes full game-state fields required for late-join replayable sync.
+  - Added store hydration entrypoint in `lib/stores/game-store.ts`:
+    - `hydrateFromMultiplayer(snapshot)` applies remote snapshot into Zustand without firing local move side effects.
+  - Updated board UI for online presence in `components/game/go-board.tsx` and `components/game/intersection.tsx`:
+    - Added opponent hover ghost stone rendering.
+    - Added hover callbacks so presence updates as users move over intersections.
+  - Updated `components/pages/home-page-client.tsx`:
+    - Added online/local board split (`OnlineBoardView` vs local view).
+    - Online board now assigns player color by connection order and publishes hover + connection quality presence.
+    - `OnlineRoomShell` now seeds full initial room storage for newly created rooms.
+    - Mounted `OnlineRoomSync` inside `RoomProvider`.
+    - Disabled local timer loop in online mode by calling `useGameClock(mode !== "online")`.
+  - Updated `components/game/online-room-panel.tsx`:
+    - Added explicit opponent status (Online/Waiting).
+    - Added explicit connection quality readout.
+  - Updated `project-todo.md`:
+    - Marked room storage sync, presence indicators, and in-game/post-game online sync checklist items as complete.
+  - Constraint preserved: no tests/build/lint were run in this pass.

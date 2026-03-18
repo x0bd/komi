@@ -1,8 +1,12 @@
 import { useEffect } from "react"
 import { useGameStore } from "@/lib/stores/game-store"
 
-export function useGameClock() {
+export function useGameClock(enabled = true) {
   useEffect(() => {
+    if (!enabled) {
+      return
+    }
+
     const intervalId = window.setInterval(() => {
       useGameStore.getState().tickActiveTimer(1)
     }, 1000)
@@ -10,7 +14,7 @@ export function useGameClock() {
     return () => {
       window.clearInterval(intervalId)
     }
-  }, [])
+  }, [enabled])
 }
 
 export function splitClock(totalSeconds: number) {
