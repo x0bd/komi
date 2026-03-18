@@ -1,11 +1,12 @@
 import { AuthView } from "@neondatabase/auth/react/ui"
 
 type AuthPageProps = {
-  params: Promise<{ path: string }>
+  params: { path: string } | Promise<{ path: string }>
 }
 
 export default async function AuthPage({ params }: AuthPageProps) {
-  const { path } = await params
+  const resolvedParams = await params
+  const { path } = resolvedParams
 
   return (
     <main className="mx-auto flex min-h-svh w-full max-w-3xl items-center justify-center p-6">
@@ -15,4 +16,3 @@ export default async function AuthPage({ params }: AuthPageProps) {
     </main>
   )
 }
-
