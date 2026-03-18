@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import { db } from "@/lib/db"
-import { ensureDbUser } from "@/lib/auth/session"
+import { getSession } from "@/lib/auth/session"
 import type { Move } from "@/lib/engine/types"
 
 const AI_EMAIL = "sensei-ai@komi.local"
@@ -36,7 +36,27 @@ function coerceMoves(moves: unknown): Move[] {
 }
 
 export async function POST(request: Request) {
-  const user = await ensureDbUser()
+  const session = await getSession()
+  const authUser = session?.user as
+    | { id?: string; email?: string | null; name?: string | null; image?: string | null }
+    | undefined
+
+  if (!authUser?.id || !authUser.email) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
+
+  const user = await db.user.upsert({
+    where: { email: authUser.email },
+    update: {
+      name: authUser.name ?? undefined,
+      avatar: authUser.image ?? undefined,
+    },
+    create: {
+      email: authUser.email,
+      name: authUser.name ?? undefined,
+      avatar: authUser.image ?? undefined,
+    },
+  })
 
   let body: SaveGamePayload
   try {
@@ -88,4 +108,3 @@ export async function POST(request: Request) {
 
   return NextResponse.json({ id: game.id })
 }
-

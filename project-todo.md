@@ -277,6 +277,9 @@ Step-by-step build plan. UI first, then game logic, then integrations.
   - [x] Display name, avatar
   - [x] Game history list
   - [x] Win/loss record, rating
+- [x] **Game persistence**
+  - [x] Save completed games to database
+  - [x] Save move list and SGF snapshot
 
 ---
 

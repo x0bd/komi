@@ -411,11 +411,24 @@ export const useGameStore = create<KomiStore>((set, get) => ({
   },
 
   exportSGF: () => {
-    const { moveHistory, size, komi, scoreResult } = get()
+    const { moveHistory, size, komi, scoreResult, gameOverReason } = get()
+    const result =
+      !scoreResult
+        ? undefined
+        : scoreResult.winner === "draw"
+          ? "Draw"
+          : `${scoreResult.winner === "black" ? "B" : "W"}+${
+              scoreResult.margin === Infinity
+                ? gameOverReason === "timeout"
+                  ? "Time"
+                  : "Resign"
+                : scoreResult.margin
+            }`
+
     return gameToSGF(moveHistory, {
       size,
       komi,
-      result: scoreResult ? `${scoreResult.winner === "black" ? "B" : "W"}+${scoreResult.margin === Infinity ? "Resign" : scoreResult.margin}` : undefined,
+      result,
     })
   }
 }))

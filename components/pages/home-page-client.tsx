@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { GameLayout } from "@/components/layout/game-layout";
 import { GoBoard } from "@/components/game/go-board";
 import { ModeToggle } from "@/components/game/mode-toggle";
@@ -20,15 +20,43 @@ import { AIReaction } from "@/components/learning/ai-reaction";
 import { AIChatPanel } from "@/components/learning/ai-chat-panel";
 import { XPBar } from "@/components/learning/xp-bar";
 import { MobileSenseiFab } from "@/components/learning/mobile-sensei-fab";
+import type { ScoreResult } from "@/lib/engine/scoring";
 import { LuBot } from "react-icons/lu";
 
 const LETTERS = "ABCDEFGHJKLMNOPQRST".split("");
+
+function formatResultCode(
+    reason: "score" | "resignation" | "timeout" | null,
+    winner: "black" | "white" | "draw" | null,
+    scoreResult: ScoreResult | null,
+) {
+    if (!winner) return null;
+    if (winner === "draw") return "Draw";
+
+    const winnerCode = winner === "black" ? "B" : "W";
+    if (reason === "resignation") return `${winnerCode}+Resign`;
+    if (reason === "timeout") return `${winnerCode}+Time`;
+
+    if (reason === "score" && scoreResult) {
+        const margin = Number.isFinite(scoreResult.margin)
+            ? Number(scoreResult.margin.toFixed(1))
+            : scoreResult.margin;
+        return `${winnerCode}+${margin}`;
+    }
+
+    return winnerCode;
+}
 
 export default function HomePageClient() {
     const isGameOver = useGameStore((state) => state.isGameOver);
     const scoreResult = useGameStore((state) => state.scoreResult);
     const gameOverReason = useGameStore((state) => state.gameOverReason);
+    const winner = useGameStore((state) => state.winner);
+    const mode = useGameStore((state) => state.mode);
+    const moveHistory = useGameStore((state) => state.moveHistory);
+    const exportSGF = useGameStore((state) => state.exportSGF);
     const resetGame = useGameStore((state) => state.resetGame);
+    const persistedGameKeyRef = useRef<string | null>(null);
 
     // Attach AI turn listener
     useAITurn();
@@ -40,6 +68,43 @@ export default function HomePageClient() {
             : scoreResult?.winner === "black"
               ? "black-wins"
               : "white-wins";
+
+    useEffect(() => {
+        if (!isGameOver) {
+            persistedGameKeyRef.current = null;
+            return;
+        }
+        if (!gameOverReason || !winner) return;
+
+        const persistenceKey = `${gameOverReason}:${winner}:${moveHistory.length}`;
+        if (persistedGameKeyRef.current === persistenceKey) return;
+        persistedGameKeyRef.current = persistenceKey;
+
+        const resultCode = formatResultCode(gameOverReason, winner, scoreResult);
+        const sgf = exportSGF();
+
+        void fetch("/api/games", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                mode,
+                moves: moveHistory,
+                result: resultCode,
+                sgf,
+            }),
+        }).catch(() => {
+            // Allow retry after user starts a new game and ends again.
+            persistedGameKeyRef.current = null;
+        });
+    }, [
+        exportSGF,
+        gameOverReason,
+        isGameOver,
+        mode,
+        moveHistory,
+        scoreResult,
+        winner,
+    ]);
 
     return (
         <>
@@ -223,4 +288,3 @@ function Sidebar() {
         </div>
     );
 }
-

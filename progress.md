@@ -119,3 +119,19 @@ Original prompt: lets continue building
   - Expanded middleware protection to include `/profile/:path*` in `proxy.ts`.
   - Updated `project-todo.md` to mark Phase 9 user profile checklist complete.
   - Constraint preserved: no tests/build/lint were run in this pass.
+
+- 2026-03-18: Completed-game persistence wired into Phase 9.
+  - Added `POST /api/games` route in `app/api/games/route.ts`.
+    - Auth-gated via `ensureDbUser()`.
+    - Saves completed `Game` row + nested `Move` rows.
+    - Persists SGF snapshot and normalized result code.
+    - In `versus-ai` mode, auto-upserts a synthetic `Sensei AI` user.
+  - Updated `components/pages/home-page-client.tsx` to auto-persist once per completed game.
+    - Triggers on game-over transitions.
+    - Sends mode, move history, result code, and SGF to `/api/games`.
+  - Updated `lib/stores/game-store.ts` SGF export result handling.
+    - Correct draw handling.
+    - Distinguishes timeout (`+Time`) vs resignation (`+Resign`) for infinite-margin games.
+  - Tweaked profile game history display to label mirror matches as `Self play`.
+  - Updated `project-todo.md` with completed game persistence checklist.
+  - Constraint preserved: no tests/build/lint were run in this pass.

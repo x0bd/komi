@@ -169,13 +169,17 @@ export default async function ProfilePage() {
                     const isBlack = game.blackPlayerId === user.id
                     const myColor = isBlack ? "black" : "white"
                     const opponent = isBlack ? game.whitePlayer : game.blackPlayer
+                    const opponentLabel =
+                      opponent.email === user.email
+                        ? "Self play"
+                        : opponent.name?.trim() || opponent.email
                     const outcome = getOutcome(game.result, myColor)
 
                     return (
                       <TableRow key={game.id}>
                         <TableCell>{formatDate(game.startedAt)}</TableCell>
                         <TableCell className="capitalize">{myColor}</TableCell>
-                        <TableCell>{opponent.name?.trim() || opponent.email}</TableCell>
+                        <TableCell>{opponentLabel}</TableCell>
                         <TableCell className={`capitalize ${outcomeClasses(outcome)}`}>
                           {outcome}
                         </TableCell>
@@ -191,4 +195,3 @@ export default async function ProfilePage() {
     </main>
   )
 }
-
