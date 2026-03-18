@@ -286,12 +286,12 @@ Step-by-step build plan. UI first, then game logic, then integrations.
 ## Phase 10: Multiplayer (Liveblocks)
 
 - [ ] **Liveblocks setup**
-  - [ ] Install `@liveblocks/client`, `@liveblocks/react`
-  - [ ] Configure API keys in `.env.local`
-  - [ ] Define room schema (board state, turn, timers, captures)
+  - [x] Install `@liveblocks/client`, `@liveblocks/react`
+  - [x] Configure API keys in `.env.local`
+  - [x] Define room schema (board state, turn, timers, captures)
 - [ ] **Room architecture**
-  - [ ] Create room on game start
-  - [ ] Join room via invite link or matchmaking
+  - [x] Create room on game start
+  - [x] Join room via invite link or matchmaking
   - [ ] Room storage: full game state synced
   - [ ] Presence: show opponent's cursor/hover on board
 - [ ] **Realtime game store** (`lib/stores/multiplayer-store.ts`)
@@ -307,8 +307,8 @@ Step-by-step build plan. UI first, then game logic, then integrations.
   - [ ] Join game → enter room code or click link
   - [ ] Lobby UI: waiting for opponent screen
 - [ ] **Online mode in UI**
-  - [ ] Add "Online" option to mode toggle
-  - [ ] Pre-game: show lobby/waiting state
+  - [x] Add "Online" option to mode toggle
+  - [x] Pre-game: show lobby/waiting state
   - [ ] In-game: sync all interactions through Liveblocks
   - [ ] Post-game: both players see result simultaneously
 

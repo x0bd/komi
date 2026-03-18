@@ -135,3 +135,29 @@ Original prompt: lets continue building
   - Tweaked profile game history display to label mirror matches as `Self play`.
   - Updated `project-todo.md` with completed game persistence checklist.
   - Constraint preserved: no tests/build/lint were run in this pass.
+
+- 2026-03-18: Phase 10 Liveblocks foundation started.
+  - Installed Liveblocks packages: `@liveblocks/client`, `@liveblocks/react`, `@liveblocks/node`.
+  - Added Liveblocks env placeholder in `.env.example`:
+    - `LIVEBLOCKS_SECRET_KEY`
+  - Added Liveblocks server setup in `lib/liveblocks/server.ts`.
+  - Added room helpers in `lib/liveblocks/rooms.ts`.
+  - Added global Liveblocks type schema in `liveblocks.config.ts` (Presence/Storage/UserMeta/RoomEvent).
+  - Added Liveblocks auth endpoint:
+    - `POST /api/liveblocks-auth` in `app/api/liveblocks-auth/route.ts`
+    - Authenticated via Neon session + Prisma user sync, then `liveblocks.identifyUser(...)`.
+  - Added room lifecycle API:
+    - `POST /api/liveblocks/rooms` in `app/api/liveblocks/rooms/route.ts`
+    - Supports `create` and `join` actions.
+  - Added multiplayer client store:
+    - `lib/stores/multiplayer-store.ts` with room bootstrap/join/leave and share link state.
+  - Wired global provider:
+    - `components/providers.tsx` now includes `LiveblocksProvider` with `authEndpoint`.
+  - Added Online mode UI integration:
+    - `components/game/mode-toggle.tsx` now includes `Online`.
+    - `components/game/online-room-panel.tsx` added for create/join/share/lobby status.
+    - `components/pages/home-page-client.tsx` now:
+      - Boots room on online mode or joins from `?room=...`
+      - Wraps gameplay in `RoomProvider` when online room is available.
+  - Updated `project-todo.md` to mark Phase 10 setup/bootstrap/lobby items now done.
+  - Constraint preserved: no tests/build/lint were run in this pass.

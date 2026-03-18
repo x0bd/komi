@@ -3,7 +3,7 @@
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { cn } from "@/lib/utils";
 
-export type GameMode = "local" | "versus-ai";
+export type GameMode = "local" | "versus-ai" | "online";
 
 export function ModeToggle({
     value = "local",
@@ -34,6 +34,12 @@ export function ModeToggle({
                 className="flex-1 rounded-full min-h-[44px] font-display font-semibold text-sm data-[state=on]:bg-primary data-[state=on]:text-primary-foreground data-[state=on]:shadow-md transition-all duration-300 text-muted-foreground hover:text-foreground hover:bg-transparent"
             >
                 Versus AI
+            </ToggleGroupItem>
+            <ToggleGroupItem
+                value="online"
+                className="flex-1 rounded-full min-h-[44px] font-display font-semibold text-sm data-[state=on]:bg-primary data-[state=on]:text-primary-foreground data-[state=on]:shadow-md transition-all duration-300 text-muted-foreground hover:text-foreground hover:bg-transparent"
+            >
+                Online
             </ToggleGroupItem>
         </ToggleGroup>
     );

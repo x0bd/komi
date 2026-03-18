@@ -1,11 +1,14 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { RoomProvider } from "@liveblocks/react";
 import { GameLayout } from "@/components/layout/game-layout";
 import { GoBoard } from "@/components/game/go-board";
 import { ModeToggle } from "@/components/game/mode-toggle";
 import { AIDifficultySelector } from "@/components/game/ai-difficulty-selector";
 import { PlayerCard } from "@/components/game/player-card";
+import { OnlineRoomPanel } from "@/components/game/online-room-panel";
 import { LiveScoreCard } from "@/components/game/live-score-card";
 import {
     MoveHistorySection,
@@ -21,6 +24,7 @@ import { AIChatPanel } from "@/components/learning/ai-chat-panel";
 import { XPBar } from "@/components/learning/xp-bar";
 import { MobileSenseiFab } from "@/components/learning/mobile-sensei-fab";
 import type { ScoreResult } from "@/lib/engine/scoring";
+import { useMultiplayerStore } from "@/lib/stores/multiplayer-store";
 import { LuBot } from "react-icons/lu";
 
 const LETTERS = "ABCDEFGHJKLMNOPQRST".split("");
@@ -48,14 +52,23 @@ function formatResultCode(
 }
 
 export default function HomePageClient() {
+    const searchParams = useSearchParams();
+    const roomParam = searchParams.get("room");
     const isGameOver = useGameStore((state) => state.isGameOver);
     const scoreResult = useGameStore((state) => state.scoreResult);
     const gameOverReason = useGameStore((state) => state.gameOverReason);
     const winner = useGameStore((state) => state.winner);
     const mode = useGameStore((state) => state.mode);
+    const setMode = useGameStore((state) => state.setMode);
+    const size = useGameStore((state) => state.size);
+    const timers = useGameStore((state) => state.timers);
     const moveHistory = useGameStore((state) => state.moveHistory);
     const exportSGF = useGameStore((state) => state.exportSGF);
     const resetGame = useGameStore((state) => state.resetGame);
+    const roomId = useMultiplayerStore((state) => state.roomId);
+    const createRoom = useMultiplayerStore((state) => state.createRoom);
+    const joinRoom = useMultiplayerStore((state) => state.joinRoom);
+    const leaveRoom = useMultiplayerStore((state) => state.leaveRoom);
     const persistedGameKeyRef = useRef<string | null>(null);
 
     // Attach AI turn listener
@@ -68,6 +81,30 @@ export default function HomePageClient() {
             : scoreResult?.winner === "black"
               ? "black-wins"
               : "white-wins";
+
+    useEffect(() => {
+        if (roomParam && mode !== "online") {
+            setMode("online");
+        }
+    }, [mode, roomParam, setMode]);
+
+    useEffect(() => {
+        if (mode !== "online") {
+            if (roomId) {
+                leaveRoom();
+            }
+            return;
+        }
+
+        if (roomId) return;
+
+        if (roomParam) {
+            void joinRoom(roomParam);
+            return;
+        }
+
+        void createRoom();
+    }, [createRoom, joinRoom, leaveRoom, mode, roomId, roomParam]);
 
     useEffect(() => {
         if (!isGameOver) {
@@ -107,7 +144,12 @@ export default function HomePageClient() {
     ]);
 
     return (
-        <>
+        <OnlineRoomShell
+            mode={mode}
+            roomId={roomId}
+            size={size}
+            timers={timers}
+        >
             <GameLayout board={<BoardView />} sidebar={<Sidebar />} />
             <AIReaction />
             <MobileSenseiFab />
@@ -118,7 +160,45 @@ export default function HomePageClient() {
                 reason={gameOverReason ?? "score"}
                 onPlayAgain={() => resetGame()}
             />
-        </>
+        </OnlineRoomShell>
+    );
+}
+
+function OnlineRoomShell({
+    mode,
+    roomId,
+    size,
+    timers,
+    children,
+}: {
+    mode: GameMode;
+    roomId: string | null;
+    size: 9 | 13 | 19;
+    timers: { black: number; white: number };
+    children: React.ReactNode;
+}) {
+    if (mode !== "online" || !roomId) {
+        return <>{children}</>;
+    }
+
+    return (
+        <RoomProvider
+            id={roomId}
+            initialPresence={{
+                cursor: null,
+                hoveredIntersection: null,
+                connectionQuality: "good",
+            }}
+            initialStorage={{
+                board: Array(size * size).fill(0),
+                turn: "black",
+                captured: { black: 0, white: 0 },
+                moveNumber: 0,
+                timers: { black: timers.black, white: timers.white },
+            }}
+        >
+            {children}
+        </RoomProvider>
     );
 }
 
@@ -170,6 +250,12 @@ function Sidebar() {
     const isGameOver = useGameStore((state) => state.isGameOver);
     const timers = useGameStore((state) => state.timers);
     const liveScore = useGameStore((state) => state.liveScore);
+    const roomId = useMultiplayerStore((state) => state.roomId);
+    const shareUrl = useMultiplayerStore((state) => state.shareUrl);
+    const multiplayerState = useMultiplayerStore((state) => state.state);
+    const multiplayerError = useMultiplayerStore((state) => state.error);
+    const createRoom = useMultiplayerStore((state) => state.createRoom);
+    const joinRoom = useMultiplayerStore((state) => state.joinRoom);
 
     const blackTimer = splitClock(timers.black);
     const whiteTimer = splitClock(timers.white);
@@ -194,7 +280,7 @@ function Sidebar() {
         <div className="flex flex-col gap-4 lg:h-full lg:min-h-0">
             <div className="flex flex-col gap-4">
                 <ModeToggle
-                    value={mode as "local" | "versus-ai"}
+                    value={mode as "local" | "versus-ai" | "online"}
                     onValueChange={(val) => setMode(val as GameMode)}
                 />
 
@@ -202,6 +288,24 @@ function Sidebar() {
                     <AIDifficultySelector
                         value={aiDifficulty}
                         onValueChange={setAIDifficulty}
+                    />
+                ) : null}
+
+                {mode === "online" ? (
+                    <OnlineRoomPanel
+                        roomId={roomId}
+                        shareUrl={shareUrl}
+                        isConnecting={
+                            multiplayerState === "creating-room" ||
+                            multiplayerState === "joining-room"
+                        }
+                        error={multiplayerError}
+                        onCreateRoom={() => {
+                            void createRoom();
+                        }}
+                        onJoinRoom={(nextRoomId) => {
+                            void joinRoom(nextRoomId);
+                        }}
                     />
                 ) : null}
 
