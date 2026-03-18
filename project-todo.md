@@ -265,14 +265,14 @@ Step-by-step build plan. UI first, then game logic, then integrations.
   - [x] `Game` — id, blackPlayerId, whitePlayerId, result, sgf, startedAt, endedAt
   - [x] `Move` — id, gameId, moveNumber, player, x, y, isPass, timestamp
   - [x] Relations: User ↔ Game (as black/white), Game ↔ Move
-- [~] **Prisma client** (`lib/db.ts`)
+- [x] **Prisma client** (`lib/db.ts`)
   - [x] Singleton client instance
   - [x] Run initial migration
-- [~] **Auth setup**
+- [x] **Auth setup**
   - [x] Neon Auth integration
-  - [ ] Sign up / sign in flow
-  - [ ] Session management
-  - [ ] Protected routes (game pages require auth)
+  - [x] Sign up / sign in flow
+  - [x] Session management
+  - [x] Protected routes (game pages require auth)
 - [ ] **User profile**
   - [ ] Display name, avatar
   - [ ] Game history list

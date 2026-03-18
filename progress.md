@@ -89,3 +89,17 @@ Original prompt: lets continue building
   - Added auth env placeholders to `.env.example`: `NEON_AUTH_BASE_URL`, `NEON_AUTH_COOKIE_SECRET`.
   - Added `@neondatabase/auth` dependency entry to `package.json`.
   - Constraint preserved: no tests/build/lint were run in this pass.
+
+- 2026-03-18: Phase 9 auth flow + protection wiring completed.
+  - Added `NeonAuthUIProvider` in `components/providers.tsx` with `authClient` + `redirectTo="/"`.
+  - Added Neon Auth Tailwind style import in `app/globals.css` (`@neondatabase/auth/ui/tailwind`).
+  - Added auth pages:
+    - `app/auth/page.tsx` redirects to `/auth/sign-in`.
+    - `app/auth/[path]/page.tsx` renders `AuthView` for sign-in/sign-up and related flows.
+  - Added account pages:
+    - `app/account/page.tsx` redirects to `/account/settings`.
+    - `app/account/[path]/page.tsx` renders `AccountView`.
+  - Added route protection via `proxy.ts` using `auth.middleware({ loginUrl: "/auth/sign-in" })` with matcher `["/", "/account/:path*"]`.
+  - Added session helper `lib/auth/session.ts` with `getSession()` and `requireSession()`.
+  - Updated `project-todo.md` Phase 9 auth/prisma checklist items to complete.
+  - Constraint preserved: no tests/build/lint were run in this pass.
