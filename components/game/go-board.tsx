@@ -18,6 +18,8 @@ export function GoBoard({
   onHoverIntersectionChange,
   opponentHover,
   analysisHints = [],
+  territoryMap,
+  showTerritoryHeatmap = false,
   className,
 }: {
   size?: 9 | 13 | 19
@@ -30,6 +32,8 @@ export function GoBoard({
   onHoverIntersectionChange?: (next: { x: number; y: number } | null) => void
   opponentHover?: { x: number; y: number; color: StoneColor } | null
   analysisHints?: Array<{ x: number; y: number; confidence: number; rank: number }>
+  territoryMap?: number[]
+  showTerritoryHeatmap?: boolean
   className?: string
 }) {
   const [hovered, setHovered] = useState<{ x: number; y: number } | null>(null)
@@ -168,6 +172,39 @@ export function GoBoard({
             <div className="relative aspect-square w-full rounded-md">
               {/* SVG grid lines + hoshi */}
               <GridLayer size={size} hoshiPoints={hoshiPoints} />
+
+              {showTerritoryHeatmap && territoryMap
+                ? rows.map((row, y) =>
+                    row.map((stoneValue, x) => {
+                      if (stoneValue !== 0) return null
+                      const owner = territoryMap[y * size + x]
+                      if (owner !== 1 && owner !== 2) return null
+
+                      return (
+                        <div
+                          key={`territory-${x}-${y}`}
+                          className="pointer-events-none absolute z-[6] flex items-center justify-center"
+                          style={{
+                            left: `${(x / size) * 100}%`,
+                            top: `${(y / size) * 100}%`,
+                            width: `${100 / size}%`,
+                            height: `${100 / size}%`,
+                          }}
+                          aria-hidden="true"
+                        >
+                          <div
+                            className={cn(
+                              "h-[54%] w-[54%] rounded-[35%]",
+                              owner === 1
+                                ? "bg-stone-black/18"
+                                : "border border-stone-black/15 bg-stone-white/55",
+                            )}
+                          />
+                        </div>
+                      )
+                    }),
+                  )
+                : null}
 
               {analysisHints.map((hint) => (
                 <div

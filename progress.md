@@ -292,3 +292,39 @@ Original prompt: lets continue building
   - Updated `project-todo.md`:
     - Marked overlay move suggestions + overlay toggle checklist items complete.
   - Constraint preserved: no tests/build/lint were run in this pass.
+
+- 2026-03-19: Move analysis overlay pass (remaining items completed).
+  - Added territory estimation heatmap rendering in `components/game/go-board.tsx`:
+    - New optional `territoryMap` + `showTerritoryHeatmap` props.
+    - Renders translucent ownership hints on empty intersections.
+  - Wired territory map data in `components/pages/home-page-client.tsx`:
+    - Passes `liveScore.territoryMap` into both local and online board views.
+    - Reuses analysis toggle to show/hide heatmap and move hints together.
+  - Added win-probability bar in sidebar (`components/pages/home-page-client.tsx`):
+    - Uses `useLearningStore().latestAnalysis.winRate`.
+    - Displays compact `Win Read` percent with animated width bar.
+  - Updated `project-todo.md`:
+    - Marked win-probability bar and territory heatmap checklist items complete.
+    - Marked the optional move analysis overlay block complete.
+  - Constraint preserved: no tests/build/lint were run in this pass.
+
+- 2026-03-19: Phase 12 tutor route scaffold + live hook-up.
+  - Added `app/api/tutor/route.ts`:
+    - Accepts move/analysis/game-context payload.
+    - Returns concise coaching explanation (rule-based fallback response).
+  - Extended `lib/stores/game-store.ts` analysis flow:
+    - Added throttled tutor API calls (`/api/tutor`) after engine analysis events.
+    - Injects returned tutor lines into Sensei chat via `useLearningStore().addMessage(...)`.
+    - Uses cooldown-based debounce to avoid per-move spam.
+  - Updated `project-todo.md`:
+    - Marked Tutor API accepts/returns checklist items complete.
+    - Marked tutor trigger and debounce checklist items complete.
+  - Constraint preserved: no tests/build/lint were run in this pass.
+
+- 2026-03-19: Tutor response caching added.
+  - Extended `app/api/tutor/route.ts` with in-memory response cache:
+    - Keyed by move + analysis signature.
+    - TTL-based expiry and bounded entry count.
+  - Updated `project-todo.md`:
+    - Marked tutor explanation caching checklist item complete.
+  - Constraint preserved: no tests/build/lint were run in this pass.

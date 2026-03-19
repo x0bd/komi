@@ -542,6 +542,7 @@ function LocalBoardView() {
     const currentPlayer = useGameStore((state) => state.currentPlayer);
     const validMoves = useGameStore((state) => state.validMoves);
     const recentCaptures = useGameStore((state) => state.recentCaptures);
+    const liveScore = useGameStore((state) => state.liveScore);
     const analysisOverlayEnabled = useGameStore(
         (state) => state.analysisOverlayEnabled,
     );
@@ -577,6 +578,8 @@ function LocalBoardView() {
                     : undefined
             }
             analysisHints={analysisHints}
+            territoryMap={liveScore.territoryMap}
+            showTerritoryHeatmap={analysisOverlayEnabled}
             onIntersectionClick={(x, y) => placeStone(x, y)}
         />
     );
@@ -595,6 +598,7 @@ function OnlineBoardView({
     const currentPlayer = useGameStore((state) => state.currentPlayer);
     const validMoves = useGameStore((state) => state.validMoves);
     const recentCaptures = useGameStore((state) => state.recentCaptures);
+    const liveScore = useGameStore((state) => state.liveScore);
     const analysisOverlayEnabled = useGameStore(
         (state) => state.analysisOverlayEnabled,
     );
@@ -690,6 +694,8 @@ function OnlineBoardView({
                         : undefined
                 }
                 analysisHints={analysisHints}
+                territoryMap={liveScore.territoryMap}
+                showTerritoryHeatmap={analysisOverlayEnabled}
                 onHoverIntersectionChange={(next) => {
                     updateMyPresence({ hoveredIntersection: next });
                 }}
@@ -751,6 +757,7 @@ function Sidebar({
     const multiplayerError = useMultiplayerStore((state) => state.error);
     const createRoom = useMultiplayerStore((state) => state.createRoom);
     const joinRoom = useMultiplayerStore((state) => state.joinRoom);
+    const latestAnalysis = useLearningStore((state) => state.latestAnalysis);
 
     const blackTimer = splitClock(timers.black);
     const whiteTimer = splitClock(timers.white);
@@ -770,6 +777,9 @@ function Sidebar({
             coordinate,
         };
     });
+    const winProbability = latestAnalysis
+        ? Math.round(Math.max(0, Math.min(1, latestAnalysis.winRate)) * 100)
+        : null;
 
     return (
         <div className="flex flex-col gap-4 lg:h-full lg:min-h-0">
@@ -855,6 +865,23 @@ function Sidebar({
                             : "Show move hints"}
                     </button>
                 </div>
+
+                {winProbability !== null ? (
+                    <div className="rounded-xl border border-border/70 bg-secondary/20 px-3 py-2.5">
+                        <div className="flex items-center justify-between text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+                            <span>Win Read</span>
+                            <span className="font-mono text-foreground">
+                                {winProbability}%
+                            </span>
+                        </div>
+                        <div className="mt-2 overflow-hidden rounded-full bg-secondary/65">
+                            <div
+                                className="h-2 bg-gradient-to-r from-emerald-500 via-accent to-orange-500 transition-[width] duration-500"
+                                style={{ width: `${winProbability}%` }}
+                            />
+                        </div>
+                    </div>
+                ) : null}
 
                 <MoveHistorySection
                     moves={mappedMoves}

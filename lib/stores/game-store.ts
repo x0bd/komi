@@ -86,6 +86,8 @@ function deriveValidMoves(state: GameState, size: 9 | 13 | 19) {
 
 const initialState = createInitialState(19)
 const DEFAULT_TIME_SECONDS = 15 * 60
+const TUTOR_MIN_INTERVAL_MS = 5500
+const TUTOR_MAX_REQUESTS_PER_GAME = 18
 const INITIAL_SCORE = calculateScore(
   initialState.board,
   19,
@@ -93,6 +95,8 @@ const INITIAL_SCORE = calculateScore(
   6.5,
 )
 let captureClearTimeout: ReturnType<typeof setTimeout> | null = null
+let nextTutorRequestAt = 0
+let tutorRequestsThisGame = 0
 
 function deriveCapturedStones(
   previousBoard: GameState["board"],
@@ -151,6 +155,63 @@ function getCandidateReason(candidate: {
   if (candidate.liberties >= 5) return "safe liberties"
   if (candidate.liberties <= 2) return "urgent liberties"
   return "pressure point"
+}
+
+async function requestTutorMessage(payload: {
+  moveNumber: number
+  moveCoordinate: string
+  isPass: boolean
+  analysis: {
+    quality: MoveQuality
+    winRate: number
+    suggestedCoordinate: string | null
+    summary: string
+    topMoves: Array<{ coordinate: string; reason: string }>
+  }
+}) {
+  const now = Date.now()
+  if (now < nextTutorRequestAt) {
+    return
+  }
+  if (tutorRequestsThisGame >= TUTOR_MAX_REQUESTS_PER_GAME) {
+    return
+  }
+  nextTutorRequestAt = now + TUTOR_MIN_INTERVAL_MS
+  tutorRequestsThisGame += 1
+
+  try {
+    const response = await fetch("/api/tutor", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        moveNumber: payload.moveNumber,
+        lastMove: {
+          coordinate: payload.moveCoordinate,
+          isPass: payload.isPass,
+        },
+        analysis: {
+          quality: payload.analysis.quality,
+          winRate: payload.analysis.winRate,
+          suggestedCoordinate: payload.analysis.suggestedCoordinate,
+          summary: payload.analysis.summary,
+          topMoves: payload.analysis.topMoves,
+        },
+      }),
+    })
+
+    if (!response.ok) {
+      return
+    }
+
+    const json = (await response.json().catch(() => ({}))) as {
+      message?: unknown
+    }
+    if (typeof json.message === "string" && json.message.trim().length > 0) {
+      useLearningStore.getState().addMessage(json.message)
+    }
+  } catch {
+    // Ignore transient network errors for tutor narration.
+  }
 }
 
 async function registerEngineMoveInsight({
@@ -232,6 +293,22 @@ async function registerEngineMoveInsight({
       winRate: playerPerspectiveWinRate,
       summary: before.summary,
       topMoves,
+    })
+
+    void requestTutorMessage({
+      moveNumber: nextState.moveNumber,
+      moveCoordinate: coordinate,
+      isPass: false,
+      analysis: {
+        quality,
+        winRate: playerPerspectiveWinRate,
+        suggestedCoordinate,
+        summary: before.summary,
+        topMoves: topMoves.map((move) => ({
+          coordinate: move.coordinate,
+          reason: move.reason,
+        })),
+      },
     })
   } catch {
     // Tutor analysis is non-blocking; ignore transient analysis failures.
@@ -483,6 +560,9 @@ export const useGameStore = create<KomiStore>((set, get) => ({
       refreshedLearningStore.markTipShown("opening")
     }
     
+    tutorRequestsThisGame = 0
+    nextTutorRequestAt = 0
+
     set({
       size,
       komi,

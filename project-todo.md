@@ -334,10 +334,10 @@ Step-by-step build plan. UI first, then game logic, then integrations.
   - [x] Medium: shape-first conservative policy profile
   - [x] Hard: deeper search + tactical override profile
   - [x] Wire profiles to existing AI turn hook and difficulty selector
-- [ ] **Move analysis overlay** (optional)
+- [x] **Move analysis overlay** (optional)
   - [x] Show suggested moves as transparent colored stones on board
-  - [ ] Win probability bar
-  - [ ] Territory estimation heatmap
+  - [x] Win probability bar
+  - [x] Territory estimation heatmap
   - [x] Toggle analysis on/off
 
 ---
@@ -345,20 +345,20 @@ Step-by-step build plan. UI first, then game logic, then integrations.
 ## Phase 12: AI Tutor (OpenAI)
 
 - [ ] **Tutor API route** (`app/api/tutor/route.ts`)
-  - [ ] Accepts: current board state, last move, engine analysis, game context
-  - [ ] Returns: natural language explanation of the position/move
+  - [x] Accepts: current board state, last move, engine analysis, game context
+  - [x] Returns: natural language explanation of the position/move
   - [ ] System prompt tuned for Go teaching (beginner-friendly)
 - [ ] **Tutor integration**
   - [ ] Replace static tips with live LLM responses
-  - [ ] Trigger on: each player move, captures, mistakes (engine detects win% drop)
+  - [x] Trigger on: each player move, captures, mistakes (engine detects win% drop)
   - [ ] Streaming responses in the chat panel
 - [ ] **Tutor modes**
   - [ ] Passive: tips appear in sidebar, non-intrusive
   - [ ] Active: ask Sensei a question (text input)
   - [ ] Review: post-game walkthrough, move-by-move commentary
 - [ ] **Rate limiting**
-  - [ ] Debounce requests (don't call on every single move)
-  - [ ] Cache explanations for common positions/patterns
+  - [x] Debounce requests (don't call on every single move)
+  - [x] Cache explanations for common positions/patterns
   - [ ] Token budget per game session
 
 ---
