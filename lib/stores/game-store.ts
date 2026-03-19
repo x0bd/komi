@@ -188,6 +188,12 @@ async function registerEngineMoveInsight({
       quality === "best" || (best.x === x && best.y === y)
         ? null
         : toCoordinate(best.x, best.y, size)
+    const topMoves = before.topMoves.slice(0, 3).map((move) => ({
+      coordinate: toCoordinate(move.x, move.y, size),
+      confidence: Math.round(move.confidence * 100),
+      score: Number(move.score.toFixed(1)),
+      tags: [...move.tags.slice(0, 2)],
+    }))
 
     useLearningStore.getState().registerTutorEvent({
       type: "analysis",
@@ -196,6 +202,8 @@ async function registerEngineMoveInsight({
       suggestedCoordinate,
       quality,
       winRate: playerPerspectiveWinRate,
+      summary: before.summary,
+      topMoves,
     })
   } catch {
     // Tutor analysis is non-blocking; ignore transient analysis failures.

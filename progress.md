@@ -227,3 +227,15 @@ Original prompt: lets continue building
     - Keeps game loop synchronous; analysis failures are safely ignored.
   - Updated `project-todo.md` to mark “Feed engine analysis insights into Sensei tutor cues/messages” complete.
   - Constraint preserved: no tests/build/lint were run in this pass.
+
+- 2026-03-19: Sensei panel engine-read UI added.
+  - Extended tutor analysis payload in `lib/stores/game-store.ts`:
+    - Now sends `summary` plus top-3 candidate moves (coordinate, confidence, score, tags).
+  - Extended learning store in `lib/stores/learning-store.ts`:
+    - Added `latestAnalysis` snapshot state and persistence-safe update behavior.
+    - `analysis` tutor events now carry structured top-move data for UI use.
+  - Updated `components/learning/ai-chat-panel.tsx`:
+    - Added “Engine Read” section under Current Goal.
+    - Shows summary, pressure percentage, and top candidate moves with compact confidence rows.
+  - Updated `project-todo.md` to mark compact top-move readout complete.
+  - Constraint preserved: no tests/build/lint were run in this pass.

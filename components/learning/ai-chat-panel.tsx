@@ -4,6 +4,7 @@ import {
     LuBot,
     LuChevronDown,
     LuChevronUp,
+    LuGauge,
     LuMessageSquareQuote,
     LuSparkles,
 } from "react-icons/lu";
@@ -48,6 +49,7 @@ export function AIChatPanel({
     const tutorMood = useLearningStore((state) => state.tutorMood);
     const tutorGoal = useLearningStore((state) => state.tutorGoal);
     const tutorCue = useLearningStore((state) => state.tutorCue);
+    const latestAnalysis = useLearningStore((state) => state.latestAnalysis);
     const requestTip = useLearningStore((state) => state.requestTip);
 
     const latestMessage = chatMessages[chatMessages.length - 1];
@@ -178,6 +180,57 @@ export function AIChatPanel({
                             </div>
                         </div>
                     </div>
+
+                    {latestAnalysis ? (
+                        <div className="mt-4 rounded-xl border border-border/60 bg-background/80 p-4 shadow-sm">
+                            <div className="flex items-start justify-between gap-3">
+                                <div className="min-w-0">
+                                    <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
+                                        Engine Read
+                                    </p>
+                                    <p className="mt-1 text-sm text-foreground">
+                                        {latestAnalysis.summary}
+                                    </p>
+                                </div>
+                                <div className="inline-flex items-center gap-1 rounded-full border border-border/70 bg-secondary/40 px-2.5 py-1 text-xs font-semibold text-foreground">
+                                    <LuGauge className="size-3.5 text-accent" />
+                                    {Math.round(
+                                        Math.max(
+                                            0,
+                                            Math.min(1, latestAnalysis.winRate),
+                                        ) * 100,
+                                    )}
+                                    %
+                                </div>
+                            </div>
+
+                            <div className="mt-3 space-y-1.5">
+                                {latestAnalysis.topMoves.map((move, index) => (
+                                    <div
+                                        key={`${move.coordinate}-${index}`}
+                                        className="grid grid-cols-[auto_1fr_auto] items-center gap-2 rounded-lg border border-border/55 bg-secondary/25 px-2.5 py-1.5"
+                                    >
+                                        <span className="font-mono text-xs text-muted-foreground">
+                                            #{index + 1}
+                                        </span>
+                                        <div className="min-w-0">
+                                            <p className="truncate font-mono text-xs font-semibold text-foreground">
+                                                {move.coordinate}
+                                            </p>
+                                            <p className="truncate text-[10px] text-muted-foreground">
+                                                {move.tags.length
+                                                    ? move.tags.join(" · ")
+                                                    : "shape"}
+                                            </p>
+                                        </div>
+                                        <span className="font-mono text-[11px] font-semibold text-muted-foreground">
+                                            {move.confidence}%
+                                        </span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    ) : null}
 
                     <div className="mt-4 overflow-hidden rounded-xl border border-border/60 bg-secondary/15">
                         <ScrollArea className="h-[210px]">

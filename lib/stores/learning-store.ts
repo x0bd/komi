@@ -2,6 +2,23 @@ import { create } from "zustand"
 import { persist } from "zustand/middleware"
 import { type ChatMessage } from "../../components/learning/ai-chat-panel"
 
+type TutorAnalysisMove = {
+  coordinate: string
+  confidence: number
+  score: number
+  tags: string[]
+}
+
+export type TutorAnalysisSnapshot = {
+  actor: "player" | "opponent"
+  moveCoordinate: string
+  suggestedCoordinate: string | null
+  quality: "best" | "strong" | "ok" | "mistake"
+  winRate: number
+  summary: string
+  topMoves: TutorAnalysisMove[]
+}
+
 type StreakEvent =
   | { type: "player-stone" }
   | { type: "player-capture"; count: number }
@@ -24,6 +41,8 @@ type TutorEvent =
       suggestedCoordinate: string | null
       quality: "best" | "strong" | "ok" | "mistake"
       winRate: number
+      summary: string
+      topMoves: TutorAnalysisMove[]
     }
   | { type: "player-pass" }
   | { type: "opponent-pass" }
@@ -43,6 +62,7 @@ interface LearningStore {
   tutorMood: "calm" | "focus" | "warning" | "celebrate"
   tutorGoal: string
   tutorCue: string
+  latestAnalysis: TutorAnalysisSnapshot | null
   tutorPulseKey: number
   tutorEventCount: number
   tipFlags: {
@@ -286,6 +306,7 @@ export const useLearningStore = create<LearningStore>()(
       tutorMood: "focus",
       tutorGoal: "Open from the corners and keep groups connected.",
       tutorCue: "Play shape first, then attack.",
+      latestAnalysis: null,
       tutorPulseKey: 0,
       tutorEventCount: 0,
       tipFlags: {
@@ -340,6 +361,20 @@ export const useLearningStore = create<LearningStore>()(
             tutorMood: meta.mood,
             tutorGoal: meta.goal,
             tutorCue: meta.cue,
+            latestAnalysis:
+              event.type === "analysis"
+                ? {
+                    actor: event.actor,
+                    moveCoordinate: event.moveCoordinate,
+                    suggestedCoordinate: event.suggestedCoordinate,
+                    quality: event.quality,
+                    winRate: event.winRate,
+                    summary: event.summary,
+                    topMoves: event.topMoves.map((move) => ({ ...move })),
+                  }
+                : event.type === "reset"
+                  ? null
+                  : state.latestAnalysis,
             tutorPulseKey: state.tutorPulseKey + 1,
             tutorEventCount: nextEventCount,
             chatMessages: nextMessages,
@@ -356,6 +391,7 @@ export const useLearningStore = create<LearningStore>()(
           tutorMood: "focus",
           tutorGoal: "Open from the corners and keep groups connected.",
           tutorCue: "Play shape first, then attack.",
+          latestAnalysis: null,
           tutorPulseKey: 0,
           tutorEventCount: 0,
           tipFlags: {
