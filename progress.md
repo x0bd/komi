@@ -258,3 +258,37 @@ Original prompt: lets continue building
   - Wired difficulty -> budget mapping into live AI turns (`hooks/use-ai-turn.ts`) and analysis/tutor insight generation (`lib/stores/game-store.ts`), plus compatibility path in `lib/ai/random.ts`.
   - Updated `project-todo.md` to mark engine strength upgrades complete.
   - Constraint preserved: no tests/build/lint were run in this pass.
+
+- 2026-03-19: Stronger medium/hard opponent profiles completed.
+  - Refined `lib/ai/simple-engine.ts` with explicit profile identities:
+    - `shape-first` (medium): conservative, connection/liberty-biased move scoring.
+    - `tactical-override` (hard): deeper tactical weighting with stronger counter-capture risk handling.
+  - Added profile-specific scoring weights (capture/liberty/shape/contact/center/edge/atari) and tuned hard-mode reply aggregation coefficients.
+  - Added weighted candidate pool sizing for medium profile selection and profile-aware hard-mode noise/risk tuning.
+  - Updated analysis summary copy to include profile read style.
+  - Updated `project-todo.md` to mark stronger opponent profile checklist items complete.
+  - Constraint preserved: no tests/build/lint were run in this pass.
+
+- 2026-03-19: Added in-house analysis API route.
+  - Created `app/api/analyze/route.ts` for server-side engine analysis requests.
+  - Route accepts board/game state context (`size`, `player`, `difficulty`, `searchBudget`, `maxCandidates`, `state`) and returns analysis from the active engine provider.
+  - Added request normalization/validation for board shape, stone values, turn/capture/pass/ko bounds, and history fallback.
+  - Added in-memory cache keyed by position + analysis params with TTL and bounded cache size.
+  - Updated `project-todo.md` to mark Phase 11 analysis route + caching checklist items complete.
+  - Constraint preserved: no tests/build/lint were run in this pass.
+
+- 2026-03-19: Move analysis overlay pass (optional Phase 11 item, partial).
+  - Extended `components/game/go-board.tsx` with `analysisHints` rendering:
+    - Renders translucent ranked hint markers for top candidate moves.
+    - Uses color-ranked badges and confidence metadata for quick visual guidance.
+  - Wired hint generation in `components/pages/home-page-client.tsx`:
+    - Reuses `useLearningStore().latestAnalysis.topMoves`.
+    - Parses move coordinates, filters invalid/occupied points, maps top 3 suggestions.
+    - Passes hints into both local and online board views.
+  - Added sidebar toggle control in `components/pages/home-page-client.tsx`:
+    - New `Show/Hide move hints` pill button with sparkles icon.
+  - Added overlay toggle state to `lib/stores/game-store.ts`:
+    - `analysisOverlayEnabled` + `setAnalysisOverlayEnabled`.
+  - Updated `project-todo.md`:
+    - Marked overlay move suggestions + overlay toggle checklist items complete.
+  - Constraint preserved: no tests/build/lint were run in this pass.

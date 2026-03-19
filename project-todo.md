@@ -327,18 +327,18 @@ Step-by-step build plan. UI first, then game logic, then integrations.
   - [x] Add configurable search budget (fast / standard / deep) to `SimpleEngine`
   - [x] Add opening-pattern priors for early-game move selection
   - [x] Add tactical safety filters (self-atari and snapback checks)
-- [ ] **Analysis API route** (`app/api/analyze/route.ts`, optional)
-  - [ ] Accepts game state, returns in-house engine analysis
-  - [ ] Caches results for identical positions
-- [ ] **Stronger opponent profiles**
-  - [ ] Medium: shape-first conservative policy profile
-  - [ ] Hard: deeper search + tactical override profile
-  - [ ] Wire profiles to existing AI turn hook and difficulty selector
+- [x] **Analysis API route** (`app/api/analyze/route.ts`, optional)
+  - [x] Accepts game state, returns in-house engine analysis
+  - [x] Caches results for identical positions
+- [x] **Stronger opponent profiles**
+  - [x] Medium: shape-first conservative policy profile
+  - [x] Hard: deeper search + tactical override profile
+  - [x] Wire profiles to existing AI turn hook and difficulty selector
 - [ ] **Move analysis overlay** (optional)
-  - [ ] Show suggested moves as transparent colored stones on board
+  - [x] Show suggested moves as transparent colored stones on board
   - [ ] Win probability bar
   - [ ] Territory estimation heatmap
-  - [ ] Toggle analysis on/off
+  - [x] Toggle analysis on/off
 
 ---
 

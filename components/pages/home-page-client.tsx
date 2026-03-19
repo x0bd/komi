@@ -41,7 +41,8 @@ import type { GameState, Move } from "@/lib/engine/types";
 import { applyMove, applyPass } from "@/lib/engine/rules";
 import { isGameOver as getIsGameOver } from "@/lib/engine/game";
 import { useMultiplayerStore } from "@/lib/stores/multiplayer-store";
-import { LuBot } from "react-icons/lu";
+import { useLearningStore } from "@/lib/stores/learning-store";
+import { LuBot, LuSparkles } from "react-icons/lu";
 import { OnlineRoomSync } from "@/components/game/online-room-sync";
 import type { StoneColor } from "@/components/game/stone";
 
@@ -67,6 +68,59 @@ function formatResultCode(
     }
 
     return winnerCode;
+}
+
+function parseMoveCoordinate(coordinate: string, size: number) {
+    const match = /^([A-HJ-T])(\d{1,2})$/i.exec(coordinate.trim());
+    if (!match) return null;
+
+    const x = LETTERS.indexOf(match[1].toUpperCase());
+    const row = Number.parseInt(match[2], 10);
+    if (x < 0 || x >= size || row < 1 || row > size) {
+        return null;
+    }
+
+    return { x, y: size - row };
+}
+
+function buildAnalysisHints({
+    enabled,
+    topMoves,
+    size,
+    board,
+}: {
+    enabled: boolean;
+    topMoves:
+        | Array<{
+              coordinate: string;
+              confidence: number;
+          }>
+        | null
+        | undefined;
+    size: number;
+    board: number[];
+}) {
+    if (!enabled || !topMoves || topMoves.length === 0) {
+        return [] as Array<{ x: number; y: number; confidence: number; rank: number }>;
+    }
+
+    return topMoves
+        .slice(0, 3)
+        .map((move, index) => {
+            const parsed = parseMoveCoordinate(move.coordinate, size);
+            if (!parsed) return null;
+
+            const boardIndex = parsed.y * size + parsed.x;
+            if (board[boardIndex] !== 0) return null;
+
+            return {
+                x: parsed.x,
+                y: parsed.y,
+                confidence: move.confidence,
+                rank: index + 1,
+            };
+        })
+        .filter((move): move is { x: number; y: number; confidence: number; rank: number } => move !== null);
 }
 
 function readSnapshotFromMutableStorage(storage: {
@@ -488,6 +542,10 @@ function LocalBoardView() {
     const currentPlayer = useGameStore((state) => state.currentPlayer);
     const validMoves = useGameStore((state) => state.validMoves);
     const recentCaptures = useGameStore((state) => state.recentCaptures);
+    const analysisOverlayEnabled = useGameStore(
+        (state) => state.analysisOverlayEnabled,
+    );
+    const latestAnalysis = useLearningStore((state) => state.latestAnalysis);
     const lastMove =
         useGameStore((state) => {
             const moveHistory = state.moveHistory;
@@ -495,6 +553,16 @@ function LocalBoardView() {
                 ? moveHistory[moveHistory.length - 1]
                 : undefined;
         });
+    const analysisHints = useMemo(
+        () =>
+            buildAnalysisHints({
+                enabled: analysisOverlayEnabled,
+                topMoves: latestAnalysis?.topMoves,
+                size,
+                board,
+            }),
+        [analysisOverlayEnabled, latestAnalysis?.topMoves, size, board],
+    );
 
     return (
         <GoBoard
@@ -508,6 +576,7 @@ function LocalBoardView() {
                     ? { x: lastMove.x, y: lastMove.y }
                     : undefined
             }
+            analysisHints={analysisHints}
             onIntersectionClick={(x, y) => placeStone(x, y)}
         />
     );
@@ -526,11 +595,25 @@ function OnlineBoardView({
     const currentPlayer = useGameStore((state) => state.currentPlayer);
     const validMoves = useGameStore((state) => state.validMoves);
     const recentCaptures = useGameStore((state) => state.recentCaptures);
+    const analysisOverlayEnabled = useGameStore(
+        (state) => state.analysisOverlayEnabled,
+    );
+    const latestAnalysis = useLearningStore((state) => state.latestAnalysis);
     const lastMove =
         useGameStore((state) => {
             const history = state.moveHistory;
             return history.length > 0 ? history[history.length - 1] : undefined;
         });
+    const analysisHints = useMemo(
+        () =>
+            buildAnalysisHints({
+                enabled: analysisOverlayEnabled,
+                topMoves: latestAnalysis?.topMoves,
+                size,
+                board,
+            }),
+        [analysisOverlayEnabled, latestAnalysis?.topMoves, size, board],
+    );
 
     const others = useOthers();
     const selfConnectionId = useSelf((me) => me.connectionId);
@@ -606,6 +689,7 @@ function OnlineBoardView({
                         ? { x: lastMove.x, y: lastMove.y }
                         : undefined
                 }
+                analysisHints={analysisHints}
                 onHoverIntersectionChange={(next) => {
                     updateMyPresence({ hoveredIntersection: next });
                 }}
@@ -655,6 +739,12 @@ function Sidebar({
     const isGameOver = useGameStore((state) => state.isGameOver);
     const timers = useGameStore((state) => state.timers);
     const liveScore = useGameStore((state) => state.liveScore);
+    const analysisOverlayEnabled = useGameStore(
+        (state) => state.analysisOverlayEnabled,
+    );
+    const setAnalysisOverlayEnabled = useGameStore(
+        (state) => state.setAnalysisOverlayEnabled,
+    );
     const roomId = useMultiplayerStore((state) => state.roomId);
     const shareUrl = useMultiplayerStore((state) => state.shareUrl);
     const multiplayerState = useMultiplayerStore((state) => state.state);
@@ -750,6 +840,21 @@ function Sidebar({
                     moveCount={mappedMoves.length}
                     isGameOver={isGameOver}
                 />
+
+                <div className="flex justify-end">
+                    <button
+                        type="button"
+                        onClick={() =>
+                            setAnalysisOverlayEnabled(!analysisOverlayEnabled)
+                        }
+                        className="inline-flex h-9 items-center gap-2 rounded-full border border-border/80 bg-card px-3 text-xs font-semibold tracking-wide text-muted-foreground transition-colors hover:text-foreground"
+                    >
+                        <LuSparkles className="h-3.5 w-3.5" />
+                        {analysisOverlayEnabled
+                            ? "Hide move hints"
+                            : "Show move hints"}
+                    </button>
+                </div>
 
                 <MoveHistorySection
                     moves={mappedMoves}

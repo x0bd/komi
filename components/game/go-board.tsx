@@ -17,6 +17,7 @@ export function GoBoard({
   onIntersectionClick,
   onHoverIntersectionChange,
   opponentHover,
+  analysisHints = [],
   className,
 }: {
   size?: 9 | 13 | 19
@@ -28,6 +29,7 @@ export function GoBoard({
   onIntersectionClick?: (x: number, y: number) => void
   onHoverIntersectionChange?: (next: { x: number; y: number } | null) => void
   opponentHover?: { x: number; y: number; color: StoneColor } | null
+  analysisHints?: Array<{ x: number; y: number; confidence: number; rank: number }>
   className?: string
 }) {
   const [hovered, setHovered] = useState<{ x: number; y: number } | null>(null)
@@ -166,6 +168,35 @@ export function GoBoard({
             <div className="relative aspect-square w-full rounded-md">
               {/* SVG grid lines + hoshi */}
               <GridLayer size={size} hoshiPoints={hoshiPoints} />
+
+              {analysisHints.map((hint) => (
+                <div
+                  key={`analysis-${hint.x}-${hint.y}-${hint.rank}`}
+                  className="pointer-events-none absolute z-[15] flex items-center justify-center"
+                  style={{
+                    left: `${(hint.x / size) * 100}%`,
+                    top: `${(hint.y / size) * 100}%`,
+                    width: `${100 / size}%`,
+                    height: `${100 / size}%`,
+                  }}
+                  aria-hidden="true"
+                >
+                  <div
+                    className={cn(
+                      "relative flex h-[66%] w-[66%] items-center justify-center rounded-full border text-[8px] font-semibold shadow-sm md:text-[9px]",
+                      hint.rank === 1 &&
+                        "border-emerald-400/80 bg-emerald-400/25 text-emerald-950 dark:text-emerald-100",
+                      hint.rank === 2 &&
+                        "border-amber-400/80 bg-amber-400/24 text-amber-950 dark:text-amber-100",
+                      hint.rank >= 3 &&
+                        "border-sky-400/80 bg-sky-400/24 text-sky-950 dark:text-sky-100",
+                    )}
+                    title={`Engine rank ${hint.rank} (${hint.confidence}% confidence)`}
+                  >
+                    {hint.rank}
+                  </div>
+                </div>
+              ))}
 
               {capturedStones.map((capture) => (
                 <div

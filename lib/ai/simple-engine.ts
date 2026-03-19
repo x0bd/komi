@@ -18,12 +18,28 @@ type CandidateWithState = EngineCandidate & {
 }
 
 type EngineProfile = {
+  id: "easy-random" | "shape-first" | "tactical-override"
   searchBudget: EngineSearchBudget
   topCandidateLimit: number
   opponentReplySample: number
+  weightedTopSize: number
   mediumTemperature: number
   openingBiasWeight: number
   applySafetyFilter: boolean
+  captureWeight: number
+  libertyWeight: number
+  adjacentAlliesWeight: number
+  adjacentOpponentsWeight: number
+  centerEarlyWeight: number
+  centerLateWeight: number
+  edgePenaltyWeight: number
+  atariPenaltyWeight: number
+  hardEvalWeight: number
+  hardReplyWeight: number
+  riskPenaltyPerCapture: number
+  libertyRiskPenalty: number
+  captureBonusWeight: number
+  hardNoiseRange: number
 }
 
 const LETTERS = "ABCDEFGHJKLMNOPQRST"
@@ -54,35 +70,90 @@ function profileForRequest(
 ): EngineProfile {
   const searchBudget = requestedBudget ?? defaultSearchBudget(difficulty)
 
-  if (searchBudget === "deep") {
+  const budgetScale =
+    searchBudget === "deep" ? 1.12 : searchBudget === "standard" ? 1 : 0.9
+  const topCandidateLimit =
+    searchBudget === "deep" ? 18 : searchBudget === "standard" ? 12 : 8
+  const opponentReplySample =
+    searchBudget === "deep" ? 20 : searchBudget === "standard" ? 12 : 8
+
+  if (difficulty === "hard") {
     return {
+      id: "tactical-override",
       searchBudget,
-      topCandidateLimit: 18,
-      opponentReplySample: 20,
-      mediumTemperature: 2.1,
-      openingBiasWeight: difficulty === "hard" ? 7.5 : 6.2,
-      applySafetyFilter: difficulty !== "easy",
+      topCandidateLimit,
+      opponentReplySample,
+      weightedTopSize: 5,
+      mediumTemperature: 2.05,
+      openingBiasWeight: 6.8 * budgetScale,
+      applySafetyFilter: true,
+      captureWeight: 26,
+      libertyWeight: 2.1,
+      adjacentAlliesWeight: 0.95,
+      adjacentOpponentsWeight: 1.4,
+      centerEarlyWeight: 6.3,
+      centerLateWeight: 2.8,
+      edgePenaltyWeight: 2.4,
+      atariPenaltyWeight: 10.5,
+      hardEvalWeight: 0.56,
+      hardReplyWeight: 0.44,
+      riskPenaltyPerCapture: 24,
+      libertyRiskPenalty: 14,
+      captureBonusWeight: 9,
+      hardNoiseRange: 0.2,
     }
   }
 
-  if (searchBudget === "standard") {
+  if (difficulty === "medium") {
     return {
+      id: "shape-first",
       searchBudget,
-      topCandidateLimit: 12,
-      opponentReplySample: 12,
-      mediumTemperature: 2.35,
-      openingBiasWeight: difficulty === "easy" ? 3.8 : 5.6,
-      applySafetyFilter: difficulty !== "easy",
+      topCandidateLimit,
+      opponentReplySample,
+      weightedTopSize: 7,
+      mediumTemperature: 1.95,
+      openingBiasWeight: 6.1 * budgetScale,
+      applySafetyFilter: true,
+      captureWeight: 18.5,
+      libertyWeight: 3.2,
+      adjacentAlliesWeight: 1.45,
+      adjacentOpponentsWeight: 0.85,
+      centerEarlyWeight: 5.6,
+      centerLateWeight: 2.2,
+      edgePenaltyWeight: 3.1,
+      atariPenaltyWeight: 12.2,
+      hardEvalWeight: 0.64,
+      hardReplyWeight: 0.36,
+      riskPenaltyPerCapture: 19,
+      libertyRiskPenalty: 13,
+      captureBonusWeight: 6,
+      hardNoiseRange: 0.14,
     }
   }
 
   return {
-    searchBudget: "fast",
-    topCandidateLimit: 8,
-    opponentReplySample: 8,
+    id: "easy-random",
+    searchBudget,
+    topCandidateLimit,
+    opponentReplySample,
+    weightedTopSize: 8,
     mediumTemperature: 2.7,
-    openingBiasWeight: difficulty === "easy" ? 2.5 : 4.4,
+    openingBiasWeight: 3.2 * budgetScale,
     applySafetyFilter: false,
+    captureWeight: 24,
+    libertyWeight: 2.2,
+    adjacentAlliesWeight: 0.8,
+    adjacentOpponentsWeight: 1.2,
+    centerEarlyWeight: 6,
+    centerLateWeight: 2.5,
+    edgePenaltyWeight: 2.2,
+    atariPenaltyWeight: 8,
+    hardEvalWeight: 0.62,
+    hardReplyWeight: 0.38,
+    riskPenaltyPerCapture: 20,
+    libertyRiskPenalty: 12,
+    captureBonusWeight: 8,
+    hardNoiseRange: 0.45,
   }
 }
 
@@ -206,16 +277,16 @@ function evaluateCandidate(
     getOpeningPatternBias(size, x, y, state.moveNumber) * profile.openingBiasWeight
   const edgePenalty =
     phase < 0.18 && (x === 0 || y === 0 || x === size - 1 || y === size - 1)
-      ? -2.2
+      ? -profile.edgePenaltyWeight
       : 0
-  const atariPenalty = liberties <= 1 ? -8 : 0
+  const atariPenalty = liberties <= 1 ? -profile.atariPenaltyWeight : 0
 
   const score =
-    captureGain * 24 +
-    Math.min(liberties, 6) * 2.2 +
-    adjacentAllies * 0.8 +
-    adjacentOpponents * 1.2 +
-    centerBias * (phase < 0.35 ? 6 : 2.5) +
+    captureGain * profile.captureWeight +
+    Math.min(liberties, 6) * profile.libertyWeight +
+    adjacentAllies * profile.adjacentAlliesWeight +
+    adjacentOpponents * profile.adjacentOpponentsWeight +
+    centerBias * (phase < 0.35 ? profile.centerEarlyWeight : profile.centerLateWeight) +
     openingBias +
     edgePenalty +
     atariPenalty
@@ -386,10 +457,14 @@ function applyTacticalSafetyFilter(
   return snapbackFiltered.length > 0 ? snapbackFiltered : base
 }
 
-function pickWeighted(candidates: CandidateWithState[], temperature = 2.4) {
+function pickWeighted(
+  candidates: CandidateWithState[],
+  topSize: number,
+  temperature = 2.4,
+) {
   if (candidates.length === 0) return null
 
-  const top = candidates.slice(0, Math.min(6, candidates.length))
+  const top = candidates.slice(0, Math.min(topSize, candidates.length))
   const bestScore = top[0].score
   const weights = top.map((candidate) =>
     Math.exp((candidate.score - bestScore) / temperature),
@@ -462,12 +537,14 @@ function chooseHardCandidate(
       worstReplyScore = evaluateBoardFast(candidate.nextState, player)
     }
 
-    const riskPenalty = maxCounterCapture * 20 + (candidate.liberties <= 1 ? 12 : 0)
-    const captureBonus = candidate.captureGain * 8
-    const noise = randomize ? Math.random() * 0.45 : 0
+    const riskPenalty =
+      maxCounterCapture * profile.riskPenaltyPerCapture +
+      (candidate.liberties <= 1 ? profile.libertyRiskPenalty : 0)
+    const captureBonus = candidate.captureGain * profile.captureBonusWeight
+    const noise = randomize ? Math.random() * profile.hardNoiseRange : 0
     const score =
-      candidate.score * 0.62 +
-      worstReplyScore * 0.38 +
+      candidate.score * profile.hardEvalWeight +
+      worstReplyScore * profile.hardReplyWeight +
       captureBonus -
       riskPenalty +
       noise
@@ -499,7 +576,13 @@ function chooseCandidate(
 
   if (difficulty === "medium") {
     if (!randomize) return candidates[0]
-    return pickWeighted(candidates, profile.mediumTemperature) ?? candidates[0]
+    return (
+      pickWeighted(
+        candidates,
+        profile.weightedTopSize,
+        profile.mediumTemperature,
+      ) ?? candidates[0]
+    )
   }
 
   return (
@@ -518,6 +601,12 @@ function toMove(candidate: CandidateWithState | null): EngineMove {
 
 function toDifficulty(value: EngineDifficulty | undefined): EngineDifficulty {
   return value ?? "easy"
+}
+
+function profileLabel(profile: EngineProfile) {
+  if (profile.id === "shape-first") return "shape-first"
+  if (profile.id === "tactical-override") return "tactical"
+  return "light"
 }
 
 async function maybeDelay(difficulty: EngineDifficulty, withDelay = true) {
@@ -592,7 +681,7 @@ export function createSimpleEngine(): EngineProvider {
 
       const summary = recommendedMove.isPass
         ? "No legal moves found; pass is recommended."
-        : `Best move looks like ${toCoordinate(
+        : `${profileLabel(profile)} read likes ${toCoordinate(
             recommendedMove.x,
             recommendedMove.y,
             request.size,

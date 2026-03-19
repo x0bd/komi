@@ -46,6 +46,7 @@ interface KomiStore {
   komi: number
   mode: GameMode
   aiDifficulty: AIDifficulty
+  analysisOverlayEnabled: boolean
   
   // State
   gameState: GameState
@@ -70,6 +71,7 @@ interface KomiStore {
   resign: () => void
   setMode: (mode: GameMode) => void
   setAIDifficulty: (difficulty: AIDifficulty) => void
+  setAnalysisOverlayEnabled: (enabled: boolean) => void
   resetGame: (size?: 9|13|19, komi?: number) => void
   tickActiveTimer: (elapsedSeconds?: number) => void
   hydrateFromMultiplayer: (snapshot: MultiplayerSnapshot) => void
@@ -241,6 +243,7 @@ export const useGameStore = create<KomiStore>((set, get) => ({
   komi: 6.5,
   mode: "local",
   aiDifficulty: "easy",
+  analysisOverlayEnabled: false,
   
   gameState: initialState,
   moveHistory: [],
@@ -455,6 +458,10 @@ export const useGameStore = create<KomiStore>((set, get) => ({
 
   setAIDifficulty: (aiDifficulty) => {
     set({ aiDifficulty })
+  },
+
+  setAnalysisOverlayEnabled: (analysisOverlayEnabled) => {
+    set({ analysisOverlayEnabled })
   },
 
   resetGame: (newSize, newKomi) => {
