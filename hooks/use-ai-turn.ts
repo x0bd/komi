@@ -1,6 +1,15 @@
 import { useEffect, useRef } from "react"
 import { useGameStore } from "../lib/stores/game-store"
 import { getActiveEngineProvider } from "../lib/ai"
+import type { EngineDifficulty, EngineSearchBudget } from "../lib/ai/engine-provider"
+
+function searchBudgetForDifficulty(
+  difficulty: EngineDifficulty,
+): EngineSearchBudget {
+  if (difficulty === "hard") return "deep"
+  if (difficulty === "medium") return "standard"
+  return "fast"
+}
 
 export function useAITurn() {
   const gameState = useGameStore((state) => state.gameState)
@@ -35,6 +44,7 @@ export function useAITurn() {
             size,
             player: "white",
             difficulty: aiDifficulty,
+            searchBudget: searchBudgetForDifficulty(aiDifficulty),
             withDelay: true,
           })
           if (requestId !== requestIdRef.current) {

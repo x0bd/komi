@@ -324,9 +324,9 @@ Step-by-step build plan. UI first, then game logic, then integrations.
   - [x] Show compact top-move confidence readout in Sensei panel
   - [x] Add short "why this move" reasons for top suggestions
 - [ ] **Engine strength upgrades** (local-first)
-  - [ ] Add configurable search budget (fast / standard / deep) to `SimpleEngine`
-  - [ ] Add opening-pattern priors for early-game move selection
-  - [ ] Add tactical safety filters (self-atari and snapback checks)
+  - [x] Add configurable search budget (fast / standard / deep) to `SimpleEngine`
+  - [x] Add opening-pattern priors for early-game move selection
+  - [x] Add tactical safety filters (self-atari and snapback checks)
 - [ ] **Analysis API route** (`app/api/analyze/route.ts`, optional)
   - [ ] Accepts game state, returns in-house engine analysis
   - [ ] Caches results for identical positions

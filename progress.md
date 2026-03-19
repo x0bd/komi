@@ -248,3 +248,13 @@ Original prompt: lets continue building
     - Candidate rows now show short “why this move” reasons instead of raw tags.
   - Updated `project-todo.md` to mark short reason polish complete.
   - Constraint preserved: no tests/build/lint were run in this pass.
+
+- 2026-03-19: Local engine profile upgrade (Phase 11 continuation).
+  - Extended engine request contract with `searchBudget` (`fast` / `standard` / `deep`) in `lib/ai/engine-provider.ts`.
+  - Upgraded `lib/ai/simple-engine.ts`:
+    - Added budget-driven search profiles (candidate breadth + opponent reply sampling depth).
+    - Added opening-pattern priors for early-game corner development.
+    - Added tactical safety filtering for self-atari traps and likely snapback recaptures.
+  - Wired difficulty -> budget mapping into live AI turns (`hooks/use-ai-turn.ts`) and analysis/tutor insight generation (`lib/stores/game-store.ts`), plus compatibility path in `lib/ai/random.ts`.
+  - Updated `project-todo.md` to mark engine strength upgrades complete.
+  - Constraint preserved: no tests/build/lint were run in this pass.

@@ -7,7 +7,7 @@ import { gameToSGF } from "../engine/sgf"
 import { useLearningStore } from "./learning-store"
 import type { StoneColor } from "@/components/game/stone"
 import { getActiveEngineProvider } from "../ai"
-import type { EngineDifficulty } from "../ai/engine-provider"
+import type { EngineDifficulty, EngineSearchBudget } from "../ai/engine-provider"
 
 export type GameMode = "local" | "versus-ai" | "online"
 export type AIDifficulty = "easy" | "medium" | "hard"
@@ -129,6 +129,14 @@ function mapDifficultyToEngine(difficulty: AIDifficulty): EngineDifficulty {
   return difficulty
 }
 
+function mapDifficultyToSearchBudget(
+  difficulty: AIDifficulty,
+): EngineSearchBudget {
+  if (difficulty === "hard") return "deep"
+  if (difficulty === "medium") return "standard"
+  return "fast"
+}
+
 function getCandidateReason(candidate: {
   captureGain: number
   liberties: number
@@ -165,6 +173,7 @@ async function registerEngineMoveInsight({
   try {
     const provider = getActiveEngineProvider()
     const difficulty = mapDifficultyToEngine(aiDifficulty)
+    const searchBudget = mapDifficultyToSearchBudget(aiDifficulty)
 
     const [before, after] = await Promise.all([
       provider.analyzePosition({
@@ -172,6 +181,7 @@ async function registerEngineMoveInsight({
         size,
         player,
         difficulty,
+        searchBudget,
         maxCandidates: 12,
         withDelay: false,
       }),
@@ -180,6 +190,7 @@ async function registerEngineMoveInsight({
         size,
         player,
         difficulty,
+        searchBudget,
         maxCandidates: 5,
         withDelay: false,
       }),

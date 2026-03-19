@@ -1,6 +1,7 @@
 import type { GameState, PlayerColor } from "../engine/types"
 
 export type EngineDifficulty = "easy" | "medium" | "hard"
+export type EngineSearchBudget = "fast" | "standard" | "deep"
 
 export type EngineMove = {
   x: number
@@ -23,6 +24,7 @@ export type EngineRequest = {
   size: number
   player: PlayerColor
   difficulty?: EngineDifficulty
+  searchBudget?: EngineSearchBudget
   maxCandidates?: number
   timeBudgetMs?: number
   withDelay?: boolean
@@ -43,4 +45,3 @@ export interface EngineProvider {
   pickMove: (request: EngineRequest) => Promise<EngineMove>
   analyzePosition: (request: EngineRequest) => Promise<EngineAnalysis>
 }
-
