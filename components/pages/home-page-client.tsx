@@ -4,6 +4,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import {
     RoomProvider,
+    useMutation,
+    useOthersConnectionIds,
     useOthers,
     useSelf,
     useStatus,
@@ -22,7 +24,11 @@ import {
 } from "@/components/game/move-history-section";
 import { GameControls } from "@/components/game/game-controls";
 import { GameOverDialog } from "@/components/game/game-over-dialog";
-import { useGameStore, type GameMode } from "@/lib/stores/game-store";
+import {
+    useGameStore,
+    type GameMode,
+    type MultiplayerSnapshot,
+} from "@/lib/stores/game-store";
 import { splitClock, useGameClock } from "@/hooks/use-timer";
 import { useAITurn } from "@/hooks/use-ai-turn";
 import { AIReaction } from "@/components/learning/ai-reaction";
@@ -30,7 +36,10 @@ import { AIChatPanel } from "@/components/learning/ai-chat-panel";
 import { XPBar } from "@/components/learning/xp-bar";
 import { MobileSenseiFab } from "@/components/learning/mobile-sensei-fab";
 import type { ScoreResult } from "@/lib/engine/scoring";
+import { calculateScore } from "@/lib/engine/scoring";
 import type { GameState, Move } from "@/lib/engine/types";
+import { applyMove, applyPass } from "@/lib/engine/rules";
+import { isGameOver as getIsGameOver } from "@/lib/engine/game";
 import { useMultiplayerStore } from "@/lib/stores/multiplayer-store";
 import { LuBot } from "react-icons/lu";
 import { OnlineRoomSync } from "@/components/game/online-room-sync";
@@ -60,6 +69,72 @@ function formatResultCode(
     return winnerCode;
 }
 
+function readSnapshotFromMutableStorage(storage: {
+    get: (key: keyof Liveblocks["Storage"]) => unknown;
+}): MultiplayerSnapshot {
+    const board = storage.get("board") as number[];
+    const turn = storage.get("turn") as MultiplayerSnapshot["turn"];
+    const moveNumber = storage.get("moveNumber") as number;
+    const consecutivePasses = storage.get("consecutivePasses") as number;
+    const captured = storage.get("captured") as MultiplayerSnapshot["captured"];
+    const ko = storage.get("ko") as number | null;
+    const history = storage.get("history") as string[];
+    const moveHistory = storage.get("moveHistory") as Move[];
+    const timers = storage.get("timers") as MultiplayerSnapshot["timers"];
+    const isGameOver = storage.get("isGameOver") as boolean;
+    const winner = storage.get("winner") as MultiplayerSnapshot["winner"];
+    const gameOverReason =
+        storage.get("gameOverReason") as MultiplayerSnapshot["gameOverReason"];
+
+    return {
+        board: [...board],
+        turn,
+        moveNumber,
+        consecutivePasses,
+        captured: {
+            black: captured.black,
+            white: captured.white,
+        },
+        ko,
+        history: [...history],
+        moveHistory: moveHistory.map((move) => ({ ...move })),
+        timers: {
+            black: timers.black,
+            white: timers.white,
+        },
+        isGameOver,
+        winner,
+        gameOverReason,
+    };
+}
+
+function writeSnapshotToMutableStorage(
+    storage: { set: (key: keyof Liveblocks["Storage"], value: unknown) => void },
+    snapshot: MultiplayerSnapshot,
+) {
+    storage.set("board", [...snapshot.board]);
+    storage.set("turn", snapshot.turn);
+    storage.set("moveNumber", snapshot.moveNumber);
+    storage.set("consecutivePasses", snapshot.consecutivePasses);
+    storage.set("captured", {
+        black: snapshot.captured.black,
+        white: snapshot.captured.white,
+    });
+    storage.set("ko", snapshot.ko);
+    storage.set("history", [...snapshot.history]);
+    storage.set(
+        "moveHistory",
+        snapshot.moveHistory.map((move) => ({ ...move })),
+    );
+    storage.set("timers", {
+        black: snapshot.timers.black,
+        white: snapshot.timers.white,
+    });
+    storage.set("isGameOver", snapshot.isGameOver);
+    storage.set("winner", snapshot.winner);
+    storage.set("gameOverReason", snapshot.gameOverReason);
+}
+
 export default function HomePageClient() {
     const searchParams = useSearchParams();
     const roomParam = searchParams.get("room");
@@ -69,7 +144,6 @@ export default function HomePageClient() {
     const winner = useGameStore((state) => state.winner);
     const mode = useGameStore((state) => state.mode);
     const setMode = useGameStore((state) => state.setMode);
-    const size = useGameStore((state) => state.size);
     const gameState = useGameStore((state) => state.gameState);
     const timers = useGameStore((state) => state.timers);
     const moveHistory = useGameStore((state) => state.moveHistory);
@@ -157,7 +231,6 @@ export default function HomePageClient() {
         <OnlineRoomShell
             mode={mode}
             roomId={roomId}
-            size={size}
             gameState={gameState}
             moveHistory={moveHistory}
             timers={timers}
@@ -165,16 +238,11 @@ export default function HomePageClient() {
             winner={winner}
             gameOverReason={gameOverReason}
         >
-            <GameLayout
-                board={
-                    mode === "online" && roomId ? (
-                        <OnlineBoardView />
-                    ) : (
-                        <LocalBoardView />
-                    )
-                }
-                sidebar={<Sidebar />}
-            />
+            {mode === "online" && roomId ? (
+                <OnlineGameplayLayout />
+            ) : (
+                <GameLayout board={<LocalBoardView />} sidebar={<Sidebar />} />
+            )}
             <AIReaction />
             <MobileSenseiFab />
             <GameOverDialog
@@ -191,7 +259,6 @@ export default function HomePageClient() {
 function OnlineRoomShell({
     mode,
     roomId,
-    size,
     gameState,
     moveHistory,
     timers,
@@ -202,7 +269,6 @@ function OnlineRoomShell({
 }: {
     mode: GameMode;
     roomId: string | null;
-    size: 9 | 13 | 19;
     gameState: GameState;
     moveHistory: Move[];
     timers: { black: number; white: number };
@@ -248,6 +314,173 @@ function OnlineRoomShell({
     );
 }
 
+function OnlineGameplayLayout() {
+    const size = useGameStore((state) => state.size);
+    const komi = useGameStore((state) => state.komi);
+    const otherConnectionIds = useOthersConnectionIds();
+    const waitingForOpponent = otherConnectionIds.length === 0;
+
+    const commitStone = useMutation(
+        ({ storage }, x: number, y: number) => {
+            if (waitingForOpponent) {
+                return false;
+            }
+
+            const snapshot = readSnapshotFromMutableStorage(storage);
+            if (snapshot.isGameOver) {
+                return false;
+            }
+
+            const currentTurn = snapshot.turn;
+            const gameState: GameState = {
+                board: [...snapshot.board] as GameState["board"],
+                turn: snapshot.turn,
+                moveNumber: snapshot.moveNumber,
+                consecutivePasses: snapshot.consecutivePasses,
+                captured: {
+                    black: snapshot.captured.black,
+                    white: snapshot.captured.white,
+                },
+                ko: snapshot.ko,
+                history: [...snapshot.history],
+            };
+            const nextState = applyMove(gameState, size, x, y, currentTurn);
+            if (!nextState) {
+                return false;
+            }
+
+            const nextSnapshot: MultiplayerSnapshot = {
+                board: [...nextState.board],
+                turn: nextState.turn,
+                moveNumber: nextState.moveNumber,
+                consecutivePasses: nextState.consecutivePasses,
+                captured: {
+                    black: nextState.captured.black,
+                    white: nextState.captured.white,
+                },
+                ko: nextState.ko,
+                history: [...nextState.history],
+                moveHistory: [
+                    ...snapshot.moveHistory,
+                    { x, y, player: currentTurn, isPass: false },
+                ],
+                timers: {
+                    black: snapshot.timers.black,
+                    white: snapshot.timers.white,
+                },
+                isGameOver: false,
+                winner: null,
+                gameOverReason: null,
+            };
+
+            writeSnapshotToMutableStorage(storage, nextSnapshot);
+            return true;
+        },
+        [size, waitingForOpponent],
+    );
+
+    const commitPass = useMutation(
+        ({ storage }) => {
+            if (waitingForOpponent) {
+                return false;
+            }
+
+            const snapshot = readSnapshotFromMutableStorage(storage);
+            if (snapshot.isGameOver) {
+                return false;
+            }
+
+            const passingPlayer = snapshot.turn;
+            const gameState: GameState = {
+                board: [...snapshot.board] as GameState["board"],
+                turn: snapshot.turn,
+                moveNumber: snapshot.moveNumber,
+                consecutivePasses: snapshot.consecutivePasses,
+                captured: {
+                    black: snapshot.captured.black,
+                    white: snapshot.captured.white,
+                },
+                ko: snapshot.ko,
+                history: [...snapshot.history],
+            };
+            const nextState = applyPass(gameState);
+            const finished = getIsGameOver(nextState);
+            const score = finished
+                ? calculateScore(nextState.board, size, nextState.captured, komi)
+                : null;
+
+            const nextSnapshot: MultiplayerSnapshot = {
+                board: [...nextState.board],
+                turn: nextState.turn,
+                moveNumber: nextState.moveNumber,
+                consecutivePasses: nextState.consecutivePasses,
+                captured: {
+                    black: nextState.captured.black,
+                    white: nextState.captured.white,
+                },
+                ko: nextState.ko,
+                history: [...nextState.history],
+                moveHistory: [
+                    ...snapshot.moveHistory,
+                    { x: -1, y: -1, player: passingPlayer, isPass: true },
+                ],
+                timers: {
+                    black: snapshot.timers.black,
+                    white: snapshot.timers.white,
+                },
+                isGameOver: finished,
+                winner: finished && score ? score.winner : null,
+                gameOverReason: finished ? "score" : null,
+            };
+
+            writeSnapshotToMutableStorage(storage, nextSnapshot);
+            return true;
+        },
+        [komi, size, waitingForOpponent],
+    );
+
+    const commitResign = useMutation(({ storage }) => {
+        if (waitingForOpponent) {
+            return false;
+        }
+
+        const snapshot = readSnapshotFromMutableStorage(storage);
+        if (snapshot.isGameOver) {
+            return false;
+        }
+
+        const winner = snapshot.turn === "black" ? "white" : "black";
+
+        const nextSnapshot: MultiplayerSnapshot = {
+            ...snapshot,
+            isGameOver: true,
+            winner,
+            gameOverReason: "resignation",
+        };
+
+        writeSnapshotToMutableStorage(storage, nextSnapshot);
+        return true;
+    }, []);
+
+        return (
+        <GameLayout
+            board={
+                <OnlineBoardView
+                    onIntersectionClick={commitStone}
+                    waitingForOpponent={waitingForOpponent}
+                />
+            }
+            sidebar={
+                <Sidebar
+                    onPassAction={commitPass}
+                    onResignAction={commitResign}
+                    controlsDisabled={waitingForOpponent}
+                />
+            }
+        />
+    );
+}
+
 function LocalBoardView() {
     const board = useGameStore((state) => state.gameState.board);
     const size = useGameStore((state) => state.size);
@@ -280,7 +513,13 @@ function LocalBoardView() {
     );
 }
 
-function OnlineBoardView() {
+function OnlineBoardView({
+    onIntersectionClick,
+    waitingForOpponent = false,
+}: {
+    onIntersectionClick?: (x: number, y: number) => boolean;
+    waitingForOpponent?: boolean;
+}) {
     const board = useGameStore((state) => state.gameState.board);
     const size = useGameStore((state) => state.size);
     const placeStone = useGameStore((state) => state.placeStone);
@@ -354,27 +593,53 @@ function OnlineBoardView() {
     );
 
     return (
-        <GoBoard
-            board={board}
-            size={size}
-            currentPlayer={currentPlayer}
-            validMoves={validMoves}
-            capturedStones={recentCaptures}
-            opponentHover={opponentHover}
-            lastMove={
-                lastMove && !lastMove.isPass
-                    ? { x: lastMove.x, y: lastMove.y }
-                    : undefined
-            }
-            onHoverIntersectionChange={(next) => {
-                updateMyPresence({ hoveredIntersection: next });
-            }}
-            onIntersectionClick={(x, y) => placeStone(x, y)}
-        />
+        <div className="relative">
+            <GoBoard
+                board={board}
+                size={size}
+                currentPlayer={currentPlayer}
+                validMoves={waitingForOpponent ? [] : validMoves}
+                capturedStones={recentCaptures}
+                opponentHover={opponentHover}
+                lastMove={
+                    lastMove && !lastMove.isPass
+                        ? { x: lastMove.x, y: lastMove.y }
+                        : undefined
+                }
+                onHoverIntersectionChange={(next) => {
+                    updateMyPresence({ hoveredIntersection: next });
+                }}
+                onIntersectionClick={(x, y) => {
+                    if (waitingForOpponent) {
+                        return;
+                    }
+                    if (onIntersectionClick) {
+                        onIntersectionClick(x, y);
+                        return;
+                    }
+                    placeStone(x, y);
+                }}
+            />
+            {waitingForOpponent ? (
+                <div className="pointer-events-none absolute inset-0 z-30 flex items-center justify-center rounded-3xl bg-background/55 backdrop-blur-[2px]">
+                    <div className="rounded-full border border-border/80 bg-card/95 px-4 py-2 text-sm font-medium text-foreground shadow-sm">
+                        Waiting for opponent to join...
+                    </div>
+                </div>
+            ) : null}
+        </div>
     );
 }
 
-function Sidebar() {
+function Sidebar({
+    onPassAction,
+    onResignAction,
+    controlsDisabled = false,
+}: {
+    onPassAction?: () => void;
+    onResignAction?: () => void;
+    controlsDisabled?: boolean;
+} = {}) {
     const [expandedPanel, setExpandedPanel] = useState<
         "history" | "sensei" | "streak" | null
     >(null);
@@ -524,9 +789,9 @@ function Sidebar() {
 
             <div className="mt-auto pt-1">
                 <GameControls
-                    onPass={passTurn}
-                    onResign={resign}
-                    disabled={isGameOver}
+                    onPass={onPassAction ?? passTurn}
+                    onResign={onResignAction ?? resign}
+                    disabled={isGameOver || controlsDisabled}
                 />
             </div>
         </div>

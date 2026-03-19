@@ -186,3 +186,16 @@ Original prompt: lets continue building
   - Updated `project-todo.md`:
     - Marked room storage sync, presence indicators, and in-game/post-game online sync checklist items as complete.
   - Constraint preserved: no tests/build/lint were run in this pass.
+
+- 2026-03-19: Phase 10 authoritative online actions pass completed.
+  - Reworked online gameplay flow in `components/pages/home-page-client.tsx`:
+    - Added `OnlineGameplayLayout` that commits `stone`, `pass`, and `resign` through `useMutation` against Liveblocks storage.
+    - Added storage snapshot read/write helpers for consistent mutation payloads.
+    - Online board now uses room-backed move commits instead of direct local-store writes.
+    - Sidebar pass/resign in online mode now route to room-backed mutations.
+    - Added lobby gating: while no opponent is connected, board interactions and controls are disabled and a waiting overlay is shown.
+  - Simplified `components/game/online-room-sync.tsx`:
+    - It is now a one-way hydrator (room storage → local Zustand projection) to avoid writeback races.
+  - Updated `project-todo.md`:
+    - Marked realtime store replacement, server-authoritative turn order, optimistic stone updates, and basic matchmaking checklist items as complete.
+  - Constraint preserved: no tests/build/lint were run in this pass.

@@ -295,17 +295,17 @@ Step-by-step build plan. UI first, then game logic, then integrations.
   - [x] Room storage: full game state synced
   - [x] Presence: show opponent's cursor/hover on board
 - [ ] **Realtime game store** (`lib/stores/multiplayer-store.ts`)
-  - [ ] Liveblocks storage replaces local Zustand for online games
-  - [ ] Conflict resolution: server-authoritative turn order
-  - [ ] Optimistic updates for stone placement
+  - [x] Liveblocks storage replaces local Zustand for online games
+  - [x] Conflict resolution: server-authoritative turn order
+  - [x] Optimistic updates for stone placement
 - [ ] **Presence indicators**
   - [x] Opponent online/offline status
   - [x] Opponent's hovered intersection (ghost stone in their color)
   - [x] Connection quality indicator
-- [ ] **Matchmaking** (basic)
-  - [ ] Create game → get shareable link
-  - [ ] Join game → enter room code or click link
-  - [ ] Lobby UI: waiting for opponent screen
+- [x] **Matchmaking** (basic)
+  - [x] Create game → get shareable link
+  - [x] Join game → enter room code or click link
+  - [x] Lobby UI: waiting for opponent screen
 - [ ] **Online mode in UI**
   - [x] Add "Online" option to mode toggle
   - [x] Pre-game: show lobby/waiting state
