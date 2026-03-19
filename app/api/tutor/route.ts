@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 
 type TutorRequestBody = {
   question?: string
+  apiKey?: string
   currentPlayer?: "black" | "white"
   moveNumber?: number
   lastMove?: {
@@ -28,6 +29,7 @@ type TutorCacheEntry = {
 const tutorCache = new Map<string, TutorCacheEntry>()
 const CACHE_TTL_MS = 120_000
 const CACHE_MAX_ENTRIES = 300
+const OPENAI_MODEL = "gpt-4.1-mini"
 
 function clamp01(value: number) {
   return Math.max(0, Math.min(1, value))
@@ -97,6 +99,102 @@ function buildAnswerForQuestion(question: string) {
   return "Good question. Prioritize connected shape, count liberties carefully, and choose moves that improve both safety and territory."
 }
 
+function buildOpenAIUserPrompt(body: TutorRequestBody) {
+  if (typeof body.question === "string" && body.question.trim().length > 0) {
+    return `User question: ${body.question.trim()}`
+  }
+
+  const coordinate = body.lastMove?.coordinate ?? "unknown"
+  const quality = body.analysis?.quality ?? "ok"
+  const winRate = Math.round(clamp01(body.analysis?.winRate ?? 0.5) * 100)
+  const suggestion = body.analysis?.suggestedCoordinate ?? "none"
+  const summary = body.analysis?.summary ?? "No summary."
+  const topMoves =
+    body.analysis?.topMoves?.slice(0, 3).map((move) => `${move.coordinate ?? "?"}: ${move.reason ?? "shape"}`).join(" | ") ??
+    "No top moves."
+  const moveNumber = body.moveNumber ?? 0
+
+  return [
+    `Move number: ${moveNumber}`,
+    `Last move: ${coordinate}${body.lastMove?.isPass ? " (pass)" : ""}`,
+    `Engine quality: ${quality}`,
+    `Estimated win rate: ${winRate}%`,
+    `Suggested coordinate: ${suggestion}`,
+    `Engine summary: ${summary}`,
+    `Top candidates: ${topMoves}`,
+    "Write one compact coaching note for a beginner-intermediate Go player.",
+  ].join("\n")
+}
+
+function extractOpenAIText(json: unknown) {
+  if (!json || typeof json !== "object") return null
+
+  const asRecord = json as Record<string, unknown>
+  if (typeof asRecord.output_text === "string" && asRecord.output_text.trim()) {
+    return asRecord.output_text.trim()
+  }
+
+  const output = asRecord.output
+  if (!Array.isArray(output)) return null
+
+  for (const item of output) {
+    if (!item || typeof item !== "object") continue
+    const content = (item as Record<string, unknown>).content
+    if (!Array.isArray(content)) continue
+    for (const part of content) {
+      if (!part || typeof part !== "object") continue
+      const text = (part as Record<string, unknown>).text
+      if (typeof text === "string" && text.trim()) {
+        return text.trim()
+      }
+    }
+  }
+
+  return null
+}
+
+async function requestOpenAIMessage(apiKey: string, body: TutorRequestBody) {
+  const response = await fetch("https://api.openai.com/v1/responses", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({
+      model: OPENAI_MODEL,
+      max_output_tokens: 180,
+      temperature: 0.5,
+      input: [
+        {
+          role: "system",
+          content: [
+            {
+              type: "input_text",
+              text: "You are Sensei, a concise Go tutor. Give practical, non-verbose coaching with concrete next-step advice.",
+            },
+          ],
+        },
+        {
+          role: "user",
+          content: [
+            {
+              type: "input_text",
+              text: buildOpenAIUserPrompt(body),
+            },
+          ],
+        },
+      ],
+    }),
+  })
+
+  if (!response.ok) {
+    return null
+  }
+
+  const json = await response.json().catch(() => null)
+  return extractOpenAIText(json)
+}
+
 function buildCacheKey(body: TutorRequestBody) {
   const top = body.analysis?.topMoves?.slice(0, 3) ?? []
   return JSON.stringify({
@@ -144,6 +242,21 @@ function writeCachedMessage(cacheKey: string, message: string) {
 
 export async function POST(request: NextRequest) {
   const body = (await request.json().catch(() => ({}))) as TutorRequestBody
+  const apiKey =
+    typeof body.apiKey === "string" && body.apiKey.trim().startsWith("sk-")
+      ? body.apiKey.trim()
+      : null
+
+  if (apiKey) {
+    const message = await requestOpenAIMessage(apiKey, body)
+    if (message) {
+      return NextResponse.json({
+        message,
+        source: "openai-user-key",
+      })
+    }
+  }
+
   if (typeof body.question === "string" && body.question.trim().length > 0) {
     const message = buildAnswerForQuestion(body.question)
     return NextResponse.json({
