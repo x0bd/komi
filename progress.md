@@ -216,3 +216,14 @@ Original prompt: lets continue building
     - Phase 11 reframed as “Advanced Engine Provider (Optional KataGo)”.
     - Marked pluggable engine architecture tasks complete.
   - Constraint preserved: no tests/build/lint were run in this pass.
+
+- 2026-03-19: Engine analysis wired into Sensei tutor flow.
+  - Extended tutor event model in `lib/stores/learning-store.ts` with `analysis` events.
+    - Tracks actor (`player`/`opponent`), move coordinate, suggested coordinate, quality bucket, and estimated win-rate pressure.
+    - Added adaptive tutor reactions for strong moves, workable moves, and mistakes (non-spam cadence).
+  - Extended `lib/stores/game-store.ts` `placeStone` flow:
+    - Calls active engine provider analysis before/after each move (non-blocking, no artificial delay).
+    - Computes move quality against top engine line and dispatches structured tutor analysis events.
+    - Keeps game loop synchronous; analysis failures are safely ignored.
+  - Updated `project-todo.md` to mark “Feed engine analysis insights into Sensei tutor cues/messages” complete.
+  - Constraint preserved: no tests/build/lint were run in this pass.

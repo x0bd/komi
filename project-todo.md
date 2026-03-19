@@ -320,6 +320,7 @@ Step-by-step build plan. UI first, then game logic, then integrations.
   - [x] Define `EngineProvider` interface (`pickMove`, `analyzePosition`)
   - [x] Implement `SimpleEngine` provider (heuristics + lightweight one-ply risk scan)
   - [x] Route AI turn hook through provider registry (default = `simple`)
+  - [x] Feed engine analysis insights into Sensei tutor cues/messages
 - [ ] **KataGo service** (optional upgrade)
   - [ ] Deploy KataGo on Fly.io or Cloudflare Worker
   - [ ] HTTP API: send board state, receive analysis (top moves, win rate, territory)

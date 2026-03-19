@@ -17,6 +17,14 @@ type TutorEvent =
   | { type: "player-capture"; count: number; coordinate: string }
   | { type: "opponent-stone"; coordinate: string }
   | { type: "opponent-capture"; count: number; coordinate: string }
+  | {
+      type: "analysis"
+      actor: "player" | "opponent"
+      moveCoordinate: string
+      suggestedCoordinate: string | null
+      quality: "best" | "strong" | "ok" | "mistake"
+      winRate: number
+    }
   | { type: "player-pass" }
   | { type: "opponent-pass" }
   | { type: "player-win" }
@@ -104,6 +112,80 @@ function getStreakMeta(event: StreakEvent) {
 
 function getTutorMeta(event: TutorEvent, eventCount: number) {
   switch (event.type) {
+    case "analysis": {
+      const winRate = Math.round(Math.max(0, Math.min(1, event.winRate)) * 100)
+
+      if (event.actor === "player") {
+        if (event.quality === "best") {
+          return {
+            mood: "celebrate" as const,
+            goal: "Excellent read. Keep converting local wins into territory.",
+            cue: `Engine approves ${event.moveCoordinate}. Keep your shape connected.`,
+            message:
+              eventCount % 2 === 0
+                ? `Strong read at ${event.moveCoordinate}. Win pressure now around ${winRate}%.`
+                : null,
+            tone: "celebrate" as const,
+          }
+        }
+
+        if (event.quality === "mistake") {
+          return {
+            mood: "warning" as const,
+            goal: "Stabilize shape before forcing the next fight.",
+            cue: event.suggestedCoordinate
+              ? `Playable, but ${event.suggestedCoordinate} was cleaner than ${event.moveCoordinate}.`
+              : `Playable move at ${event.moveCoordinate}, but there was a stronger option nearby.`,
+            message: event.suggestedCoordinate
+              ? `At ${event.moveCoordinate}, shape got thin. Consider ${event.suggestedCoordinate} in similar positions.`
+              : `That move at ${event.moveCoordinate} weakened tempo. Prioritize shape first.`,
+            tone: "warning" as const,
+          }
+        }
+
+        return {
+          mood: "focus" as const,
+          goal: "Keep building efficient shape and tempo.",
+          cue: `Move ${event.moveCoordinate} is workable. Estimated pressure ${winRate}%.`,
+          message: eventCount % 3 === 0 ? `Good pace. ${winRate}% pressure after ${event.moveCoordinate}.` : null,
+          tone: "coach" as const,
+        }
+      }
+
+      if (event.quality === "mistake") {
+        return {
+          mood: "celebrate" as const,
+          goal: "Punish inaccuracy with forcing moves.",
+          cue: `Opponent drifted at ${event.moveCoordinate}. Look for sente first.`,
+          message:
+            eventCount % 3 === 0
+              ? `Opponent slipped at ${event.moveCoordinate}. Clean punish opportunity now.`
+              : null,
+          tone: "celebrate" as const,
+        }
+      }
+
+      if (event.quality === "best") {
+        return {
+          mood: "warning" as const,
+          goal: "Respect strong opponent shape and defend weak groups.",
+          cue: `Opponent found a precise move at ${event.moveCoordinate}.`,
+          message:
+            eventCount % 4 === 0
+              ? `Opponent read was strong at ${event.moveCoordinate}. Stabilize before counter-attacking.`
+              : null,
+          tone: "warning" as const,
+        }
+      }
+
+      return {
+        mood: "focus" as const,
+        goal: "Track opponent intent and answer with shape.",
+        cue: `Opponent played ${event.moveCoordinate}. Stay connected and avoid over-fighting.`,
+        message: null,
+        tone: "coach" as const,
+      }
+    }
     case "player-capture":
       return {
         mood: "celebrate" as const,

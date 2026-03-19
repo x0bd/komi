@@ -6,6 +6,8 @@ import { calculateScore, type ScoreResult } from "../engine/scoring"
 import { gameToSGF } from "../engine/sgf"
 import { useLearningStore } from "./learning-store"
 import type { StoneColor } from "@/components/game/stone"
+import { getActiveEngineProvider } from "../ai"
+import type { EngineDifficulty } from "../ai/engine-provider"
 
 export type GameMode = "local" | "versus-ai" | "online"
 export type AIDifficulty = "easy" | "medium" | "hard"
@@ -114,6 +116,92 @@ function deriveCapturedStones(
   return captures
 }
 
+type MoveQuality = "best" | "strong" | "ok" | "mistake"
+
+function classifyMoveQuality(deltaFromBest: number): MoveQuality {
+  if (deltaFromBest <= 1.5) return "best"
+  if (deltaFromBest <= 6) return "strong"
+  if (deltaFromBest <= 14) return "ok"
+  return "mistake"
+}
+
+function mapDifficultyToEngine(difficulty: AIDifficulty): EngineDifficulty {
+  return difficulty
+}
+
+async function registerEngineMoveInsight({
+  previousState,
+  nextState,
+  size,
+  player,
+  aiDifficulty,
+  x,
+  y,
+  coordinate,
+}: {
+  previousState: GameState
+  nextState: GameState
+  size: 9 | 13 | 19
+  player: GameState["turn"]
+  aiDifficulty: AIDifficulty
+  x: number
+  y: number
+  coordinate: string
+}) {
+  try {
+    const provider = getActiveEngineProvider()
+    const difficulty = mapDifficultyToEngine(aiDifficulty)
+
+    const [before, after] = await Promise.all([
+      provider.analyzePosition({
+        state: previousState,
+        size,
+        player,
+        difficulty,
+        maxCandidates: 12,
+        withDelay: false,
+      }),
+      provider.analyzePosition({
+        state: nextState,
+        size,
+        player,
+        difficulty,
+        maxCandidates: 5,
+        withDelay: false,
+      }),
+    ])
+
+    const best = before.topMoves[0]
+    const played = before.topMoves.find((move) => move.x === x && move.y === y)
+
+    if (!best) {
+      return
+    }
+
+    const estimatedPlayedScore = played?.score ?? best.score - 16
+    const deltaFromBest = Math.max(0, best.score - estimatedPlayedScore)
+    const quality = classifyMoveQuality(deltaFromBest)
+    const playerPerspectiveWinRate =
+      player === "black" ? after.estimatedWinRate : 1 - after.estimatedWinRate
+
+    const suggestedCoordinate =
+      quality === "best" || (best.x === x && best.y === y)
+        ? null
+        : toCoordinate(best.x, best.y, size)
+
+    useLearningStore.getState().registerTutorEvent({
+      type: "analysis",
+      actor: player === "black" ? "player" : "opponent",
+      moveCoordinate: coordinate,
+      suggestedCoordinate,
+      quality,
+      winRate: playerPerspectiveWinRate,
+    })
+  } catch {
+    // Tutor analysis is non-blocking; ignore transient analysis failures.
+  }
+}
+
 export const useGameStore = create<KomiStore>((set, get) => ({
   size: 19,
   komi: 6.5,
@@ -137,7 +225,7 @@ export const useGameStore = create<KomiStore>((set, get) => ({
   scoreResult: null,
 
   placeStone: (x, y) => {
-    const { gameState, size, isGameOver } = get()
+    const { gameState, size, isGameOver, aiDifficulty } = get()
     
     if (isGameOver) return false
 
@@ -223,6 +311,17 @@ export const useGameStore = create<KomiStore>((set, get) => ({
         captureClearTimeout = null
       }, 260)
     }
+
+    void registerEngineMoveInsight({
+      previousState: gameState,
+      nextState,
+      size,
+      player: currentPlayer,
+      aiDifficulty,
+      x,
+      y,
+      coordinate,
+    })
 
     return true
   },
