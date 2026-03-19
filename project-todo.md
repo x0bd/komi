@@ -354,12 +354,12 @@ Step-by-step build plan. UI first, then game logic, then integrations.
   - [ ] Streaming responses in the chat panel
 - [ ] **Tutor modes**
   - [ ] Passive: tips appear in sidebar, non-intrusive
-  - [ ] Active: ask Sensei a question (text input)
+  - [x] Active: ask Sensei a question (text input)
   - [ ] Review: post-game walkthrough, move-by-move commentary
-- [ ] **Rate limiting**
+- [x] **Rate limiting**
   - [x] Debounce requests (don't call on every single move)
   - [x] Cache explanations for common positions/patterns
-  - [ ] Token budget per game session
+  - [x] Token budget per game session
 
 ---
 

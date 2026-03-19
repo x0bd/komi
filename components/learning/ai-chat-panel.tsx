@@ -1,11 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import {
     LuBot,
     LuChevronDown,
     LuChevronUp,
     LuGauge,
     LuMessageSquareQuote,
+    LuSend,
     LuSparkles,
 } from "react-icons/lu";
 import { Card, CardContent } from "@/components/ui/card";
@@ -51,9 +53,13 @@ export function AIChatPanel({
     const tutorCue = useLearningStore((state) => state.tutorCue);
     const latestAnalysis = useLearningStore((state) => state.latestAnalysis);
     const requestTip = useLearningStore((state) => state.requestTip);
+    const addMessage = useLearningStore((state) => state.addMessage);
+    const [question, setQuestion] = useState("");
+    const [isAsking, setIsAsking] = useState(false);
 
     const latestMessage = chatMessages[chatMessages.length - 1];
     const visibleMessages = chatMessages.slice(-12);
+    const canAsk = question.trim().length > 0 && !isAsking;
 
     const moodLabel =
         tutorMood === "celebrate"
@@ -63,6 +69,37 @@ export function AIChatPanel({
               : tutorMood === "focus"
                 ? "Sensei sees a plan"
                 : "Sensei is calm";
+
+    async function handleAskSensei() {
+        const nextQuestion = question.trim();
+        if (!nextQuestion || isAsking) return;
+
+        setIsAsking(true);
+        try {
+            const response = await fetch("/api/tutor", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ question: nextQuestion }),
+            });
+
+            if (!response.ok) {
+                addMessage("I could not answer that just now. Ask again in a moment.", "warning");
+                return;
+            }
+
+            const json = (await response.json().catch(() => ({}))) as {
+                message?: unknown;
+            };
+            if (typeof json.message === "string" && json.message.trim().length > 0) {
+                addMessage(json.message, "coach");
+            }
+        } catch {
+            addMessage("Connection issue while asking Sensei. Try once more.", "warning");
+        } finally {
+            setIsAsking(false);
+            setQuestion("");
+        }
+    }
 
     if (collapsed) {
         return (
@@ -264,6 +301,28 @@ export function AIChatPanel({
                     </div>
 
                     <div className="mt-4 flex flex-wrap gap-2">
+                        <form
+                            className="flex w-full items-center gap-2"
+                            onSubmit={(event) => {
+                                event.preventDefault();
+                                void handleAskSensei();
+                            }}
+                        >
+                            <input
+                                value={question}
+                                onChange={(event) => setQuestion(event.target.value)}
+                                placeholder="Ask Sensei about this position..."
+                                className="h-10 flex-1 rounded-full border border-border/70 bg-background/85 px-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-accent/60"
+                            />
+                            <button
+                                type="submit"
+                                disabled={!canAsk}
+                                className="inline-flex h-10 min-w-10 items-center justify-center rounded-full border border-border/70 bg-secondary/30 px-3 text-sm font-semibold text-foreground transition-colors hover:bg-secondary/50 disabled:cursor-not-allowed disabled:opacity-50"
+                            >
+                                <LuSend className="size-4" />
+                            </button>
+                        </form>
+
                         {QUICK_TIPS.map((topic) => (
                             <button
                                 key={topic}

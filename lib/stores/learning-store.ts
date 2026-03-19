@@ -80,7 +80,7 @@ interface LearningStore {
   registerStreakEvent: (event: StreakEvent) => void
   registerTutorEvent: (event: TutorEvent) => void
   resetLiveStreak: () => void
-  addMessage: (text: string) => void
+  addMessage: (text: string, tone?: ChatMessageTone) => void
   requestTip: (topic: string) => void
   markTipShown: (tip: "opening" | "firstCapture" | "territory") => void
   clearMessages: () => void
@@ -402,9 +402,9 @@ export const useLearningStore = create<LearningStore>()(
           },
         }),
 
-      addMessage: (text) => {
+      addMessage: (text, tone = "tip") => {
         set((state) => ({
-          chatMessages: pushChatMessage(state.chatMessages, text, "tip")
+          chatMessages: pushChatMessage(state.chatMessages, text, tone)
         }))
       },
 

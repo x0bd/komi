@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 
 type TutorRequestBody = {
+  question?: string
   currentPlayer?: "black" | "white"
   moveNumber?: number
   lastMove?: {
@@ -71,6 +72,31 @@ function buildTutorMessage(body: TutorRequestBody) {
   return `Move ${coordinate} keeps the game live. Maintain shape in this ${phase} and avoid creating new weak groups.`
 }
 
+function buildAnswerForQuestion(question: string) {
+  const q = question.trim().toLowerCase()
+  if (!q) {
+    return "Ask me about shape, captures, opening priorities, or endgame choices."
+  }
+
+  if (q.includes("opening")) {
+    return "Opening rule: corners first, sides second, center last. Favor connected shapes over early fights."
+  }
+  if (q.includes("capture") || q.includes("atari")) {
+    return "Before chasing a capture, count liberties for both groups. If your own chain gets thin, defend first."
+  }
+  if (q.includes("territory")) {
+    return "Secure territory with stable borders first. Reductions are safer than deep invasions unless you have strong support."
+  }
+  if (q.includes("pass")) {
+    return "Pass when no move gains secure points and local fights are settled. If a forcing move exists, keep initiative."
+  }
+  if (q.includes("ko")) {
+    return "In ko fights, compare ko threats globally. Take ko only when your follow-up value beats the opponent’s threat value."
+  }
+
+  return "Good question. Prioritize connected shape, count liberties carefully, and choose moves that improve both safety and territory."
+}
+
 function buildCacheKey(body: TutorRequestBody) {
   const top = body.analysis?.topMoves?.slice(0, 3) ?? []
   return JSON.stringify({
@@ -118,6 +144,14 @@ function writeCachedMessage(cacheKey: string, message: string) {
 
 export async function POST(request: NextRequest) {
   const body = (await request.json().catch(() => ({}))) as TutorRequestBody
+  if (typeof body.question === "string" && body.question.trim().length > 0) {
+    const message = buildAnswerForQuestion(body.question)
+    return NextResponse.json({
+      message,
+      source: "rule-based-qa",
+    })
+  }
+
   const cacheKey = buildCacheKey(body)
   const cachedMessage = readCachedMessage(cacheKey)
   if (cachedMessage) {

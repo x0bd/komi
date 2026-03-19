@@ -325,6 +325,21 @@ Original prompt: lets continue building
   - Extended `app/api/tutor/route.ts` with in-memory response cache:
     - Keyed by move + analysis signature.
     - TTL-based expiry and bounded entry count.
+  - Added per-game tutor request budget in `lib/stores/game-store.ts`:
+    - Capped tutor calls per game session with reset on new game.
   - Updated `project-todo.md`:
-    - Marked tutor explanation caching checklist item complete.
+    - Marked tutor explanation caching and token-budget checklist items complete.
+  - Constraint preserved: no tests/build/lint were run in this pass.
+
+- 2026-03-19: Active tutor question mode added.
+  - Extended `components/learning/ai-chat-panel.tsx`:
+    - Added `Ask Sensei` text input + submit button UI.
+    - Added async submit handler calling `POST /api/tutor` with `question`.
+    - Added non-blocking error handling and coach/warning message insertion.
+  - Extended `app/api/tutor/route.ts`:
+    - Added question-answer branch with focused Go coaching responses by topic.
+  - Extended `lib/stores/learning-store.ts`:
+    - `addMessage` now accepts optional tone (`coach`, `tip`, `warning`, etc.).
+  - Updated `project-todo.md`:
+    - Marked tutor active mode checklist item complete.
   - Constraint preserved: no tests/build/lint were run in this pass.
