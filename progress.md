@@ -343,3 +343,20 @@ Original prompt: lets continue building
   - Updated `project-todo.md`:
     - Marked tutor active mode checklist item complete.
   - Constraint preserved: no tests/build/lint were run in this pass.
+
+- 2026-03-19: BYOK tutor support (cheap user-provided API key flow).
+  - Extended `components/learning/ai-chat-panel.tsx`:
+    - Added local API key controls (`AI Key` card with set/save/clear actions).
+    - Stores key in browser `localStorage` (`komi_openai_api_key`) only.
+    - Sends `apiKey` with Ask Sensei requests when configured.
+  - Extended `lib/stores/game-store.ts`:
+    - Automatic tutor event requests now also pass the stored `apiKey` when available.
+  - Extended `app/api/tutor/route.ts`:
+    - Added optional `apiKey` request field.
+    - Calls OpenAI Responses API with user-provided key when present.
+    - Falls back to rule-based coach responses on error/missing key.
+    - Keeps cache path for non-key rule-based responses (no shared cache for user-key calls).
+  - Updated `project-todo.md`:
+    - Marked Tutor API route complete and system prompt tuned.
+    - Marked live LLM replacement item complete.
+  - Constraint preserved: no tests/build/lint were run in this pass.

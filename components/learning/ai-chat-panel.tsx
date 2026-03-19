@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
     LuBot,
     LuChevronDown,
     LuChevronUp,
     LuGauge,
+    LuKeyRound,
     LuMessageSquareQuote,
     LuSend,
     LuSparkles,
@@ -56,10 +57,13 @@ export function AIChatPanel({
     const addMessage = useLearningStore((state) => state.addMessage);
     const [question, setQuestion] = useState("");
     const [isAsking, setIsAsking] = useState(false);
+    const [openAIApiKey, setOpenAIApiKey] = useState("");
+    const [showKeyEditor, setShowKeyEditor] = useState(false);
 
     const latestMessage = chatMessages[chatMessages.length - 1];
     const visibleMessages = chatMessages.slice(-12);
     const canAsk = question.trim().length > 0 && !isAsking;
+    const hasApiKey = openAIApiKey.trim().length > 0;
 
     const moodLabel =
         tutorMood === "celebrate"
@@ -70,6 +74,37 @@ export function AIChatPanel({
                 ? "Sensei sees a plan"
                 : "Sensei is calm";
 
+    useEffect(() => {
+        if (typeof window === "undefined") return;
+        const saved = window.localStorage.getItem("komi_openai_api_key");
+        if (saved) {
+            setOpenAIApiKey(saved);
+        }
+    }, []);
+
+    function saveApiKey() {
+        if (typeof window === "undefined") return;
+        const next = openAIApiKey.trim();
+        if (!next) {
+            window.localStorage.removeItem("komi_openai_api_key");
+            addMessage(
+                "Using local tutor mode. Add your key anytime to enable live AI.",
+                "tip",
+            );
+            return;
+        }
+
+        window.localStorage.setItem("komi_openai_api_key", next);
+        addMessage("Personal API key saved locally on this device.", "tip");
+    }
+
+    function clearApiKey() {
+        if (typeof window === "undefined") return;
+        setOpenAIApiKey("");
+        window.localStorage.removeItem("komi_openai_api_key");
+        addMessage("Personal API key removed. Back to local tutor mode.", "tip");
+    }
+
     async function handleAskSensei() {
         const nextQuestion = question.trim();
         if (!nextQuestion || isAsking) return;
@@ -79,7 +114,10 @@ export function AIChatPanel({
             const response = await fetch("/api/tutor", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ question: nextQuestion }),
+                body: JSON.stringify({
+                    question: nextQuestion,
+                    apiKey: hasApiKey ? openAIApiKey.trim() : undefined,
+                }),
             });
 
             if (!response.ok) {
@@ -301,6 +339,57 @@ export function AIChatPanel({
                     </div>
 
                     <div className="mt-4 flex flex-wrap gap-2">
+                        <div className="w-full rounded-xl border border-border/60 bg-secondary/20 p-3">
+                            <div className="flex items-center justify-between gap-2">
+                                <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                                    AI Key
+                                </p>
+                                <button
+                                    type="button"
+                                    onClick={() => setShowKeyEditor((current) => !current)}
+                                    className="inline-flex items-center gap-1 rounded-full border border-border/70 bg-background/80 px-2.5 py-1 text-[11px] font-medium text-muted-foreground hover:text-foreground"
+                                >
+                                    <LuKeyRound className="size-3.5" />
+                                    {hasApiKey ? "Configured" : "Set key"}
+                                </button>
+                            </div>
+                            {showKeyEditor ? (
+                                <div className="mt-2 space-y-2">
+                                    <input
+                                        value={openAIApiKey}
+                                        onChange={(event) =>
+                                            setOpenAIApiKey(event.target.value)
+                                        }
+                                        placeholder="sk-..."
+                                        type="password"
+                                        className="h-10 w-full rounded-full border border-border/70 bg-background/85 px-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-accent/60"
+                                    />
+                                    <div className="flex items-center justify-end gap-2">
+                                        <button
+                                            type="button"
+                                            onClick={clearApiKey}
+                                            className="inline-flex h-8 items-center rounded-full border border-border/70 bg-background/85 px-3 text-xs font-medium text-muted-foreground hover:text-foreground"
+                                        >
+                                            Clear
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={saveApiKey}
+                                            className="inline-flex h-8 items-center rounded-full border border-border/70 bg-secondary/30 px-3 text-xs font-semibold text-foreground hover:bg-secondary/50"
+                                        >
+                                            Save key
+                                        </button>
+                                    </div>
+                                </div>
+                            ) : (
+                                <p className="mt-1 text-xs text-muted-foreground">
+                                    {hasApiKey
+                                        ? "Using your key for live tutor responses."
+                                        : "No key set. Sensei uses local fallback responses."}
+                                </p>
+                            )}
+                        </div>
+
                         <form
                             className="flex w-full items-center gap-2"
                             onSubmit={(event) => {

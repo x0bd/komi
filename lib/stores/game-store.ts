@@ -180,10 +180,16 @@ async function requestTutorMessage(payload: {
   tutorRequestsThisGame += 1
 
   try {
+    const apiKey =
+      typeof window === "undefined"
+        ? ""
+        : window.localStorage.getItem("komi_openai_api_key")?.trim() ?? ""
+
     const response = await fetch("/api/tutor", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
+        apiKey: apiKey || undefined,
         moveNumber: payload.moveNumber,
         lastMove: {
           coordinate: payload.moveCoordinate,

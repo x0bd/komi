@@ -344,12 +344,12 @@ Step-by-step build plan. UI first, then game logic, then integrations.
 
 ## Phase 12: AI Tutor (OpenAI)
 
-- [ ] **Tutor API route** (`app/api/tutor/route.ts`)
+- [x] **Tutor API route** (`app/api/tutor/route.ts`)
   - [x] Accepts: current board state, last move, engine analysis, game context
   - [x] Returns: natural language explanation of the position/move
-  - [ ] System prompt tuned for Go teaching (beginner-friendly)
+  - [x] System prompt tuned for Go teaching (beginner-friendly)
 - [ ] **Tutor integration**
-  - [ ] Replace static tips with live LLM responses
+  - [x] Replace static tips with live LLM responses
   - [x] Trigger on: each player move, captures, mistakes (engine detects win% drop)
   - [ ] Streaming responses in the chat panel
 - [ ] **Tutor modes**
