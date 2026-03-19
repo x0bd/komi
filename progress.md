@@ -199,3 +199,20 @@ Original prompt: lets continue building
   - Updated `project-todo.md`:
     - Marked realtime store replacement, server-authoritative turn order, optimistic stone updates, and basic matchmaking checklist items as complete.
   - Constraint preserved: no tests/build/lint were run in this pass.
+
+- 2026-03-19: Pluggable simple AI engine pass completed (KataGo made optional).
+  - Added AI provider contract in `lib/ai/engine-provider.ts`.
+    - Defines `EngineProvider`, `EngineRequest`, `EngineAnalysis`, move/candidate types.
+  - Added `SimpleEngine` implementation in `lib/ai/simple-engine.ts`.
+    - Easy: random legal move.
+    - Medium: weighted heuristic choice.
+    - Hard: heuristic + lightweight one-ply opponent-risk scan.
+    - Added `analyzePosition` surface for future tutor/explainer/overlay features.
+  - Added provider registry in `lib/ai/index.ts`.
+    - Default active provider is `simple`; can be swapped later without touching gameplay hooks.
+  - Updated `hooks/use-ai-turn.ts` to call the active provider instead of hard-coding random AI module logic.
+  - Kept backward compatibility shim in `lib/ai/random.ts` delegating to active provider.
+  - Updated roadmap in `project-todo.md`:
+    - Phase 11 reframed as “Advanced Engine Provider (Optional KataGo)”.
+    - Marked pluggable engine architecture tasks complete.
+  - Constraint preserved: no tests/build/lint were run in this pass.

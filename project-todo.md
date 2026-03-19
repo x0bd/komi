@@ -314,20 +314,24 @@ Step-by-step build plan. UI first, then game logic, then integrations.
 
 ---
 
-## Phase 11: AI Engine Integration (KataGo)
+## Phase 11: Advanced Engine Provider (Optional KataGo)
 
-- [ ] **KataGo service**
+- [x] **Pluggable engine architecture**
+  - [x] Define `EngineProvider` interface (`pickMove`, `analyzePosition`)
+  - [x] Implement `SimpleEngine` provider (heuristics + lightweight one-ply risk scan)
+  - [x] Route AI turn hook through provider registry (default = `simple`)
+- [ ] **KataGo service** (optional upgrade)
   - [ ] Deploy KataGo on Fly.io or Cloudflare Worker
   - [ ] HTTP API: send board state, receive analysis (top moves, win rate, territory)
   - [ ] Rate limiting and request queuing
-- [ ] **Analysis API route** (`app/api/analyze/route.ts`)
+- [ ] **Analysis API route** (`app/api/analyze/route.ts`, optional)
   - [ ] Accepts game state, returns KataGo analysis
   - [ ] Caches results for identical positions
-- [ ] **AI opponent (Medium/Hard)**
+- [ ] **KataGo-backed opponent** (optional)
   - [ ] Medium: KataGo with limited playouts (weaker)
   - [ ] Hard: KataGo with full playouts (strong)
   - [ ] Wire to existing AI turn hook
-- [ ] **Move analysis overlay**
+- [ ] **Move analysis overlay** (optional)
   - [ ] Show suggested moves as transparent colored stones on board
   - [ ] Win probability bar
   - [ ] Territory estimation heatmap

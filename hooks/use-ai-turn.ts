@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react"
 import { useGameStore } from "../lib/stores/game-store"
-import { getRandomAIMove } from "../lib/ai/random"
+import { getActiveEngineProvider } from "../lib/ai"
 
 export function useAITurn() {
   const gameState = useGameStore((state) => state.gameState)
@@ -30,12 +30,13 @@ export function useAITurn() {
 
       const processAITurn = async () => {
         try {
-          const move = await getRandomAIMove(
-            gameState,
+          const move = await getActiveEngineProvider().pickMove({
+            state: gameState,
             size,
-            "white",
-            aiDifficulty,
-          )
+            player: "white",
+            difficulty: aiDifficulty,
+            withDelay: true,
+          })
           if (requestId !== requestIdRef.current) {
             return
           }
