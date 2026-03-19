@@ -129,6 +129,20 @@ function mapDifficultyToEngine(difficulty: AIDifficulty): EngineDifficulty {
   return difficulty
 }
 
+function getCandidateReason(candidate: {
+  captureGain: number
+  liberties: number
+  tags: string[]
+}) {
+  if (candidate.captureGain >= 2) return "multi-stone capture"
+  if (candidate.captureGain === 1) return "clean capture"
+  if (candidate.tags.includes("stable-shape")) return "solid shape"
+  if (candidate.tags.includes("atari-risk")) return "thin but forcing"
+  if (candidate.liberties >= 5) return "safe liberties"
+  if (candidate.liberties <= 2) return "urgent liberties"
+  return "pressure point"
+}
+
 async function registerEngineMoveInsight({
   previousState,
   nextState,
@@ -192,6 +206,7 @@ async function registerEngineMoveInsight({
       coordinate: toCoordinate(move.x, move.y, size),
       confidence: Math.round(move.confidence * 100),
       score: Number(move.score.toFixed(1)),
+      reason: getCandidateReason(move),
       tags: [...move.tags.slice(0, 2)],
     }))
 

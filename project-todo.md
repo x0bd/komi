@@ -228,7 +228,7 @@ Step-by-step build plan. UI first, then game logic, then integrations.
   - [x] "Local" mode: both players are human
 - [x] **AI difficulty placeholder**
   - [x] UI selector (Easy / Medium / Hard)
-  - [x] Easy = random, Medium/Hard = heuristic policy until KataGo integration
+  - [x] Easy = random, Medium/Hard = in-house heuristic policy
 
 ---
 
@@ -314,7 +314,7 @@ Step-by-step build plan. UI first, then game logic, then integrations.
 
 ---
 
-## Phase 11: Advanced Engine Provider (Optional KataGo)
+## Phase 11: Advanced Local Engine & Analysis
 
 - [x] **Pluggable engine architecture**
   - [x] Define `EngineProvider` interface (`pickMove`, `analyzePosition`)
@@ -322,17 +322,18 @@ Step-by-step build plan. UI first, then game logic, then integrations.
   - [x] Route AI turn hook through provider registry (default = `simple`)
   - [x] Feed engine analysis insights into Sensei tutor cues/messages
   - [x] Show compact top-move confidence readout in Sensei panel
-- [ ] **KataGo service** (optional upgrade)
-  - [ ] Deploy KataGo on Fly.io or Cloudflare Worker
-  - [ ] HTTP API: send board state, receive analysis (top moves, win rate, territory)
-  - [ ] Rate limiting and request queuing
+  - [x] Add short "why this move" reasons for top suggestions
+- [ ] **Engine strength upgrades** (local-first)
+  - [ ] Add configurable search budget (fast / standard / deep) to `SimpleEngine`
+  - [ ] Add opening-pattern priors for early-game move selection
+  - [ ] Add tactical safety filters (self-atari and snapback checks)
 - [ ] **Analysis API route** (`app/api/analyze/route.ts`, optional)
-  - [ ] Accepts game state, returns KataGo analysis
+  - [ ] Accepts game state, returns in-house engine analysis
   - [ ] Caches results for identical positions
-- [ ] **KataGo-backed opponent** (optional)
-  - [ ] Medium: KataGo with limited playouts (weaker)
-  - [ ] Hard: KataGo with full playouts (strong)
-  - [ ] Wire to existing AI turn hook
+- [ ] **Stronger opponent profiles**
+  - [ ] Medium: shape-first conservative policy profile
+  - [ ] Hard: deeper search + tactical override profile
+  - [ ] Wire profiles to existing AI turn hook and difficulty selector
 - [ ] **Move analysis overlay** (optional)
   - [ ] Show suggested moves as transparent colored stones on board
   - [ ] Win probability bar
@@ -344,12 +345,12 @@ Step-by-step build plan. UI first, then game logic, then integrations.
 ## Phase 12: AI Tutor (OpenAI)
 
 - [ ] **Tutor API route** (`app/api/tutor/route.ts`)
-  - [ ] Accepts: current board state, last move, KataGo analysis, game context
+  - [ ] Accepts: current board state, last move, engine analysis, game context
   - [ ] Returns: natural language explanation of the position/move
   - [ ] System prompt tuned for Go teaching (beginner-friendly)
 - [ ] **Tutor integration**
   - [ ] Replace static tips with live LLM responses
-  - [ ] Trigger on: each player move, captures, mistakes (KataGo detects win% drop)
+  - [ ] Trigger on: each player move, captures, mistakes (engine detects win% drop)
   - [ ] Streaming responses in the chat panel
 - [ ] **Tutor modes**
   - [ ] Passive: tips appear in sidebar, non-intrusive
@@ -410,11 +411,11 @@ Step-by-step build plan. UI first, then game logic, then integrations.
   - [ ] Favicon and app icons
 - [ ] **Error handling**
   - [ ] Network disconnection recovery (multiplayer)
-  - [ ] API failure fallbacks (AI tutor, KataGo)
+  - [ ] API failure fallbacks (AI tutor, analysis API)
   - [ ] Graceful error boundaries
 - [ ] **Deploy**
   - [ ] Vercel deployment configuration
   - [ ] Environment variables for production
-  - [ ] KataGo service deployment (Fly.io)
+  - [ ] Optional analysis worker deployment
   - [ ] Domain setup
   - [ ] Monitoring and analytics

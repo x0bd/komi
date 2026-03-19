@@ -239,3 +239,12 @@ Original prompt: lets continue building
     - Shows summary, pressure percentage, and top candidate moves with compact confidence rows.
   - Updated `project-todo.md` to mark compact top-move readout complete.
   - Constraint preserved: no tests/build/lint were run in this pass.
+
+- 2026-03-19: Engine-read candidate reasons polish.
+  - Added compact per-candidate `reason` text to analysis payload in `lib/stores/game-store.ts`.
+    - Examples: `clean capture`, `solid shape`, `safe liberties`, `pressure point`.
+  - Extended tutor analysis move model in `lib/stores/learning-store.ts` with `reason`.
+  - Updated `components/learning/ai-chat-panel.tsx` top-move list:
+    - Candidate rows now show short “why this move” reasons instead of raw tags.
+  - Updated `project-todo.md` to mark short reason polish complete.
+  - Constraint preserved: no tests/build/lint were run in this pass.

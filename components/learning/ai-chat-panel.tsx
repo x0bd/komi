@@ -218,9 +218,7 @@ export function AIChatPanel({
                                                 {move.coordinate}
                                             </p>
                                             <p className="truncate text-[10px] text-muted-foreground">
-                                                {move.tags.length
-                                                    ? move.tags.join(" · ")
-                                                    : "shape"}
+                                                {move.reason}
                                             </p>
                                         </div>
                                         <span className="font-mono text-[11px] font-semibold text-muted-foreground">

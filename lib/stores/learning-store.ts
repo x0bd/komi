@@ -6,6 +6,7 @@ type TutorAnalysisMove = {
   coordinate: string
   confidence: number
   score: number
+  reason: string
   tags: string[]
 }
 
