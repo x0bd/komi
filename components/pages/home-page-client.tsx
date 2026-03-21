@@ -106,7 +106,12 @@ function buildAnalysisHints({
     board: number[];
 }) {
     if (!enabled || !topMoves || topMoves.length === 0) {
-        return [] as Array<{ x: number; y: number; confidence: number; rank: number }>;
+        return [] as Array<{
+            x: number;
+            y: number;
+            confidence: number;
+            rank: number;
+        }>;
     }
 
     return topMoves
@@ -125,7 +130,16 @@ function buildAnalysisHints({
                 rank: index + 1,
             };
         })
-        .filter((move): move is { x: number; y: number; confidence: number; rank: number } => move !== null);
+        .filter(
+            (
+                move,
+            ): move is {
+                x: number;
+                y: number;
+                confidence: number;
+                rank: number;
+            } => move !== null,
+        );
 }
 
 type ReplayFrame = {
@@ -272,8 +286,9 @@ function readSnapshotFromMutableStorage(storage: {
     const timers = storage.get("timers") as MultiplayerSnapshot["timers"];
     const isGameOver = storage.get("isGameOver") as boolean;
     const winner = storage.get("winner") as MultiplayerSnapshot["winner"];
-    const gameOverReason =
-        storage.get("gameOverReason") as MultiplayerSnapshot["gameOverReason"];
+    const gameOverReason = storage.get(
+        "gameOverReason",
+    ) as MultiplayerSnapshot["gameOverReason"];
 
     return {
         board: [...board],
@@ -298,7 +313,7 @@ function readSnapshotFromMutableStorage(storage: {
 }
 
 function writeSnapshotToMutableStorage(
-    storage: { set: (key: keyof Liveblocks["Storage"], value: unknown) => void },
+    storage: { set: (key: keyof Liveblocks["Storage"], value: any) => void },
     snapshot: MultiplayerSnapshot,
 ) {
     storage.set("board", [...snapshot.board]);
@@ -344,7 +359,9 @@ export default function HomePageClient() {
     const joinRoom = useMultiplayerStore((state) => state.joinRoom);
     const leaveRoom = useMultiplayerStore((state) => state.leaveRoom);
     const persistedGameKeyRef = useRef<string | null>(null);
-    const [replayMoveNumber, setReplayMoveNumber] = useState<number | null>(null);
+    const [replayMoveNumber, setReplayMoveNumber] = useState<number | null>(
+        null,
+    );
     const [replayIsPlaying, setReplayIsPlaying] = useState(false);
     const [replayPlaybackSpeed, setReplayPlaybackSpeed] = useState(1);
 
@@ -408,7 +425,11 @@ export default function HomePageClient() {
         if (persistedGameKeyRef.current === persistenceKey) return;
         persistedGameKeyRef.current = persistenceKey;
 
-        const resultCode = formatResultCode(gameOverReason, winner, scoreResult);
+        const resultCode = formatResultCode(
+            gameOverReason,
+            winner,
+            scoreResult,
+        );
         const sgf = exportSGF();
 
         void fetch("/api/games", {
@@ -506,7 +527,10 @@ export default function HomePageClient() {
                             }}
                             onReplaySeek={(moveNumber) => {
                                 setReplayMoveNumber(
-                                    Math.max(0, Math.min(moveNumber, maxReplayMove)),
+                                    Math.max(
+                                        0,
+                                        Math.min(moveNumber, maxReplayMove),
+                                    ),
                                 );
                                 setReplayIsPlaying(false);
                             }}
@@ -522,7 +546,9 @@ export default function HomePageClient() {
                                 setReplayIsPlaying(false);
                                 setReplayMoveNumber((current) => {
                                     const safeCurrent =
-                                        current === null ? maxReplayMove : current;
+                                        current === null
+                                            ? maxReplayMove
+                                            : current;
                                     return Math.max(0, safeCurrent - 1);
                                 });
                             }}
@@ -531,8 +557,13 @@ export default function HomePageClient() {
                                 setReplayIsPlaying(false);
                                 setReplayMoveNumber((current) => {
                                     const safeCurrent =
-                                        current === null ? maxReplayMove : current;
-                                    return Math.min(maxReplayMove, safeCurrent + 1);
+                                        current === null
+                                            ? maxReplayMove
+                                            : current;
+                                    return Math.min(
+                                        maxReplayMove,
+                                        safeCurrent + 1,
+                                    );
                                 });
                             }}
                             onReplaySkipStart={() => {
@@ -715,7 +746,12 @@ function OnlineGameplayLayout() {
             const nextState = applyPass(gameState);
             const finished = getIsGameOver(nextState);
             const score = finished
-                ? calculateScore(nextState.board, size, nextState.captured, komi)
+                ? calculateScore(
+                      nextState.board,
+                      size,
+                      nextState.captured,
+                      komi,
+                  )
                 : null;
 
             const nextSnapshot: MultiplayerSnapshot = {
@@ -771,7 +807,7 @@ function OnlineGameplayLayout() {
         return true;
     }, []);
 
-        return (
+    return (
         <GameLayout
             board={
                 <OnlineBoardView
@@ -809,14 +845,12 @@ function LocalBoardView({
         (state) => state.analysisOverlayEnabled,
     );
     const latestAnalysis = useLearningStore((state) => state.latestAnalysis);
-    const liveLastMove =
-        useGameStore((state) => {
-            const history = state.moveHistory;
-            return history.length > 0 ? history[history.length - 1] : undefined;
-        });
+    const liveLastMove = useGameStore((state) => {
+        const history = state.moveHistory;
+        return history.length > 0 ? history[history.length - 1] : undefined;
+    });
 
-    const board =
-        replayEnabled && replayFrame ? replayFrame.board : liveBoard;
+    const board = replayEnabled && replayFrame ? replayFrame.board : liveBoard;
     const currentPlayer =
         replayEnabled && replayFrame ? replayFrame.turn : liveCurrentPlayer;
     const validMoves = replayEnabled ? [] : liveValidMoves;
@@ -833,7 +867,7 @@ function LocalBoardView({
         () =>
             replayEnabled && replayFrame
                 ? calculateScore(
-                      replayFrame.board,
+                      replayFrame.board as any,
                       size,
                       replayFrame.captured,
                       komi,
@@ -850,7 +884,13 @@ function LocalBoardView({
                 size,
                 board,
             }),
-        [analysisOverlayEnabled, board, latestAnalysis?.topMoves, replayEnabled, size],
+        [
+            analysisOverlayEnabled,
+            board,
+            latestAnalysis?.topMoves,
+            replayEnabled,
+            size,
+        ],
     );
 
     return (
@@ -893,11 +933,10 @@ function OnlineBoardView({
         (state) => state.analysisOverlayEnabled,
     );
     const latestAnalysis = useLearningStore((state) => state.latestAnalysis);
-    const lastMove =
-        useGameStore((state) => {
-            const history = state.moveHistory;
-            return history.length > 0 ? history[history.length - 1] : undefined;
-        });
+    const lastMove = useGameStore((state) => {
+        const history = state.moveHistory;
+        return history.length > 0 ? history[history.length - 1] : undefined;
+    });
     const analysisHints = useMemo(
         () =>
             buildAnalysisHints({
@@ -919,7 +958,10 @@ function OnlineBoardView({
             return null;
         }
 
-        const ids = [selfConnectionId, ...others.map((other) => other.connectionId)]
+        const ids = [
+            selfConnectionId,
+            ...others.map((other) => other.connectionId),
+        ]
             .sort((a, b) => a - b)
             .slice(0, 2);
 
@@ -931,7 +973,9 @@ function OnlineBoardView({
     }, [others, selfConnectionId]);
 
     const opponentHover = useMemo(() => {
-        const hovered = others.find((other) => other.presence.hoveredIntersection);
+        const hovered = others.find(
+            (other) => other.presence.hoveredIntersection,
+        );
         const intersection = hovered?.presence.hoveredIntersection;
 
         if (!hovered || !intersection) {

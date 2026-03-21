@@ -45,27 +45,29 @@ export function MobileSenseiFab() {
     return (
         <div className="fixed bottom-6 left-6 z-40 lg:hidden">
             <Sheet open={open} onOpenChange={setOpen}>
-                <SheetTrigger asChild>
-                    <button
-                        ref={triggerRef}
-                        type="button"
-                        onMouseEnter={() => setExpanded(true)}
-                        onMouseLeave={() => setExpanded(false)}
-                        onFocus={() => setExpanded(true)}
-                        onBlur={() => setExpanded(false)}
-                        aria-label="Open Sensei tutor"
-                        className="flex h-12 w-12 items-center gap-2 overflow-hidden rounded-full border border-border/70 bg-accent/90 pl-3 pr-4 text-accent-foreground shadow-lg backdrop-blur-sm transition-colors"
+                <SheetTrigger
+                    render={
+                        <button
+                            ref={triggerRef}
+                            type="button"
+                            onMouseEnter={() => setExpanded(true)}
+                            onMouseLeave={() => setExpanded(false)}
+                            onFocus={() => setExpanded(true)}
+                            onBlur={() => setExpanded(false)}
+                            aria-label="Open Sensei tutor"
+                            className="flex h-12 w-12 items-center gap-2 overflow-hidden rounded-full border border-border/70 bg-accent/90 pl-3 pr-4 text-accent-foreground shadow-lg backdrop-blur-sm transition-colors"
+                        />
+                    }
+                >
+                    <span className="flex size-6 shrink-0 items-center justify-center">
+                        <LuSparkles className="size-[18px]" />
+                    </span>
+                    <span
+                        ref={labelRef}
+                        className="invisible -translate-x-2 whitespace-nowrap text-sm font-semibold opacity-0"
                     >
-                        <span className="flex size-6 shrink-0 items-center justify-center">
-                            <LuSparkles className="size-[18px]" />
-                        </span>
-                        <span
-                            ref={labelRef}
-                            className="invisible -translate-x-2 whitespace-nowrap text-sm font-semibold opacity-0"
-                        >
-                            Open Sensei
-                        </span>
-                    </button>
+                        Open Sensei
+                    </span>
                 </SheetTrigger>
 
                 <SheetContent
