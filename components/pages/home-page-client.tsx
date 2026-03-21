@@ -50,6 +50,7 @@ import { useLearningStore } from "@/lib/stores/learning-store";
 import { LuBot, LuSparkles } from "react-icons/lu";
 import { OnlineRoomSync } from "@/components/game/online-room-sync";
 import type { StoneColor } from "@/components/game/stone";
+import { cn } from "@/lib/utils";
 
 const LETTERS = "ABCDEFGHJKLMNOPQRST".split("");
 
@@ -1086,9 +1087,10 @@ function Sidebar({
     onReplaySkipEnd?: () => void;
     onReplaySpeedChange?: (speed: number) => void;
 } = {}) {
-    const [expandedPanel, setExpandedPanel] = useState<
-        "history" | "sensei" | "streak" | null
-    >(null);
+    const [activeTab, setActiveTab] = useState<
+        "game" | "analysis" | "settings"
+    >("game");
+
     const gameState = useGameStore((state) => state.gameState);
     const moveHistory = useGameStore((state) => state.moveHistory);
     const mode = useGameStore((state) => state.mode);
@@ -1136,7 +1138,6 @@ function Sidebar({
         URL.revokeObjectURL(objectUrl);
     };
 
-    // Map engine moves to UI MoveEntry format
     const mappedMoves: MoveEntry[] = moveHistory.map((m, idx) => {
         let coordinate = "—";
         if (!m.isPass) {
@@ -1160,172 +1161,244 @@ function Sidebar({
         : null;
 
     return (
-        <div className="flex flex-col w-full h-full pb-8">
-            <div className="flex flex-col gap-6">
-                <ModeToggle
-                    value={mode as "local" | "versus-ai" | "online"}
-                    onValueChange={(val) => setMode(val as GameMode)}
-                />
+        <div className="flex flex-col w-full h-[calc(100svh-8rem)] bg-card/40 backdrop-blur-2xl border border-border/50 rounded-3xl shadow-2xl overflow-hidden relative">
+            {/* Vercel-style Tab Navigation */}
+            <div className="flex items-center p-2 border-b border-border/50 bg-background/50 backdrop-blur-md z-10 shrink-0">
+                {(["game", "analysis", "settings"] as const).map((tab) => (
+                    <button
+                        key={tab}
+                        onClick={() => setActiveTab(tab)}
+                        className={cn(
+                            "flex-1 h-9 rounded-xl text-[13px] font-medium capitalize tracking-wider transition-all",
+                            activeTab === tab
+                                ? "bg-foreground text-background shadow-sm"
+                                : "text-muted-foreground hover:text-foreground hover:bg-secondary/50",
+                        )}
+                    >
+                        {tab}
+                    </button>
+                ))}
+            </div>
 
-                {mode === "versus-ai" ? (
-                    <AIDifficultySelector
-                        value={aiDifficulty}
-                        onValueChange={setAIDifficulty}
-                    />
-                ) : null}
+            {/* Scrollable Content Area */}
+            <div className="flex-1 overflow-y-auto scrollbar-none p-5 relative">
+                {activeTab === "game" && (
+                    <div className="flex flex-col h-full animate-in fade-in slide-in-from-bottom-2 duration-300">
+                        <div className="flex flex-col gap-2">
+                            <PlayerCard
+                                name="Player 1"
+                                initial="P1"
+                                stoneColor="black"
+                                captures={gameState.captured.black}
+                                minutes={blackTimer.minutes}
+                                seconds={blackTimer.seconds}
+                                isActive={
+                                    gameState.turn === "black" && !isGameOver
+                                }
+                                isLowTime={blackTimer.isLowTime}
+                            />
 
-                {mode === "online" ? (
-                    <OnlineRoomPanel
-                        roomId={roomId}
-                        shareUrl={shareUrl}
-                        isConnecting={
-                            multiplayerState === "creating-room" ||
-                            multiplayerState === "joining-room"
-                        }
-                        error={multiplayerError}
-                        onCreateRoom={() => {
-                            void createRoom();
-                        }}
-                        onJoinRoom={(nextRoomId) => {
-                            void joinRoom(nextRoomId);
-                        }}
-                    />
-                ) : null}
+                            <div className="w-full h-px bg-border/40 my-1" />
 
-                <div className="flex flex-col gap-4 mt-2">
-                    <PlayerCard
-                        name="Player 1"
-                        initial="P1"
-                        stoneColor="black"
-                        captures={gameState.captured.black}
-                        minutes={blackTimer.minutes}
-                        seconds={blackTimer.seconds}
-                        isActive={gameState.turn === "black" && !isGameOver}
-                        isLowTime={blackTimer.isLowTime}
-                    />
+                            <PlayerCard
+                                name={
+                                    mode === "versus-ai"
+                                        ? gameState.turn === "white" &&
+                                          !isGameOver
+                                            ? "Sensei AI (Thinking...)"
+                                            : "Sensei AI"
+                                        : "Player 2"
+                                }
+                                initial={mode === "versus-ai" ? "AI" : "P2"}
+                                avatarIcon={
+                                    mode === "versus-ai" ? <LuBot /> : undefined
+                                }
+                                stoneColor="white"
+                                captures={gameState.captured.white}
+                                minutes={whiteTimer.minutes}
+                                seconds={whiteTimer.seconds}
+                                isActive={
+                                    gameState.turn === "white" && !isGameOver
+                                }
+                                isLowTime={whiteTimer.isLowTime}
+                            />
+                        </div>
 
-                    <PlayerCard
-                        name={
-                            mode === "versus-ai"
-                                ? gameState.turn === "white" && !isGameOver
-                                    ? "Sensei AI (Thinking...)"
-                                    : "Sensei AI"
-                                : "Player 2"
-                        }
-                        initial={mode === "versus-ai" ? "AI" : "P2"}
-                        avatarIcon={
-                            mode === "versus-ai" ? <LuBot /> : undefined
-                        }
-                        stoneColor="white"
-                        captures={gameState.captured.white}
-                        minutes={whiteTimer.minutes}
-                        seconds={whiteTimer.seconds}
-                        isActive={gameState.turn === "white" && !isGameOver}
-                        isLowTime={whiteTimer.isLowTime}
-                    />
-                </div>
+                        {winProbability !== null ? (
+                            <div className="mt-6 mb-2">
+                                <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-widest text-muted-foreground mb-2">
+                                    <span>Engine Read</span>
+                                    <span className="font-mono text-foreground">
+                                        {winProbability}%
+                                    </span>
+                                </div>
+                                <div className="h-1.5 rounded-full bg-border/50 overflow-hidden">
+                                    <div
+                                        className="h-full bg-foreground transition-[width] duration-500"
+                                        style={{ width: `${winProbability}%` }}
+                                    />
+                                </div>
+                            </div>
+                        ) : null}
 
-                {winProbability !== null ? (
-                    <div className="mt-2 overflow-hidden rounded-full bg-border/40 h-2.5">
-                        <div
-                            className="h-full bg-gradient-to-r from-emerald-500 via-accent to-orange-500 transition-[width] duration-500"
-                            style={{ width: `${winProbability}%` }}
-                        />
+                        <div className="mt-auto pt-6 flex flex-col gap-4 shrink-0">
+                            <LiveScoreCard
+                                score={liveScore}
+                                moveCount={mappedMoves.length}
+                                isGameOver={isGameOver}
+                            />
+
+                            <GameControls
+                                onPass={onPassAction ?? passTurn}
+                                onResign={onResignAction ?? resign}
+                                disabled={isGameOver || controlsDisabled}
+                            />
+                        </div>
                     </div>
-                ) : (
-                    <div className="mt-2 overflow-hidden rounded-full bg-border/40 h-2.5" />
                 )}
 
-                <div className="flex justify-end pb-4 border-b border-border/50">
-                    <button
-                        type="button"
-                        onClick={() =>
-                            setAnalysisOverlayEnabled(!analysisOverlayEnabled)
-                        }
-                        className="inline-flex h-9 items-center gap-2 rounded-full border border-border/80 bg-background px-4 text-xs font-semibold tracking-wide text-foreground transition-colors hover:bg-secondary/50 shadow-sm"
-                    >
-                        <LuSparkles className="h-3.5 w-3.5 text-muted-foreground" />
-                        {analysisOverlayEnabled
-                            ? "Hide move hints"
-                            : "Show move hints"}
-                    </button>
-                </div>
-            </div>
+                {activeTab === "analysis" && (
+                    <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                        {isGameOver ? (
+                            <PostGameReviewCard
+                                scoreResult={scoreResult}
+                                winner={winner}
+                                reason={gameOverReason}
+                                keyMoments={keyMoments}
+                                onExportSgf={handleExportSgf}
+                            />
+                        ) : null}
 
-            <div className="flex min-h-0 flex-col gap-4 py-6 flex-1 overflow-y-auto scrollbar-none">
-                {isGameOver ? (
-                    <PostGameReviewCard
-                        scoreResult={scoreResult}
-                        winner={winner}
-                        reason={gameOverReason}
-                        keyMoments={keyMoments}
-                        onExportSgf={handleExportSgf}
-                    />
-                ) : null}
+                        <div className="flex items-center justify-between border border-border/50 rounded-2xl p-4 bg-background/50">
+                            <div className="flex flex-col gap-0.5">
+                                <span className="text-[13px] font-semibold text-foreground">
+                                    Move Hints
+                                </span>
+                                <span className="text-[11px] text-muted-foreground">
+                                    Overlay AI suggestions on board
+                                </span>
+                            </div>
+                            <button
+                                onClick={() =>
+                                    setAnalysisOverlayEnabled(
+                                        !analysisOverlayEnabled,
+                                    )
+                                }
+                                className={cn(
+                                    "w-11 h-6 rounded-full transition-colors relative",
+                                    analysisOverlayEnabled
+                                        ? "bg-foreground"
+                                        : "bg-border",
+                                )}
+                            >
+                                <span
+                                    className={cn(
+                                        "absolute top-1 left-1 w-4 h-4 rounded-full bg-background transition-transform",
+                                        analysisOverlayEnabled
+                                            ? "translate-x-5"
+                                            : "translate-x-0",
+                                    )}
+                                />
+                            </button>
+                        </div>
 
-                <AIChatPanel
-                    collapsed={expandedPanel !== "sensei"}
-                    onToggle={() =>
-                        setExpandedPanel((current) =>
-                            current === "sensei" ? null : "sensei",
-                        )
-                    }
-                />
+                        <AIChatPanel collapsed={false} />
 
-                <XPBar
-                    collapsed={expandedPanel !== "streak"}
-                    onToggle={() =>
-                        setExpandedPanel((current) =>
-                            current === "streak" ? null : "streak",
-                        )
-                    }
-                />
+                        {isGameOver &&
+                        replayState &&
+                        replayState.maxMove > 0 ? (
+                            <ReplayControls
+                                maxMove={replayState.maxMove}
+                                currentMove={replayState.currentMove}
+                                isPlaying={replayState.isPlaying}
+                                playbackSpeed={replayState.playbackSpeed}
+                                onTogglePlay={() => onReplayTogglePlay?.()}
+                                onSeek={(moveNumber) =>
+                                    onReplaySeek?.(moveNumber)
+                                }
+                                onStepBack={() => onReplayStepBack?.()}
+                                onStepForward={() => onReplayStepForward?.()}
+                                onSkipStart={() => onReplaySkipStart?.()}
+                                onSkipEnd={() => onReplaySkipEnd?.()}
+                                onSpeedChange={(speed) =>
+                                    onReplaySpeedChange?.(speed)
+                                }
+                            />
+                        ) : null}
 
-                <MoveHistorySection
-                    moves={mappedMoves}
-                    moveCount={mappedMoves.length}
-                    highlightedMoveNumber={
-                        replayState?.enabled && replayState.currentMove > 0
-                            ? replayState.currentMove
-                            : undefined
-                    }
-                    onMoveSelect={
-                        isGameOver && onReplaySeek
-                            ? (moveNumber) => onReplaySeek(moveNumber)
-                            : undefined
-                    }
-                    collapsed={expandedPanel !== "history"}
-                    onToggle={() =>
-                        setExpandedPanel((current) =>
-                            current === "history" ? null : "history",
-                        )
-                    }
-                    className="mt-2"
-                />
+                        <MoveHistorySection
+                            moves={mappedMoves}
+                            moveCount={mappedMoves.length}
+                            highlightedMoveNumber={
+                                replayState?.enabled &&
+                                replayState.currentMove > 0
+                                    ? replayState.currentMove
+                                    : undefined
+                            }
+                            onMoveSelect={
+                                isGameOver && onReplaySeek
+                                    ? (moveNumber) => onReplaySeek(moveNumber)
+                                    : undefined
+                            }
+                            collapsed={false}
+                        />
+                    </div>
+                )}
 
-                {isGameOver && replayState && replayState.maxMove > 0 ? (
-                    <ReplayControls
-                        maxMove={replayState.maxMove}
-                        currentMove={replayState.currentMove}
-                        isPlaying={replayState.isPlaying}
-                        playbackSpeed={replayState.playbackSpeed}
-                        onTogglePlay={() => onReplayTogglePlay?.()}
-                        onSeek={(moveNumber) => onReplaySeek?.(moveNumber)}
-                        onStepBack={() => onReplayStepBack?.()}
-                        onStepForward={() => onReplayStepForward?.()}
-                        onSkipStart={() => onReplaySkipStart?.()}
-                        onSkipEnd={() => onReplaySkipEnd?.()}
-                        onSpeedChange={(speed) => onReplaySpeedChange?.(speed)}
-                    />
-                ) : null}
-            </div>
+                {activeTab === "settings" && (
+                    <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                        <div className="space-y-3">
+                            <span className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground ml-1">
+                                Game Mode
+                            </span>
+                            <ModeToggle
+                                value={mode as "local" | "versus-ai" | "online"}
+                                onValueChange={(val) =>
+                                    setMode(val as GameMode)
+                                }
+                            />
+                        </div>
 
-            <div className="pt-4 border-t border-border/50 mt-auto shrink-0">
-                <GameControls
-                    onPass={onPassAction ?? passTurn}
-                    onResign={onResignAction ?? resign}
-                    disabled={isGameOver || controlsDisabled}
-                />
+                        {mode === "versus-ai" && (
+                            <div className="space-y-3 animate-in fade-in">
+                                <span className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground ml-1">
+                                    AI Engine
+                                </span>
+                                <AIDifficultySelector
+                                    value={aiDifficulty}
+                                    onValueChange={setAIDifficulty}
+                                />
+                            </div>
+                        )}
+
+                        {mode === "online" && (
+                            <div className="space-y-3 animate-in fade-in">
+                                <span className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground ml-1">
+                                    Multiplayer
+                                </span>
+                                <OnlineRoomPanel
+                                    roomId={roomId}
+                                    shareUrl={shareUrl}
+                                    isConnecting={
+                                        multiplayerState === "creating-room" ||
+                                        multiplayerState === "joining-room"
+                                    }
+                                    error={multiplayerError}
+                                    onCreateRoom={() => {
+                                        void createRoom();
+                                    }}
+                                    onJoinRoom={(nextRoomId) => {
+                                        void joinRoom(nextRoomId);
+                                    }}
+                                />
+                            </div>
+                        )}
+
+                        <div className="mt-8">
+                            <XPBar collapsed={false} />
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );
