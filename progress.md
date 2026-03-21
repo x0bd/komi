@@ -402,3 +402,15 @@ Original prompt: lets continue building
     - Marked replay controls complete.
     - Marked replay board rendering + move highlight checklist items complete.
   - Constraint preserved: no tests/build/lint were run in this pass.
+
+- 2026-03-21: Post-game review card added to sidebar.
+  - Added `components/game/post-game-review-card.tsx`:
+    - Displays end-of-game outcome summary.
+    - Renders score breakdown table (territory, captures, komi, totals).
+    - Includes SGF export action.
+  - Extended `components/pages/home-page-client.tsx`:
+    - Injected post-game review card into sidebar when game is finished.
+    - Added browser download flow for SGF export.
+  - Updated `project-todo.md`:
+    - Marked score breakdown and SGF export checklist items complete under Post-game review screen.
+  - Constraint preserved: no tests/build/lint were run in this pass.

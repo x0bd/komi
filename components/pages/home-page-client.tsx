@@ -138,6 +138,89 @@ type ReplayFrame = {
     lastMove: Move | null;
 };
 
+type KeyMoment = {
+    moveNumber: number;
+    player: "black" | "white";
+    label: string;
+    detail: string;
+};
+
+function toCoordinate(move: Move, size: 9 | 13 | 19) {
+    if (move.isPass) return "Pass";
+    const column = LETTERS[move.x] ?? "?";
+    const row = size - move.y;
+    return `${column}${row}`;
+}
+
+function buildKeyMoments(moves: Move[], size: 9 | 13 | 19): KeyMoment[] {
+    let state = createInitialState(size);
+    const weightedMoments: Array<KeyMoment & { weight: number }> = [];
+
+    for (let index = 0; index < moves.length; index += 1) {
+        const move = moves[index];
+        const moveNumber = index + 1;
+        const coordinate = toCoordinate(move, size);
+
+        if (move.isPass) {
+            state = applyPass(state);
+            if (index >= Math.max(0, moves.length - 2)) {
+                weightedMoments.push({
+                    moveNumber,
+                    player: move.player,
+                    label: "Endgame pass",
+                    detail: `${move.player === "black" ? "Black" : "White"} passed on ${coordinate}`,
+                    weight: 2,
+                });
+            }
+            continue;
+        }
+
+        const nextState = applyMove(state, size, move.x, move.y, move.player);
+        if (!nextState) continue;
+
+        const captureGain =
+            nextState.captured[move.player] - state.captured[move.player];
+        if (captureGain >= 1) {
+            weightedMoments.push({
+                moveNumber,
+                player: move.player,
+                label: captureGain >= 3 ? "Major capture" : "Capture",
+                detail: `${move.player === "black" ? "Black" : "White"} captured ${captureGain} on ${coordinate}`,
+                weight: captureGain >= 3 ? 6 : 3 + captureGain,
+            });
+        }
+
+        if (moveNumber === 1) {
+            weightedMoments.push({
+                moveNumber,
+                player: move.player,
+                label: "Opening move",
+                detail: `${move.player === "black" ? "Black" : "White"} opened at ${coordinate}`,
+                weight: 1,
+            });
+        }
+
+        state = nextState;
+    }
+
+    if (weightedMoments.length === 0 && moves.length > 0) {
+        const last = moves[moves.length - 1];
+        weightedMoments.push({
+            moveNumber: moves.length,
+            player: last.player,
+            label: "Closing move",
+            detail: `${last.player === "black" ? "Black" : "White"} played ${toCoordinate(last, size)}`,
+            weight: 1,
+        });
+    }
+
+    return weightedMoments
+        .sort((a, b) => b.weight - a.weight || a.moveNumber - b.moveNumber)
+        .slice(0, 4)
+        .sort((a, b) => a.moveNumber - b.moveNumber)
+        .map(({ weight: _weight, ...moment }) => moment);
+}
+
 function buildReplayFrame(
     moves: Move[],
     size: 9 | 13 | 19,
@@ -1024,6 +1107,10 @@ function Sidebar({
             coordinate,
         };
     });
+    const keyMoments = useMemo(
+        () => buildKeyMoments(moveHistory, size),
+        [moveHistory, size],
+    );
     const winProbability = latestAnalysis
         ? Math.round(Math.max(0, Math.min(1, latestAnalysis.winRate)) * 100)
         : null;
@@ -1103,6 +1190,7 @@ function Sidebar({
                         scoreResult={scoreResult}
                         winner={winner}
                         reason={gameOverReason}
+                        keyMoments={keyMoments}
                         onExportSgf={handleExportSgf}
                     />
                 ) : null}
