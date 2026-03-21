@@ -61,8 +61,8 @@ export function GameLayout({
                     </main>
 
                     {/* Sidebar Area — Unified Apple-style Frosted Panel */}
-                    <aside className="relative z-20 w-full lg:w-[380px] shrink-0 pb-12 lg:pb-0 h-full flex flex-col justify-center">
-                        <div className="flex flex-col gap-4 w-full">
+                    <aside className="relative z-20 w-full lg:w-[420px] shrink-0 pb-12 lg:pb-0 h-full flex flex-col justify-center">
+                        <div className="flex flex-col w-full h-[calc(100svh-8rem)]">
                             {sidebar}
                         </div>
                     </aside>

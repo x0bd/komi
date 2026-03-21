@@ -1161,27 +1161,29 @@ function Sidebar({
         : null;
 
     return (
-        <div className="flex flex-col w-full h-[calc(100svh-8rem)] bg-card/40 backdrop-blur-2xl border border-border/50 rounded-3xl shadow-2xl overflow-hidden relative">
-            {/* Vercel-style Tab Navigation */}
-            <div className="flex items-center p-2 border-b border-border/50 bg-background/50 backdrop-blur-md z-10 shrink-0">
-                {(["game", "analysis", "settings"] as const).map((tab) => (
-                    <button
-                        key={tab}
-                        onClick={() => setActiveTab(tab)}
-                        className={cn(
-                            "flex-1 h-9 rounded-xl text-[13px] font-medium capitalize tracking-wider transition-all",
-                            activeTab === tab
-                                ? "bg-foreground text-background shadow-sm"
-                                : "text-muted-foreground hover:text-foreground hover:bg-secondary/50",
-                        )}
-                    >
-                        {tab}
-                    </button>
-                ))}
+        <div className="flex flex-col w-full h-full relative">
+            {/* Vercel-style Minimal Segmented Control Navigation */}
+            <div className="flex justify-center w-full pb-4 border-b border-border/50 shrink-0">
+                <div className="flex items-center p-1 rounded-full bg-border/40 w-fit">
+                    {(["game", "analysis", "settings"] as const).map((tab) => (
+                        <button
+                            key={tab}
+                            onClick={() => setActiveTab(tab)}
+                            className={cn(
+                                "h-9 px-6 rounded-full text-[13px] font-medium capitalize transition-all duration-300",
+                                activeTab === tab
+                                    ? "bg-background text-foreground shadow-sm"
+                                    : "text-muted-foreground hover:text-foreground hover:bg-secondary/40",
+                            )}
+                        >
+                            {tab}
+                        </button>
+                    ))}
+                </div>
             </div>
 
             {/* Scrollable Content Area */}
-            <div className="flex-1 overflow-y-auto scrollbar-none p-5 relative">
+            <div className="flex-1 overflow-y-auto scrollbar-none pt-6 relative">
                 {activeTab === "game" && (
                     <div className="flex flex-col h-full animate-in fade-in slide-in-from-bottom-2 duration-300">
                         <div className="flex flex-col gap-2">
