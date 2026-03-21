@@ -1,10 +1,7 @@
 "use client";
 
 import type { ScoreResult } from "@/lib/engine/scoring";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { LuScale } from "react-icons/lu";
 
 function formatPoints(value: number) {
     return Number.isInteger(value) ? `${value}` : value.toFixed(1);
@@ -29,72 +26,47 @@ export function LiveScoreCard({
 
     const leadText =
         score.winner === "draw"
-            ? "Even position"
+            ? "Even"
             : `${score.winner === "black" ? "Black" : "White"} +${formatPoints(score.margin)}`;
 
     return (
-        <Card
+        <div
             className={cn(
-                "overflow-hidden rounded-2xl border border-border bg-card shadow-md",
+                "flex flex-col w-full py-4 transition-all duration-300",
                 className,
             )}
         >
-            <CardContent className="p-5">
-                <div className="flex items-start justify-between gap-3">
-                    <div className="flex items-center gap-3">
-                        <span className="flex size-10 items-center justify-center rounded-full bg-secondary text-primary">
-                            <LuScale className="size-5" />
-                        </span>
-                        <div className="space-y-0.5">
-                            <p className="font-display text-lg font-bold leading-none">
-                                Score
-                            </p>
-                            <p className="text-xs text-muted-foreground">
-                                {leadText}
-                            </p>
-                        </div>
-                    </div>
-
-                    <Badge
-                        variant="secondary"
-                        className="rounded-full px-2.5 py-0.5 text-[11px]"
-                    >
-                        {isGameOver ? "Final" : `${moveCount} moves`}
-                    </Badge>
+            <div className="flex items-center justify-between gap-4 mb-2.5">
+                <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
+                    <span>Live Score</span>
+                    <div className="w-1 h-1 rounded-full bg-status-active" />
+                    <span>{leadText}</span>
                 </div>
+            </div>
 
-                <div className="mt-4 overflow-hidden rounded-full bg-secondary/70">
-                    <div className="flex h-2.5 w-full">
-                        <div
-                            className="bg-stone-black"
-                            style={{ width: `${blackShare}%` }}
-                        />
-                        <div
-                            className="bg-stone-white"
-                            style={{ width: `${whiteShare}%` }}
-                        />
-                    </div>
-                </div>
+            <div className="relative w-full h-1.5 rounded-full overflow-hidden flex bg-border/40">
+                <div
+                    className="h-full bg-foreground transition-[width] duration-500"
+                    style={{ width: `${blackShare}%` }}
+                />
+                <div
+                    className="h-full bg-muted-foreground/30 transition-[width] duration-500"
+                    style={{ width: `${whiteShare}%` }}
+                />
+            </div>
 
-                <div className="mt-3 grid grid-cols-2 gap-2">
-                    <div className="rounded-xl border border-border/60 bg-secondary/30 px-3 py-2">
-                        <p className="text-[11px] uppercase tracking-[0.12em] text-muted-foreground">
-                            Black
-                        </p>
-                        <p className="mt-1 font-mono text-lg font-bold tabular-nums text-foreground">
-                            {formatPoints(blackTotal)}
-                        </p>
-                    </div>
-                    <div className="rounded-xl border border-border/60 bg-secondary/30 px-3 py-2">
-                        <p className="text-[11px] uppercase tracking-[0.12em] text-muted-foreground">
-                            White
-                        </p>
-                        <p className="mt-1 font-mono text-lg font-bold tabular-nums text-foreground">
-                            {formatPoints(whiteTotal)}
-                        </p>
-                    </div>
+            <div className="flex items-center justify-between mt-2.5 px-0.5">
+                <div className="flex flex-col">
+                    <span className="text-[12px] font-medium text-foreground/80">
+                        {formatPoints(blackTotal)}
+                    </span>
                 </div>
-            </CardContent>
-        </Card>
+                <div className="flex flex-col text-right">
+                    <span className="text-[12px] font-medium text-muted-foreground">
+                        {formatPoints(whiteTotal)}
+                    </span>
+                </div>
+            </div>
+        </div>
     );
 }
