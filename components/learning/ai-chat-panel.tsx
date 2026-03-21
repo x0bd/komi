@@ -57,12 +57,14 @@ export function AIChatPanel({
     const addMessage = useLearningStore((state) => state.addMessage);
     const [question, setQuestion] = useState("");
     const [isAsking, setIsAsking] = useState(false);
+    const [isStreaming, setIsStreaming] = useState(false);
+    const [streamingReply, setStreamingReply] = useState("");
     const [openAIApiKey, setOpenAIApiKey] = useState("");
     const [showKeyEditor, setShowKeyEditor] = useState(false);
 
     const latestMessage = chatMessages[chatMessages.length - 1];
     const visibleMessages = chatMessages.slice(-12);
-    const canAsk = question.trim().length > 0 && !isAsking;
+    const canAsk = question.trim().length > 0 && !isAsking && !isStreaming;
     const hasApiKey = openAIApiKey.trim().length > 0;
 
     const moodLabel =
@@ -107,9 +109,11 @@ export function AIChatPanel({
 
     async function handleAskSensei() {
         const nextQuestion = question.trim();
-        if (!nextQuestion || isAsking) return;
+        if (!nextQuestion || isAsking || isStreaming) return;
 
         setIsAsking(true);
+        setIsStreaming(true);
+        setStreamingReply("");
         try {
             const response = await fetch("/api/tutor", {
                 method: "POST",
@@ -117,6 +121,7 @@ export function AIChatPanel({
                 body: JSON.stringify({
                     question: nextQuestion,
                     apiKey: hasApiKey ? openAIApiKey.trim() : undefined,
+                    stream: true,
                 }),
             });
 
@@ -125,16 +130,41 @@ export function AIChatPanel({
                 return;
             }
 
-            const json = (await response.json().catch(() => ({}))) as {
-                message?: unknown;
-            };
-            if (typeof json.message === "string" && json.message.trim().length > 0) {
-                addMessage(json.message, "coach");
+            if (!response.body) {
+                const json = (await response.json().catch(() => ({}))) as {
+                    message?: unknown;
+                };
+                if (
+                    typeof json.message === "string" &&
+                    json.message.trim().length > 0
+                ) {
+                    addMessage(json.message, "coach");
+                }
+                return;
+            }
+
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+            let fullText = "";
+
+            while (true) {
+                const { value, done } = await reader.read();
+                if (done) break;
+
+                fullText += decoder.decode(value, { stream: true });
+                setStreamingReply(fullText);
+            }
+            fullText += decoder.decode();
+
+            if (fullText.trim().length > 0) {
+                addMessage(fullText.trim(), "coach");
             }
         } catch {
             addMessage("Connection issue while asking Sensei. Try once more.", "warning");
         } finally {
             setIsAsking(false);
+            setIsStreaming(false);
+            setStreamingReply("");
             setQuestion("");
         }
     }
@@ -329,6 +359,17 @@ export function AIChatPanel({
                                         </p>
                                     </div>
                                 ))}
+                                {isStreaming ? (
+                                    <div className="rounded-2xl border border-accent/25 bg-accent/10 px-3.5 py-3 text-sm leading-relaxed shadow-sm">
+                                        <div className="mb-1 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
+                                            <LuMessageSquareQuote className="size-3.5" />
+                                            <span>Coach note</span>
+                                        </div>
+                                        <p className="text-pretty">
+                                            {streamingReply || "Sensei is thinking..."}
+                                        </p>
+                                    </div>
+                                ) : null}
                                 {!visibleMessages.length ? (
                                     <p className="px-1 py-4 text-center text-sm text-muted-foreground">
                                         Sensei will react after your next move.

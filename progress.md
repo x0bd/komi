@@ -360,3 +360,15 @@ Original prompt: lets continue building
     - Marked Tutor API route complete and system prompt tuned.
     - Marked live LLM replacement item complete.
   - Constraint preserved: no tests/build/lint were run in this pass.
+
+- 2026-03-21: Tutor streaming UI wired (Phase 12 integration).
+  - Extended `app/api/tutor/route.ts`:
+    - Added optional `stream: true` mode returning chunked text response.
+    - Refactored resolution flow to share logic across JSON and streaming paths.
+  - Extended `components/learning/ai-chat-panel.tsx`:
+    - Ask Sensei now requests streamed responses.
+    - Added in-panel live streaming bubble while chunks arrive.
+    - Commits final streamed text into persisted chat history when complete.
+  - Updated `project-todo.md`:
+    - Marked tutor integration block complete, including streaming checklist item.
+  - Constraint preserved: no tests/build/lint were run in this pass.

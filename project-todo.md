@@ -348,10 +348,10 @@ Step-by-step build plan. UI first, then game logic, then integrations.
   - [x] Accepts: current board state, last move, engine analysis, game context
   - [x] Returns: natural language explanation of the position/move
   - [x] System prompt tuned for Go teaching (beginner-friendly)
-- [ ] **Tutor integration**
+- [x] **Tutor integration**
   - [x] Replace static tips with live LLM responses
   - [x] Trigger on: each player move, captures, mistakes (engine detects win% drop)
-  - [ ] Streaming responses in the chat panel
+  - [x] Streaming responses in the chat panel
 - [ ] **Tutor modes**
   - [ ] Passive: tips appear in sidebar, non-intrusive
   - [x] Active: ask Sensei a question (text input)

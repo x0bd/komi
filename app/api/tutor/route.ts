@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server"
 type TutorRequestBody = {
   question?: string
   apiKey?: string
+  stream?: boolean
   currentPlayer?: "black" | "white"
   moveNumber?: number
   lastMove?: {
@@ -240,8 +241,33 @@ function writeCachedMessage(cacheKey: string, message: string) {
   })
 }
 
-export async function POST(request: NextRequest) {
-  const body = (await request.json().catch(() => ({}))) as TutorRequestBody
+function createStreamingTextResponse(message: string, source: string) {
+  const encoder = new TextEncoder()
+  const parts = message.split(/(\s+)/).filter((part) => part.length > 0)
+  let cursor = 0
+
+  const stream = new ReadableStream<Uint8Array>({
+    pull(controller) {
+      if (cursor >= parts.length) {
+        controller.close()
+        return
+      }
+
+      controller.enqueue(encoder.encode(parts[cursor]))
+      cursor += 1
+    },
+  })
+
+  return new Response(stream, {
+    headers: {
+      "Content-Type": "text/plain; charset=utf-8",
+      "Cache-Control": "no-store",
+      "X-Tutor-Source": source,
+    },
+  })
+}
+
+async function resolveTutorMessage(body: TutorRequestBody) {
   const apiKey =
     typeof body.apiKey === "string" && body.apiKey.trim().startsWith("sk-")
       ? body.apiKey.trim()
@@ -250,35 +276,47 @@ export async function POST(request: NextRequest) {
   if (apiKey) {
     const message = await requestOpenAIMessage(apiKey, body)
     if (message) {
-      return NextResponse.json({
+      return {
         message,
         source: "openai-user-key",
-      })
+      }
     }
   }
 
   if (typeof body.question === "string" && body.question.trim().length > 0) {
-    const message = buildAnswerForQuestion(body.question)
-    return NextResponse.json({
-      message,
+    return {
+      message: buildAnswerForQuestion(body.question),
       source: "rule-based-qa",
-    })
+    }
   }
 
   const cacheKey = buildCacheKey(body)
   const cachedMessage = readCachedMessage(cacheKey)
   if (cachedMessage) {
-    return NextResponse.json({
+    return {
       message: cachedMessage,
       source: "rule-based-cache",
-    })
+    }
   }
 
   const message = buildTutorMessage(body)
   writeCachedMessage(cacheKey, message)
-
-  return NextResponse.json({
+  return {
     message,
     source: "rule-based",
+  }
+}
+
+export async function POST(request: NextRequest) {
+  const body = (await request.json().catch(() => ({}))) as TutorRequestBody
+  const resolved = await resolveTutorMessage(body)
+
+  if (body.stream) {
+    return createStreamingTextResponse(resolved.message, resolved.source)
+  }
+
+  return NextResponse.json({
+    message: resolved.message,
+    source: resolved.source,
   })
 }
