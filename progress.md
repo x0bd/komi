@@ -407,10 +407,11 @@ Original prompt: lets continue building
   - Added `components/game/post-game-review-card.tsx`:
     - Displays end-of-game outcome summary.
     - Renders score breakdown table (territory, captures, komi, totals).
+    - Adds key moments timeline entries from reconstructed move flow.
     - Includes SGF export action.
   - Extended `components/pages/home-page-client.tsx`:
     - Injected post-game review card into sidebar when game is finished.
     - Added browser download flow for SGF export.
   - Updated `project-todo.md`:
-    - Marked score breakdown and SGF export checklist items complete under Post-game review screen.
+    - Marked score breakdown, key moments timeline, and SGF export checklist items complete under Post-game review screen.
   - Constraint preserved: no tests/build/lint were run in this pass.

@@ -376,7 +376,7 @@ Step-by-step build plan. UI first, then game logic, then integrations.
   - [ ] Side panel shows analysis at each position (if available)
 - [ ] **Post-game review screen**
   - [x] Score breakdown (territory, captures, komi)
-  - [ ] Key moments timeline (big win% swings)
+  - [x] Key moments timeline (big win% swings)
   - [ ] AI tutor commentary per move
   - [x] Share / export SGF button
 - [ ] **Game history page**
