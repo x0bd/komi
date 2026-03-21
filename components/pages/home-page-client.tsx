@@ -23,6 +23,7 @@ import {
     type MoveEntry,
 } from "@/components/game/move-history-section";
 import { GameControls } from "@/components/game/game-controls";
+import { ReplayControls } from "@/components/game/replay-controls";
 import { GameOverDialog } from "@/components/game/game-over-dialog";
 import {
     useGameStore,
@@ -39,7 +40,10 @@ import type { ScoreResult } from "@/lib/engine/scoring";
 import { calculateScore } from "@/lib/engine/scoring";
 import type { GameState, Move } from "@/lib/engine/types";
 import { applyMove, applyPass } from "@/lib/engine/rules";
-import { isGameOver as getIsGameOver } from "@/lib/engine/game";
+import {
+    createInitialState,
+    isGameOver as getIsGameOver,
+} from "@/lib/engine/game";
 import { useMultiplayerStore } from "@/lib/stores/multiplayer-store";
 import { useLearningStore } from "@/lib/stores/learning-store";
 import { LuBot, LuSparkles } from "react-icons/lu";
@@ -123,6 +127,53 @@ function buildAnalysisHints({
         .filter((move): move is { x: number; y: number; confidence: number; rank: number } => move !== null);
 }
 
+type ReplayFrame = {
+    board: number[];
+    turn: GameState["turn"];
+    captured: {
+        black: number;
+        white: number;
+    };
+    lastMove: Move | null;
+};
+
+function buildReplayFrame(
+    moves: Move[],
+    size: 9 | 13 | 19,
+    moveNumber: number,
+): ReplayFrame {
+    const targetMove = Math.max(0, Math.min(moveNumber, moves.length));
+    let state = createInitialState(size);
+    let lastMove: Move | null = null;
+
+    for (let index = 0; index < targetMove; index += 1) {
+        const move = moves[index];
+        if (move.isPass) {
+            state = applyPass(state);
+            lastMove = move;
+            continue;
+        }
+
+        const nextState = applyMove(state, size, move.x, move.y, move.player);
+        if (!nextState) {
+            break;
+        }
+
+        state = nextState;
+        lastMove = move;
+    }
+
+    return {
+        board: [...state.board],
+        turn: state.turn,
+        captured: {
+            black: state.captured.black,
+            white: state.captured.white,
+        },
+        lastMove,
+    };
+}
+
 function readSnapshotFromMutableStorage(storage: {
     get: (key: keyof Liveblocks["Storage"]) => unknown;
 }): MultiplayerSnapshot {
@@ -199,6 +250,7 @@ export default function HomePageClient() {
     const mode = useGameStore((state) => state.mode);
     const setMode = useGameStore((state) => state.setMode);
     const gameState = useGameStore((state) => state.gameState);
+    const size = useGameStore((state) => state.size);
     const timers = useGameStore((state) => state.timers);
     const moveHistory = useGameStore((state) => state.moveHistory);
     const exportSGF = useGameStore((state) => state.exportSGF);
@@ -208,10 +260,27 @@ export default function HomePageClient() {
     const joinRoom = useMultiplayerStore((state) => state.joinRoom);
     const leaveRoom = useMultiplayerStore((state) => state.leaveRoom);
     const persistedGameKeyRef = useRef<string | null>(null);
+    const [replayMoveNumber, setReplayMoveNumber] = useState<number | null>(null);
+    const [replayIsPlaying, setReplayIsPlaying] = useState(false);
+    const [replayPlaybackSpeed, setReplayPlaybackSpeed] = useState(1);
 
     // Attach AI turn listener
     useAITurn();
     useGameClock(mode !== "online");
+
+    const maxReplayMove = moveHistory.length;
+    const replayCurrentMove = replayMoveNumber ?? maxReplayMove;
+    const replayEnabled =
+        isGameOver &&
+        replayMoveNumber !== null &&
+        replayCurrentMove < maxReplayMove;
+    const replayFrame = useMemo(
+        () =>
+            replayEnabled
+                ? buildReplayFrame(moveHistory, size, replayCurrentMove)
+                : null,
+        [moveHistory, replayCurrentMove, replayEnabled, size],
+    );
 
     const result =
         !scoreResult || scoreResult.winner === "draw"
@@ -281,6 +350,46 @@ export default function HomePageClient() {
         winner,
     ]);
 
+    useEffect(() => {
+        if (isGameOver) return;
+        setReplayMoveNumber(null);
+        setReplayIsPlaying(false);
+    }, [isGameOver]);
+
+    useEffect(() => {
+        if (!replayIsPlaying || !isGameOver) return;
+
+        if (replayMoveNumber === null) {
+            setReplayMoveNumber(0);
+            return;
+        }
+
+        if (replayMoveNumber >= maxReplayMove) {
+            setReplayIsPlaying(false);
+            return;
+        }
+
+        const intervalMs = Math.max(260, Math.round(950 / replayPlaybackSpeed));
+        const timeoutId = window.setTimeout(() => {
+            setReplayMoveNumber((current) => {
+                if (current === null) return 0;
+                const nextMove = Math.min(current + 1, maxReplayMove);
+                if (nextMove >= maxReplayMove) {
+                    setReplayIsPlaying(false);
+                }
+                return nextMove;
+            });
+        }, intervalMs);
+
+        return () => window.clearTimeout(timeoutId);
+    }, [
+        isGameOver,
+        maxReplayMove,
+        replayIsPlaying,
+        replayMoveNumber,
+        replayPlaybackSpeed,
+    ]);
+
     return (
         <OnlineRoomShell
             mode={mode}
@@ -295,7 +404,69 @@ export default function HomePageClient() {
             {mode === "online" && roomId ? (
                 <OnlineGameplayLayout />
             ) : (
-                <GameLayout board={<LocalBoardView />} sidebar={<Sidebar />} />
+                <GameLayout
+                    board={
+                        <LocalBoardView
+                            replayEnabled={replayEnabled}
+                            replayFrame={replayFrame}
+                        />
+                    }
+                    sidebar={
+                        <Sidebar
+                            replayState={{
+                                enabled: replayEnabled,
+                                isPlaying: replayIsPlaying,
+                                maxMove: maxReplayMove,
+                                currentMove: replayCurrentMove,
+                                playbackSpeed: replayPlaybackSpeed,
+                            }}
+                            onReplaySeek={(moveNumber) => {
+                                setReplayMoveNumber(
+                                    Math.max(0, Math.min(moveNumber, maxReplayMove)),
+                                );
+                                setReplayIsPlaying(false);
+                            }}
+                            onReplayTogglePlay={() => {
+                                if (!isGameOver || maxReplayMove === 0) return;
+                                setReplayMoveNumber((current) =>
+                                    current === null ? 0 : current,
+                                );
+                                setReplayIsPlaying((playing) => !playing);
+                            }}
+                            onReplayStepBack={() => {
+                                if (!isGameOver || maxReplayMove === 0) return;
+                                setReplayIsPlaying(false);
+                                setReplayMoveNumber((current) => {
+                                    const safeCurrent =
+                                        current === null ? maxReplayMove : current;
+                                    return Math.max(0, safeCurrent - 1);
+                                });
+                            }}
+                            onReplayStepForward={() => {
+                                if (!isGameOver || maxReplayMove === 0) return;
+                                setReplayIsPlaying(false);
+                                setReplayMoveNumber((current) => {
+                                    const safeCurrent =
+                                        current === null ? maxReplayMove : current;
+                                    return Math.min(maxReplayMove, safeCurrent + 1);
+                                });
+                            }}
+                            onReplaySkipStart={() => {
+                                if (!isGameOver || maxReplayMove === 0) return;
+                                setReplayIsPlaying(false);
+                                setReplayMoveNumber(0);
+                            }}
+                            onReplaySkipEnd={() => {
+                                if (!isGameOver || maxReplayMove === 0) return;
+                                setReplayIsPlaying(false);
+                                setReplayMoveNumber(maxReplayMove);
+                            }}
+                            onReplaySpeedChange={(speed) =>
+                                setReplayPlaybackSpeed(speed)
+                            }
+                        />
+                    }
+                />
             )}
             <AIReaction />
             <MobileSenseiFab />
@@ -535,34 +706,67 @@ function OnlineGameplayLayout() {
     );
 }
 
-function LocalBoardView() {
-    const board = useGameStore((state) => state.gameState.board);
+function LocalBoardView({
+    replayEnabled = false,
+    replayFrame = null,
+}: {
+    replayEnabled?: boolean;
+    replayFrame?: ReplayFrame | null;
+}) {
+    const liveBoard = useGameStore((state) => state.gameState.board);
     const size = useGameStore((state) => state.size);
+    const komi = useGameStore((state) => state.komi);
     const placeStone = useGameStore((state) => state.placeStone);
-    const currentPlayer = useGameStore((state) => state.currentPlayer);
-    const validMoves = useGameStore((state) => state.validMoves);
-    const recentCaptures = useGameStore((state) => state.recentCaptures);
+    const liveCurrentPlayer = useGameStore((state) => state.currentPlayer);
+    const liveValidMoves = useGameStore((state) => state.validMoves);
+    const liveRecentCaptures = useGameStore((state) => state.recentCaptures);
     const liveScore = useGameStore((state) => state.liveScore);
     const analysisOverlayEnabled = useGameStore(
         (state) => state.analysisOverlayEnabled,
     );
     const latestAnalysis = useLearningStore((state) => state.latestAnalysis);
-    const lastMove =
+    const liveLastMove =
         useGameStore((state) => {
-            const moveHistory = state.moveHistory;
-            return moveHistory.length > 0
-                ? moveHistory[moveHistory.length - 1]
-                : undefined;
+            const history = state.moveHistory;
+            return history.length > 0 ? history[history.length - 1] : undefined;
         });
+
+    const board =
+        replayEnabled && replayFrame ? replayFrame.board : liveBoard;
+    const currentPlayer =
+        replayEnabled && replayFrame ? replayFrame.turn : liveCurrentPlayer;
+    const validMoves = replayEnabled ? [] : liveValidMoves;
+    const capturedStones = replayEnabled ? [] : liveRecentCaptures;
+    const displayLastMove =
+        replayEnabled && replayFrame
+            ? replayFrame.lastMove && !replayFrame.lastMove.isPass
+                ? { x: replayFrame.lastMove.x, y: replayFrame.lastMove.y }
+                : undefined
+            : liveLastMove && !liveLastMove.isPass
+              ? { x: liveLastMove.x, y: liveLastMove.y }
+              : undefined;
+    const replayScore = useMemo(
+        () =>
+            replayEnabled && replayFrame
+                ? calculateScore(
+                      replayFrame.board,
+                      size,
+                      replayFrame.captured,
+                      komi,
+                  )
+                : null,
+        [komi, replayEnabled, replayFrame, size],
+    );
+
     const analysisHints = useMemo(
         () =>
             buildAnalysisHints({
-                enabled: analysisOverlayEnabled,
+                enabled: analysisOverlayEnabled && !replayEnabled,
                 topMoves: latestAnalysis?.topMoves,
                 size,
                 board,
             }),
-        [analysisOverlayEnabled, latestAnalysis?.topMoves, size, board],
+        [analysisOverlayEnabled, board, latestAnalysis?.topMoves, replayEnabled, size],
     );
 
     return (
@@ -571,16 +775,18 @@ function LocalBoardView() {
             size={size}
             currentPlayer={currentPlayer}
             validMoves={validMoves}
-            capturedStones={recentCaptures}
-            lastMove={
-                lastMove && !lastMove.isPass
-                    ? { x: lastMove.x, y: lastMove.y }
-                    : undefined
-            }
+            capturedStones={capturedStones}
+            lastMove={displayLastMove}
             analysisHints={analysisHints}
-            territoryMap={liveScore.territoryMap}
-            showTerritoryHeatmap={analysisOverlayEnabled}
-            onIntersectionClick={(x, y) => placeStone(x, y)}
+            territoryMap={
+                replayEnabled && replayScore
+                    ? replayScore.territoryMap
+                    : liveScore.territoryMap
+            }
+            showTerritoryHeatmap={analysisOverlayEnabled && !replayEnabled}
+            onIntersectionClick={
+                replayEnabled ? undefined : (x, y) => placeStone(x, y)
+            }
         />
     );
 }
@@ -725,10 +931,32 @@ function Sidebar({
     onPassAction,
     onResignAction,
     controlsDisabled = false,
+    replayState,
+    onReplayTogglePlay,
+    onReplaySeek,
+    onReplayStepBack,
+    onReplayStepForward,
+    onReplaySkipStart,
+    onReplaySkipEnd,
+    onReplaySpeedChange,
 }: {
     onPassAction?: () => void;
     onResignAction?: () => void;
     controlsDisabled?: boolean;
+    replayState?: {
+        enabled: boolean;
+        maxMove: number;
+        currentMove: number;
+        isPlaying: boolean;
+        playbackSpeed: number;
+    };
+    onReplayTogglePlay?: () => void;
+    onReplaySeek?: (moveNumber: number) => void;
+    onReplayStepBack?: () => void;
+    onReplayStepForward?: () => void;
+    onReplaySkipStart?: () => void;
+    onReplaySkipEnd?: () => void;
+    onReplaySpeedChange?: (speed: number) => void;
 } = {}) {
     const [expandedPanel, setExpandedPanel] = useState<
         "history" | "sensei" | "streak" | null
@@ -886,6 +1114,16 @@ function Sidebar({
                 <MoveHistorySection
                     moves={mappedMoves}
                     moveCount={mappedMoves.length}
+                    highlightedMoveNumber={
+                        replayState?.enabled && replayState.currentMove > 0
+                            ? replayState.currentMove
+                            : undefined
+                    }
+                    onMoveSelect={
+                        isGameOver && onReplaySeek
+                            ? (moveNumber) => onReplaySeek(moveNumber)
+                            : undefined
+                    }
                     collapsed={expandedPanel !== "history"}
                     onToggle={() =>
                         setExpandedPanel((current) =>
@@ -898,6 +1136,22 @@ function Sidebar({
                             : "lg:flex-none"
                     }
                 />
+
+                {isGameOver && replayState && replayState.maxMove > 0 ? (
+                    <ReplayControls
+                        maxMove={replayState.maxMove}
+                        currentMove={replayState.currentMove}
+                        isPlaying={replayState.isPlaying}
+                        playbackSpeed={replayState.playbackSpeed}
+                        onTogglePlay={() => onReplayTogglePlay?.()}
+                        onSeek={(moveNumber) => onReplaySeek?.(moveNumber)}
+                        onStepBack={() => onReplayStepBack?.()}
+                        onStepForward={() => onReplayStepForward?.()}
+                        onSkipStart={() => onReplaySkipStart?.()}
+                        onSkipEnd={() => onReplaySkipEnd?.()}
+                        onSpeedChange={(speed) => onReplaySpeedChange?.(speed)}
+                    />
+                ) : null}
 
                 <AIChatPanel
                     collapsed={expandedPanel !== "sensei"}

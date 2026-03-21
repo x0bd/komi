@@ -23,6 +23,8 @@ export function MoveHistory({
     moveCount = 0,
     variant = "default",
     collapsed = false,
+    highlightedMoveNumber,
+    onMoveSelect,
     onToggle,
     className,
 }: {
@@ -30,6 +32,8 @@ export function MoveHistory({
     moveCount?: number;
     variant?: "default" | "embedded";
     collapsed?: boolean;
+    highlightedMoveNumber?: number;
+    onMoveSelect?: (moveNumber: number) => void;
     onToggle?: () => void;
     className?: string;
 }) {
@@ -150,13 +154,20 @@ export function MoveHistory({
 
                         {hasMoves ? (
                             moves.map((m) => (
-                                <div
+                                <button
                                     key={m.moveNumber}
+                                    type="button"
+                                    onClick={() => onMoveSelect?.(m.moveNumber)}
+                                    disabled={!onMoveSelect}
+                                    aria-pressed={highlightedMoveNumber === m.moveNumber}
                                     className={cn(
-                                        "flex items-center gap-3 rounded-xl border p-3 transition-colors",
+                                        "flex w-full items-center gap-3 rounded-xl border p-3 text-left transition-colors",
                                         m.isPass
                                             ? "border-border/40 bg-secondary/30"
                                             : "border-border/60 bg-card hover:border-border shadow-sm",
+                                        onMoveSelect && "cursor-pointer",
+                                        highlightedMoveNumber === m.moveNumber &&
+                                            "border-accent/70 bg-accent/10",
                                     )}
                                 >
                                     <span className="w-6 text-center font-mono text-xs font-bold text-muted-foreground">
@@ -196,7 +207,7 @@ export function MoveHistory({
                                             ? "Pass"
                                             : (m.coordinate ?? "—")}
                                     </span>
-                                </div>
+                                </button>
                             ))
                         ) : (
                             <div className="mt-4 flex flex-col items-center justify-center text-center opacity-60">

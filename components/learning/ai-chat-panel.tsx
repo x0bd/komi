@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
     LuBot,
     LuChevronDown,
@@ -14,6 +14,7 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useLearningStore } from "@/lib/stores/learning-store";
+import { useGameStore } from "@/lib/stores/game-store";
 import { cn } from "@/lib/utils";
 
 export type ChatMessageTone = "coach" | "celebrate" | "warning" | "tip";
@@ -25,6 +26,9 @@ export type ChatMessage = {
 };
 
 const QUICK_TIPS = ["Opening tips", "How to capture", "Territory"] as const;
+const LETTERS = "ABCDEFGHJKLMNOPQRST".split("");
+
+type TutorMode = "passive" | "active" | "review";
 
 function getToneClasses(tone: ChatMessageTone) {
     switch (tone) {
@@ -37,6 +41,36 @@ function getToneClasses(tone: ChatMessageTone) {
         default:
             return "border-border/60 bg-secondary/35 text-foreground";
     }
+}
+
+function toCoordinate(x: number, y: number, size: number) {
+    const col = LETTERS[x] ?? "?";
+    return `${col}${size - y}`;
+}
+
+function buildReviewLine({
+    moveNumber,
+    player,
+    isPass,
+    coordinate,
+}: {
+    moveNumber: number;
+    player: "black" | "white";
+    isPass: boolean;
+    coordinate: string;
+}) {
+    if (isPass) {
+        return `#${moveNumber}: ${player === "black" ? "Black" : "White"} passed. Check if there was still a forcing move before ending local fights.`;
+    }
+
+    const tone =
+        moveNumber <= 20
+            ? "opening shape"
+            : moveNumber <= 120
+              ? "middle-game pressure"
+              : "endgame value";
+
+    return `#${moveNumber}: ${player === "black" ? "Black" : "White"} played ${coordinate}. Re-evaluate nearby liberties and territory balance for ${tone}.`;
 }
 
 export function AIChatPanel({
@@ -55,17 +89,47 @@ export function AIChatPanel({
     const latestAnalysis = useLearningStore((state) => state.latestAnalysis);
     const requestTip = useLearningStore((state) => state.requestTip);
     const addMessage = useLearningStore((state) => state.addMessage);
+    const isGameOver = useGameStore((state) => state.isGameOver);
+    const moveHistory = useGameStore((state) => state.moveHistory);
+    const scoreResult = useGameStore((state) => state.scoreResult);
+    const gameOverReason = useGameStore((state) => state.gameOverReason);
+    const boardSize = useGameStore((state) => state.size);
     const [question, setQuestion] = useState("");
     const [isAsking, setIsAsking] = useState(false);
     const [isStreaming, setIsStreaming] = useState(false);
     const [streamingReply, setStreamingReply] = useState("");
+    const [tutorMode, setTutorMode] = useState<TutorMode>("active");
     const [openAIApiKey, setOpenAIApiKey] = useState("");
     const [showKeyEditor, setShowKeyEditor] = useState(false);
+    const [reviewSummary, setReviewSummary] = useState("");
+    const [isGeneratingReview, setIsGeneratingReview] = useState(false);
+    const [lastReviewedGameKey, setLastReviewedGameKey] = useState("");
 
     const latestMessage = chatMessages[chatMessages.length - 1];
     const visibleMessages = chatMessages.slice(-12);
     const canAsk = question.trim().length > 0 && !isAsking && !isStreaming;
     const hasApiKey = openAIApiKey.trim().length > 0;
+    const reviewKey = isGameOver
+        ? `${moveHistory.length}:${scoreResult?.winner ?? "none"}:${gameOverReason ?? "none"}`
+        : "";
+    const recentReviewMoves = useMemo(
+        () =>
+            moveHistory.slice(-8).map((move, index) => {
+                const absoluteMoveNumber = moveHistory.length - 8 + index + 1;
+                const moveNumber = absoluteMoveNumber > 0 ? absoluteMoveNumber : index + 1;
+                const coordinate = move.isPass
+                    ? "pass"
+                    : toCoordinate(move.x, move.y, boardSize);
+
+                return buildReviewLine({
+                    moveNumber,
+                    player: move.player,
+                    isPass: move.isPass,
+                    coordinate,
+                });
+            }),
+        [boardSize, moveHistory],
+    );
 
     const moodLabel =
         tutorMood === "celebrate"
@@ -106,6 +170,73 @@ export function AIChatPanel({
         window.localStorage.removeItem("komi_openai_api_key");
         addMessage("Personal API key removed. Back to local tutor mode.", "tip");
     }
+
+    useEffect(() => {
+        if (!isGameOver) {
+            setReviewSummary("");
+            setLastReviewedGameKey("");
+        }
+    }, [isGameOver]);
+
+    async function generateReview() {
+        if (!isGameOver || isGeneratingReview || !reviewKey) return;
+
+        setIsGeneratingReview(true);
+        try {
+            const finalResult = !scoreResult
+                ? "result unavailable"
+                : scoreResult.winner === "draw"
+                  ? "draw"
+                  : `${scoreResult.winner} by ${scoreResult.margin.toFixed(1)}`;
+
+            const response = await fetch("/api/tutor", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    question: [
+                        "Give a compact post-game Go review.",
+                        `Result: ${finalResult}.`,
+                        `Reason: ${gameOverReason ?? "score"}.`,
+                        `Recent moves: ${recentReviewMoves.join(" | ")}`,
+                        "Focus on one strength, one mistake pattern, and one next-game objective.",
+                    ].join(" "),
+                    apiKey: hasApiKey ? openAIApiKey.trim() : undefined,
+                }),
+            });
+
+            if (!response.ok) {
+                setReviewSummary(
+                    "Review unavailable right now. Check shape efficiency in your last 8 moves and prioritize safer liberties next game.",
+                );
+                return;
+            }
+
+            const json = (await response.json().catch(() => ({}))) as {
+                message?: unknown;
+            };
+            if (typeof json.message === "string" && json.message.trim().length > 0) {
+                setReviewSummary(json.message.trim());
+            } else {
+                setReviewSummary(
+                    "Game complete. Revisit the final sequence and choose one defensive pattern to sharpen before your next match.",
+                );
+            }
+        } catch {
+            setReviewSummary(
+                "Could not fetch review notes. Quick check: identify one over-extended group and one missed forcing move from the final phase.",
+            );
+        } finally {
+            setIsGeneratingReview(false);
+            setLastReviewedGameKey(reviewKey);
+        }
+    }
+
+    useEffect(() => {
+        if (tutorMode !== "review") return;
+        if (!isGameOver || !reviewKey) return;
+        if (lastReviewedGameKey === reviewKey) return;
+        void generateReview();
+    }, [tutorMode, isGameOver, reviewKey, lastReviewedGameKey]);
 
     async function handleAskSensei() {
         const nextQuestion = question.trim();
@@ -286,6 +417,24 @@ export function AIChatPanel({
                         </div>
                     </div>
 
+                    <div className="mt-3 grid grid-cols-3 gap-2 rounded-xl border border-border/60 bg-secondary/15 p-1.5">
+                        {(["passive", "active", "review"] as TutorMode[]).map((mode) => (
+                            <button
+                                key={mode}
+                                type="button"
+                                onClick={() => setTutorMode(mode)}
+                                className={cn(
+                                    "rounded-lg px-2 py-2 text-xs font-semibold uppercase tracking-[0.12em] transition-colors",
+                                    tutorMode === mode
+                                        ? "bg-background text-foreground shadow-sm"
+                                        : "text-muted-foreground hover:text-foreground",
+                                )}
+                            >
+                                {mode}
+                            </button>
+                        ))}
+                    </div>
+
                     {latestAnalysis ? (
                         <div className="mt-4 rounded-xl border border-border/60 bg-background/80 p-4 shadow-sm">
                             <div className="flex items-start justify-between gap-3">
@@ -335,6 +484,50 @@ export function AIChatPanel({
                         </div>
                     ) : null}
 
+                    {tutorMode === "review" ? (
+                        <div className="mt-4 rounded-xl border border-border/60 bg-background/80 p-4 shadow-sm">
+                            <div className="flex items-center justify-between gap-3">
+                                <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
+                                    Post-Game Review
+                                </p>
+                                {isGameOver ? (
+                                    <button
+                                        type="button"
+                                        onClick={() => void generateReview()}
+                                        disabled={isGeneratingReview}
+                                        className="rounded-full border border-border/70 bg-secondary/25 px-2.5 py-1 text-[11px] font-semibold text-foreground disabled:opacity-60"
+                                    >
+                                        {isGeneratingReview ? "Updating..." : "Refresh"}
+                                    </button>
+                                ) : null}
+                            </div>
+
+                            {!isGameOver ? (
+                                <p className="mt-2 text-sm text-muted-foreground">
+                                    Review unlocks after game end. Finish the current game to get a move-by-move walkthrough.
+                                </p>
+                            ) : (
+                                <>
+                                    <p className="mt-2 text-sm text-foreground">
+                                        {isGeneratingReview
+                                            ? "Sensei is preparing your recap..."
+                                            : reviewSummary || "Generating review..."}
+                                    </p>
+                                    <div className="mt-3 space-y-1.5">
+                                        {recentReviewMoves.map((line, index) => (
+                                            <p
+                                                key={`${line}-${index}`}
+                                                className="rounded-lg border border-border/55 bg-secondary/20 px-2.5 py-1.5 text-[12px] text-muted-foreground"
+                                            >
+                                                {line}
+                                            </p>
+                                        ))}
+                                    </div>
+                                </>
+                            )}
+                        </div>
+                    ) : null}
+
                     <div className="mt-4 overflow-hidden rounded-xl border border-border/60 bg-secondary/15">
                         <ScrollArea className="h-[210px]">
                             <div className="space-y-2 p-3">
@@ -380,89 +573,101 @@ export function AIChatPanel({
                     </div>
 
                     <div className="mt-4 flex flex-wrap gap-2">
-                        <div className="w-full rounded-xl border border-border/60 bg-secondary/20 p-3">
-                            <div className="flex items-center justify-between gap-2">
-                                <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-                                    AI Key
-                                </p>
-                                <button
-                                    type="button"
-                                    onClick={() => setShowKeyEditor((current) => !current)}
-                                    className="inline-flex items-center gap-1 rounded-full border border-border/70 bg-background/80 px-2.5 py-1 text-[11px] font-medium text-muted-foreground hover:text-foreground"
-                                >
-                                    <LuKeyRound className="size-3.5" />
-                                    {hasApiKey ? "Configured" : "Set key"}
-                                </button>
-                            </div>
-                            {showKeyEditor ? (
-                                <div className="mt-2 space-y-2">
-                                    <input
-                                        value={openAIApiKey}
-                                        onChange={(event) =>
-                                            setOpenAIApiKey(event.target.value)
-                                        }
-                                        placeholder="sk-..."
-                                        type="password"
-                                        className="h-10 w-full rounded-full border border-border/70 bg-background/85 px-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-accent/60"
-                                    />
-                                    <div className="flex items-center justify-end gap-2">
+                        {tutorMode === "active" ? (
+                            <>
+                                <div className="w-full rounded-xl border border-border/60 bg-secondary/20 p-3">
+                                    <div className="flex items-center justify-between gap-2">
+                                        <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                                            AI Key
+                                        </p>
                                         <button
                                             type="button"
-                                            onClick={clearApiKey}
-                                            className="inline-flex h-8 items-center rounded-full border border-border/70 bg-background/85 px-3 text-xs font-medium text-muted-foreground hover:text-foreground"
+                                            onClick={() => setShowKeyEditor((current) => !current)}
+                                            className="inline-flex items-center gap-1 rounded-full border border-border/70 bg-background/80 px-2.5 py-1 text-[11px] font-medium text-muted-foreground hover:text-foreground"
                                         >
-                                            Clear
-                                        </button>
-                                        <button
-                                            type="button"
-                                            onClick={saveApiKey}
-                                            className="inline-flex h-8 items-center rounded-full border border-border/70 bg-secondary/30 px-3 text-xs font-semibold text-foreground hover:bg-secondary/50"
-                                        >
-                                            Save key
+                                            <LuKeyRound className="size-3.5" />
+                                            {hasApiKey ? "Configured" : "Set key"}
                                         </button>
                                     </div>
+                                    {showKeyEditor ? (
+                                        <div className="mt-2 space-y-2">
+                                            <input
+                                                value={openAIApiKey}
+                                                onChange={(event) =>
+                                                    setOpenAIApiKey(event.target.value)
+                                                }
+                                                placeholder="sk-..."
+                                                type="password"
+                                                className="h-10 w-full rounded-full border border-border/70 bg-background/85 px-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-accent/60"
+                                            />
+                                            <div className="flex items-center justify-end gap-2">
+                                                <button
+                                                    type="button"
+                                                    onClick={clearApiKey}
+                                                    className="inline-flex h-8 items-center rounded-full border border-border/70 bg-background/85 px-3 text-xs font-medium text-muted-foreground hover:text-foreground"
+                                                >
+                                                    Clear
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={saveApiKey}
+                                                    className="inline-flex h-8 items-center rounded-full border border-border/70 bg-secondary/30 px-3 text-xs font-semibold text-foreground hover:bg-secondary/50"
+                                                >
+                                                    Save key
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <p className="mt-1 text-xs text-muted-foreground">
+                                            {hasApiKey
+                                                ? "Using your key for live tutor responses."
+                                                : "No key set. Sensei uses local fallback responses."}
+                                        </p>
+                                    )}
                                 </div>
-                            ) : (
-                                <p className="mt-1 text-xs text-muted-foreground">
-                                    {hasApiKey
-                                        ? "Using your key for live tutor responses."
-                                        : "No key set. Sensei uses local fallback responses."}
-                                </p>
-                            )}
-                        </div>
 
-                        <form
-                            className="flex w-full items-center gap-2"
-                            onSubmit={(event) => {
-                                event.preventDefault();
-                                void handleAskSensei();
-                            }}
-                        >
-                            <input
-                                value={question}
-                                onChange={(event) => setQuestion(event.target.value)}
-                                placeholder="Ask Sensei about this position..."
-                                className="h-10 flex-1 rounded-full border border-border/70 bg-background/85 px-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-accent/60"
-                            />
-                            <button
-                                type="submit"
-                                disabled={!canAsk}
-                                className="inline-flex h-10 min-w-10 items-center justify-center rounded-full border border-border/70 bg-secondary/30 px-3 text-sm font-semibold text-foreground transition-colors hover:bg-secondary/50 disabled:cursor-not-allowed disabled:opacity-50"
-                            >
-                                <LuSend className="size-4" />
-                            </button>
-                        </form>
+                                <form
+                                    className="flex w-full items-center gap-2"
+                                    onSubmit={(event) => {
+                                        event.preventDefault();
+                                        void handleAskSensei();
+                                    }}
+                                >
+                                    <input
+                                        value={question}
+                                        onChange={(event) => setQuestion(event.target.value)}
+                                        placeholder="Ask Sensei about this position..."
+                                        className="h-10 flex-1 rounded-full border border-border/70 bg-background/85 px-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-accent/60"
+                                    />
+                                    <button
+                                        type="submit"
+                                        disabled={!canAsk}
+                                        className="inline-flex h-10 min-w-10 items-center justify-center rounded-full border border-border/70 bg-secondary/30 px-3 text-sm font-semibold text-foreground transition-colors hover:bg-secondary/50 disabled:cursor-not-allowed disabled:opacity-50"
+                                    >
+                                        <LuSend className="size-4" />
+                                    </button>
+                                </form>
+                            </>
+                        ) : null}
 
-                        {QUICK_TIPS.map((topic) => (
-                            <button
-                                key={topic}
-                                type="button"
-                                onClick={() => requestTip(topic)}
-                                className="inline-flex min-h-9 items-center rounded-full border border-border/70 bg-background/80 px-3 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-                            >
-                                {topic}
-                            </button>
-                        ))}
+                        {tutorMode === "passive" ? (
+                            <p className="w-full rounded-xl border border-border/60 bg-secondary/15 px-3 py-2 text-xs text-muted-foreground">
+                                Passive mode keeps hints lightweight while you focus on play.
+                            </p>
+                        ) : null}
+
+                        {tutorMode !== "review"
+                            ? QUICK_TIPS.map((topic) => (
+                                  <button
+                                      key={topic}
+                                      type="button"
+                                      onClick={() => requestTip(topic)}
+                                      className="inline-flex min-h-9 items-center rounded-full border border-border/70 bg-background/80 px-3 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                                  >
+                                      {topic}
+                                  </button>
+                              ))
+                            : null}
                     </div>
                 </div>
             </CardContent>

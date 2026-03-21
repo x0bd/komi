@@ -352,10 +352,10 @@ Step-by-step build plan. UI first, then game logic, then integrations.
   - [x] Replace static tips with live LLM responses
   - [x] Trigger on: each player move, captures, mistakes (engine detects win% drop)
   - [x] Streaming responses in the chat panel
-- [ ] **Tutor modes**
-  - [ ] Passive: tips appear in sidebar, non-intrusive
+- [x] **Tutor modes**
+  - [x] Passive: tips appear in sidebar, non-intrusive
   - [x] Active: ask Sensei a question (text input)
-  - [ ] Review: post-game walkthrough, move-by-move commentary
+  - [x] Review: post-game walkthrough, move-by-move commentary
 - [x] **Rate limiting**
   - [x] Debounce requests (don't call on every single move)
   - [x] Cache explanations for common positions/patterns

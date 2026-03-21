@@ -12,12 +12,16 @@ export function MoveHistorySection({
   moves,
   moveCount = 0,
   collapsed = false,
+  highlightedMoveNumber,
+  onMoveSelect,
   onToggle,
   className,
 }: {
   moves: MoveEntry[]
   moveCount?: number
   collapsed?: boolean
+  highlightedMoveNumber?: number
+  onMoveSelect?: (moveNumber: number) => void
   onToggle?: () => void
   className?: string
 }) {
@@ -31,6 +35,8 @@ export function MoveHistorySection({
           moves={moves}
           moveCount={moveCount}
           collapsed={collapsed}
+          highlightedMoveNumber={highlightedMoveNumber}
+          onMoveSelect={onMoveSelect}
           onToggle={onToggle}
         />
       </div>
@@ -59,6 +65,8 @@ export function MoveHistorySection({
             <MoveHistory
               moves={moves}
               moveCount={moveCount}
+              highlightedMoveNumber={highlightedMoveNumber}
+              onMoveSelect={onMoveSelect}
               variant="embedded"
             />
           </div>

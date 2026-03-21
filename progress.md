@@ -372,3 +372,16 @@ Original prompt: lets continue building
   - Updated `project-todo.md`:
     - Marked tutor integration block complete, including streaming checklist item.
   - Constraint preserved: no tests/build/lint were run in this pass.
+
+- 2026-03-21: Tutor modes completed (passive + review).
+  - Extended `components/learning/ai-chat-panel.tsx` with explicit mode tabs:
+    - `passive`: lightweight tips-focused mode.
+    - `active`: full Ask Sensei + BYOK controls.
+    - `review`: post-game recap mode.
+  - Added post-game review generation flow in `AIChatPanel`:
+    - Auto-generates recap when entering review mode after game end.
+    - Includes compact summary + recent move-by-move commentary lines.
+    - Supports manual refresh of review notes.
+  - Updated `project-todo.md`:
+    - Marked Tutor modes block complete (passive, active, review).
+  - Constraint preserved: no tests/build/lint were run in this pass.
