@@ -1160,8 +1160,8 @@ function Sidebar({
         : null;
 
     return (
-        <div className="flex flex-col gap-4 lg:h-full lg:min-h-0">
-            <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-6 w-full lg:h-full lg:min-h-0 lg:p-6 lg:bg-card/30 lg:backdrop-blur-xl lg:rounded-[2rem] lg:border lg:border-border/40 lg:shadow-2xl">
+            <div className="flex flex-col gap-5">
                 <ModeToggle
                     value={mode as "local" | "versus-ai" | "online"}
                     onValueChange={(val) => setMode(val as GameMode)}
@@ -1192,37 +1192,41 @@ function Sidebar({
                     />
                 ) : null}
 
-                <PlayerCard
-                    name="Player 1"
-                    initial="P1"
-                    stoneColor="black"
-                    captures={gameState.captured.black}
-                    minutes={blackTimer.minutes}
-                    seconds={blackTimer.seconds}
-                    isActive={gameState.turn === "black" && !isGameOver}
-                    isLowTime={blackTimer.isLowTime}
-                />
+                <div className="flex flex-col gap-3">
+                    <PlayerCard
+                        name="Player 1"
+                        initial="P1"
+                        stoneColor="black"
+                        captures={gameState.captured.black}
+                        minutes={blackTimer.minutes}
+                        seconds={blackTimer.seconds}
+                        isActive={gameState.turn === "black" && !isGameOver}
+                        isLowTime={blackTimer.isLowTime}
+                    />
 
-                <PlayerCard
-                    name={
-                        mode === "versus-ai"
-                            ? gameState.turn === "white" && !isGameOver
-                                ? "Sensei AI (Thinking...)"
-                                : "Sensei AI"
-                            : "Player 2"
-                    }
-                    initial={mode === "versus-ai" ? "AI" : "P2"}
-                    avatarIcon={mode === "versus-ai" ? <LuBot /> : undefined}
-                    stoneColor="white"
-                    captures={gameState.captured.white}
-                    minutes={whiteTimer.minutes}
-                    seconds={whiteTimer.seconds}
-                    isActive={gameState.turn === "white" && !isGameOver}
-                    isLowTime={whiteTimer.isLowTime}
-                />
+                    <PlayerCard
+                        name={
+                            mode === "versus-ai"
+                                ? gameState.turn === "white" && !isGameOver
+                                    ? "Sensei AI (Thinking...)"
+                                    : "Sensei AI"
+                                : "Player 2"
+                        }
+                        initial={mode === "versus-ai" ? "AI" : "P2"}
+                        avatarIcon={
+                            mode === "versus-ai" ? <LuBot /> : undefined
+                        }
+                        stoneColor="white"
+                        captures={gameState.captured.white}
+                        minutes={whiteTimer.minutes}
+                        seconds={whiteTimer.seconds}
+                        isActive={gameState.turn === "white" && !isGameOver}
+                        isLowTime={whiteTimer.isLowTime}
+                    />
+                </div>
             </div>
 
-            <div className="flex min-h-0 flex-col gap-4">
+            <div className="flex min-h-0 flex-col gap-4 flex-1">
                 <LiveScoreCard
                     score={liveScore}
                     moveCount={mappedMoves.length}

@@ -320,79 +320,79 @@ export function AIChatPanel({
                 onClick={onToggle}
                 className={cn("group w-full text-left", className)}
             >
-                <Card className="overflow-hidden rounded-2xl border border-border shadow-md bg-card transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg">
-                    <CardContent className="px-5 py-3.5">
-                        <div className="grid grid-cols-[auto_1fr_auto] items-center gap-3">
-                            <div className="flex size-11 items-center justify-center rounded-full bg-secondary text-accent shadow-sm">
-                                <LuBot className="size-[18px]" />
-                            </div>
-
-                            <div className="min-w-0">
-                                <div className="flex items-center gap-2">
-                                    <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground">
-                                        Sensei
-                                    </p>
-                                    <span className="inline-flex h-2 w-2 rounded-full bg-status-active" />
+                <div className="overflow-hidden rounded-2xl border border-border/50 bg-card/60 backdrop-blur-xl shadow-sm transition-all duration-300 hover:shadow-md">
+                    <div className="px-4 py-4">
+                        <div className="flex items-center justify-between gap-3">
+                            <div className="flex items-center gap-3 min-w-0">
+                                <div className="flex size-10 items-center justify-center rounded-full bg-secondary text-accent shadow-sm border border-border/40">
+                                    <LuBot className="size-[18px]" />
                                 </div>
-                                <p className="mt-1 truncate font-display text-[1.28rem] font-semibold leading-none tracking-[-0.03em] text-foreground/[0.92]">
-                                    {moodLabel}
-                                </p>
-                                <p className="mt-1 truncate text-sm text-muted-foreground">
-                                    {latestMessage?.text ?? tutorCue}
-                                </p>
+                                <div className="min-w-0">
+                                    <div className="flex items-center gap-2">
+                                        <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-muted-foreground">
+                                            Sensei
+                                        </p>
+                                        <span className="inline-flex h-1.5 w-1.5 rounded-full bg-status-active shadow-[0_0_8px_rgba(var(--status-active),0.8)]" />
+                                    </div>
+                                    <p className="mt-0.5 truncate font-sans text-[15px] font-semibold text-foreground">
+                                        {moodLabel}
+                                    </p>
+                                    <p className="mt-0.5 truncate text-[13px] text-muted-foreground">
+                                        {latestMessage?.text ?? tutorCue}
+                                    </p>
+                                </div>
                             </div>
 
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-2 shrink-0">
                                 <div className="text-right">
-                                    <p className="font-display text-xl font-bold leading-none tracking-[-0.04em] text-accent">
+                                    <p className="font-sans text-xl font-bold leading-none text-accent">
                                         {chatMessages.length}
                                     </p>
-                                    <p className="mt-1 text-[11px] font-medium text-muted-foreground">
+                                    <p className="mt-1 text-[10px] font-medium text-muted-foreground">
                                         notes
                                     </p>
                                 </div>
-                                <span className="flex size-9 items-center justify-center rounded-full border border-border/65 bg-background/70 text-muted-foreground shadow-sm transition-colors group-hover:text-foreground">
+                                <span className="flex size-8 items-center justify-center rounded-full border border-border/50 bg-background/50 text-muted-foreground shadow-sm transition-colors group-hover:text-foreground">
                                     <LuChevronDown className="size-4" />
                                 </span>
                             </div>
                         </div>
-                    </CardContent>
-                </Card>
+                    </div>
+                </div>
             </button>
         );
     }
 
     return (
-        <Card
+        <div
             className={cn(
-                "overflow-hidden rounded-2xl border border-border shadow-md bg-card",
+                "overflow-hidden rounded-2xl border border-border/50 bg-card/60 backdrop-blur-xl shadow-md",
                 className,
             )}
         >
-            <CardContent className="p-0">
-                <div className="relative overflow-hidden bg-tutor-accent px-5 py-4 text-tutor-foreground">
-                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-black/10 via-transparent to-white/10" />
-                    <div className="relative flex items-start justify-between gap-4">
+            <div className="p-0">
+                <div className="relative border-b border-border/50 px-4 py-4">
+                    <div className="flex items-center justify-between gap-4">
                         <div className="flex items-center gap-3">
-                            <span className="flex size-11 items-center justify-center rounded-full bg-tutor-foreground/15 text-tutor-foreground shadow-sm">
-                                <LuBot className="size-[18px] drop-shadow-sm" />
+                            <span className="flex size-10 items-center justify-center rounded-full bg-secondary text-accent shadow-sm border border-border/40">
+                                <LuBot className="size-[18px]" />
                             </span>
                             <div>
-                                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-tutor-foreground/70">
+                                <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-muted-foreground">
                                     Sensei
                                 </p>
-                                <p className="font-display text-[1.35rem] font-semibold leading-none tracking-[-0.03em] text-tutor-foreground">
+                                <p className="font-sans text-[15px] font-semibold text-foreground">
                                     {moodLabel}
                                 </p>
                             </div>
                         </div>
 
-                        <div className="flex items-start gap-2">
+                        <div className="flex items-center gap-3">
                             <div className="text-right">
-                                <p className="font-display text-2xl font-extrabold leading-none tracking-[-0.05em] text-tutor-foreground">
+                                <p className="font-sans text-xl font-bold leading-none text-foreground">
                                     {chatMessages.length}
                                 </p>
-                                <p className="mt-1 text-[11px] font-medium text-tutor-foreground/70">
+                                <p className="mt-1 text-[10px] font-medium text-muted-foreground">
                                     notes
                                 </p>
                             </div>
@@ -401,7 +401,7 @@ export function AIChatPanel({
                                     type="button"
                                     onClick={onToggle}
                                     aria-label="Collapse Sensei panel"
-                                    className="flex size-9 items-center justify-center rounded-full border border-tutor-foreground/30 bg-tutor-foreground/10 text-tutor-foreground/80 shadow-sm transition-colors hover:text-tutor-foreground"
+                                    className="flex size-8 items-center justify-center rounded-full border border-border/50 bg-background/50 text-muted-foreground shadow-sm transition-colors hover:text-foreground hover:bg-secondary"
                                 >
                                     <LuChevronUp className="size-4" />
                                 </button>
@@ -410,27 +410,27 @@ export function AIChatPanel({
                     </div>
                 </div>
 
-                <div className="px-5 py-4">
-                    <div className="rounded-xl border border-border/60 bg-secondary/25 p-4">
+                <div className="px-4 py-4">
+                    <div className="rounded-xl border border-border/40 bg-secondary/30 p-4 backdrop-blur-sm">
                         <div className="flex items-start gap-3">
-                            <span className="mt-0.5 flex size-8 items-center justify-center rounded-full bg-background/80 text-accent shadow-sm">
-                                <LuSparkles className="size-[14px]" />
+                            <span className="mt-0.5 flex size-7 items-center justify-center rounded-full bg-background/80 text-accent shadow-sm border border-border/40">
+                                <LuSparkles className="size-3.5" />
                             </span>
                             <div className="min-w-0">
-                                <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
+                                <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-muted-foreground">
                                     Current Goal
                                 </p>
-                                <p className="mt-1 font-medium text-foreground">
+                                <p className="mt-0.5 font-sans text-sm font-medium text-foreground">
                                     {tutorGoal}
                                 </p>
-                                <p className="mt-2 text-sm text-muted-foreground">
+                                <p className="mt-1.5 text-[13px] text-muted-foreground/80 leading-relaxed">
                                     {tutorCue}
                                 </p>
                             </div>
                         </div>
                     </div>
 
-                    <div className="mt-3 grid grid-cols-3 gap-2 rounded-xl border border-border/60 bg-secondary/15 p-1.5">
+                    <div className="mt-3 grid grid-cols-3 gap-1 rounded-xl bg-secondary/40 p-1">
                         {(["passive", "active", "review"] as TutorMode[]).map(
                             (mode) => (
                                 <button
@@ -438,7 +438,7 @@ export function AIChatPanel({
                                     type="button"
                                     onClick={() => setTutorMode(mode)}
                                     className={cn(
-                                        "rounded-lg px-2 py-2 text-xs font-semibold uppercase tracking-[0.12em] transition-colors",
+                                        "rounded-lg px-2 py-1.5 text-[11px] font-semibold uppercase tracking-[0.1em] transition-all duration-200",
                                         tutorMode === mode
                                             ? "bg-background text-foreground shadow-sm"
                                             : "text-muted-foreground hover:text-foreground",
@@ -712,7 +712,7 @@ export function AIChatPanel({
                             : null}
                     </div>
                 </div>
-            </CardContent>
-        </Card>
+            </div>
+        </div>
     );
 }

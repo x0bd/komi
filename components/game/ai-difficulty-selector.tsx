@@ -1,6 +1,5 @@
 "use client";
 
-import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import type { AIDifficulty } from "@/lib/stores/game-store";
 
@@ -24,23 +23,25 @@ export function AIDifficultySelector({
     className?: string;
 }) {
     return (
-        <Card
+        <div
             className={cn(
-                "overflow-hidden rounded-2xl border border-border/80 bg-card shadow-md",
+                "overflow-hidden rounded-2xl border border-border/50 bg-card/60 backdrop-blur-xl shadow-sm p-4",
                 className,
             )}
         >
-            <CardContent className="flex items-center gap-3 px-4 py-3">
-                <div className="min-w-0 flex-1">
-                    <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground">
-                        AI Difficulty
-                    </p>
-                    <p className="mt-0.5 font-display text-sm font-semibold text-foreground">
-                        Train against Sensei
-                    </p>
+            <div className="flex flex-col gap-3">
+                <div className="flex items-center justify-between">
+                    <div>
+                        <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                            Sensei Engine
+                        </p>
+                        <p className="font-sans text-[13px] font-medium text-foreground">
+                            Choose difficulty level
+                        </p>
+                    </div>
                 </div>
 
-                <div className="grid grid-cols-3 gap-1 rounded-full border border-border/70 bg-secondary p-1">
+                <div className="grid grid-cols-3 gap-1 rounded-xl bg-secondary/40 p-1">
                     {OPTIONS.map((option) => {
                         const active = option.value === value;
 
@@ -55,12 +56,12 @@ export function AIDifficultySelector({
                                     }
                                 }}
                                 className={cn(
-                                    "min-h-9 min-w-[4.4rem] rounded-full px-3 text-sm font-display font-semibold transition-all duration-200",
+                                    "h-8 rounded-lg text-[13px] font-sans font-medium transition-all duration-200",
                                     active
-                                        ? "bg-primary text-primary-foreground shadow-sm"
+                                        ? "bg-background text-foreground shadow-sm"
                                         : "text-muted-foreground",
                                     option.enabled
-                                        ? "hover:bg-background/80 hover:text-foreground"
+                                        ? "hover:text-foreground"
                                         : "cursor-not-allowed opacity-45",
                                 )}
                                 aria-pressed={active}
@@ -75,7 +76,7 @@ export function AIDifficultySelector({
                         );
                     })}
                 </div>
-            </CardContent>
-        </Card>
+            </div>
+        </div>
     );
 }

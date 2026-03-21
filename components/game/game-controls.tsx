@@ -17,24 +17,22 @@ export function GameControls({
     return (
         <div
             className={cn(
-                "flex items-center gap-2 mt-4 pt-4 border-t border-border/50",
+                "flex w-full items-center gap-2 rounded-2xl border border-border/50 bg-card/60 p-2 shadow-sm backdrop-blur-xl",
                 className,
             )}
         >
             <Button
                 variant="ghost"
-                size="sm"
-                className="flex-1 font-sans font-medium text-[13px] text-muted-foreground hover:text-foreground hover:bg-secondary/40 rounded-full h-9"
+                className="h-10 flex-1 rounded-xl font-sans text-[14px] font-medium text-muted-foreground hover:bg-secondary/40 hover:text-foreground"
                 onClick={onPass}
                 disabled={disabled}
             >
                 Pass turn
             </Button>
-            <div className="w-px h-4 bg-border/50" />
+            <div className="h-6 w-px shrink-0 bg-border/60" />
             <Button
                 variant="ghost"
-                size="sm"
-                className="flex-1 font-sans font-medium text-[13px] text-destructive/80 hover:text-destructive hover:bg-destructive/10 rounded-full h-9"
+                className="h-10 flex-1 rounded-xl font-sans text-[14px] font-medium text-destructive/80 hover:bg-destructive/10 hover:text-destructive"
                 onClick={onResign}
                 disabled={disabled}
             >

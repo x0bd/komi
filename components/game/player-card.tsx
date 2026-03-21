@@ -33,33 +33,32 @@ export function PlayerCard({
     return (
         <div
             className={cn(
-                "relative flex items-center gap-4 py-2 transition-opacity duration-300",
-                !isActive && "opacity-40 grayscale-[0.5]",
+                "relative flex items-center gap-4 rounded-2xl border p-4 transition-all duration-500",
+                isActive
+                    ? "border-border shadow-lg bg-card scale-[1.02]"
+                    : "border-border/40 shadow-sm bg-card/40 opacity-70 grayscale-[0.2]",
                 className,
             )}
         >
-            {/* Active Indicator Line */}
-            <div
-                className={cn(
-                    "absolute -left-3 top-1/2 h-8 w-1 -translate-y-1/2 rounded-full transition-all duration-300",
-                    isActive
-                        ? "bg-foreground scale-y-100"
-                        : "bg-transparent scale-y-0",
-                )}
-            />
+            {/* Active Indicator Glow */}
+            {isActive && (
+                <div className="absolute inset-0 -z-10 rounded-2xl bg-gradient-to-b from-foreground/[0.03] to-transparent" />
+            )}
 
             <Avatar
                 className={cn(
                     "size-12 shrink-0 rounded-full border shadow-sm transition-all duration-300",
-                    isActive ? "border-border shadow-md" : "border-border/50",
+                    isActive
+                        ? "border-foreground/20 shadow-md"
+                        : "border-border/50",
                 )}
             >
                 <AvatarFallback
                     className={cn(
-                        "font-sans text-sm font-medium",
+                        "font-sans text-[15px] font-semibold",
                         stoneColor === "black"
-                            ? "bg-stone-black text-white"
-                            : "bg-stone-white text-black border-border",
+                            ? "bg-[#111] text-white"
+                            : "bg-white text-black border-border",
                         avatarIcon && "bg-muted text-foreground",
                     )}
                 >
@@ -86,20 +85,20 @@ export function PlayerCard({
                     />
                 </div>
                 <div className="mt-1 flex items-center gap-3">
-                    <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-medium uppercase tracking-widest">
+                    <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground font-semibold uppercase tracking-wider">
                         <div
                             className={cn(
                                 "size-2 rounded-full",
                                 stoneColor === "black"
-                                    ? "bg-stone-black shadow-[inset_0_1px_1px_rgba(255,255,255,0.2)]"
-                                    : "bg-stone-white border border-border/50 shadow-sm",
+                                    ? "bg-[#111] shadow-[inset_0_1px_1px_rgba(255,255,255,0.2)]"
+                                    : "bg-white border border-black/10 shadow-sm",
                             )}
                         />
                         <span>{stoneColor}</span>
                     </div>
-                    <div className="h-3 w-px bg-border/50" />
-                    <p className="text-xs text-muted-foreground font-medium">
-                        <span className="text-foreground font-semibold mr-1">
+                    <div className="h-3 w-px bg-border/60" />
+                    <p className="text-[12px] text-muted-foreground font-medium">
+                        <span className="text-foreground font-bold mr-1">
                             {captures}
                         </span>
                         Captures

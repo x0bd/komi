@@ -4,6 +4,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { LuMenu } from "react-icons/lu";
 
 export function GameLayout({
     board,
@@ -17,22 +18,23 @@ export function GameLayout({
     return (
         <div
             className={cn(
-                "relative flex min-h-svh flex-col overflow-hidden bg-background",
+                "relative flex min-h-svh flex-col overflow-hidden bg-background text-foreground font-sans",
                 className,
             )}
         >
-            {/* Dynamic Island style topbar */}
-            <header className="pointer-events-none absolute inset-x-0 top-0 z-50 flex items-center justify-center pt-4 lg:pt-6">
-                <div className="pointer-events-auto flex items-center gap-2 lg:gap-4 rounded-full border border-border/50 bg-background/80 px-4 py-2 shadow-sm backdrop-blur-xl">
-                    <span className="font-display text-sm font-bold tracking-[0.12em] text-foreground select-none uppercase mr-2">
+            {/* Minimalist Header */}
+            <header className="absolute inset-x-0 top-0 z-50 flex items-center justify-between px-6 py-4">
+                <div className="flex items-center gap-4">
+                    <span className="font-sans text-lg font-bold tracking-tight text-foreground select-none">
                         Komi
                     </span>
-                    <div className="h-4 w-px bg-border/50 hidden sm:block" />
+                </div>
+                <div className="flex items-center gap-2">
                     <Button
                         render={<Link href="/games" />}
                         variant="ghost"
                         size="sm"
-                        className="rounded-full h-8 px-3 hidden sm:inline-flex"
+                        className="rounded-full hidden sm:inline-flex"
                     >
                         Games
                     </Button>
@@ -40,28 +42,27 @@ export function GameLayout({
                         render={<Link href="/profile" />}
                         variant="ghost"
                         size="sm"
-                        className="rounded-full h-8 px-3 hidden sm:inline-flex"
+                        className="rounded-full hidden sm:inline-flex"
                     >
                         Profile
                     </Button>
-                    <div className="h-4 w-px bg-border/50 mx-1" />
-                    <ThemeToggle className="pointer-events-auto h-8 w-8 rounded-full [&_svg]:size-4" />
+                    <ThemeToggle className="rounded-full" />
                 </div>
             </header>
 
-            {/* Main area */}
-            <div className="relative z-10 flex flex-1 w-full max-w-[1600px] mx-auto pt-24 pb-6 px-4 lg:px-8">
-                <div className="flex w-full gap-8 max-lg:flex-col lg:items-start h-full">
-                    {/* Board — takes remaining space, centered */}
-                    <main className="flex flex-1 items-center justify-center min-h-[50vh] lg:min-h-[calc(100svh-8rem)]">
-                        <div className="w-full flex justify-center">
+            {/* Main Workspace */}
+            <div className="relative z-10 flex flex-1 w-full mx-auto pt-20 pb-0 px-4 lg:px-6">
+                <div className="flex w-full gap-6 max-lg:flex-col lg:items-center h-full max-w-[1600px] mx-auto">
+                    {/* Board Area */}
+                    <main className="flex flex-1 items-center justify-center min-h-[50vh] lg:min-h-[calc(100svh-5rem)]">
+                        <div className="w-full flex justify-center max-w-3xl">
                             {board}
                         </div>
                     </main>
 
-                    {/* Sidebar — pure flat list */}
-                    <aside className="relative z-20 w-full lg:w-[320px] lg:min-w-[320px] shrink-0 pb-24 lg:pb-0">
-                        <div className="lg:sticky lg:top-24 flex flex-col gap-8 lg:max-h-[calc(100svh-8rem)] overflow-y-auto scrollbar-none px-2 lg:px-0">
+                    {/* Sidebar Area — Unified Apple-style Frosted Panel */}
+                    <aside className="relative z-20 w-full lg:w-[380px] shrink-0 pb-12 lg:pb-0 h-full flex flex-col justify-center">
+                        <div className="flex flex-col gap-4 w-full">
                             {sidebar}
                         </div>
                     </aside>

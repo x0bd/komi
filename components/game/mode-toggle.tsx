@@ -19,25 +19,25 @@ export function ModeToggle({
             value={value ? [value] : []}
             onValueChange={(v) => v?.[0] && onValueChange?.(v[0] as GameMode)}
             className={cn(
-                "w-full rounded-full border border-border bg-secondary p-1 shadow-sm",
+                "w-full rounded-2xl bg-secondary/40 p-1 backdrop-blur-md",
                 className,
             )}
         >
             <ToggleGroupItem
                 value="local"
-                className="flex-1 rounded-full min-h-[44px] font-display font-semibold text-sm data-[state=on]:bg-primary data-[state=on]:text-primary-foreground data-[state=on]:shadow-md transition-all duration-300 text-muted-foreground hover:text-foreground hover:bg-transparent"
+                className="flex-1 rounded-xl h-10 font-sans font-medium text-[13px] data-[state=on]:bg-background data-[state=on]:text-foreground data-[state=on]:shadow-sm transition-all duration-300 text-muted-foreground hover:text-foreground"
             >
                 Local
             </ToggleGroupItem>
             <ToggleGroupItem
                 value="versus-ai"
-                className="flex-1 rounded-full min-h-[44px] font-display font-semibold text-sm data-[state=on]:bg-primary data-[state=on]:text-primary-foreground data-[state=on]:shadow-md transition-all duration-300 text-muted-foreground hover:text-foreground hover:bg-transparent"
+                className="flex-1 rounded-xl h-10 font-sans font-medium text-[13px] data-[state=on]:bg-background data-[state=on]:text-foreground data-[state=on]:shadow-sm transition-all duration-300 text-muted-foreground hover:text-foreground"
             >
                 Versus AI
             </ToggleGroupItem>
             <ToggleGroupItem
                 value="online"
-                className="flex-1 rounded-full min-h-[44px] font-display font-semibold text-sm data-[state=on]:bg-primary data-[state=on]:text-primary-foreground data-[state=on]:shadow-md transition-all duration-300 text-muted-foreground hover:text-foreground hover:bg-transparent"
+                className="flex-1 rounded-xl h-10 font-sans font-medium text-[13px] data-[state=on]:bg-background data-[state=on]:text-foreground data-[state=on]:shadow-sm transition-all duration-300 text-muted-foreground hover:text-foreground"
             >
                 Online
             </ToggleGroupItem>
