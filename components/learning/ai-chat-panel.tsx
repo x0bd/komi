@@ -116,7 +116,8 @@ export function AIChatPanel({
         () =>
             moveHistory.slice(-8).map((move, index) => {
                 const absoluteMoveNumber = moveHistory.length - 8 + index + 1;
-                const moveNumber = absoluteMoveNumber > 0 ? absoluteMoveNumber : index + 1;
+                const moveNumber =
+                    absoluteMoveNumber > 0 ? absoluteMoveNumber : index + 1;
                 const coordinate = move.isPass
                     ? "pass"
                     : toCoordinate(move.x, move.y, boardSize);
@@ -168,7 +169,10 @@ export function AIChatPanel({
         if (typeof window === "undefined") return;
         setOpenAIApiKey("");
         window.localStorage.removeItem("komi_openai_api_key");
-        addMessage("Personal API key removed. Back to local tutor mode.", "tip");
+        addMessage(
+            "Personal API key removed. Back to local tutor mode.",
+            "tip",
+        );
     }
 
     useEffect(() => {
@@ -214,7 +218,10 @@ export function AIChatPanel({
             const json = (await response.json().catch(() => ({}))) as {
                 message?: unknown;
             };
-            if (typeof json.message === "string" && json.message.trim().length > 0) {
+            if (
+                typeof json.message === "string" &&
+                json.message.trim().length > 0
+            ) {
                 setReviewSummary(json.message.trim());
             } else {
                 setReviewSummary(
@@ -257,7 +264,10 @@ export function AIChatPanel({
             });
 
             if (!response.ok) {
-                addMessage("I could not answer that just now. Ask again in a moment.", "warning");
+                addMessage(
+                    "I could not answer that just now. Ask again in a moment.",
+                    "warning",
+                );
                 return;
             }
 
@@ -291,7 +301,10 @@ export function AIChatPanel({
                 addMessage(fullText.trim(), "coach");
             }
         } catch {
-            addMessage("Connection issue while asking Sensei. Try once more.", "warning");
+            addMessage(
+                "Connection issue while asking Sensei. Try once more.",
+                "warning",
+            );
         } finally {
             setIsAsking(false);
             setIsStreaming(false);
@@ -418,21 +431,23 @@ export function AIChatPanel({
                     </div>
 
                     <div className="mt-3 grid grid-cols-3 gap-2 rounded-xl border border-border/60 bg-secondary/15 p-1.5">
-                        {(["passive", "active", "review"] as TutorMode[]).map((mode) => (
-                            <button
-                                key={mode}
-                                type="button"
-                                onClick={() => setTutorMode(mode)}
-                                className={cn(
-                                    "rounded-lg px-2 py-2 text-xs font-semibold uppercase tracking-[0.12em] transition-colors",
-                                    tutorMode === mode
-                                        ? "bg-background text-foreground shadow-sm"
-                                        : "text-muted-foreground hover:text-foreground",
-                                )}
-                            >
-                                {mode}
-                            </button>
-                        ))}
+                        {(["passive", "active", "review"] as TutorMode[]).map(
+                            (mode) => (
+                                <button
+                                    key={mode}
+                                    type="button"
+                                    onClick={() => setTutorMode(mode)}
+                                    className={cn(
+                                        "rounded-lg px-2 py-2 text-xs font-semibold uppercase tracking-[0.12em] transition-colors",
+                                        tutorMode === mode
+                                            ? "bg-background text-foreground shadow-sm"
+                                            : "text-muted-foreground hover:text-foreground",
+                                    )}
+                                >
+                                    {mode}
+                                </button>
+                            ),
+                        )}
                     </div>
 
                     {latestAnalysis ? (
@@ -497,31 +512,38 @@ export function AIChatPanel({
                                         disabled={isGeneratingReview}
                                         className="rounded-full border border-border/70 bg-secondary/25 px-2.5 py-1 text-[11px] font-semibold text-foreground disabled:opacity-60"
                                     >
-                                        {isGeneratingReview ? "Updating..." : "Refresh"}
+                                        {isGeneratingReview
+                                            ? "Updating..."
+                                            : "Refresh"}
                                     </button>
                                 ) : null}
                             </div>
 
                             {!isGameOver ? (
                                 <p className="mt-2 text-sm text-muted-foreground">
-                                    Review unlocks after game end. Finish the current game to get a move-by-move walkthrough.
+                                    Review unlocks after game end. Finish the
+                                    current game to get a move-by-move
+                                    walkthrough.
                                 </p>
                             ) : (
                                 <>
                                     <p className="mt-2 text-sm text-foreground">
                                         {isGeneratingReview
                                             ? "Sensei is preparing your recap..."
-                                            : reviewSummary || "Generating review..."}
+                                            : reviewSummary ||
+                                              "Generating review..."}
                                     </p>
                                     <div className="mt-3 space-y-1.5">
-                                        {recentReviewMoves.map((line, index) => (
-                                            <p
-                                                key={`${line}-${index}`}
-                                                className="rounded-lg border border-border/55 bg-secondary/20 px-2.5 py-1.5 text-[12px] text-muted-foreground"
-                                            >
-                                                {line}
-                                            </p>
-                                        ))}
+                                        {recentReviewMoves.map(
+                                            (line, index) => (
+                                                <p
+                                                    key={`${line}-${index}`}
+                                                    className="rounded-lg border border-border/55 bg-secondary/20 px-2.5 py-1.5 text-[12px] text-muted-foreground"
+                                                >
+                                                    {line}
+                                                </p>
+                                            ),
+                                        )}
                                     </div>
                                 </>
                             )}
@@ -530,45 +552,54 @@ export function AIChatPanel({
 
                     <div className="mt-4 overflow-hidden rounded-xl border border-border/60 bg-secondary/15">
                         <ScrollArea className="h-[210px]">
-                            <div className="space-y-2 p-3">
+                            <div className="p-4">
                                 {visibleMessages.map((message) => (
                                     <div
                                         key={message.id}
-                                        className={cn(
-                                            "rounded-2xl border px-3.5 py-3 text-sm leading-relaxed shadow-sm",
-                                            getToneClasses(message.tone),
-                                        )}
+                                        className="mb-5 flex gap-3"
                                     >
-                                        <div className="mb-1 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
-                                            <LuMessageSquareQuote className="size-3.5" />
-                                            <span>
-                                                {message.tone === "coach"
-                                                    ? "Coach note"
-                                                    : message.tone}
-                                            </span>
+                                        <div className="flex size-8 shrink-0 select-none items-center justify-center rounded-full border border-border/50 bg-secondary text-primary shadow-sm">
+                                            <LuBot className="size-4" />
                                         </div>
-                                        <p className="text-pretty">
-                                            {message.text}
-                                        </p>
+                                        <div className="flex-1 space-y-1">
+                                            <p className="text-sm font-semibold text-foreground">
+                                                Sensei
+                                                <span className="ml-2 font-normal text-muted-foreground text-[10px] uppercase tracking-wider">
+                                                    {message.tone === "coach"
+                                                        ? "Coach"
+                                                        : message.tone}
+                                                </span>
+                                            </p>
+                                            <p className="text-[13px] text-foreground/80 text-pretty leading-relaxed">
+                                                {message.text}
+                                            </p>
+                                        </div>
                                     </div>
                                 ))}
                                 {isStreaming ? (
-                                    <div className="rounded-2xl border border-accent/25 bg-accent/10 px-3.5 py-3 text-sm leading-relaxed shadow-sm">
-                                        <div className="mb-1 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
-                                            <LuMessageSquareQuote className="size-3.5" />
-                                            <span>Coach note</span>
+                                    <div className="mb-5 flex gap-3">
+                                        <div className="flex size-8 shrink-0 select-none items-center justify-center rounded-full border border-border/50 bg-secondary text-primary shadow-sm animate-pulse">
+                                            <LuBot className="size-4" />
                                         </div>
-                                        <p className="text-pretty">
-                                            {streamingReply || "Sensei is thinking..."}
-                                        </p>
+                                        <div className="flex-1 space-y-1">
+                                            <p className="text-sm font-semibold text-foreground">
+                                                Sensei
+                                                <span className="ml-2 font-normal text-muted-foreground text-[10px] uppercase tracking-wider">
+                                                    Thinking
+                                                </span>
+                                            </p>
+                                            <p className="text-[13px] text-foreground/80 text-pretty leading-relaxed">
+                                                {streamingReply || "..."}
+                                            </p>
+                                        </div>
                                     </div>
                                 ) : null}
-                                {!visibleMessages.length ? (
-                                    <p className="px-1 py-4 text-center text-sm text-muted-foreground">
+                                {!visibleMessages.length && !isStreaming ? (
+                                    <p className="py-8 text-center text-sm text-muted-foreground">
                                         Sensei will react after your next move.
                                     </p>
                                 ) : null}
-                                </div>
+                            </div>
                         </ScrollArea>
                     </div>
 
@@ -582,11 +613,17 @@ export function AIChatPanel({
                                         </p>
                                         <button
                                             type="button"
-                                            onClick={() => setShowKeyEditor((current) => !current)}
+                                            onClick={() =>
+                                                setShowKeyEditor(
+                                                    (current) => !current,
+                                                )
+                                            }
                                             className="inline-flex items-center gap-1 rounded-full border border-border/70 bg-background/80 px-2.5 py-1 text-[11px] font-medium text-muted-foreground hover:text-foreground"
                                         >
                                             <LuKeyRound className="size-3.5" />
-                                            {hasApiKey ? "Configured" : "Set key"}
+                                            {hasApiKey
+                                                ? "Configured"
+                                                : "Set key"}
                                         </button>
                                     </div>
                                     {showKeyEditor ? (
@@ -594,7 +631,9 @@ export function AIChatPanel({
                                             <input
                                                 value={openAIApiKey}
                                                 onChange={(event) =>
-                                                    setOpenAIApiKey(event.target.value)
+                                                    setOpenAIApiKey(
+                                                        event.target.value,
+                                                    )
                                                 }
                                                 placeholder="sk-..."
                                                 type="password"
@@ -627,7 +666,7 @@ export function AIChatPanel({
                                 </div>
 
                                 <form
-                                    className="flex w-full items-center gap-2"
+                                    className="flex w-full items-center gap-2 relative mt-2"
                                     onSubmit={(event) => {
                                         event.preventDefault();
                                         void handleAskSensei();
@@ -635,16 +674,18 @@ export function AIChatPanel({
                                 >
                                     <input
                                         value={question}
-                                        onChange={(event) => setQuestion(event.target.value)}
+                                        onChange={(event) =>
+                                            setQuestion(event.target.value)
+                                        }
                                         placeholder="Ask Sensei about this position..."
-                                        className="h-10 flex-1 rounded-full border border-border/70 bg-background/85 px-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-accent/60"
+                                        className="h-10 flex-1 rounded-full border border-border/50 bg-background/50 backdrop-blur-md pl-4 pr-12 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-accent/60 shadow-sm"
                                     />
                                     <button
                                         type="submit"
                                         disabled={!canAsk}
-                                        className="inline-flex h-10 min-w-10 items-center justify-center rounded-full border border-border/70 bg-secondary/30 px-3 text-sm font-semibold text-foreground transition-colors hover:bg-secondary/50 disabled:cursor-not-allowed disabled:opacity-50"
+                                        className="absolute right-1 inline-flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
                                     >
-                                        <LuSend className="size-4" />
+                                        <LuSend className="size-3.5" />
                                     </button>
                                 </form>
                             </>
@@ -652,7 +693,8 @@ export function AIChatPanel({
 
                         {tutorMode === "passive" ? (
                             <p className="w-full rounded-xl border border-border/60 bg-secondary/15 px-3 py-2 text-xs text-muted-foreground">
-                                Passive mode keeps hints lightweight while you focus on play.
+                                Passive mode keeps hints lightweight while you
+                                focus on play.
                             </p>
                         ) : null}
 
