@@ -51,90 +51,66 @@ export function MoveHistory({
             <button
                 type="button"
                 onClick={onToggle}
-                className="group w-full text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-xl"
+                className="group w-full text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-lg mt-2"
             >
-                <Card className="rounded-xl border border-border/50 shadow-sm bg-card/60 backdrop-blur-md transition-all duration-300 hover:shadow-md">
-                    <CardContent className="px-4 py-3">
-                        <div className="flex items-center justify-between gap-3">
-                            <div className="flex items-center gap-3 min-w-0">
-                                <div className="flex size-8 items-center justify-center rounded-full bg-secondary text-primary">
-                                    <LuHistory className="size-4" />
-                                </div>
-                                <div className="min-w-0">
-                                    <p className="font-sans text-base font-semibold text-foreground">
-                                        History
-                                    </p>
-                                    <p className="truncate text-xs text-muted-foreground font-sans">
-                                        {summaryText}
-                                    </p>
-                                </div>
-                            </div>
-                            <div className="flex items-center gap-2 shrink-0">
-                                <Badge
-                                    variant="secondary"
-                                    className="rounded-full font-mono text-xs shadow-none px-2 py-0.5"
-                                >
-                                    {moveCount}
-                                </Badge>
-                                <LuChevronDown className="size-5 text-muted-foreground transition-colors group-hover:text-foreground" />
-                            </div>
+                <div className="px-2 py-3 flex items-center justify-between border-t border-border/50 transition-colors hover:bg-secondary/20 rounded-xl">
+                    <div className="flex items-center gap-3 min-w-0">
+                        <LuHistory className="size-4 text-muted-foreground" />
+                        <div className="min-w-0">
+                            <p className="font-sans text-[13px] font-medium text-foreground">
+                                History
+                            </p>
+                            <p className="truncate text-[11px] text-muted-foreground font-sans">
+                                {summaryText}
+                            </p>
                         </div>
-                    </CardContent>
-                </Card>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0 text-muted-foreground">
+                        <span className="font-mono text-[10px] bg-secondary/50 px-2 py-0.5 rounded-full">
+                            {moveCount}
+                        </span>
+                        <LuChevronDown className="size-4 transition-colors group-hover:text-foreground" />
+                    </div>
+                </div>
             </button>
         );
     }
 
     return (
-        <Card
+        <div
             className={cn(
-                "flex flex-col overflow-hidden rounded-xl border border-border/50 shadow-sm bg-card/60 backdrop-blur-md transition-all duration-300",
-                isEmbedded &&
-                    "rounded-none border-0 shadow-none bg-transparent backdrop-blur-none",
+                "flex flex-col overflow-hidden transition-all duration-300 mt-2",
+                !isEmbedded && "border-t border-border/50",
                 className,
             )}
         >
             {!isEmbedded && (
-                <CardHeader className="shrink-0 px-4 pb-3 pt-4 border-b border-border/30">
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                            <div className="flex size-8 items-center justify-center rounded-full bg-secondary text-primary">
-                                <LuHistory className="size-4" />
-                            </div>
-                            <div className="space-y-0.5">
-                                <CardTitle className="font-sans text-lg font-semibold leading-none">
-                                    History
-                                </CardTitle>
-                                <p className="text-[10px] font-medium tracking-[0.1em] text-muted-foreground uppercase">
-                                    Replay Log
-                                </p>
-                            </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <Badge
-                                variant="secondary"
-                                className="rounded-full font-mono text-xs shadow-none px-2 py-0.5"
-                            >
-                                Moves: {moveCount}
-                            </Badge>
-                            {onToggle && (
-                                <button
-                                    type="button"
-                                    onClick={onToggle}
-                                    aria-label="Collapse history"
-                                    className="flex size-7 items-center justify-center rounded-full bg-secondary text-muted-foreground transition-colors hover:text-foreground hover:bg-secondary/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                                >
-                                    <LuChevronUp className="size-4" />
-                                </button>
-                            )}
-                        </div>
+                <div className="shrink-0 px-2 pb-2 pt-4 flex items-center justify-between">
+                    <div className="flex items-center gap-2.5">
+                        <LuHistory className="size-4 text-foreground/70" />
+                        <span className="font-sans text-sm font-semibold text-foreground">
+                            Replay Log
+                        </span>
                     </div>
-                </CardHeader>
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                        <span className="font-mono text-[10px] bg-secondary/50 px-2 py-0.5 rounded-full">
+                            {moveCount}
+                        </span>
+                        {onToggle && (
+                            <button
+                                type="button"
+                                onClick={onToggle}
+                                aria-label="Collapse history"
+                                className="flex size-6 items-center justify-center rounded-full transition-colors hover:bg-secondary/80 hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                            >
+                                <LuChevronUp className="size-3.5" />
+                            </button>
+                        )}
+                    </div>
+                </div>
             )}
 
-            <CardContent
-                className={cn("min-h-0 flex-1 p-0", !isEmbedded && "pt-0")}
-            >
+            <div className={cn("min-h-0 flex-1 p-0", !isEmbedded && "pt-0")}>
                 <ScrollArea
                     className={cn(
                         isEmbedded
@@ -144,14 +120,10 @@ export function MoveHistory({
                 >
                     <div
                         className={cn(
-                            "flex flex-col gap-2",
-                            isEmbedded ? "px-4 pb-6 pt-4" : "p-5",
+                            "flex flex-col gap-1",
+                            isEmbedded ? "px-4 pb-6 pt-4" : "p-2",
                         )}
                     >
-                        <div className="flex items-center justify-center rounded-xl bg-secondary/50 px-3 py-2 text-center text-xs font-medium text-muted-foreground">
-                            Game started
-                        </div>
-
                         {hasMoves ? (
                             moves.map((m) => (
                                 <button
@@ -163,69 +135,56 @@ export function MoveHistory({
                                         highlightedMoveNumber === m.moveNumber
                                     }
                                     className={cn(
-                                        "flex w-full items-center gap-3 rounded-xl border p-3 text-left transition-colors",
-                                        m.isPass
-                                            ? "border-border/40 bg-secondary/30"
-                                            : "border-border/60 bg-card hover:border-border shadow-sm",
-                                        onMoveSelect && "cursor-pointer",
+                                        "flex w-full items-center justify-between rounded-lg px-3 py-1.5 text-left transition-colors",
+                                        onMoveSelect &&
+                                            "cursor-pointer hover:bg-secondary/40",
                                         highlightedMoveNumber ===
                                             m.moveNumber &&
-                                            "border-accent/70 bg-accent/10",
+                                            "bg-secondary/60 font-medium",
                                     )}
                                 >
-                                    <span className="w-6 text-center font-mono text-xs font-bold text-muted-foreground">
-                                        {m.moveNumber}
-                                    </span>
-                                    <div className="flex items-center gap-2 flex-1">
+                                    <div className="flex items-center gap-3">
+                                        <span className="w-5 text-right font-mono text-[11px] text-muted-foreground/70">
+                                            {m.moveNumber}
+                                        </span>
                                         <span
                                             className={cn(
-                                                "inline-block size-3.5 rounded-full shadow-sm",
+                                                "inline-block size-2 rounded-full",
                                                 m.player === "black"
                                                     ? "bg-stone-black"
-                                                    : "bg-stone-white border border-border",
+                                                    : "bg-stone-white border border-border/50",
                                             )}
                                         />
-                                        <div className="flex flex-col">
-                                            <span className="text-sm font-semibold font-body leading-none">
-                                                {m.player === "black"
-                                                    ? "Black"
-                                                    : "White"}
-                                            </span>
-                                            {m.isPass && (
-                                                <span className="text-[10px] text-muted-foreground uppercase tracking-widest mt-0.5">
-                                                    Passed
-                                                </span>
-                                            )}
-                                        </div>
+                                        <span className="text-[13px] font-medium text-foreground">
+                                            {m.player === "black"
+                                                ? "Black"
+                                                : "White"}
+                                        </span>
                                     </div>
                                     <span
                                         className={cn(
-                                            "font-mono text-sm font-bold",
+                                            "font-mono text-[12px]",
                                             m.isPass
-                                                ? "text-muted-foreground"
+                                                ? "text-muted-foreground italic"
                                                 : "text-foreground",
                                         )}
                                     >
                                         {m.isPass
-                                            ? "Pass"
+                                            ? "pass"
                                             : (m.coordinate ?? "—")}
                                     </span>
                                 </button>
                             ))
                         ) : (
                             <div className="mt-4 flex flex-col items-center justify-center text-center opacity-60">
-                                <LuSparkles className="size-6 text-muted-foreground mb-2" />
-                                <p className="font-display text-sm font-semibold">
+                                <p className="text-xs text-muted-foreground italic">
                                     No moves yet
-                                </p>
-                                <p className="text-xs text-muted-foreground">
-                                    Place a stone to begin
                                 </p>
                             </div>
                         )}
                     </div>
                 </ScrollArea>
-            </CardContent>
-        </Card>
+            </div>
+        </div>
     );
 }

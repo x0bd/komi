@@ -15,20 +15,26 @@ export function GameControls({
     className?: string;
 }) {
     return (
-        <div className={cn("flex gap-3", className)}>
+        <div
+            className={cn(
+                "flex items-center gap-2 mt-4 pt-4 border-t border-border/50",
+                className,
+            )}
+        >
             <Button
-                variant="outline"
-                size="lg"
-                className="min-h-[48px] flex-1 font-sans font-semibold text-[14px] bg-secondary/30 border-border/50 shadow-sm hover:shadow text-foreground hover:bg-secondary/50 rounded-xl"
+                variant="ghost"
+                size="sm"
+                className="flex-1 font-sans font-medium text-[13px] text-muted-foreground hover:text-foreground hover:bg-secondary/40 rounded-full h-9"
                 onClick={onPass}
                 disabled={disabled}
             >
-                Pass
+                Pass turn
             </Button>
+            <div className="w-px h-4 bg-border/50" />
             <Button
-                variant="outline"
-                size="lg"
-                className="min-h-[48px] flex-1 font-sans font-semibold text-[14px] bg-destructive/5 border-destructive/20 shadow-sm hover:shadow text-destructive hover:border-destructive/30 hover:bg-destructive/10 rounded-xl"
+                variant="ghost"
+                size="sm"
+                className="flex-1 font-sans font-medium text-[13px] text-destructive/80 hover:text-destructive hover:bg-destructive/10 rounded-full h-9"
                 onClick={onResign}
                 disabled={disabled}
             >
