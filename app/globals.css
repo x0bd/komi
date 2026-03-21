@@ -10,265 +10,269 @@
    ══════════════════════════════════════════════ */
 
 @theme inline {
-  /* ── Font Families ── */
-  --font-sans: var(--font-body);
-  --font-display: var(--font-display);
-  --font-mono: var(--font-mono);
+    /* ── Font Families ── */
+    --font-sans: var(--font-body);
+    --font-display: var(--font-display);
+    --font-mono: var(--font-mono);
 
-  /* ── Semantic Color Mapping ── */
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
+    /* ── Semantic Color Mapping ── */
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-destructive: var(--destructive);
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
 
-  /* ── Game-Specific Colors ── */
-  --color-board-surface: var(--board-surface);
-  --color-board-frame: var(--board-frame);
-  --color-board-grid: var(--board-grid);
-  --color-board-hoshi: var(--board-hoshi);
-  --color-stone-black: var(--stone-black);
-  --color-stone-white: var(--stone-white);
-  --color-stone-shadow: var(--stone-shadow);
-  --color-status-active: var(--status-active);
-  --color-status-capture: var(--status-capture);
-  --color-status-territory: var(--status-territory);
-  --color-status-danger: var(--status-danger);
-  --color-tutor-surface: var(--tutor-surface);
-  --color-tutor-accent: var(--tutor-accent);
-  --color-tutor-foreground: var(--tutor-foreground);
-  --color-xp-streak: var(--xp-streak);
+    /* ── Game-Specific Colors ── */
+    --color-board-surface: var(--board-surface);
+    --color-board-frame: var(--board-frame);
+    --color-board-grid: var(--board-grid);
+    --color-board-hoshi: var(--board-hoshi);
+    --color-stone-black: var(--stone-black);
+    --color-stone-white: var(--stone-white);
+    --color-stone-shadow: var(--stone-shadow);
+    --color-status-active: var(--status-active);
+    --color-status-capture: var(--status-capture);
+    --color-status-territory: var(--status-territory);
+    --color-status-danger: var(--status-danger);
+    --color-tutor-surface: var(--tutor-surface);
+    --color-tutor-accent: var(--tutor-accent);
+    --color-tutor-foreground: var(--tutor-foreground);
+    --color-xp-streak: var(--xp-streak);
 
-  /* ── Sidebar ── */
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
+    /* ── Sidebar ── */
+    --color-sidebar-ring: var(--sidebar-ring);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar: var(--sidebar);
 
-  /* ── Chart ── */
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
+    /* ── Chart ── */
+    --color-chart-1: var(--chart-1);
+    --color-chart-2: var(--chart-2);
+    --color-chart-3: var(--chart-3);
+    --color-chart-4: var(--chart-4);
+    --color-chart-5: var(--chart-5);
 
-  /* ── Radius Scale ── */
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
-  --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
+    /* ── Radius Scale ── */
+    --radius-sm: calc(var(--radius) * 0.6);
+    --radius-md: calc(var(--radius) * 0.8);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) * 1.4);
+    --radius-2xl: calc(var(--radius) * 1.8);
+    --radius-3xl: calc(var(--radius) * 2.2);
+    --radius-4xl: calc(var(--radius) * 2.6);
 
-  /* ── Shadows ── */
-  --shadow-sm: 0 1px 2px oklch(0.20 0.02 50 / 6%);
-  --shadow-md: 0 4px 12px oklch(0.20 0.02 50 / 8%), 0 1px 3px oklch(0.20 0.02 50 / 5%);
-  --shadow-lg: 0 8px 24px oklch(0.20 0.02 50 / 10%), 0 2px 6px oklch(0.20 0.02 50 / 6%);
-  --shadow-board: 0 16px 48px oklch(0.20 0.02 50 / 12%), 0 4px 12px oklch(0.20 0.02 50 / 8%);
-  --shadow-offset: 4px 4px 0px oklch(0.20 0.02 50 / 12%);
+    /* ── Shadows ── */
+    --shadow-sm: 0 1px 2px oklch(0 0 0 / 4%);
+    --shadow-md:
+        0 4px 6px -1px oklch(0 0 0 / 6%), 0 2px 4px -2px oklch(0 0 0 / 4%);
+    --shadow-lg:
+        0 10px 15px -3px oklch(0 0 0 / 8%), 0 4px 6px -4px oklch(0 0 0 / 4%);
+    --shadow-board:
+        0 20px 25px -5px oklch(0 0 0 / 10%), 0 8px 10px -6px oklch(0 0 0 / 4%);
+    --shadow-offset:
+        0 0 0 1px oklch(0 0 0 / 5%), 0 4px 6px -1px oklch(0 0 0 / 6%);
 
-  /* ── Grid Extensions ── */
-  --grid-template-columns-19: repeat(19, 1fr);
-  --grid-template-rows-19: repeat(19, 1fr);
-  --grid-template-columns-13: repeat(13, 1fr);
-  --grid-template-rows-13: repeat(13, 1fr);
-  --grid-template-columns-9: repeat(9, 1fr);
-  --grid-template-rows-9: repeat(9, 1fr);
+    /* ── Grid Extensions ── */
+    --grid-template-columns-19: repeat(19, 1fr);
+    --grid-template-rows-19: repeat(19, 1fr);
+    --grid-template-columns-13: repeat(13, 1fr);
+    --grid-template-rows-13: repeat(13, 1fr);
+    --grid-template-columns-9: repeat(9, 1fr);
+    --grid-template-rows-9: repeat(9, 1fr);
 }
 
 /* ══════════════════════════════════════════════
-   Light Theme — Warm Washi Paper
-   Unbleached parchment, sumi ink, honey wood
+   Light Theme — Vercel Clean
+   Crisp whites, neutral grays, subtle borders
    ══════════════════════════════════════════════ */
 
 :root {
-  /* ── Surface Hierarchy ── */
-  --background: oklch(0.965 0.007 85);          /* warm washi cream */
-  --foreground: oklch(0.18 0.01 70);            /* sumi ink — near-black, barely warm */
-  --card: oklch(0.985 0.005 85);                /* slightly lighter washi */
-  --card-foreground: oklch(0.18 0.01 70);
-  --popover: oklch(0.985 0.005 85);
-  --popover-foreground: oklch(0.18 0.01 70);
+    /* ── Surface Hierarchy ── */
+    --background: oklch(0.985 0 0); /* Off-white background */
+    --foreground: oklch(0.145 0 0); /* Very dark gray text */
+    --card: oklch(1 0 0); /* Pure white card */
+    --card-foreground: oklch(0.145 0 0);
+    --popover: oklch(1 0 0);
+    --popover-foreground: oklch(0.145 0 0);
 
-  /* ── Primary (Sumi Ink) ── */
-  --primary: oklch(0.22 0.01 70);
-  --primary-foreground: oklch(0.965 0.007 85);
+    /* ── Primary (Vercel Black) ── */
+    --primary: oklch(0.145 0 0);
+    --primary-foreground: oklch(0.985 0 0);
 
-  /* ── Secondary (Raw Linen) ── */
-  --secondary: oklch(0.935 0.012 80);
-  --secondary-foreground: oklch(0.30 0.015 70);
+    /* ── Secondary (Subtle Gray) ── */
+    --secondary: oklch(0.96 0 0);
+    --secondary-foreground: oklch(0.205 0 0);
 
-  /* ── Muted ── */
-  --muted: oklch(0.925 0.008 80);
-  --muted-foreground: oklch(0.52 0.015 70);
+    /* ── Muted ── */
+    --muted: oklch(0.96 0 0);
+    --muted-foreground: oklch(0.55 0 0);
 
-  /* ── Accent (Warm Amber / Kintsugi Gold) ── */
-  --accent: oklch(0.78 0.14 75);
-  --accent-foreground: oklch(0.22 0.02 60);
+    /* ── Accent (Vercel Blue/Cyan glow vibe) ── */
+    --accent: oklch(0.96 0 0);
+    --accent-foreground: oklch(0.145 0 0);
 
-  /* ── Destructive (Vermilion Red — hanko stamp) ── */
-  --destructive: oklch(0.58 0.22 25);
+    /* ── Destructive (Vercel Red) ── */
+    --destructive: oklch(0.6 0.18 20);
 
-  /* ── Borders & Focus ── */
-  --border: oklch(0.88 0.01 80);
-  --input: oklch(0.90 0.008 80);
-  --ring: oklch(0.60 0.06 75);
-  --radius: 0.75rem;
+    /* ── Borders & Focus ── */
+    --border: oklch(0.92 0 0);
+    --input: oklch(0.92 0 0);
+    --ring: oklch(0.145 0 0);
+    --radius: 0.5rem; /* Slightly sharper radius */
 
-  /* ── Chart ── */
-  --chart-1: oklch(0.70 0.12 145);
-  --chart-2: oklch(0.78 0.14 75);
-  --chart-3: oklch(0.65 0.16 45);
-  --chart-4: oklch(0.58 0.22 25);
-  --chart-5: oklch(0.52 0.015 70);
+    /* ── Chart ── */
+    --chart-1: oklch(0.7 0.1 260); /* Blue */
+    --chart-2: oklch(0.6 0.15 320); /* Magenta/Purple */
+    --chart-3: oklch(0.65 0.15 45); /* Orange */
+    --chart-4: oklch(0.6 0.18 20); /* Red */
+    --chart-5: oklch(0.8 0 0); /* Gray */
 
-  /* ── Sidebar ── */
-  --sidebar: oklch(0.955 0.007 82);
-  --sidebar-foreground: oklch(0.18 0.01 70);
-  --sidebar-primary: oklch(0.22 0.01 70);
-  --sidebar-primary-foreground: oklch(0.965 0.007 85);
-  --sidebar-accent: oklch(0.935 0.012 80);
-  --sidebar-accent-foreground: oklch(0.30 0.015 70);
-  --sidebar-border: oklch(0.88 0.01 80);
-  --sidebar-ring: oklch(0.60 0.06 75);
+    /* ── Sidebar ── */
+    --sidebar: oklch(0.985 0 0);
+    --sidebar-foreground: oklch(0.145 0 0);
+    --sidebar-primary: oklch(0.145 0 0);
+    --sidebar-primary-foreground: oklch(0.985 0 0);
+    --sidebar-accent: oklch(0.96 0 0);
+    --sidebar-accent-foreground: oklch(0.145 0 0);
+    --sidebar-border: oklch(0.92 0 0);
+    --sidebar-ring: oklch(0.145 0 0);
 
-  /* ── Board ── */
-  --board-surface: oklch(0.925 0.018 82);       /* washi cream — light warm paper */
-  --board-frame: oklch(0.80 0.018 78);          /* deeper warm gray frame */
-  --board-grid: oklch(0.40 0.022 72);           /* sumi ink grid lines */
-  --board-hoshi: oklch(0.34 0.022 68);          /* darker hoshi dots */
+    /* ── Board ── */
+    --board-surface: oklch(1 0 0); /* Pure white board */
+    --board-frame: oklch(0.96 0 0); /* Very subtle gray frame */
+    --board-grid: oklch(0.85 0 0); /* Light gray grid lines */
+    --board-hoshi: oklch(0.6 0 0); /* Medium gray hoshi */
 
-  /* ── Stones ── */
-  --stone-black: oklch(0.16 0.005 70);          /* slate black, barely warm */
-  --stone-black-highlight: oklch(0.32 0.005 70);
-  --stone-white: oklch(0.96 0.005 85);          /* washi white */
-  --stone-white-highlight: oklch(1.0 0 0);
-  --stone-white-border: oklch(0.86 0.008 80);
-  --stone-shadow: oklch(0.16 0.005 70 / 25%);
+    /* ── Stones ── */
+    --stone-black: oklch(0.145 0 0); /* Deep black */
+    --stone-black-highlight: oklch(0.25 0 0);
+    --stone-white: oklch(1 0 0); /* Pure white */
+    --stone-white-highlight: oklch(1 0 0);
+    --stone-white-border: oklch(0.9 0 0);
+    --stone-shadow: oklch(0 0 0 / 15%);
 
-  /* ── Status ── */
-  --status-active: oklch(0.70 0.13 150);        /* muted sage green */
-  --status-waiting: oklch(0.60 0.015 70);
-  --status-capture: oklch(0.68 0.15 50);        /* warm coral */
-  --status-territory: oklch(0.72 0.10 150);
-  --status-danger: oklch(0.58 0.22 25);         /* matches destructive */
+    /* ── Status ── */
+    --status-active: oklch(0.7 0.1 260); /* Blue */
+    --status-waiting: oklch(0.6 0 0); /* Gray */
+    --status-capture: oklch(0.6 0.18 20); /* Red */
+    --status-territory: oklch(0.7 0.1 260 / 20%); /* Faint Blue */
+    --status-danger: oklch(0.6 0.18 20); /* Red */
 
-  /* ── AI Tutor ── */
-  --tutor-surface: oklch(0.93 0.03 165);
-  --tutor-accent: oklch(0.65 0.10 170);
-  --tutor-foreground: oklch(0.22 0.015 70);
+    /* ── AI Tutor ── */
+    --tutor-surface: oklch(0.96 0 0);
+    --tutor-accent: oklch(0.7 0.1 260); /* Blue accent */
+    --tutor-foreground: oklch(0.145 0 0);
 
-  /* ── XP / Gamification ── */
-  --xp-bar-bg: oklch(0.925 0.008 80);
-  --xp-bar-fill-start: oklch(0.70 0.13 150);
-  --xp-bar-fill-end: oklch(0.78 0.14 85);
-  --xp-streak: oklch(0.66 0.16 45);
+    /* ── XP / Gamification ── */
+    --xp-bar-bg: oklch(0.92 0 0);
+    --xp-bar-fill-start: oklch(0.7 0.1 260); /* Blue gradient start */
+    --xp-bar-fill-end: oklch(0.6 0.15 320); /* Purple gradient end */
+    --xp-streak: oklch(0.65 0.15 45); /* Orange/Gold */
 }
 
 /* ══════════════════════════════════════════════
-   Dark Theme — Sumi-e / Ink Stone
-   Charcoal slate, ivory text, restrained gold
+   Dark Theme — Vercel Dark Mode
+   Pure black #000, high contrast, subtle borders
    ══════════════════════════════════════════════ */
 
 .dark {
-  /* ── Surface Hierarchy ── */
-  --background: oklch(0.13 0.005 260);          /* cool near-black, faint blue undertone */
-  --foreground: oklch(0.92 0.006 85);           /* warm ivory — like light washi */
-  --card: oklch(0.17 0.005 260);                /* slightly lifted slate */
-  --card-foreground: oklch(0.92 0.006 85);
-  --popover: oklch(0.19 0.005 260);
-  --popover-foreground: oklch(0.92 0.006 85);
+    /* ── Surface Hierarchy ── */
+    --background: oklch(0 0 0); /* Pure Black #000 */
+    --foreground: oklch(0.985 0 0); /* Pure white text */
+    --card: oklch(0.1 0 0); /* Very dark gray card */
+    --card-foreground: oklch(0.985 0 0);
+    --popover: oklch(0.1 0 0);
+    --popover-foreground: oklch(0.985 0 0);
 
-  /* ── Primary (Ivory) ── */
-  --primary: oklch(0.92 0.006 85);
-  --primary-foreground: oklch(0.13 0.005 260);
+    /* ── Primary (White) ── */
+    --primary: oklch(0.985 0 0);
+    --primary-foreground: oklch(0 0 0);
 
-  /* ── Secondary ── */
-  --secondary: oklch(0.20 0.005 260);
-  --secondary-foreground: oklch(0.82 0.006 85);
+    /* ── Secondary ── */
+    --secondary: oklch(0.15 0 0);
+    --secondary-foreground: oklch(0.9 0 0);
 
-  /* ── Muted ── */
-  --muted: oklch(0.22 0.005 260);
-  --muted-foreground: oklch(0.58 0.008 250);    /* cool gray */
+    /* ── Muted ── */
+    --muted: oklch(0.15 0 0);
+    --muted-foreground: oklch(0.6 0 0); /* Gray */
 
-  /* ── Accent (Muted Gold / Kintsugi) ── */
-  --accent: oklch(0.72 0.11 75);
-  --accent-foreground: oklch(0.13 0.005 260);
+    /* ── Accent ── */
+    --accent: oklch(0.15 0 0);
+    --accent-foreground: oklch(0.985 0 0);
 
-  /* ── Destructive (Soft Vermilion) ── */
-  --destructive: oklch(0.65 0.18 25);
+    /* ── Destructive (Vercel Red) ── */
+    --destructive: oklch(0.6 0.18 20);
 
-  /* ── Borders & Focus ── */
-  --border: oklch(1 0 0 / 8%);
-  --input: oklch(1 0 0 / 10%);
-  --ring: oklch(0.50 0.008 250);
+    /* ── Borders & Focus ── */
+    --border: oklch(0.2 0 0); /* Subtle dark gray border */
+    --input: oklch(0.2 0 0);
+    --ring: oklch(0.8 0 0);
 
-  /* ── Chart ── */
-  --chart-1: oklch(0.70 0.12 150);
-  --chart-2: oklch(0.72 0.11 75);
-  --chart-3: oklch(0.65 0.15 45);
-  --chart-4: oklch(0.65 0.18 25);
-  --chart-5: oklch(0.58 0.008 250);
+    /* ── Chart ── */
+    --chart-1: oklch(0.7 0.1 260); /* Blue */
+    --chart-2: oklch(0.6 0.15 320); /* Magenta/Purple */
+    --chart-3: oklch(0.65 0.15 45); /* Orange */
+    --chart-4: oklch(0.6 0.18 20); /* Red */
+    --chart-5: oklch(0.4 0 0); /* Dark Gray */
 
-  /* ── Sidebar ── */
-  --sidebar: oklch(0.15 0.005 260);
-  --sidebar-foreground: oklch(0.92 0.006 85);
-  --sidebar-primary: oklch(0.92 0.006 85);
-  --sidebar-primary-foreground: oklch(0.13 0.005 260);
-  --sidebar-accent: oklch(0.20 0.005 260);
-  --sidebar-accent-foreground: oklch(0.82 0.006 85);
-  --sidebar-border: oklch(1 0 0 / 8%);
-  --sidebar-ring: oklch(0.50 0.008 250);
+    /* ── Sidebar ── */
+    --sidebar: oklch(0.05 0 0); /* Almost pure black */
+    --sidebar-foreground: oklch(0.985 0 0);
+    --sidebar-primary: oklch(0.985 0 0);
+    --sidebar-primary-foreground: oklch(0 0 0);
+    --sidebar-accent: oklch(0.15 0 0);
+    --sidebar-accent-foreground: oklch(0.985 0 0);
+    --sidebar-border: oklch(0.2 0 0);
+    --sidebar-ring: oklch(0.8 0 0);
 
-  /* ── Board ── */
-  --board-surface: oklch(0.21 0.007 260);       /* dark cool slate — washi ink stone */
-  --board-frame: oklch(0.16 0.005 260);         /* near-black slate frame */
-  --board-grid: oklch(0.46 0.008 260);          /* cool gray grid lines */
-  --board-hoshi: oklch(0.52 0.008 260);         /* slightly brighter hoshi */
+    /* ── Board ── */
+    --board-surface: oklch(0.05 0 0); /* Very dark gray, almost black */
+    --board-frame: oklch(0.1 0 0); /* Dark frame */
+    --board-grid: oklch(0.25 0 0); /* Subtle gray grid lines */
+    --board-hoshi: oklch(0.4 0 0); /* Gray hoshi */
 
-  /* ── Stones ── */
-  --stone-black: oklch(0.10 0.003 260);         /* true near-black */
-  --stone-black-highlight: oklch(0.25 0.005 260);
-  --stone-white: oklch(0.90 0.006 85);          /* ivory */
-  --stone-white-highlight: oklch(0.97 0.003 85);
-  --stone-white-border: oklch(0.65 0.006 250);
-  --stone-shadow: oklch(0.0 0 0 / 50%);
+    /* ── Stones ── */
+    --stone-black: oklch(0.08 0 0); /* Deep obsidian */
+    --stone-black-highlight: oklch(0.2 0 0);
+    --stone-white: oklch(0.95 0 0); /* Off-white */
+    --stone-white-highlight: oklch(1 0 0);
+    --stone-white-border: oklch(0.8 0 0);
+    --stone-shadow: oklch(0 0 0 / 80%); /* Deep shadow */
 
-  /* ── Status ── */
-  --status-active: oklch(0.68 0.12 150);
-  --status-waiting: oklch(0.45 0.008 250);
-  --status-capture: oklch(0.68 0.14 50);
-  --status-territory: oklch(0.65 0.10 150);
-  --status-danger: oklch(0.65 0.18 25);
+    /* ── Status ── */
+    --status-active: oklch(0.7 0.1 260);
+    --status-waiting: oklch(0.4 0 0);
+    --status-capture: oklch(0.6 0.18 20);
+    --status-territory: oklch(0.7 0.1 260 / 20%);
+    --status-danger: oklch(0.6 0.18 20);
 
-  /* ── AI Tutor ── */
-  --tutor-surface: oklch(0.20 0.02 170);
-  --tutor-accent: oklch(0.60 0.08 170);
-  --tutor-foreground: oklch(0.90 0.006 85);
+    /* ── AI Tutor ── */
+    --tutor-surface: oklch(0.15 0 0);
+    --tutor-accent: oklch(0.7 0.1 260);
+    --tutor-foreground: oklch(0.985 0 0);
 
-  /* ── XP / Gamification ── */
-  --xp-bar-bg: oklch(0.20 0.005 260);
-  --xp-bar-fill-start: oklch(0.65 0.10 150);
-  --xp-bar-fill-end: oklch(0.72 0.11 85);
-  --xp-streak: oklch(0.70 0.15 45);
+    /* ── XP / Gamification ── */
+    --xp-bar-bg: oklch(0.2 0 0);
+    --xp-bar-fill-start: oklch(0.7 0.1 260);
+    --xp-bar-fill-end: oklch(0.6 0.15 320);
+    --xp-streak: oklch(0.65 0.15 45);
 }
 
 /* ══════════════════════════════════════════════
@@ -276,82 +280,83 @@
    ══════════════════════════════════════════════ */
 
 @layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
-  html {
-    @apply font-sans;
-  }
+    * {
+        @apply border-border outline-ring/50;
+    }
+    body {
+        @apply bg-background text-foreground;
+    }
+    html {
+        @apply font-sans;
+    }
 }
 
 /* ══════════════════════════════════════════════
    Game Animations
    ══════════════════════════════════════════════ */
 
+/* Apple-like spring animations */
 @keyframes stone-place {
-  0% {
-    transform: scale(0);
-    opacity: 0;
-  }
-  60% {
-    transform: scale(1.08);
-    opacity: 1;
-  }
-  100% {
-    transform: scale(1);
-  }
+    0% {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+    70% {
+        transform: scale(1.05);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1);
+    }
 }
 
 @keyframes stone-capture {
-  0% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1.15);
-    opacity: 0.6;
-  }
-  100% {
-    transform: scale(0);
-    opacity: 0;
-  }
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(0);
+        opacity: 0;
+    }
 }
 
 @keyframes pulse-gentle {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.6;
-  }
+    0%,
+    100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
 }
 
 @keyframes marker-appear {
-  0% {
-    transform: translate(-50%, -50%) scale(0);
-  }
-  100% {
-    transform: translate(-50%, -50%) scale(1);
-  }
+    0% {
+        transform: translate(-50%, -50%) scale(0);
+        opacity: 0;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
 }
 
 .animate-stone-place {
-  animation: stone-place 300ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    animation: stone-place 250ms cubic-bezier(0.175, 0.885, 0.32, 1.275)
+        forwards;
 }
 
 .animate-stone-capture {
-  animation: stone-capture 250ms ease-in forwards;
+    animation: stone-capture 150ms ease-out forwards;
 }
 
 .animate-pulse-gentle {
-  animation: pulse-gentle 2s ease-in-out infinite;
+    animation: pulse-gentle 2s ease-in-out infinite;
 }
 
 .animate-marker-appear {
-  animation: marker-appear 200ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    animation: marker-appear 150ms ease-out forwards;
 }
 
 /* ══════════════════════════════════════════════
@@ -359,23 +364,5 @@
    ══════════════════════════════════════════════ */
 
 .tabular-nums {
-  font-variant-numeric: tabular-nums;
-}
-
-.board-texture {
-  background-image:
-    repeating-linear-gradient(
-      90deg,
-      transparent,
-      transparent 30px,
-      oklch(0 0 0 / 2%) 30px,
-      oklch(0 0 0 / 2%) 31px
-    ),
-    repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 30px,
-      oklch(0 0 0 / 1.5%) 30px,
-      oklch(0 0 0 / 1.5%) 31px
-    );
+    font-variant-numeric: tabular-nums;
 }
