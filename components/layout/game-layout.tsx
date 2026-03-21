@@ -59,9 +59,9 @@ export function GameLayout({
                         </div>
                     </main>
 
-                    {/* Sidebar — floating inspector panel */}
-                    <aside className="relative z-20 w-full lg:w-[400px] lg:min-w-[360px] shrink-0 pb-24 lg:pb-0">
-                        <div className="lg:sticky lg:top-24 flex flex-col gap-5 rounded-2xl lg:border lg:border-border/40 lg:bg-card/30 lg:p-5 lg:shadow-2xl lg:backdrop-blur-2xl lg:max-h-[calc(100svh-8rem)] overflow-y-auto scrollbar-none">
+                    {/* Sidebar — pure flat list */}
+                    <aside className="relative z-20 w-full lg:w-[320px] lg:min-w-[320px] shrink-0 pb-24 lg:pb-0">
+                        <div className="lg:sticky lg:top-24 flex flex-col gap-8 lg:max-h-[calc(100svh-8rem)] overflow-y-auto scrollbar-none px-2 lg:px-0">
                             {sidebar}
                         </div>
                     </aside>

@@ -494,7 +494,7 @@ export function ReplayPageClient({ gameId }: { gameId: string }) {
                             quality,
                             winRate: analysis
                                 ? analysis.estimatedWinRate
-                                : currentReplayMove.player === "black"
+                                : currentReplayMove?.player === "black"
                                   ? 0.52
                                   : 0.48,
                             suggestedCoordinate: analysis
@@ -503,7 +503,9 @@ export function ReplayPageClient({ gameId }: { gameId: string }) {
                                           {
                                               x: analysis.topMoves[0].x,
                                               y: analysis.topMoves[0].y,
-                                              player: currentReplayMove.player,
+                                              player:
+                                                  currentReplayMove?.player ??
+                                                  "black",
                                               isPass: false,
                                           },
                                           activeGame.size,

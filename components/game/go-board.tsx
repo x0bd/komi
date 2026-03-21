@@ -140,267 +140,253 @@ export function GoBoard({
     }
 
     return (
-        <div className={cn("w-full max-w-2xl", className)}>
-            {/* Frame */}
-            <div className="relative rounded-2xl border border-border/60 bg-card p-4 shadow-xl backdrop-blur-sm md:p-6">
-                {/* Surface */}
-                <div className="relative overflow-hidden rounded-xl bg-board-surface p-4 md:p-5 border border-border/40 shadow-sm">
-                    {/* 2×2 coordinate + board grid
-              col: [label-width] [board]
-              row: [label-height] [board] */}
+        <div className={cn("w-full max-w-2xl px-2", className)}>
+            <div className="relative w-full aspect-square">
+                {/* 2×2 coordinate + board grid */}
+                <div
+                    className="absolute inset-0 grid gap-x-2 gap-y-2"
+                    style={{
+                        gridTemplateColumns: "1.5rem 1fr",
+                        gridTemplateRows: "1.5rem 1fr",
+                    }}
+                >
+                    {/* [0,0] — empty corner */}
+                    <div />
+
+                    {/* [0,1] — column letters (A B C … T) */}
                     <div
-                        className="grid gap-x-2 gap-y-1"
+                        className="grid"
                         style={{
-                            gridTemplateColumns: "1.25rem 1fr",
-                            gridTemplateRows: "1.25rem 1fr",
+                            gridTemplateColumns: `repeat(${size}, 1fr)`,
                         }}
                     >
-                        {/* [0,0] — empty corner */}
-                        <div />
+                        {letters.map((letter) => (
+                            <span
+                                key={letter}
+                                className="flex items-end justify-center font-sans text-[10px] font-semibold tracking-widest text-muted-foreground/70 pb-1"
+                            >
+                                {letter}
+                            </span>
+                        ))}
+                    </div>
 
-                        {/* [0,1] — column letters (A B C … T) */}
-                        <div
-                            className="grid"
-                            style={{
-                                gridTemplateColumns: `repeat(${size}, 1fr)`,
-                            }}
-                        >
-                            {letters.map((letter) => (
-                                <span
-                                    key={letter}
-                                    className="text-center font-mono text-[9px] font-semibold leading-none text-board-grid/55 md:text-[10px]"
-                                >
-                                    {letter}
-                                </span>
-                            ))}
-                        </div>
+                    {/* [1,0] — row numbers (19 … 1) */}
+                    <div
+                        className="grid"
+                        style={{ gridTemplateRows: `repeat(${size}, 1fr)` }}
+                    >
+                        {numbers.map((number) => (
+                            <span
+                                key={number}
+                                className="flex items-center justify-end font-sans text-[10px] font-semibold text-muted-foreground/70 pr-1"
+                            >
+                                {number}
+                            </span>
+                        ))}
+                    </div>
 
-                        {/* [1,0] — row numbers (19 … 1) */}
-                        <div
-                            className="grid"
-                            style={{ gridTemplateRows: `repeat(${size}, 1fr)` }}
-                        >
-                            {numbers.map((number) => (
-                                <span
-                                    key={number}
-                                    className="flex items-center justify-end font-mono text-[9px] font-semibold leading-none text-board-grid/55 md:text-[10px]"
-                                >
-                                    {number}
-                                </span>
-                            ))}
-                        </div>
+                    {/* [1,1] — the actual board */}
+                    <div className="relative w-full h-full rounded-sm">
+                        {/* SVG grid lines + hoshi */}
+                        <GridLayer size={size} hoshiPoints={hoshiPoints} />
 
-                        {/* [1,1] — the actual board */}
-                        <div className="relative aspect-square w-full rounded-md">
-                            {/* SVG grid lines + hoshi */}
-                            <GridLayer size={size} hoshiPoints={hoshiPoints} />
+                        {showTerritoryHeatmap && territoryMap
+                            ? rows.map((row, y) =>
+                                  row.map((stoneValue, x) => {
+                                      if (stoneValue !== 0) return null;
+                                      const owner = territoryMap[y * size + x];
+                                      if (owner !== 1 && owner !== 2)
+                                          return null;
 
-                            {showTerritoryHeatmap && territoryMap
-                                ? rows.map((row, y) =>
-                                      row.map((stoneValue, x) => {
-                                          if (stoneValue !== 0) return null;
-                                          const owner =
-                                              territoryMap[y * size + x];
-                                          if (owner !== 1 && owner !== 2)
-                                              return null;
-
-                                          return (
+                                      return (
+                                          <div
+                                              key={`territory-${x}-${y}`}
+                                              className="pointer-events-none absolute z-[6] flex items-center justify-center"
+                                              style={{
+                                                  left: `${(x / size) * 100}%`,
+                                                  top: `${(y / size) * 100}%`,
+                                                  width: `${100 / size}%`,
+                                                  height: `${100 / size}%`,
+                                              }}
+                                              aria-hidden="true"
+                                          >
                                               <div
-                                                  key={`territory-${x}-${y}`}
-                                                  className="pointer-events-none absolute z-[6] flex items-center justify-center"
-                                                  style={{
-                                                      left: `${(x / size) * 100}%`,
-                                                      top: `${(y / size) * 100}%`,
-                                                      width: `${100 / size}%`,
-                                                      height: `${100 / size}%`,
-                                                  }}
-                                                  aria-hidden="true"
-                                              >
-                                                  <div
-                                                      className={cn(
-                                                          "h-[54%] w-[54%] rounded-[35%]",
-                                                          owner === 1
-                                                              ? "bg-stone-black/18"
-                                                              : "border border-stone-black/15 bg-stone-white/55",
-                                                      )}
-                                                  />
-                                              </div>
-                                          );
-                                      }),
-                                  )
-                                : null}
+                                                  className={cn(
+                                                      "h-[54%] w-[54%] rounded-[35%]",
+                                                      owner === 1
+                                                          ? "bg-stone-black/18"
+                                                          : "border border-stone-black/15 bg-stone-white/55",
+                                                  )}
+                                              />
+                                          </div>
+                                      );
+                                  }),
+                              )
+                            : null}
 
-                            {analysisHints.map((hint) => (
-                                <div
-                                    key={`analysis-${hint.x}-${hint.y}-${hint.rank}`}
-                                    className="pointer-events-none absolute z-[15] flex items-center justify-center"
-                                    style={{
-                                        left: `${(hint.x / size) * 100}%`,
-                                        top: `${(hint.y / size) * 100}%`,
-                                        width: `${100 / size}%`,
-                                        height: `${100 / size}%`,
-                                    }}
-                                    aria-hidden="true"
-                                >
-                                    <div
-                                        className={cn(
-                                            "relative flex h-[66%] w-[66%] items-center justify-center rounded-full border text-[8px] font-semibold shadow-sm md:text-[9px]",
-                                            hint.rank === 1 &&
-                                                "border-emerald-400/80 bg-emerald-400/25 text-emerald-950 dark:text-emerald-100",
-                                            hint.rank === 2 &&
-                                                "border-amber-400/80 bg-amber-400/24 text-amber-950 dark:text-amber-100",
-                                            hint.rank >= 3 &&
-                                                "border-sky-400/80 bg-sky-400/24 text-sky-950 dark:text-sky-100",
-                                        )}
-                                        title={`Engine rank ${hint.rank} (${hint.confidence}% confidence)`}
-                                    >
-                                        {hint.rank}
-                                    </div>
-                                </div>
-                            ))}
-
-                            {capturedStones.map((capture) => (
-                                <div
-                                    key={capture.key}
-                                    className="pointer-events-none absolute z-20 flex items-center justify-center"
-                                    style={{
-                                        left: `${(capture.x / size) * 100}%`,
-                                        top: `${(capture.y / size) * 100}%`,
-                                        width: `${100 / size}%`,
-                                        height: `${100 / size}%`,
-                                    }}
-                                >
-                                    <Stone color={capture.color} capture />
-                                </div>
-                            ))}
-
-                            {/* Intersection grid */}
+                        {analysisHints.map((hint) => (
                             <div
-                                className="absolute inset-0 z-10 grid h-full w-full"
-                                role="grid"
-                                aria-label={`${size} by ${size} Go board`}
-                                aria-rowcount={size}
-                                aria-colcount={size}
+                                key={`analysis-${hint.x}-${hint.y}-${hint.rank}`}
+                                className="pointer-events-none absolute z-[15] flex items-center justify-center"
                                 style={{
-                                    gridTemplateColumns: `repeat(${size}, 1fr)`,
-                                    gridTemplateRows: `repeat(${size}, 1fr)`,
+                                    left: `${(hint.x / size) * 100}%`,
+                                    top: `${(hint.y / size) * 100}%`,
+                                    width: `${100 / size}%`,
+                                    height: `${100 / size}%`,
+                                }}
+                                aria-hidden="true"
+                            >
+                                <div
+                                    className={cn(
+                                        "relative flex h-[66%] w-[66%] items-center justify-center rounded-full border text-[8px] font-semibold shadow-sm md:text-[9px]",
+                                        hint.rank === 1 &&
+                                            "border-emerald-400/80 bg-emerald-400/25 text-emerald-950 dark:text-emerald-100",
+                                        hint.rank === 2 &&
+                                            "border-amber-400/80 bg-amber-400/24 text-amber-950 dark:text-amber-100",
+                                        hint.rank >= 3 &&
+                                            "border-sky-400/80 bg-sky-400/24 text-sky-950 dark:text-sky-100",
+                                    )}
+                                    title={`Engine rank ${hint.rank} (${hint.confidence}% confidence)`}
+                                >
+                                    {hint.rank}
+                                </div>
+                            </div>
+                        ))}
+
+                        {capturedStones.map((capture) => (
+                            <div
+                                key={capture.key}
+                                className="pointer-events-none absolute z-20 flex items-center justify-center"
+                                style={{
+                                    left: `${(capture.x / size) * 100}%`,
+                                    top: `${(capture.y / size) * 100}%`,
+                                    width: `${100 / size}%`,
+                                    height: `${100 / size}%`,
                                 }}
                             >
-                                {rows.map((row, y) =>
-                                    row.map((stoneValue, x) => {
-                                        const stoneColor =
-                                            stoneValue === 1
-                                                ? "black"
-                                                : stoneValue === 2
-                                                  ? "white"
-                                                  : undefined;
-                                        const coordinateKey = `${x}:${y}`;
-                                        const isPlayable =
-                                            !stoneColor &&
-                                            validMoveSet.has(coordinateKey);
-                                        const isFocused =
-                                            focused.x === x && focused.y === y;
-                                        return (
-                                            <button
-                                                key={`${x}-${y}`}
-                                                ref={(node) => {
-                                                    cellRefs.current[
-                                                        y * size + x
-                                                    ] = node;
-                                                }}
-                                                type="button"
-                                                role="gridcell"
-                                                tabIndex={isFocused ? 0 : -1}
-                                                aria-label={describeIntersection(
+                                <Stone color={capture.color} capture />
+                            </div>
+                        ))}
+
+                        {/* Intersection grid */}
+                        <div
+                            className="absolute inset-0 z-10 grid h-full w-full"
+                            role="grid"
+                            aria-label={`${size} by ${size} Go board`}
+                            aria-rowcount={size}
+                            aria-colcount={size}
+                            style={{
+                                gridTemplateColumns: `repeat(${size}, 1fr)`,
+                                gridTemplateRows: `repeat(${size}, 1fr)`,
+                            }}
+                        >
+                            {rows.map((row, y) =>
+                                row.map((stoneValue, x) => {
+                                    const stoneColor =
+                                        stoneValue === 1
+                                            ? "black"
+                                            : stoneValue === 2
+                                              ? "white"
+                                              : undefined;
+                                    const coordinateKey = `${x}:${y}`;
+                                    const isPlayable =
+                                        !stoneColor &&
+                                        validMoveSet.has(coordinateKey);
+                                    const isFocused =
+                                        focused.x === x && focused.y === y;
+                                    return (
+                                        <button
+                                            key={`${x}-${y}`}
+                                            ref={(node) => {
+                                                cellRefs.current[y * size + x] =
+                                                    node;
+                                            }}
+                                            type="button"
+                                            role="gridcell"
+                                            tabIndex={isFocused ? 0 : -1}
+                                            aria-label={describeIntersection(
+                                                x,
+                                                y,
+                                                size,
+                                                stoneColor,
+                                                isPlayable,
+                                            )}
+                                            aria-selected={isFocused}
+                                            aria-disabled={!isPlayable}
+                                            className="h-full w-full appearance-none bg-transparent p-0 text-inherit outline-none"
+                                            onFocus={() => setFocused({ x, y })}
+                                            onMouseEnter={() => {
+                                                if (isPlayable) {
+                                                    setHovered({ x, y });
+                                                    onHoverIntersectionChange?.(
+                                                        { x, y },
+                                                    );
+                                                } else if (
+                                                    hovered?.x === x &&
+                                                    hovered?.y === y
+                                                ) {
+                                                    setHovered(null);
+                                                    onHoverIntersectionChange?.(
+                                                        null,
+                                                    );
+                                                }
+                                            }}
+                                            onMouseLeave={() => {
+                                                if (
+                                                    hovered?.x === x &&
+                                                    hovered?.y === y
+                                                ) {
+                                                    setHovered(null);
+                                                    onHoverIntersectionChange?.(
+                                                        null,
+                                                    );
+                                                }
+                                            }}
+                                            onClick={() => {
+                                                if (isPlayable) {
+                                                    onIntersectionClick?.(x, y);
+                                                }
+                                            }}
+                                            onKeyDown={(event) =>
+                                                handleKeyDown(
+                                                    event,
                                                     x,
                                                     y,
-                                                    size,
-                                                    stoneColor,
                                                     isPlayable,
-                                                )}
-                                                aria-selected={isFocused}
-                                                aria-disabled={!isPlayable}
-                                                className="h-full w-full appearance-none bg-transparent p-0 text-inherit outline-none"
-                                                onFocus={() =>
-                                                    setFocused({ x, y })
+                                                )
+                                            }
+                                        >
+                                            <Intersection
+                                                stone={stoneColor}
+                                                ghostColor={
+                                                    isPlayable
+                                                        ? currentPlayer
+                                                        : undefined
                                                 }
-                                                onMouseEnter={() => {
-                                                    if (isPlayable) {
-                                                        setHovered({ x, y });
-                                                        onHoverIntersectionChange?.(
-                                                            { x, y },
-                                                        );
-                                                    } else if (
-                                                        hovered?.x === x &&
-                                                        hovered?.y === y
-                                                    ) {
-                                                        setHovered(null);
-                                                        onHoverIntersectionChange?.(
-                                                            null,
-                                                        );
-                                                    }
-                                                }}
-                                                onMouseLeave={() => {
-                                                    if (
-                                                        hovered?.x === x &&
-                                                        hovered?.y === y
-                                                    ) {
-                                                        setHovered(null);
-                                                        onHoverIntersectionChange?.(
-                                                            null,
-                                                        );
-                                                    }
-                                                }}
-                                                onClick={() => {
-                                                    if (isPlayable) {
-                                                        onIntersectionClick?.(
-                                                            x,
-                                                            y,
-                                                        );
-                                                    }
-                                                }}
-                                                onKeyDown={(event) =>
-                                                    handleKeyDown(
-                                                        event,
-                                                        x,
-                                                        y,
-                                                        isPlayable,
-                                                    )
+                                                remoteGhostColor={
+                                                    opponentHover?.color
                                                 }
-                                            >
-                                                <Intersection
-                                                    stone={stoneColor}
-                                                    ghostColor={
-                                                        isPlayable
-                                                            ? currentPlayer
-                                                            : undefined
-                                                    }
-                                                    remoteGhostColor={
-                                                        opponentHover?.color
-                                                    }
-                                                    hovered={
-                                                        isPlayable &&
-                                                        hovered?.x === x &&
-                                                        hovered?.y === y
-                                                    }
-                                                    remoteHovered={
-                                                        !stoneColor &&
-                                                        opponentHover?.x ===
-                                                            x &&
-                                                        opponentHover?.y === y
-                                                    }
-                                                    isLastMove={
-                                                        lastMove?.x === x &&
-                                                        lastMove?.y === y
-                                                    }
-                                                    interactive={isPlayable}
-                                                    isFocused={isFocused}
-                                                />
-                                            </button>
-                                        );
-                                    }),
-                                )}
-                            </div>
+                                                hovered={
+                                                    isPlayable &&
+                                                    hovered?.x === x &&
+                                                    hovered?.y === y
+                                                }
+                                                remoteHovered={
+                                                    !stoneColor &&
+                                                    opponentHover?.x === x &&
+                                                    opponentHover?.y === y
+                                                }
+                                                isLastMove={
+                                                    lastMove?.x === x &&
+                                                    lastMove?.y === y
+                                                }
+                                                interactive={isPlayable}
+                                                isFocused={isFocused}
+                                            />
+                                        </button>
+                                    );
+                                }),
+                            )}
                         </div>
                     </div>
                 </div>
