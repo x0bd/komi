@@ -21,68 +21,52 @@ export function GameLayout({
                 className,
             )}
         >
-            <WashiTexture />
-
-            {/* Floating topbar — logo left, theme toggle right */}
-            <header className="pointer-events-none absolute inset-x-0 top-0 z-20 flex items-center justify-between px-6 py-4 lg:px-10">
-                <span className="pointer-events-auto font-display text-sm font-bold tracking-[0.12em] text-foreground/40 select-none uppercase">
-                    Komi
-                </span>
-                <div className="pointer-events-auto flex items-center gap-2">
+            {/* Dynamic Island style topbar */}
+            <header className="pointer-events-none absolute inset-x-0 top-0 z-50 flex items-center justify-center pt-4 lg:pt-6">
+                <div className="pointer-events-auto flex items-center gap-2 lg:gap-4 rounded-full border border-border/50 bg-background/80 px-4 py-2 shadow-sm backdrop-blur-xl">
+                    <span className="font-display text-sm font-bold tracking-[0.12em] text-foreground select-none uppercase mr-2">
+                        Komi
+                    </span>
+                    <div className="h-4 w-px bg-border/50 hidden sm:block" />
                     <Button
                         render={<Link href="/games" />}
-                        variant="outline"
+                        variant="ghost"
                         size="sm"
-                        className="hidden sm:inline-flex"
+                        className="rounded-full h-8 px-3 hidden sm:inline-flex"
                     >
                         Games
                     </Button>
                     <Button
                         render={<Link href="/profile" />}
-                        variant="outline"
+                        variant="ghost"
                         size="sm"
-                        className="hidden sm:inline-flex"
+                        className="rounded-full h-8 px-3 hidden sm:inline-flex"
                     >
                         Profile
                     </Button>
-                    <ThemeToggle className="pointer-events-auto" />
+                    <div className="h-4 w-px bg-border/50 mx-1" />
+                    <ThemeToggle className="pointer-events-auto h-8 w-8 rounded-full [&_svg]:size-4" />
                 </div>
             </header>
 
             {/* Main area */}
-            <div className="relative z-10 flex flex-1 justify-center px-6 py-16 lg:px-10 lg:py-8">
-                <div className="flex w-full max-w-[1416px] gap-8 max-lg:flex-col max-lg:gap-6 lg:items-center">
+            <div className="relative z-10 flex flex-1 w-full max-w-[1600px] mx-auto pt-24 pb-6 px-4 lg:px-8">
+                <div className="flex w-full gap-8 max-lg:flex-col lg:items-start h-full">
                     {/* Board — takes remaining space, centered */}
-                    <main className="flex flex-1 items-center justify-center pt-4 max-lg:w-full lg:min-h-[calc(100svh-5rem)] lg:pt-0">
-                        {board}
+                    <main className="flex flex-1 items-center justify-center min-h-[50vh] lg:min-h-[calc(100svh-8rem)]">
+                        <div className="w-full flex justify-center">
+                            {board}
+                        </div>
                     </main>
 
-                    {/* Sidebar — fixed rail */}
-                    <aside className="relative z-20 w-full px-3 pb-24 lg:w-[380px] lg:min-w-[340px] lg:self-center lg:px-0 lg:pb-0">
-                        <div className="flex flex-col gap-5 lg:h-[calc(100svh-10rem)] lg:max-h-[840px] lg:min-h-[700px] lg:py-2">
+                    {/* Sidebar — floating inspector panel */}
+                    <aside className="relative z-20 w-full lg:w-[400px] lg:min-w-[360px] shrink-0 pb-24 lg:pb-0">
+                        <div className="lg:sticky lg:top-24 flex flex-col gap-5 rounded-2xl lg:border lg:border-border/40 lg:bg-card/30 lg:p-5 lg:shadow-2xl lg:backdrop-blur-2xl lg:max-h-[calc(100svh-8rem)] overflow-y-auto scrollbar-none">
                             {sidebar}
                         </div>
                     </aside>
                 </div>
             </div>
         </div>
-    );
-}
-
-function WashiTexture() {
-    return (
-        <>
-            {/* Subtle noise grain */}
-            <div
-                className="pointer-events-none fixed inset-0 z-0 opacity-[0.03] mix-blend-multiply dark:mix-blend-soft-light dark:opacity-[0.04]"
-                style={{
-                    backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
-                    backgroundSize: "200px 200px",
-                }}
-            />
-            {/* Ambient warm glow */}
-            <div className="pointer-events-none fixed -top-[20%] -right-[10%] z-0 h-[600px] w-[600px] rounded-full bg-accent/5 blur-[120px] dark:bg-accent/3" />
-            <div className="pointer-events-none fixed -bottom-[15%] -left-[10%] z-0 h-[500px] w-[500px] rounded-full bg-status-active/5 blur-[100px] dark:bg-status-active/2" />
-        </>
     );
 }

@@ -51,20 +51,20 @@ export function MoveHistory({
             <button
                 type="button"
                 onClick={onToggle}
-                className="group w-full text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-2xl"
+                className="group w-full text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-xl"
             >
-                <Card className="rounded-2xl border border-border shadow-md bg-card transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg">
-                    <CardContent className="px-5 py-4">
+                <Card className="rounded-xl border border-border/50 shadow-sm bg-card/60 backdrop-blur-md transition-all duration-300 hover:shadow-md">
+                    <CardContent className="px-4 py-3">
                         <div className="flex items-center justify-between gap-3">
                             <div className="flex items-center gap-3 min-w-0">
-                                <div className="flex size-10 items-center justify-center rounded-full bg-secondary text-primary">
-                                    <LuHistory className="size-5" />
+                                <div className="flex size-8 items-center justify-center rounded-full bg-secondary text-primary">
+                                    <LuHistory className="size-4" />
                                 </div>
                                 <div className="min-w-0">
-                                    <p className="font-display text-lg font-bold text-foreground">
+                                    <p className="font-sans text-base font-semibold text-foreground">
                                         History
                                     </p>
-                                    <p className="truncate text-sm text-muted-foreground font-body">
+                                    <p className="truncate text-xs text-muted-foreground font-sans">
                                         {summaryText}
                                     </p>
                                 </div>
@@ -72,7 +72,7 @@ export function MoveHistory({
                             <div className="flex items-center gap-2 shrink-0">
                                 <Badge
                                     variant="secondary"
-                                    className="rounded-full font-mono text-xs shadow-sm px-2.5 py-0.5"
+                                    className="rounded-full font-mono text-xs shadow-none px-2 py-0.5"
                                 >
                                     {moveCount}
                                 </Badge>
@@ -88,24 +88,24 @@ export function MoveHistory({
     return (
         <Card
             className={cn(
-                "flex flex-col overflow-hidden rounded-2xl border border-border shadow-md bg-card transition-all duration-300",
+                "flex flex-col overflow-hidden rounded-xl border border-border/50 shadow-sm bg-card/60 backdrop-blur-md transition-all duration-300",
                 isEmbedded &&
-                    "rounded-none border-0 shadow-none bg-transparent",
+                    "rounded-none border-0 shadow-none bg-transparent backdrop-blur-none",
                 className,
             )}
         >
             {!isEmbedded && (
-                <CardHeader className="shrink-0 px-5 pb-3 pt-5 border-b border-border/40">
+                <CardHeader className="shrink-0 px-4 pb-3 pt-4 border-b border-border/30">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                            <div className="flex size-10 items-center justify-center rounded-full bg-secondary text-primary">
-                                <LuHistory className="size-5" />
+                            <div className="flex size-8 items-center justify-center rounded-full bg-secondary text-primary">
+                                <LuHistory className="size-4" />
                             </div>
                             <div className="space-y-0.5">
-                                <CardTitle className="font-display text-xl font-bold leading-none">
+                                <CardTitle className="font-sans text-lg font-semibold leading-none">
                                     History
                                 </CardTitle>
-                                <p className="text-[11px] font-medium tracking-[0.14em] text-muted-foreground uppercase">
+                                <p className="text-[10px] font-medium tracking-[0.1em] text-muted-foreground uppercase">
                                     Replay Log
                                 </p>
                             </div>
@@ -113,7 +113,7 @@ export function MoveHistory({
                         <div className="flex items-center gap-2">
                             <Badge
                                 variant="secondary"
-                                className="rounded-full font-mono text-xs shadow-sm px-2.5 py-0.5"
+                                className="rounded-full font-mono text-xs shadow-none px-2 py-0.5"
                             >
                                 Moves: {moveCount}
                             </Badge>
@@ -122,7 +122,7 @@ export function MoveHistory({
                                     type="button"
                                     onClick={onToggle}
                                     aria-label="Collapse history"
-                                    className="flex size-8 items-center justify-center rounded-full bg-secondary text-muted-foreground transition-colors hover:text-foreground hover:bg-secondary/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                                    className="flex size-7 items-center justify-center rounded-full bg-secondary text-muted-foreground transition-colors hover:text-foreground hover:bg-secondary/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                                 >
                                     <LuChevronUp className="size-4" />
                                 </button>
@@ -159,14 +159,17 @@ export function MoveHistory({
                                     type="button"
                                     onClick={() => onMoveSelect?.(m.moveNumber)}
                                     disabled={!onMoveSelect}
-                                    aria-pressed={highlightedMoveNumber === m.moveNumber}
+                                    aria-pressed={
+                                        highlightedMoveNumber === m.moveNumber
+                                    }
                                     className={cn(
                                         "flex w-full items-center gap-3 rounded-xl border p-3 text-left transition-colors",
                                         m.isPass
                                             ? "border-border/40 bg-secondary/30"
                                             : "border-border/60 bg-card hover:border-border shadow-sm",
                                         onMoveSelect && "cursor-pointer",
-                                        highlightedMoveNumber === m.moveNumber &&
+                                        highlightedMoveNumber ===
+                                            m.moveNumber &&
                                             "border-accent/70 bg-accent/10",
                                     )}
                                 >

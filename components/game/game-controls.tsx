@@ -19,7 +19,7 @@ export function GameControls({
             <Button
                 variant="outline"
                 size="lg"
-                className="min-h-[56px] flex-1 font-display font-semibold text-[15px] rounded-[1.25rem] bg-secondary/40 border border-border/50 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 text-foreground hover:bg-secondary/60"
+                className="min-h-[48px] flex-1 font-sans font-semibold text-[14px] bg-secondary/30 border-border/50 shadow-sm hover:shadow text-foreground hover:bg-secondary/50 rounded-xl"
                 onClick={onPass}
                 disabled={disabled}
             >
@@ -28,7 +28,7 @@ export function GameControls({
             <Button
                 variant="outline"
                 size="lg"
-                className="min-h-[56px] flex-1 font-display font-semibold text-[15px] rounded-[1.25rem] bg-destructive/10 border border-destructive/10 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 text-destructive hover:text-destructive hover:border-destructive/20 hover:bg-destructive/20"
+                className="min-h-[48px] flex-1 font-sans font-semibold text-[14px] bg-destructive/5 border-destructive/20 shadow-sm hover:shadow text-destructive hover:border-destructive/30 hover:bg-destructive/10 rounded-xl"
                 onClick={onResign}
                 disabled={disabled}
             >
