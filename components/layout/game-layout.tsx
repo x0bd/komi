@@ -30,6 +30,14 @@ export function GameLayout({
                 </span>
                 <div className="pointer-events-auto flex items-center gap-2">
                     <Button
+                        render={<Link href="/games" />}
+                        variant="outline"
+                        size="sm"
+                        className="hidden sm:inline-flex"
+                    >
+                        Games
+                    </Button>
+                    <Button
                         render={<Link href="/profile" />}
                         variant="outline"
                         size="sm"

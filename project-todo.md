@@ -369,20 +369,20 @@ Step-by-step build plan. UI first, then game logic, then integrations.
   - [x] Play/Pause, Step Forward, Step Back, Skip to Start/End
   - [x] Timeline slider (scrub through moves)
   - [x] Playback speed selector
-- [ ] **Replay mode**
-  - [ ] Load game from database or SGF
+- [x] **Replay mode**
+  - [x] Load game from database or SGF
   - [x] Board renders state at current replay position
   - [x] Move history highlights current move
-  - [ ] Side panel shows analysis at each position (if available)
-- [ ] **Post-game review screen**
+  - [x] Side panel shows analysis at each position (if available)
+- [x] **Post-game review screen**
   - [x] Score breakdown (territory, captures, komi)
   - [x] Key moments timeline (big win% swings)
-  - [ ] AI tutor commentary per move
+  - [x] AI tutor commentary per move
   - [x] Share / export SGF button
-- [ ] **Game history page**
-  - [ ] List of past games with opponent, result, date
-  - [ ] Click to enter replay mode
-  - [ ] Filter by result, opponent, date range
+- [x] **Game history page**
+  - [x] List of past games with opponent, result, date
+  - [x] Click to enter replay mode
+  - [x] Filter by result, opponent, date range
 
 ---
 

@@ -415,3 +415,26 @@ Original prompt: lets continue building
   - Updated `project-todo.md`:
     - Marked score breakdown, key moments timeline, and SGF export checklist items complete under Post-game review screen.
   - Constraint preserved: no tests/build/lint were run in this pass.
+
+- 2026-03-21: Phase 13 completed (history + replay + analysis + tutor commentary).
+  - Extended game APIs:
+    - `GET /api/games` now returns signed-in user game history with filters (`result`, `opponent`, `from`, `to`, `limit`).
+    - Added `GET /api/games/[gameId]` for replay payload (moves, players, SGF, inferred board size).
+  - Added game history route:
+    - `app/games/page.tsx`
+    - `components/pages/game-history-page-client.tsx`
+    - Includes list view, filter controls, and one-click replay entry.
+  - Added dedicated replay/review route:
+    - `app/replay/[gameId]/page.tsx`
+    - `components/pages/replay-page-client.tsx`
+    - Supports database replay and SGF paste replay source.
+    - Uses timeline controls + move history highlight + board position rendering.
+    - Loads side-panel position analysis per selected move via `/api/analyze`.
+    - Loads per-move tutor commentary via `/api/tutor`.
+    - Shows post-game score breakdown, key moments, tutor notes, and SGF export.
+  - Extended shared UI:
+    - `components/game/post-game-review-card.tsx` now supports optional tutor commentary list.
+    - `components/layout/game-layout.tsx` now includes topbar navigation link to `/games`.
+  - Updated `project-todo.md`:
+    - Marked all remaining Phase 13 items complete.
+  - Constraint preserved: no tests/build/lint were run in this pass.

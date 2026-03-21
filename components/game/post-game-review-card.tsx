@@ -13,6 +13,11 @@ type KeyMoment = {
     detail: string;
 };
 
+type TutorNote = {
+    moveNumber: number;
+    note: string;
+};
+
 function formatOutcome({
     winner,
     reason,
@@ -46,12 +51,14 @@ export function PostGameReviewCard({
     winner,
     reason,
     keyMoments,
+    tutorNotes = [],
     onExportSgf,
 }: {
     scoreResult: ScoreResult | null;
     winner: "black" | "white" | "draw" | null;
     reason: "score" | "resignation" | "timeout" | null;
     keyMoments: KeyMoment[];
+    tutorNotes?: TutorNote[];
     onExportSgf: () => void;
 }) {
     return (
@@ -145,6 +152,29 @@ export function PostGameReviewCard({
                                             {moment.detail}
                                         </p>
                                     </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                ) : null}
+
+                {tutorNotes.length > 0 ? (
+                    <div className="rounded-xl border border-border/70 bg-secondary/20 p-3">
+                        <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+                            Tutor commentary
+                        </p>
+                        <div className="mt-2 space-y-2">
+                            {tutorNotes.map((note) => (
+                                <div
+                                    key={`tutor-${note.moveNumber}`}
+                                    className="rounded-lg border border-border/70 bg-background/80 px-3 py-2"
+                                >
+                                    <p className="text-[10px] font-mono font-semibold text-muted-foreground">
+                                        Move {note.moveNumber}
+                                    </p>
+                                    <p className="mt-1 text-xs text-foreground">
+                                        {note.note}
+                                    </p>
                                 </div>
                             ))}
                         </div>
