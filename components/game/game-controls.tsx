@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 export function GameControls({
@@ -15,29 +14,24 @@ export function GameControls({
     className?: string;
 }) {
     return (
-        <div
-            className={cn(
-                "flex w-full items-center gap-2 rounded-2xl border border-border/50 bg-card/60 p-2 shadow-sm backdrop-blur-xl",
-                className,
-            )}
-        >
-            <Button
-                variant="ghost"
-                className="h-10 flex-1 rounded-xl font-sans text-[14px] font-medium text-muted-foreground hover:bg-secondary/40 hover:text-foreground"
+        <div className={cn("flex w-full items-center gap-4", className)}>
+            <button
+                type="button"
+                className="flex-1 h-12 rounded-full border border-border/70 font-sans text-[15px] font-medium text-foreground/80 hover:bg-secondary/40 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 onClick={onPass}
                 disabled={disabled}
             >
                 Pass turn
-            </Button>
-            <div className="h-6 w-px shrink-0 bg-border/60" />
-            <Button
-                variant="ghost"
-                className="h-10 flex-1 rounded-xl font-sans text-[14px] font-medium text-destructive/80 hover:bg-destructive/10 hover:text-destructive"
+            </button>
+            <div className="h-4 w-px shrink-0 bg-border" />
+            <button
+                type="button"
+                className="flex-1 h-12 rounded-full border border-border/70 font-sans text-[15px] font-medium text-[#d94545] hover:bg-destructive/5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 onClick={onResign}
                 disabled={disabled}
             >
                 Resign
-            </Button>
+            </button>
         </div>
     );
 }

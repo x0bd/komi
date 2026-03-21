@@ -33,37 +33,28 @@ export function PlayerCard({
     return (
         <div
             className={cn(
-                "relative flex items-center gap-4 rounded-2xl border p-4 transition-all duration-500",
-                isActive
-                    ? "border-border shadow-lg bg-card scale-[1.02]"
-                    : "border-border/40 shadow-sm bg-card/40 opacity-70 grayscale-[0.2]",
+                "flex items-center gap-5 py-2 transition-all duration-300 w-full",
+                !isActive && "opacity-50",
                 className,
             )}
         >
-            {/* Active Indicator Glow */}
-            {isActive && (
-                <div className="absolute inset-0 -z-10 rounded-2xl bg-gradient-to-b from-foreground/[0.03] to-transparent" />
-            )}
-
             <Avatar
                 className={cn(
-                    "size-12 shrink-0 rounded-full border shadow-sm transition-all duration-300",
-                    isActive
-                        ? "border-foreground/20 shadow-md"
-                        : "border-border/50",
+                    "size-14 shrink-0 rounded-full",
+                    stoneColor === "white" &&
+                        "border border-border/60 bg-transparent",
                 )}
             >
                 <AvatarFallback
                     className={cn(
-                        "font-sans text-[15px] font-semibold",
+                        "font-sans text-[16px] font-medium tracking-tight",
                         stoneColor === "black"
                             ? "bg-[#111] text-white"
-                            : "bg-white text-black border-border",
-                        avatarIcon && "bg-muted text-foreground",
+                            : "bg-transparent text-muted-foreground",
                     )}
                 >
                     {avatarIcon ? (
-                        <span className="flex items-center justify-center text-lg">
+                        <span className="flex items-center justify-center text-xl">
                             {avatarIcon}
                         </span>
                     ) : (
@@ -72,38 +63,39 @@ export function PlayerCard({
                 </AvatarFallback>
             </Avatar>
 
-            <div className="min-w-0 flex-1">
-                <div className="flex items-baseline justify-between gap-2">
-                    <p className="font-sans text-[15px] font-semibold tracking-tight truncate text-foreground">
+            <div className="min-w-0 flex-1 flex items-center justify-between">
+                <div className="flex flex-col gap-1">
+                    <p className="font-sans text-[16px] font-semibold tracking-tight text-foreground">
                         {name}
                     </p>
-                    <Timer
-                        minutes={minutes}
-                        seconds={seconds}
-                        isLowTime={isLowTime}
-                        className="text-right"
-                    />
-                </div>
-                <div className="mt-1 flex items-center gap-3">
-                    <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground font-semibold uppercase tracking-wider">
-                        <div
-                            className={cn(
-                                "size-2 rounded-full",
-                                stoneColor === "black"
-                                    ? "bg-[#111] shadow-[inset_0_1px_1px_rgba(255,255,255,0.2)]"
-                                    : "bg-white border border-black/10 shadow-sm",
-                            )}
-                        />
-                        <span>{stoneColor}</span>
+                    <div className="flex items-center gap-2.5 text-[12px] font-medium text-muted-foreground">
+                        <div className="flex items-center gap-1.5 uppercase tracking-wider">
+                            <div
+                                className={cn(
+                                    "size-2 rounded-full",
+                                    stoneColor === "black"
+                                        ? "bg-[#111]"
+                                        : "bg-transparent border border-muted-foreground/50",
+                                )}
+                            />
+                            <span>{stoneColor}</span>
+                        </div>
+                        <div className="w-px h-3 bg-border" />
+                        <p>
+                            <span className="text-foreground font-bold mr-1">
+                                {captures}
+                            </span>
+                            Captures
+                        </p>
                     </div>
-                    <div className="h-3 w-px bg-border/60" />
-                    <p className="text-[12px] text-muted-foreground font-medium">
-                        <span className="text-foreground font-bold mr-1">
-                            {captures}
-                        </span>
-                        Captures
-                    </p>
                 </div>
+
+                <Timer
+                    minutes={minutes}
+                    seconds={seconds}
+                    isLowTime={isLowTime}
+                    className="text-right text-2xl font-mono tracking-tighter text-foreground"
+                />
             </div>
         </div>
     );

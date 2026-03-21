@@ -142,56 +142,65 @@ export function XPBar({
             <button
                 type="button"
                 onClick={onToggle}
-                className="group w-full text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-lg mt-2"
+                className="group w-full text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
-                <div className="px-2 py-3 flex items-center justify-between border-t border-border/50 transition-colors hover:bg-secondary/20 rounded-xl">
-                    <div className="flex items-center gap-3 min-w-0">
-                        <div className="flex size-8 items-center justify-center rounded-full bg-secondary/80 text-accent border border-border/50">
-                            <LuFlame className="size-4" />
-                        </div>
+                <div className="overflow-hidden rounded-[1.75rem] border border-border/60 bg-white dark:bg-card/60 shadow-sm transition-all duration-300 hover:shadow-md">
+                    <div className="px-5 py-4">
+                        <div className="flex items-center justify-between gap-3">
+                            <div className="flex items-center gap-4 min-w-0">
+                                <div className="flex size-12 items-center justify-center rounded-full bg-[#f0eee9] dark:bg-secondary/40 text-xp-streak/80">
+                                    <LuFlame className="size-[20px]" />
+                                </div>
 
-                        <div className="min-w-0">
-                            <div className="flex items-center gap-2">
-                                <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-muted-foreground">
-                                    Live Streak
-                                </p>
-                                <div className="hidden items-end gap-1 min-[430px]:flex">
-                                    {compactBars.map((bar, index) => (
-                                        <span
-                                            key={index}
-                                            className={cn(
-                                                "w-1.5 rounded-full bg-gradient-to-t",
-                                                bar.isActive
-                                                    ? "from-status-active via-accent to-xp-streak"
-                                                    : "from-border/50 via-border/35 to-border/15",
-                                            )}
-                                            style={{
-                                                height: `${Math.max(8, Math.round(bar.height * 0.45))}px`,
-                                                opacity: Math.max(
-                                                    0.3,
-                                                    bar.opacity,
-                                                ),
-                                            }}
-                                        />
-                                    ))}
+                                <div className="min-w-0 flex flex-col justify-center">
+                                    <div className="flex items-center gap-2 mb-0.5">
+                                        <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-muted-foreground">
+                                            Live Streak
+                                        </p>
+                                        <div className="hidden items-end gap-[3px] min-[430px]:flex">
+                                            {compactBars.map((bar, index) => (
+                                                <span
+                                                    key={index}
+                                                    className={cn(
+                                                        "w-1.5 rounded-full bg-gradient-to-t",
+                                                        bar.isActive
+                                                            ? "from-status-active via-accent to-xp-streak"
+                                                            : "bg-muted-foreground/20",
+                                                    )}
+                                                    style={{
+                                                        height: `${Math.max(10, Math.round(bar.height * 0.4))}px`,
+                                                        opacity: Math.max(
+                                                            0.3,
+                                                            bar.opacity,
+                                                        ),
+                                                    }}
+                                                />
+                                            ))}
+                                        </div>
+                                    </div>
+                                    <p className="truncate font-sans text-[17px] font-semibold text-foreground leading-tight">
+                                        {momentumTone}
+                                    </p>
+                                    <p className="truncate text-[13px] text-muted-foreground leading-tight mt-0.5">
+                                        {lastStreakEvent}
+                                    </p>
                                 </div>
                             </div>
-                            <p className="mt-0.5 truncate font-sans text-sm font-semibold text-foreground">
-                                {momentumTone}
-                            </p>
-                        </div>
-                    </div>
 
-                    <div className="flex items-center gap-3 shrink-0">
-                        <div className="text-right">
-                            <p className="font-sans text-lg font-bold leading-none text-xp-streak">
-                                {streak}
-                            </p>
-                            <p className="mt-1 text-[10px] font-medium text-muted-foreground">
-                                {energy}% live
-                            </p>
+                            <div className="flex items-center gap-4 shrink-0">
+                                <div className="text-center flex flex-col items-center">
+                                    <p className="font-sans text-2xl font-bold leading-none text-[#d96645] dark:text-xp-streak">
+                                        {streak}
+                                    </p>
+                                    <p className="mt-1 text-[11px] font-medium text-muted-foreground">
+                                        {energy}% live
+                                    </p>
+                                </div>
+                                <span className="flex size-9 items-center justify-center rounded-full border border-border/60 text-muted-foreground transition-colors group-hover:bg-secondary/50">
+                                    <LuChevronDown className="size-4" />
+                                </span>
+                            </div>
                         </div>
-                        <LuChevronDown className="size-4 text-muted-foreground transition-colors group-hover:text-foreground" />
                     </div>
                 </div>
             </button>

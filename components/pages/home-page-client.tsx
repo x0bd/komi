@@ -1160,8 +1160,8 @@ function Sidebar({
         : null;
 
     return (
-        <div className="flex flex-col gap-6 w-full lg:h-full lg:min-h-0 lg:p-6 lg:bg-card/30 lg:backdrop-blur-xl lg:rounded-[2rem] lg:border lg:border-border/40 lg:shadow-2xl">
-            <div className="flex flex-col gap-5">
+        <div className="flex flex-col w-full h-full pb-8">
+            <div className="flex flex-col gap-6">
                 <ModeToggle
                     value={mode as "local" | "versus-ai" | "online"}
                     onValueChange={(val) => setMode(val as GameMode)}
@@ -1192,7 +1192,7 @@ function Sidebar({
                     />
                 ) : null}
 
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-4 mt-2">
                     <PlayerCard
                         name="Player 1"
                         initial="P1"
@@ -1224,15 +1224,35 @@ function Sidebar({
                         isLowTime={whiteTimer.isLowTime}
                     />
                 </div>
+
+                {winProbability !== null ? (
+                    <div className="mt-2 overflow-hidden rounded-full bg-border/40 h-2.5">
+                        <div
+                            className="h-full bg-gradient-to-r from-emerald-500 via-accent to-orange-500 transition-[width] duration-500"
+                            style={{ width: `${winProbability}%` }}
+                        />
+                    </div>
+                ) : (
+                    <div className="mt-2 overflow-hidden rounded-full bg-border/40 h-2.5" />
+                )}
+
+                <div className="flex justify-end pb-4 border-b border-border/50">
+                    <button
+                        type="button"
+                        onClick={() =>
+                            setAnalysisOverlayEnabled(!analysisOverlayEnabled)
+                        }
+                        className="inline-flex h-9 items-center gap-2 rounded-full border border-border/80 bg-background px-4 text-xs font-semibold tracking-wide text-foreground transition-colors hover:bg-secondary/50 shadow-sm"
+                    >
+                        <LuSparkles className="h-3.5 w-3.5 text-muted-foreground" />
+                        {analysisOverlayEnabled
+                            ? "Hide move hints"
+                            : "Show move hints"}
+                    </button>
+                </div>
             </div>
 
-            <div className="flex min-h-0 flex-col gap-4 flex-1">
-                <LiveScoreCard
-                    score={liveScore}
-                    moveCount={mappedMoves.length}
-                    isGameOver={isGameOver}
-                />
-
+            <div className="flex min-h-0 flex-col gap-4 py-6 flex-1 overflow-y-auto scrollbar-none">
                 {isGameOver ? (
                     <PostGameReviewCard
                         scoreResult={scoreResult}
@@ -1243,37 +1263,23 @@ function Sidebar({
                     />
                 ) : null}
 
-                <div className="flex justify-end">
-                    <button
-                        type="button"
-                        onClick={() =>
-                            setAnalysisOverlayEnabled(!analysisOverlayEnabled)
-                        }
-                        className="inline-flex h-9 items-center gap-2 rounded-full border border-border/80 bg-card px-3 text-xs font-semibold tracking-wide text-muted-foreground transition-colors hover:text-foreground"
-                    >
-                        <LuSparkles className="h-3.5 w-3.5" />
-                        {analysisOverlayEnabled
-                            ? "Hide move hints"
-                            : "Show move hints"}
-                    </button>
-                </div>
+                <AIChatPanel
+                    collapsed={expandedPanel !== "sensei"}
+                    onToggle={() =>
+                        setExpandedPanel((current) =>
+                            current === "sensei" ? null : "sensei",
+                        )
+                    }
+                />
 
-                {winProbability !== null ? (
-                    <div className="rounded-xl border border-border/70 bg-secondary/20 px-3 py-2.5">
-                        <div className="flex items-center justify-between text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-                            <span>Win Read</span>
-                            <span className="font-mono text-foreground">
-                                {winProbability}%
-                            </span>
-                        </div>
-                        <div className="mt-2 overflow-hidden rounded-full bg-secondary/65">
-                            <div
-                                className="h-2 bg-gradient-to-r from-emerald-500 via-accent to-orange-500 transition-[width] duration-500"
-                                style={{ width: `${winProbability}%` }}
-                            />
-                        </div>
-                    </div>
-                ) : null}
+                <XPBar
+                    collapsed={expandedPanel !== "streak"}
+                    onToggle={() =>
+                        setExpandedPanel((current) =>
+                            current === "streak" ? null : "streak",
+                        )
+                    }
+                />
 
                 <MoveHistorySection
                     moves={mappedMoves}
@@ -1294,11 +1300,7 @@ function Sidebar({
                             current === "history" ? null : "history",
                         )
                     }
-                    className={
-                        expandedPanel === "history"
-                            ? "lg:h-full lg:flex-1"
-                            : "lg:flex-none"
-                    }
+                    className="mt-2"
                 />
 
                 {isGameOver && replayState && replayState.maxMove > 0 ? (
@@ -1316,28 +1318,9 @@ function Sidebar({
                         onSpeedChange={(speed) => onReplaySpeedChange?.(speed)}
                     />
                 ) : null}
-
-                <AIChatPanel
-                    collapsed={expandedPanel !== "sensei"}
-                    onToggle={() =>
-                        setExpandedPanel((current) =>
-                            current === "sensei" ? null : "sensei",
-                        )
-                    }
-                    className="hidden lg:block"
-                />
-
-                <XPBar
-                    collapsed={expandedPanel !== "streak"}
-                    onToggle={() =>
-                        setExpandedPanel((current) =>
-                            current === "streak" ? null : "streak",
-                        )
-                    }
-                />
             </div>
 
-            <div className="mt-auto pt-1">
+            <div className="pt-4 border-t border-border/50 mt-auto shrink-0">
                 <GameControls
                     onPass={onPassAction ?? passTurn}
                     onResign={onResignAction ?? resign}

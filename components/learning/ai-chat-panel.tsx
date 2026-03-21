@@ -320,39 +320,39 @@ export function AIChatPanel({
                 onClick={onToggle}
                 className={cn("group w-full text-left", className)}
             >
-                <div className="overflow-hidden rounded-2xl border border-border/50 bg-card/60 backdrop-blur-xl shadow-sm transition-all duration-300 hover:shadow-md">
-                    <div className="px-4 py-4">
+                <div className="overflow-hidden rounded-[1.75rem] border border-border/60 bg-white dark:bg-card/60 shadow-sm transition-all duration-300 hover:shadow-md">
+                    <div className="px-5 py-4">
                         <div className="flex items-center justify-between gap-3">
-                            <div className="flex items-center gap-3 min-w-0">
-                                <div className="flex size-10 items-center justify-center rounded-full bg-secondary text-accent shadow-sm border border-border/40">
-                                    <LuBot className="size-[18px]" />
+                            <div className="flex items-center gap-4 min-w-0">
+                                <div className="flex size-12 items-center justify-center rounded-full bg-[#f0eee9] dark:bg-secondary/40 text-accent/80">
+                                    <LuBot className="size-[20px]" />
                                 </div>
-                                <div className="min-w-0">
-                                    <div className="flex items-center gap-2">
+                                <div className="min-w-0 flex flex-col justify-center">
+                                    <div className="flex items-center gap-2 mb-0.5">
                                         <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-muted-foreground">
                                             Sensei
                                         </p>
-                                        <span className="inline-flex h-1.5 w-1.5 rounded-full bg-status-active shadow-[0_0_8px_rgba(var(--status-active),0.8)]" />
+                                        <span className="inline-flex h-1.5 w-1.5 rounded-full bg-status-active" />
                                     </div>
-                                    <p className="mt-0.5 truncate font-sans text-[15px] font-semibold text-foreground">
+                                    <p className="truncate font-sans text-[17px] font-semibold text-foreground leading-tight">
                                         {moodLabel}
                                     </p>
-                                    <p className="mt-0.5 truncate text-[13px] text-muted-foreground">
+                                    <p className="truncate text-[13px] text-muted-foreground leading-tight mt-0.5">
                                         {latestMessage?.text ?? tutorCue}
                                     </p>
                                 </div>
                             </div>
 
-                            <div className="flex items-center gap-2 shrink-0">
-                                <div className="text-right">
-                                    <p className="font-sans text-xl font-bold leading-none text-accent">
+                            <div className="flex items-center gap-4 shrink-0">
+                                <div className="text-center flex flex-col items-center">
+                                    <p className="font-sans text-2xl font-bold leading-none text-accent">
                                         {chatMessages.length}
                                     </p>
-                                    <p className="mt-1 text-[10px] font-medium text-muted-foreground">
+                                    <p className="mt-1 text-[11px] font-medium text-muted-foreground">
                                         notes
                                     </p>
                                 </div>
-                                <span className="flex size-8 items-center justify-center rounded-full border border-border/50 bg-background/50 text-muted-foreground shadow-sm transition-colors group-hover:text-foreground">
+                                <span className="flex size-9 items-center justify-center rounded-full border border-border/60 text-muted-foreground transition-colors group-hover:bg-secondary/50">
                                     <LuChevronDown className="size-4" />
                                 </span>
                             </div>

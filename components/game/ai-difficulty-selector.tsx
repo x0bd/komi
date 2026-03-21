@@ -25,23 +25,19 @@ export function AIDifficultySelector({
     return (
         <div
             className={cn(
-                "overflow-hidden rounded-2xl border border-border/50 bg-card/60 backdrop-blur-xl shadow-sm p-4",
+                "rounded-[1.75rem] border border-border/60 bg-white dark:bg-card/60 shadow-sm p-5",
                 className,
             )}
         >
-            <div className="flex flex-col gap-3">
-                <div className="flex items-center justify-between">
-                    <div>
-                        <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                            Sensei Engine
-                        </p>
-                        <p className="font-sans text-[13px] font-medium text-foreground">
-                            Choose difficulty level
-                        </p>
-                    </div>
-                </div>
+            <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-muted-foreground mb-2">
+                AI DIFFICULTY
+            </p>
+            <div className="flex items-center justify-between gap-4">
+                <p className="font-sans text-[15px] font-semibold text-foreground leading-tight max-w-[100px]">
+                    Train against Sensei
+                </p>
 
-                <div className="grid grid-cols-3 gap-1 rounded-xl bg-secondary/40 p-1">
+                <div className="flex bg-[#f0eee9] dark:bg-secondary/40 rounded-full p-1 border border-border/40">
                     {OPTIONS.map((option) => {
                         const active = option.value === value;
 
@@ -56,20 +52,17 @@ export function AIDifficultySelector({
                                     }
                                 }}
                                 className={cn(
-                                    "h-8 rounded-lg text-[13px] font-sans font-medium transition-all duration-200",
+                                    "px-4 py-2 rounded-full text-[13px] font-sans font-medium transition-all duration-200",
                                     active
-                                        ? "bg-background text-foreground shadow-sm"
+                                        ? "bg-[#1f1d1a] dark:bg-foreground text-white dark:text-background shadow-md"
                                         : "text-muted-foreground",
-                                    option.enabled
+                                    option.enabled && !active
                                         ? "hover:text-foreground"
-                                        : "cursor-not-allowed opacity-45",
+                                        : "",
+                                    !option.enabled &&
+                                        "cursor-not-allowed opacity-45",
                                 )}
                                 aria-pressed={active}
-                                aria-label={
-                                    option.enabled
-                                        ? `${option.label} difficulty`
-                                        : `${option.label} difficulty coming soon`
-                                }
                             >
                                 {option.label}
                             </button>
