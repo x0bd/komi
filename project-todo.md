@@ -365,20 +365,20 @@ Step-by-step build plan. UI first, then game logic, then integrations.
 
 ## Phase 13: Replay & Post-Game Review
 
-- [ ] **Replay controls** (`components/game/replay-controls.tsx`)
-  - [ ] Play/Pause, Step Forward, Step Back, Skip to Start/End
-  - [ ] Timeline slider (scrub through moves)
-  - [ ] Playback speed selector
+- [x] **Replay controls** (`components/game/replay-controls.tsx`)
+  - [x] Play/Pause, Step Forward, Step Back, Skip to Start/End
+  - [x] Timeline slider (scrub through moves)
+  - [x] Playback speed selector
 - [ ] **Replay mode**
   - [ ] Load game from database or SGF
-  - [ ] Board renders state at current replay position
-  - [ ] Move history highlights current move
+  - [x] Board renders state at current replay position
+  - [x] Move history highlights current move
   - [ ] Side panel shows analysis at each position (if available)
 - [ ] **Post-game review screen**
-  - [ ] Score breakdown (territory, captures, komi)
+  - [x] Score breakdown (territory, captures, komi)
   - [ ] Key moments timeline (big win% swings)
   - [ ] AI tutor commentary per move
-  - [ ] Share / export SGF button
+  - [x] Share / export SGF button
 - [ ] **Game history page**
   - [ ] List of past games with opponent, result, date
   - [ ] Click to enter replay mode

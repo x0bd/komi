@@ -23,6 +23,7 @@ import {
     type MoveEntry,
 } from "@/components/game/move-history-section";
 import { GameControls } from "@/components/game/game-controls";
+import { PostGameReviewCard } from "@/components/game/post-game-review-card";
 import { ReplayControls } from "@/components/game/replay-controls";
 import { GameOverDialog } from "@/components/game/game-over-dialog";
 import {
@@ -971,8 +972,12 @@ function Sidebar({
     const setAIDifficulty = useGameStore((state) => state.setAIDifficulty);
     const size = useGameStore((state) => state.size);
     const isGameOver = useGameStore((state) => state.isGameOver);
+    const winner = useGameStore((state) => state.winner);
+    const gameOverReason = useGameStore((state) => state.gameOverReason);
+    const scoreResult = useGameStore((state) => state.scoreResult);
     const timers = useGameStore((state) => state.timers);
     const liveScore = useGameStore((state) => state.liveScore);
+    const exportSGF = useGameStore((state) => state.exportSGF);
     const analysisOverlayEnabled = useGameStore(
         (state) => state.analysisOverlayEnabled,
     );
@@ -989,6 +994,20 @@ function Sidebar({
 
     const blackTimer = splitClock(timers.black);
     const whiteTimer = splitClock(timers.white);
+
+    const handleExportSgf = () => {
+        const sgf = exportSGF();
+        const filenameDate = new Date().toISOString().replace(/[:.]/g, "-");
+        const blob = new Blob([sgf], { type: "application/x-go-sgf" });
+        const objectUrl = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = objectUrl;
+        link.download = `komi-${filenameDate}.sgf`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(objectUrl);
+    };
 
     // Map engine moves to UI MoveEntry format
     const mappedMoves: MoveEntry[] = moveHistory.map((m, idx) => {
@@ -1078,6 +1097,15 @@ function Sidebar({
                     moveCount={mappedMoves.length}
                     isGameOver={isGameOver}
                 />
+
+                {isGameOver ? (
+                    <PostGameReviewCard
+                        scoreResult={scoreResult}
+                        winner={winner}
+                        reason={gameOverReason}
+                        onExportSgf={handleExportSgf}
+                    />
+                ) : null}
 
                 <div className="flex justify-end">
                     <button

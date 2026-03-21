@@ -385,3 +385,20 @@ Original prompt: lets continue building
   - Updated `project-todo.md`:
     - Marked Tutor modes block complete (passive, active, review).
   - Constraint preserved: no tests/build/lint were run in this pass.
+
+- 2026-03-21: Phase 13 replay mode wiring (controls + board sync).
+  - Added `components/game/replay-controls.tsx`:
+    - Play/Pause, Step Back/Forward, Skip Start/End controls.
+    - Timeline slider and playback speed selector.
+  - Extended `components/pages/home-page-client.tsx`:
+    - Added replay timeline state (position, play/pause, speed).
+    - Added replay frame reconstruction from move history.
+    - Local board now renders replay position when replay mode is active.
+    - Replay playback is post-game only and auto-advances by selected speed.
+  - Extended move history UI:
+    - `components/game/move-history.tsx`: move rows are selectable and highlight active replay move.
+    - `components/game/move-history-section.tsx`: passes replay selection/highlight props through desktop + mobile variants.
+  - Updated `project-todo.md`:
+    - Marked replay controls complete.
+    - Marked replay board rendering + move highlight checklist items complete.
+  - Constraint preserved: no tests/build/lint were run in this pass.
