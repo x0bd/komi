@@ -74,12 +74,8 @@ function buildReviewLine({
 }
 
 export function AIChatPanel({
-    collapsed = false,
-    onToggle,
     className,
 }: {
-    collapsed?: boolean;
-    onToggle?: () => void;
     className?: string;
 }) {
     const chatMessages = useLearningStore((state) => state.chatMessages);
@@ -313,124 +309,33 @@ export function AIChatPanel({
         }
     }
 
-    if (collapsed) {
-        return (
-            <button
-                type="button"
-                onClick={onToggle}
-                className={cn("group w-full text-left", className)}
-            >
-                <div className="overflow-hidden rounded-[1.75rem] border border-border/60 bg-white dark:bg-card/60 shadow-sm transition-all duration-300 hover:shadow-md">
-                    <div className="px-5 py-4">
-                        <div className="flex items-center justify-between gap-3">
-                            <div className="flex items-center gap-4 min-w-0">
-                                <div className="flex size-12 items-center justify-center rounded-full bg-[#f0eee9] dark:bg-secondary/40 text-accent/80">
-                                    <LuBot className="size-[20px]" />
-                                </div>
-                                <div className="min-w-0 flex flex-col justify-center">
-                                    <div className="flex items-center gap-2 mb-0.5">
-                                        <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-muted-foreground">
-                                            Sensei
-                                        </p>
-                                        <span className="inline-flex h-1.5 w-1.5 rounded-full bg-status-active" />
-                                    </div>
-                                    <p className="truncate font-sans text-[17px] font-semibold text-foreground leading-tight">
-                                        {moodLabel}
-                                    </p>
-                                    <p className="truncate text-[13px] text-muted-foreground leading-tight mt-0.5">
-                                        {latestMessage?.text ?? tutorCue}
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div className="flex items-center gap-4 shrink-0">
-                                <div className="text-center flex flex-col items-center">
-                                    <p className="font-sans text-2xl font-bold leading-none text-accent">
-                                        {chatMessages.length}
-                                    </p>
-                                    <p className="mt-1 text-[11px] font-medium text-muted-foreground">
-                                        notes
-                                    </p>
-                                </div>
-                                <span className="flex size-9 items-center justify-center rounded-full border border-border/60 text-muted-foreground transition-colors group-hover:bg-secondary/50">
-                                    <LuChevronDown className="size-4" />
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </button>
-        );
-    }
-
     return (
         <div
             className={cn(
-                "overflow-hidden rounded-2xl border border-border/50 bg-card/60 backdrop-blur-xl shadow-md",
+                "flex flex-col gap-4 animate-in fade-in slide-in-from-bottom-2 duration-300 h-full",
                 className,
             )}
         >
-            <div className="p-0">
-                <div className="relative border-b border-border/50 px-4 py-4">
-                    <div className="flex items-center justify-between gap-4">
-                        <div className="flex items-center gap-3">
-                            <span className="flex size-10 items-center justify-center rounded-full bg-secondary text-accent shadow-sm border border-border/40">
-                                <LuBot className="size-[18px]" />
-                            </span>
-                            <div>
-                                <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-muted-foreground">
-                                    Sensei
-                                </p>
-                                <p className="font-sans text-[15px] font-semibold text-foreground">
-                                    {moodLabel}
-                                </p>
-                            </div>
-                        </div>
-
-                        <div className="flex items-center gap-3">
-                            <div className="text-right">
-                                <p className="font-sans text-xl font-bold leading-none text-foreground">
-                                    {chatMessages.length}
-                                </p>
-                                <p className="mt-1 text-[10px] font-medium text-muted-foreground">
-                                    notes
-                                </p>
-                            </div>
-                            {onToggle ? (
-                                <button
-                                    type="button"
-                                    onClick={onToggle}
-                                    aria-label="Collapse Sensei panel"
-                                    className="flex size-8 items-center justify-center rounded-full border border-border/50 bg-background/50 text-muted-foreground shadow-sm transition-colors hover:text-foreground hover:bg-secondary"
-                                >
-                                    <LuChevronUp className="size-4" />
-                                </button>
-                            ) : null}
-                        </div>
+            <div className="rounded-xl border border-border/40 bg-secondary/30 p-4 backdrop-blur-sm shrink-0">
+                <div className="flex items-start gap-3">
+                    <span className="mt-0.5 flex size-7 items-center justify-center rounded-full bg-background/80 text-accent shadow-sm border border-border/40">
+                        <LuSparkles className="size-3.5" />
+                    </span>
+                    <div className="min-w-0">
+                        <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-muted-foreground">
+                            Current Goal • <span className="text-foreground/80 lowercase">{moodLabel}</span>
+                        </p>
+                        <p className="mt-1 font-sans text-sm font-medium text-foreground">
+                            {tutorGoal}
+                        </p>
+                        <p className="mt-1.5 text-[13px] text-muted-foreground/80 leading-relaxed">
+                            {tutorCue}
+                        </p>
                     </div>
                 </div>
+            </div>
 
-                <div className="px-4 py-4">
-                    <div className="rounded-xl border border-border/40 bg-secondary/30 p-4 backdrop-blur-sm">
-                        <div className="flex items-start gap-3">
-                            <span className="mt-0.5 flex size-7 items-center justify-center rounded-full bg-background/80 text-accent shadow-sm border border-border/40">
-                                <LuSparkles className="size-3.5" />
-                            </span>
-                            <div className="min-w-0">
-                                <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-muted-foreground">
-                                    Current Goal
-                                </p>
-                                <p className="mt-0.5 font-sans text-sm font-medium text-foreground">
-                                    {tutorGoal}
-                                </p>
-                                <p className="mt-1.5 text-[13px] text-muted-foreground/80 leading-relaxed">
-                                    {tutorCue}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="mt-3 grid grid-cols-3 gap-1 rounded-xl bg-secondary/40 p-1">
+            <div className="grid grid-cols-3 gap-1 rounded-xl bg-secondary/40 p-1 shrink-0">
                         {(["passive", "active", "review"] as TutorMode[]).map(
                             (mode) => (
                                 <button
@@ -451,7 +356,7 @@ export function AIChatPanel({
                     </div>
 
                     {latestAnalysis ? (
-                        <div className="mt-4 rounded-xl border border-border/60 bg-background/80 p-4 shadow-sm">
+                        <div className="rounded-xl border border-border/60 bg-background/80 p-4 shadow-sm shrink-0">
                             <div className="flex items-start justify-between gap-3">
                                 <div className="min-w-0">
                                     <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
@@ -500,7 +405,7 @@ export function AIChatPanel({
                     ) : null}
 
                     {tutorMode === "review" ? (
-                        <div className="mt-4 rounded-xl border border-border/60 bg-background/80 p-4 shadow-sm">
+                        <div className="rounded-xl border border-border/60 bg-background/80 p-4 shadow-sm shrink-0">
                             <div className="flex items-center justify-between gap-3">
                                 <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
                                     Post-Game Review
@@ -550,8 +455,8 @@ export function AIChatPanel({
                         </div>
                     ) : null}
 
-                    <div className="mt-4 overflow-hidden rounded-xl border border-border/60 bg-secondary/15">
-                        <ScrollArea className="h-[210px]">
+                    <div className="flex-1 overflow-hidden rounded-xl border border-border/60 bg-secondary/15 relative min-h-[250px] shrink-0">
+                        <ScrollArea className="absolute inset-0 top-0 h-full w-full">
                             <div className="p-4">
                                 {visibleMessages.map((message) => (
                                     <div
@@ -603,9 +508,9 @@ export function AIChatPanel({
                         </ScrollArea>
                     </div>
 
-                    <div className="mt-4 flex flex-wrap gap-2">
+                    <div className="flex flex-col gap-2 shrink-0 pb-4">
                         {tutorMode === "active" ? (
-                            <>
+                            <div className="flex flex-col gap-2">
                                 <div className="w-full rounded-xl border border-border/60 bg-secondary/20 p-3">
                                     <div className="flex items-center justify-between gap-2">
                                         <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
@@ -688,7 +593,7 @@ export function AIChatPanel({
                                         <LuSend className="size-3.5" />
                                     </button>
                                 </form>
-                            </>
+                            </div>
                         ) : null}
 
                         {tutorMode === "passive" ? (
@@ -711,8 +616,6 @@ export function AIChatPanel({
                               ))
                             : null}
                     </div>
-                </div>
-            </div>
         </div>
     );
 }

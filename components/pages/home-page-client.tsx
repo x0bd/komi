@@ -1254,7 +1254,7 @@ export function useSidebarPanels({
                         </button>
                     </div>
 
-                    <AIChatPanel collapsed={false} />
+                    <AIChatPanel />
 
                     {isGameOver && replayState && replayState.maxMove > 0 ? (
                         <ReplayControls

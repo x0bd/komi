@@ -6,7 +6,9 @@ import {
     LuArrowLeft,
     LuBrain,
     LuFileUp,
+    LuGamepad2,
     LuLoaderCircle,
+    LuSettings,
     LuSparkles,
 } from "react-icons/lu";
 import type { EngineAnalysis, EngineCandidate } from "@/lib/ai/engine-provider";
@@ -23,7 +25,7 @@ import {
 } from "@/components/game/move-history-section";
 import { PostGameReviewCard } from "@/components/game/post-game-review-card";
 import { ReplayControls } from "@/components/game/replay-controls";
-import { GameLayout } from "@/components/layout/game-layout";
+import { GameLayout, type DockPanel } from "@/components/layout/game-layout";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -508,7 +510,7 @@ export function ReplayPageClient({ gameId }: { gameId: string }) {
                                                   "black",
                                               isPass: false,
                                           },
-                                          activeGame.size,
+                                          activeGame?.size ?? 19,
                                       )
                                     : null
                                 : null,
@@ -520,10 +522,10 @@ export function ReplayPageClient({ gameId }: { gameId: string }) {
                                         {
                                             x: candidate.x,
                                             y: candidate.y,
-                                            player: currentReplayMove.player,
+                                            player: currentReplayMove?.player ?? "black",
                                             isPass: false,
                                         },
-                                        activeGame.size,
+                                        activeGame?.size ?? 19,
                                     ),
                                     reason: candidateReason(candidate),
                                 })),
@@ -727,27 +729,13 @@ export function ReplayPageClient({ gameId }: { gameId: string }) {
     const currentTutorNote =
         clampedMove > 0 ? tutorNotesByMove[clampedMove] : null;
 
-    return (
-        <GameLayout
-            board={
-                <GoBoard
-                    board={currentFrame.state.board}
-                    size={activeGame.size}
-                    currentPlayer={currentFrame.state.turn}
-                    validMoves={[]}
-                    lastMove={
-                        currentFrame.lastMove && !currentFrame.lastMove.isPass
-                            ? {
-                                  x: currentFrame.lastMove.x,
-                                  y: currentFrame.lastMove.y,
-                              }
-                            : undefined
-                    }
-                    onIntersectionClick={() => {}}
-                />
-            }
-            sidebar={
-                <div className="flex flex-col gap-4 lg:h-full lg:min-h-0">
+    const panels: DockPanel[] = [
+        {
+            id: "review",
+            label: "Replay Review",
+            icon: <LuGamepad2 />,
+            content: (
+                <div className="flex flex-col gap-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
                     <Card>
                         <CardHeader className="pb-3">
                             <CardTitle className="flex flex-wrap items-center justify-between gap-2 text-base">
@@ -835,7 +823,15 @@ export function ReplayPageClient({ gameId }: { gameId: string }) {
                         }}
                         className="lg:h-[230px] lg:flex-none"
                     />
-
+                </div>
+            )
+        },
+        {
+            id: "analysis",
+            label: "Analysis & Tutor",
+            icon: <LuBrain />,
+            content: (
+                <div className="flex flex-col gap-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
                     <Card className="lg:flex-none">
                         <CardHeader className="pb-3">
                             <CardTitle className="flex items-center gap-2 text-base">
@@ -961,7 +957,15 @@ export function ReplayPageClient({ gameId }: { gameId: string }) {
                         tutorNotes={tutorNotesForCard}
                         onExportSgf={exportSgf}
                     />
-
+                </div>
+            )
+        },
+        {
+            id: "settings",
+            label: "Load SGF",
+            icon: <LuFileUp />,
+            content: (
+                <div className="flex flex-col gap-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
                     <Card className="lg:flex-none">
                         <CardHeader className="pb-3">
                             <CardTitle className="flex items-center gap-2 text-base">
@@ -993,7 +997,30 @@ export function ReplayPageClient({ gameId }: { gameId: string }) {
                         </CardContent>
                     </Card>
                 </div>
+            )
+        }
+    ];
+
+    return (
+        <GameLayout
+            board={
+                <GoBoard
+                    board={currentFrame.state.board}
+                    size={activeGame.size}
+                    currentPlayer={currentFrame.state.turn}
+                    validMoves={[]}
+                    lastMove={
+                        currentFrame.lastMove && !currentFrame.lastMove.isPass
+                            ? {
+                                  x: currentFrame.lastMove.x,
+                                  y: currentFrame.lastMove.y,
+                              }
+                            : undefined
+                    }
+                    onIntersectionClick={() => {}}
+                />
             }
+            panels={panels}
         />
     );
 }

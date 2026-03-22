@@ -79,19 +79,21 @@ export function GameLayout({
                         {panels.map((panel) => {
                             const isActive = activePanelId === panel.id;
                             return (
-                                <Tooltip key={panel.id} delayDuration={100}>
-                                    <TooltipTrigger asChild>
-                                        <button
-                                            onClick={() => setActivePanelId(isActive ? null : panel.id)}
-                                            className={cn(
-                                                "relative flex size-12 items-center justify-center rounded-2xl transition-all duration-200",
-                                                isActive 
-                                                    ? "bg-foreground text-background shadow-md scale-105" 
-                                                    : "bg-secondary/50 text-muted-foreground hover:bg-secondary hover:text-foreground"
-                                            )}
-                                        >
-                                            <span className="[&>svg]:size-5">{panel.icon}</span>
-                                        </button>
+                                <Tooltip key={panel.id}>
+                                    <TooltipTrigger
+                                        render={
+                                            <button
+                                                onClick={() => setActivePanelId(isActive ? null : panel.id)}
+                                                className={cn(
+                                                    "relative flex size-12 items-center justify-center rounded-2xl transition-all duration-200",
+                                                    isActive 
+                                                        ? "bg-foreground text-background shadow-md scale-105" 
+                                                        : "bg-secondary/50 text-muted-foreground hover:bg-secondary hover:text-foreground"
+                                                )}
+                                            />
+                                        }
+                                    >
+                                        <span className="[&>svg]:size-5">{panel.icon}</span>
                                     </TooltipTrigger>
                                     <TooltipContent side="left" sideOffset={12}>
                                         {panel.label}

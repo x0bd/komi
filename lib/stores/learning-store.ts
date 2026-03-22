@@ -1,6 +1,6 @@
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
-import { type ChatMessage } from "../../components/learning/ai-chat-panel"
+import { type ChatMessage, type ChatMessageTone } from "@/components/learning/ai-chat-panel"
 
 type TutorAnalysisMove = {
   coordinate: string
