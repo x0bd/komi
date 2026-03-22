@@ -117,7 +117,7 @@ export function GameLayout({
                 {/* Modals Attached to the Right of the Left Dock */}
                 {activePanel && (
                     <div
-                        className="fixed left-[84px] lg:left-[96px] top-3 lg:top-4 bottom-3 lg:bottom-4 z-50 w-[420px] max-w-[calc(100vw-[80px]-1rem)] rounded-[1.5rem] border border-border/60 bg-card shadow-2xl animate-in fade-in slide-in-from-left-4 duration-300 flex flex-col pointer-events-auto overflow-hidden"
+                        className="fixed left-[84px] lg:left-[96px] top-3 lg:top-4 bottom-3 lg:bottom-4 z-50 w-[420px] max-w-[calc(100vw-[80px]-1rem)] rounded-[1.5rem] border border-border/60 bg-background/95 backdrop-blur-3xl shadow-2xl animate-in fade-in slide-in-from-left-4 duration-300 flex flex-col pointer-events-auto overflow-hidden"
                     >
                         <div className="flex items-center justify-between px-6 py-4 border-b border-border/50 shrink-0">
                             <h2 className="font-semibold text-lg flex items-center gap-2">

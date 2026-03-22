@@ -32,7 +32,7 @@ export function LiveScoreCard({
     return (
         <div
             className={cn(
-                "flex flex-col w-full p-5 rounded-3xl border border-border/60 bg-white dark:bg-card/60 shadow-sm transition-all duration-300",
+                "flex flex-col w-full p-5 rounded-3xl border border-border/60 bg-card/40 backdrop-blur-md dark:bg-card/60 shadow-sm transition-all duration-300",
                 className,
             )}
         >
