@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { LuX } from "react-icons/lu";
+import { LuX, LuUser } from "react-icons/lu";
 
 export type DockPanel = {
     id: string;
@@ -35,14 +35,8 @@ export function GameLayout({
                     className,
                 )}
             >
-                {/* Minimalist Header */}
-                <header className="absolute inset-x-0 top-0 z-50 flex items-center justify-between px-6 py-4 pointer-events-none">
-                    <div className="flex items-center gap-4 pointer-events-auto">
-                        <span className="font-sans text-lg font-bold tracking-tight text-foreground select-none">
-                            Komi
-                        </span>
-                    </div>
-                    <div className="flex items-center gap-2 pointer-events-auto mr-16">
+                <header className="absolute inset-x-0 top-0 z-50 flex items-center justify-end px-6 py-4 pointer-events-none">
+                    <div className="flex items-center gap-2 pointer-events-auto">
                         <Button
                             render={<Link href="/games" />}
                             variant="ghost"
@@ -51,20 +45,12 @@ export function GameLayout({
                         >
                             History
                         </Button>
-                        <Button
-                            render={<Link href="/profile" />}
-                            variant="ghost"
-                            size="sm"
-                            className="rounded-full hidden sm:inline-flex"
-                        >
-                            Profile
-                        </Button>
                         <ThemeToggle className="rounded-full" />
                     </div>
                 </header>
 
                 {/* Main Workspace */}
-                <div className="relative z-10 flex flex-1 w-full mx-auto pt-20 pb-0 pl-4 pr-16 lg:pr-20 h-svh">
+                <div className="relative z-10 flex flex-1 w-full mx-auto pt-20 pb-0 pl-24 lg:pl-32 pr-4 lg:pr-6 h-svh">
                     {/* Board Area */}
                     <main className="flex flex-1 items-center justify-center h-full">
                         <div className="w-full flex justify-center max-w-3xl">
@@ -73,9 +59,15 @@ export function GameLayout({
                     </main>
                 </div>
 
-                {/* Right Dock */}
-                <nav className="fixed right-0 top-0 bottom-0 z-40 w-16 lg:w-20 border-l border-border/50 bg-background/80 backdrop-blur-xl flex flex-col items-center py-6 gap-4 pointer-events-auto">
-                    <div className="flex-1 flex flex-col items-center gap-4 mt-16">
+                {/* Left Dock */}
+                <nav className="fixed left-3 lg:left-4 top-3 lg:top-4 bottom-3 lg:bottom-4 z-40 w-[68px] lg:w-[76px] rounded-[2rem] border border-border/80 bg-foreground/[0.03] dark:bg-card/95 backdrop-blur-2xl shadow-xl flex flex-col items-center py-6 gap-2 pointer-events-auto">
+                    <div className="flex items-center justify-center mb-6 mt-1.5">
+                        <span className="font-sans text-[15px] font-bold tracking-tight text-foreground select-none">
+                            Komi
+                        </span>
+                    </div>
+                    
+                    <div className="flex-1 flex flex-col items-center gap-3 w-full px-3">
                         {panels.map((panel) => {
                             const isActive = activePanelId === panel.id;
                             return (
@@ -85,29 +77,47 @@ export function GameLayout({
                                             <button
                                                 onClick={() => setActivePanelId(isActive ? null : panel.id)}
                                                 className={cn(
-                                                    "relative flex size-12 items-center justify-center rounded-2xl transition-all duration-200",
+                                                    "relative flex min-h-12 w-full items-center justify-center rounded-2xl transition-all duration-200 group",
                                                     isActive 
-                                                        ? "bg-foreground text-background shadow-md scale-105" 
-                                                        : "bg-secondary/50 text-muted-foreground hover:bg-secondary hover:text-foreground"
+                                                        ? "bg-foreground/10 dark:bg-accent/20 text-foreground shadow-sm" 
+                                                        : "text-muted-foreground hover:bg-foreground/5 dark:hover:bg-secondary/80 hover:text-foreground"
                                                 )}
                                             />
                                         }
                                     >
                                         <span className="[&>svg]:size-5">{panel.icon}</span>
                                     </TooltipTrigger>
-                                    <TooltipContent side="left" sideOffset={12}>
+                                    <TooltipContent side="right" sideOffset={16} className="font-semibold text-xs tracking-wide">
                                         {panel.label}
                                     </TooltipContent>
                                 </Tooltip>
                             );
                         })}
                     </div>
+                    
+                    <div className="mt-auto flex flex-col items-center gap-3 w-full px-3">
+                        <Tooltip>
+                            <TooltipTrigger
+                                render={
+                                    <Link
+                                        href="/profile"
+                                        className="relative flex min-h-12 w-full items-center justify-center rounded-2xl transition-all duration-200 group text-muted-foreground hover:bg-foreground/5 dark:hover:bg-secondary/80 hover:text-foreground"
+                                    />
+                                }
+                            >
+                                <LuUser className="size-5" />
+                            </TooltipTrigger>
+                            <TooltipContent side="right" sideOffset={16} className="font-semibold text-xs tracking-wide">
+                                Profile
+                            </TooltipContent>
+                        </Tooltip>
+                    </div>
                 </nav>
 
-                {/* Modals Attached to the Left of the Dock */}
+                {/* Modals Attached to the Right of the Left Dock */}
                 {activePanel && (
                     <div 
-                        className="fixed right-16 lg:right-20 top-0 bottom-0 z-50 w-[420px] max-w-[calc(100vw-4rem)] border-l border-border/50 bg-card/95 backdrop-blur-2xl shadow-[-10px_0_20px_-10px_rgba(0,0,0,0.1)] animate-in slide-in-from-right-4 duration-300 flex flex-col pointer-events-auto"
+                        className="fixed left-[88px] lg:left-[100px] top-3 lg:top-4 bottom-3 lg:bottom-4 z-50 w-[420px] max-w-[calc(100vw-6rem)] rounded-r-[2rem] border border-border/60 border-l-0 bg-card/95 backdrop-blur-3xl shadow-2xl shadow-black/20 animate-in slide-in-from-left-4 duration-300 flex flex-col pointer-events-auto overflow-hidden"
                     >
                         <div className="flex items-center justify-between px-6 py-4 border-b border-border/50 shrink-0">
                             <h2 className="font-semibold text-lg flex items-center gap-2">
