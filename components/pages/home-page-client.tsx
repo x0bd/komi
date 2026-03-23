@@ -1292,9 +1292,9 @@ export function useSidebarPanels({
             label: "Context & Settings",
             icon: <LuSettings />,
             content: (
-                <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
-                    <div className="space-y-3">
-                        <span className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground ml-1">
+                <div className="flex flex-col gap-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                    <div className="flex flex-col gap-2">
+                        <span className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground ml-1 px-1">
                             Game Mode
                         </span>
                         <ModeToggle
@@ -1304,10 +1304,7 @@ export function useSidebarPanels({
                     </div>
 
                     {mode === "versus-ai" && (
-                        <div className="space-y-3 animate-in fade-in">
-                            <span className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground ml-1">
-                                AI Engine
-                            </span>
+                        <div className="animate-in fade-in slide-in-from-bottom-1 duration-300">
                             <AIDifficultySelector
                                 value={aiDifficulty}
                                 onValueChange={setAIDifficulty}
@@ -1316,10 +1313,7 @@ export function useSidebarPanels({
                     )}
 
                     {mode === "online" && (
-                        <div className="space-y-3 animate-in fade-in">
-                            <span className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground ml-1">
-                                Multiplayer
-                            </span>
+                        <div className="animate-in fade-in slide-in-from-bottom-1 duration-300">
                             <OnlineRoomPanel
                                 roomId={roomId}
                                 shareUrl={shareUrl}
@@ -1338,7 +1332,7 @@ export function useSidebarPanels({
                         </div>
                     )}
 
-                    <div className="mt-8">
+                    <div className="mt-4">
                         <XPBar collapsed={false} />
                     </div>
                 </div>
