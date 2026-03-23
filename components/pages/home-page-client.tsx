@@ -1147,7 +1147,7 @@ export function useSidebarPanels({
             icon: <LuGamepad2 />,
             content: (
                 <div className="flex flex-col h-full animate-in fade-in slide-in-from-bottom-2 duration-300">
-                    <div className="flex flex-col gap-2">
+                    <div className="flex flex-col gap-3">
                         <PlayerCard
                             name="Player 1"
                             initial="P1"
@@ -1158,8 +1158,6 @@ export function useSidebarPanels({
                             isActive={gameState.turn === "black" && !isGameOver}
                             isLowTime={blackTimer.isLowTime}
                         />
-
-                        <div className="w-full h-px bg-border/40 my-1" />
 
                         <PlayerCard
                             name={
@@ -1181,16 +1179,16 @@ export function useSidebarPanels({
                     </div>
 
                     {winProbability !== null ? (
-                        <div className="mt-6 mb-2">
-                            <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-widest text-muted-foreground mb-2">
+                        <div className="mt-8 mb-2 px-2">
+                            <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-widest text-muted-foreground mb-3">
                                 <span>Engine Read</span>
                                 <span className="font-mono text-foreground">
                                     {winProbability}%
                                 </span>
                             </div>
-                            <div className="h-1.5 rounded-full bg-border/50 overflow-hidden">
+                            <div className="h-2 rounded-full bg-border/40 overflow-hidden relative backdrop-blur-sm">
                                 <div
-                                    className="h-full bg-foreground transition-[width] duration-500"
+                                    className="absolute inset-y-0 left-0 bg-gradient-to-r from-foreground/80 to-foreground shadow-[0_0_10px_rgba(0,0,0,0.1)] transition-[width] duration-1000 ease-out rounded-full"
                                     style={{ width: `${winProbability}%` }}
                                 />
                             </div>
