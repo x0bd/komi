@@ -50,7 +50,7 @@ export function GameLayout({
                 </header>
 
                 {/* Main Workspace */}
-                <div className="relative z-10 flex flex-1 w-full mx-auto pt-20 pb-0 pl-24 lg:pl-32 pr-4 lg:pr-6 h-svh">
+                <div className="relative z-10 flex flex-1 w-full mx-auto px-24 lg:px-32 h-svh">
                     {/* Board Area */}
                     <main className="flex flex-1 items-center justify-center h-full">
                         <div className="w-full flex justify-center max-w-3xl">

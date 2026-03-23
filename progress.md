@@ -1,4 +1,4 @@
-Original prompt: lets continue building
+ aOriginal prompt: lets continue building
 
 - 2026-03-17: Continuing after Phase 5 engine work. Current focus is Phase 6 board wiring.
 - Goal for this pass: expose derived move state from the store, restrict hover/click to legal intersections, and add keyboard navigation to the board.
