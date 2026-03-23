@@ -1226,27 +1226,26 @@ export function useSidebarPanels({
                             onExportSgf={handleExportSgf}
                         />
                     ) : null}
-
-                    <div className="flex items-center justify-between border border-border/50 rounded-2xl p-4 bg-background/50">
-                        <div className="flex flex-col gap-0.5">
-                            <span className="text-[13px] font-semibold text-foreground">
-                                Move Hints
+                    <div className="flex items-center justify-between bg-card/60 backdrop-blur-md p-5 border border-border/60 rounded-[2rem] shadow-sm hover:shadow-md transition-all group">
+                        <div className="flex flex-col gap-1">
+                            <span className="text-[14px] font-bold text-foreground tracking-tight">
+                                Sensei Move Hints
                             </span>
-                            <span className="text-[11px] text-muted-foreground">
-                                Overlay AI suggestions on board
+                            <span className="text-[12px] font-medium text-muted-foreground">
+                                Overlay optimal AI suggestions directly on the board
                             </span>
                         </div>
                         <button
                             onClick={() => setAnalysisOverlayEnabled(!analysisOverlayEnabled)}
                             className={cn(
-                                "w-11 h-6 rounded-full transition-colors relative",
-                                analysisOverlayEnabled ? "bg-foreground" : "bg-border",
+                                "w-12 h-7 rounded-full transition-all relative outline-none focus-visible:ring-2 focus-visible:ring-ring shrink-0",
+                                analysisOverlayEnabled ? "bg-foreground shadow-inner" : "bg-secondary border border-border/80",
                             )}
                         >
                             <span
                                 className={cn(
-                                    "absolute top-1 left-1 w-4 h-4 rounded-full bg-background transition-transform",
-                                    analysisOverlayEnabled ? "translate-x-5" : "translate-x-0",
+                                    "absolute top-1 left-1 w-5 h-5 rounded-full bg-background transition-transform shadow-sm",
+                                    analysisOverlayEnabled ? "translate-x-5" : "translate-x-0"
                                 )}
                             />
                         </button>

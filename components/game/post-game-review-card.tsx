@@ -62,93 +62,99 @@ export function PostGameReviewCard({
     onExportSgf: () => void;
 }) {
     return (
-        <Card className="rounded-2xl border border-border bg-card shadow-sm">
-            <CardHeader className="px-4 pb-3 pt-4">
-                <div className="flex items-start justify-between gap-3">
-                    <div>
-                        <CardTitle className="text-base font-semibold">
-                            Post-game review
-                        </CardTitle>
-                        <p className="mt-1 text-sm text-muted-foreground">
-                            {formatOutcome({ winner, reason, scoreResult })}
-                        </p>
-                    </div>
-                    <Badge
-                        variant="secondary"
-                        className="inline-flex items-center gap-1 rounded-full"
-                    >
-                        <LuFlag className="size-3.5" />
-                        Final
-                    </Badge>
+        <div className="flex flex-col gap-6 w-full rounded-[2rem] border border-border/60 bg-card/40 backdrop-blur-xl p-5 lg:p-6 shadow-sm">
+            <div className="flex items-start justify-between gap-3 px-1">
+                <div>
+                    <h3 className="text-xl font-bold tracking-tight text-foreground">
+                        Post-game review
+                    </h3>
+                    <p className="font-medium text-[13px] text-muted-foreground mt-1">
+                        {formatOutcome({ winner, reason, scoreResult })}
+                    </p>
                 </div>
-            </CardHeader>
+                <Badge
+                    variant="secondary"
+                    className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 font-bold text-[11px] uppercase tracking-widest bg-secondary/80 text-foreground border-border/50 shadow-sm"
+                >
+                    <LuFlag className="size-3.5" />
+                    Final
+                </Badge>
+            </div>
 
-            <CardContent className="space-y-3 px-4 pb-4 pt-0">
-                {scoreResult ? (
-                    <div className="overflow-hidden rounded-xl border border-border/70">
-                        <div className="grid grid-cols-[1.2fr_repeat(4,minmax(0,1fr))] bg-secondary/35 px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-                            <span>Player</span>
-                            <span className="text-right">Terr</span>
-                            <span className="text-right">Cap</span>
-                            <span className="text-right">Komi</span>
-                            <span className="text-right">Total</span>
+            {scoreResult ? (
+                <div className="grid grid-cols-2 gap-3">
+                    {/* Black Stat Block */}
+                    <div className="flex flex-col bg-background/50 border border-border/60 rounded-3xl p-5 shadow-sm w-full transition-all hover:bg-background/80 group">
+                        <div className="flex items-center justify-between mb-6">
+                            <span className="text-[12px] font-bold uppercase tracking-widest text-[#111] dark:text-foreground">Black</span>
+                            <div className="size-3.5 rounded-full bg-[#111] shadow-inner" />
                         </div>
-
-                        <div className="grid grid-cols-[1.2fr_repeat(4,minmax(0,1fr))] px-3 py-2.5 text-xs text-foreground">
-                            <span className="font-semibold">Black</span>
-                            <span className="text-right font-mono">
-                                {scoreResult.black.territory}
-                            </span>
-                            <span className="text-right font-mono">
-                                {scoreResult.black.captures}
-                            </span>
-                            <span className="text-right font-mono">-</span>
-                            <span className="text-right font-mono font-semibold">
+                        <div className="mt-auto">
+                            <span className="text-4xl font-mono font-bold tracking-tighter text-foreground group-hover:scale-105 transition-transform origin-left inline-block">
                                 {scoreResult.black.total.toFixed(1)}
                             </span>
+                            <div className="flex flex-col gap-2 mt-4 pt-4 border-t border-border/50">
+                                <div className="flex items-center justify-between text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+                                    <span>Territory</span>
+                                    <span className="font-mono text-foreground text-[13px]">{scoreResult.black.territory}</span>
+                                </div>
+                                <div className="flex items-center justify-between text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+                                    <span>Captures</span>
+                                    <span className="font-mono text-foreground text-[13px]">{scoreResult.black.captures}</span>
+                                </div>
+                            </div>
                         </div>
+                    </div>
 
-                        <div className="grid grid-cols-[1.2fr_repeat(4,minmax(0,1fr))] border-t border-border/70 px-3 py-2.5 text-xs text-foreground">
-                            <span className="font-semibold">White</span>
-                            <span className="text-right font-mono">
-                                {scoreResult.white.territory}
-                            </span>
-                            <span className="text-right font-mono">
-                                {scoreResult.white.captures}
-                            </span>
-                            <span className="text-right font-mono">
-                                {scoreResult.white.komi?.toFixed(1) ?? "0.0"}
-                            </span>
-                            <span className="text-right font-mono font-semibold">
+                    {/* White Stat Block */}
+                    <div className="flex flex-col bg-background/50 border border-border/60 rounded-3xl p-5 shadow-sm w-full transition-all hover:bg-background/80 group">
+                        <div className="flex items-center justify-between mb-6">
+                            <span className="text-[12px] font-bold uppercase tracking-widest text-muted-foreground">White</span>
+                            <div className="size-3.5 rounded-full bg-stone-200 border border-border/80 shadow-inner" />
+                        </div>
+                        <div className="mt-auto">
+                            <span className="text-4xl font-mono font-bold tracking-tighter text-foreground group-hover:scale-105 transition-transform origin-left inline-block">
                                 {scoreResult.white.total.toFixed(1)}
                             </span>
+                            <div className="flex flex-col gap-2 mt-4 pt-4 border-t border-border/50">
+                                <div className="flex items-center justify-between text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+                                    <span>Territory</span>
+                                    <span className="font-mono text-foreground text-[13px]">{scoreResult.white.territory}</span>
+                                </div>
+                                <div className="flex items-center justify-between text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+                                    <span>Komi</span>
+                                    <span className="font-mono text-foreground text-[13px]">+{scoreResult.white.komi?.toFixed(1) ?? "0.0"}</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                ) : (
-                    <div className="rounded-xl border border-border/70 bg-secondary/20 px-3 py-2 text-xs text-muted-foreground">
-                        Final score details are unavailable for this game end type.
-                    </div>
-                )}
+                </div>
+            ) : (
+                <div className="rounded-3xl border border-border/50 bg-secondary/30 p-6 text-center text-[13px] font-medium text-muted-foreground">
+                    Final score details are unavailable for this game end type.
+                </div>
+            )}
 
+            <div className="flex flex-col gap-8 mt-2 px-1">
                 {keyMoments.length > 0 ? (
-                    <div className="rounded-xl border border-border/70 bg-secondary/20 p-3">
-                        <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-                            Key moments
-                        </p>
-                        <div className="mt-2 space-y-2">
+                    <div className="flex flex-col gap-4">
+                        <h4 className="text-[11px] font-bold uppercase tracking-[0.15em] text-muted-foreground ml-2">
+                            Key Moments
+                        </h4>
+                        <div className="relative border-l-2 border-border/40 ml-4 space-y-6 pb-2">
                             {keyMoments.map((moment) => (
-                                <div
-                                    key={`${moment.moveNumber}-${moment.label}`}
-                                    className="flex items-start gap-2 rounded-lg bg-background/70 px-2.5 py-2"
-                                >
-                                    <span className="min-w-[2.25rem] rounded-full bg-secondary px-2 py-0.5 text-center font-mono text-[10px] font-semibold text-muted-foreground">
-                                        {moment.moveNumber}
-                                    </span>
-                                    <div className="min-w-0">
-                                        <p className="truncate text-xs font-semibold text-foreground">
-                                            {moment.label}
-                                        </p>
-                                        <p className="truncate text-[11px] text-muted-foreground">
+                                <div key={`${moment.moveNumber}-${moment.label}`} className="relative pl-6">
+                                    <div className="absolute -left-[5px] top-1.5 size-2.5 rounded-full bg-foreground shadow-[0_0_10px_currentColor]" />
+                                    <div className="flex flex-col">
+                                        <div className="flex items-center gap-2 mb-1.5">
+                                            <span className="px-2 py-0.5 rounded-md bg-secondary text-muted-foreground font-mono text-[10px] font-bold">
+                                                M{moment.moveNumber}
+                                            </span>
+                                            <span className="font-semibold text-foreground text-[14px]">
+                                                {moment.label}
+                                            </span>
+                                        </div>
+                                        <p className="text-[13px] text-muted-foreground/90 font-medium leading-relaxed">
                                             {moment.detail}
                                         </p>
                                     </div>
@@ -159,38 +165,39 @@ export function PostGameReviewCard({
                 ) : null}
 
                 {tutorNotes.length > 0 ? (
-                    <div className="rounded-xl border border-border/70 bg-secondary/20 p-3">
-                        <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-                            Tutor commentary
-                        </p>
-                        <div className="mt-2 space-y-2">
+                    <div className="flex flex-col gap-4">
+                        <h4 className="text-[11px] font-bold uppercase tracking-[0.15em] text-tutor-accent ml-2">
+                            Sensei Notes
+                        </h4>
+                        <div className="relative border-l-2 border-tutor-accent/30 ml-4 space-y-6 pb-2">
                             {tutorNotes.map((note) => (
-                                <div
-                                    key={`tutor-${note.moveNumber}`}
-                                    className="rounded-lg border border-border/70 bg-background/80 px-3 py-2"
-                                >
-                                    <p className="text-[10px] font-mono font-semibold text-muted-foreground">
-                                        Move {note.moveNumber}
-                                    </p>
-                                    <p className="mt-1 text-xs text-foreground">
-                                        {note.note}
-                                    </p>
+                                <div key={`tutor-${note.moveNumber}`} className="relative pl-6">
+                                    <div className="absolute -left-[5px] top-1.5 size-2.5 rounded-full bg-tutor-accent shadow-[0_0_10px_var(--color-tutor-accent)]" />
+                                    <div className="flex flex-col">
+                                        <div className="flex items-center gap-2 mb-1.5">
+                                            <span className="px-2 py-0.5 rounded-md bg-tutor-accent/10 text-tutor-accent font-mono text-[10px] font-bold">
+                                                M{note.moveNumber}
+                                            </span>
+                                        </div>
+                                        <p className="text-[13px] text-foreground font-medium leading-relaxed">
+                                            {note.note}
+                                        </p>
+                                    </div>
                                 </div>
                             ))}
                         </div>
                     </div>
                 ) : null}
+            </div>
 
-                <Button
-                    type="button"
-                    onClick={onExportSgf}
-                    variant="outline"
-                    className="w-full rounded-full"
-                >
-                    <LuDownload className="size-4" />
-                    Export SGF
-                </Button>
-            </CardContent>
-        </Card>
+            <Button
+                type="button"
+                onClick={onExportSgf}
+                className="w-full h-12 rounded-full font-bold text-[14px] uppercase tracking-wide shadow-md transition-shadow hover:shadow-lg mt-2"
+            >
+                <LuDownload className="size-4 mr-2" />
+                Export SGF
+            </Button>
+        </div>
     );
 }
