@@ -26,6 +26,7 @@ export function GameLayout({
 }) {
     const [activePanelId, setActivePanelId] = useState<string | null>(null);
     const activePanel = panels.find((p) => p.id === activePanelId);
+    const isExpanded = Boolean(activePanel);
 
     return (
         <TooltipProvider>
@@ -60,82 +61,107 @@ export function GameLayout({
                 </div>
 
                 {/* Left Dock */}
-                <nav className="fixed left-3 lg:left-4 top-3 lg:top-4 bottom-3 lg:bottom-4 z-40 w-[68px] lg:w-[76px] rounded-[2rem] border border-border/80 bg-foreground/[0.03] dark:bg-card/95 backdrop-blur-2xl shadow-xl flex flex-col items-center py-6 gap-2 pointer-events-auto">
-                    <div className="flex items-center justify-center mb-6 mt-1.5">
-                        <span className="font-sans text-[15px] font-bold tracking-tight text-foreground select-none">
-                            Komi
-                        </span>
-                    </div>
-                    
-                    <div className="flex-1 flex flex-col items-center gap-3 w-full px-3">
-                        {panels.map((panel) => {
-                            const isActive = activePanelId === panel.id;
-                            return (
-                                <Tooltip key={panel.id}>
+                <div
+                    className={cn(
+                        "fixed left-3 top-3 bottom-3 z-40 pointer-events-auto lg:left-4 lg:top-4 lg:bottom-4",
+                        "transition-[width] duration-300 ease-out",
+                        isExpanded
+                            ? "w-[min(560px,calc(100vw-1.5rem))] lg:w-[min(620px,calc(100vw-2rem))]"
+                            : "w-[68px] lg:w-[76px]",
+                    )}
+                >
+                    <div className="relative flex h-full overflow-hidden rounded-[2.15rem] border border-border/80 bg-background/82 shadow-[0_22px_80px_-34px_rgba(34,24,10,0.4)] backdrop-blur-2xl dark:bg-card/94">
+                        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-foreground/12 to-transparent" />
+                        <div className="pointer-events-none absolute inset-y-8 left-0 w-px bg-gradient-to-b from-transparent via-foreground/8 to-transparent" />
+
+                        <nav className="relative flex h-full w-[68px] shrink-0 flex-col items-center gap-2 border-r border-border/60 py-6 lg:w-[76px]">
+                            <div className="flex items-center justify-center mb-6 mt-1.5">
+                                <span className="font-sans text-[15px] font-bold tracking-tight text-foreground select-none">
+                                    Komi
+                                </span>
+                            </div>
+
+                            <div className="flex flex-1 flex-col items-center gap-3 w-full px-3">
+                                {panels.map((panel) => {
+                                    const isActive = activePanelId === panel.id;
+                                    return (
+                                        <Tooltip key={panel.id}>
+                                            <TooltipTrigger
+                                                render={
+                                                    <button
+                                                        onClick={() => setActivePanelId(isActive ? null : panel.id)}
+                                                        className={cn(
+                                                            "relative flex min-h-12 w-full items-center justify-center rounded-2xl transition-all duration-200 group",
+                                                            isActive
+                                                                ? "bg-foreground/10 dark:bg-accent/20 text-foreground shadow-sm"
+                                                                : "text-muted-foreground hover:bg-foreground/5 dark:hover:bg-secondary/80 hover:text-foreground",
+                                                        )}
+                                                    />
+                                                }
+                                            >
+                                                <span className="[&>svg]:size-5">{panel.icon}</span>
+                                            </TooltipTrigger>
+                                            <TooltipContent side="right" sideOffset={16} className="font-semibold text-xs tracking-wide">
+                                                {panel.label}
+                                            </TooltipContent>
+                                        </Tooltip>
+                                    );
+                                })}
+                            </div>
+
+                            <div className="mt-auto flex flex-col items-center gap-3 w-full px-3">
+                                <Tooltip>
                                     <TooltipTrigger
                                         render={
-                                            <button
-                                                onClick={() => setActivePanelId(isActive ? null : panel.id)}
-                                                className={cn(
-                                                    "relative flex min-h-12 w-full items-center justify-center rounded-2xl transition-all duration-200 group",
-                                                    isActive 
-                                                        ? "bg-foreground/10 dark:bg-accent/20 text-foreground shadow-sm" 
-                                                        : "text-muted-foreground hover:bg-foreground/5 dark:hover:bg-secondary/80 hover:text-foreground"
-                                                )}
+                                            <Link
+                                                href="/profile"
+                                                className="relative flex min-h-12 w-full items-center justify-center rounded-2xl transition-all duration-200 group text-muted-foreground hover:bg-foreground/5 dark:hover:bg-secondary/80 hover:text-foreground"
                                             />
                                         }
                                     >
-                                        <span className="[&>svg]:size-5">{panel.icon}</span>
+                                        <LuUser className="size-5" />
                                     </TooltipTrigger>
                                     <TooltipContent side="right" sideOffset={16} className="font-semibold text-xs tracking-wide">
-                                        {panel.label}
+                                        Profile
                                     </TooltipContent>
                                 </Tooltip>
-                            );
-                        })}
-                    </div>
-                    
-                    <div className="mt-auto flex flex-col items-center gap-3 w-full px-3">
-                        <Tooltip>
-                            <TooltipTrigger
-                                render={
-                                    <Link
-                                        href="/profile"
-                                        className="relative flex min-h-12 w-full items-center justify-center rounded-2xl transition-all duration-200 group text-muted-foreground hover:bg-foreground/5 dark:hover:bg-secondary/80 hover:text-foreground"
-                                    />
-                                }
-                            >
-                                <LuUser className="size-5" />
-                            </TooltipTrigger>
-                            <TooltipContent side="right" sideOffset={16} className="font-semibold text-xs tracking-wide">
-                                Profile
-                            </TooltipContent>
-                        </Tooltip>
-                    </div>
-                </nav>
+                            </div>
+                        </nav>
 
-                {/* Modals Attached to the Right of the Left Dock */}
-                {activePanel && (
-                    <div
-                        className="fixed left-[84px] lg:left-[96px] top-3 lg:top-4 bottom-3 lg:bottom-4 z-50 w-[420px] max-w-[calc(100vw-[80px]-1rem)] rounded-[1.5rem] border border-border/60 bg-background/95 backdrop-blur-3xl shadow-2xl animate-in fade-in slide-in-from-left-4 duration-300 flex flex-col pointer-events-auto overflow-hidden"
-                    >
-                        <div className="flex items-center justify-between px-6 py-4 border-b border-border/50 shrink-0">
-                            <h2 className="font-semibold text-lg flex items-center gap-2">
-                                <span className="[&>svg]:size-5 text-muted-foreground">{activePanel.icon}</span>
-                                {activePanel.label}
-                            </h2>
-                            <button 
-                                onClick={() => setActivePanelId(null)}
-                                className="p-2 rounded-full hover:bg-secondary text-muted-foreground transition-colors"
-                            >
-                                <LuX className="size-5" />
-                            </button>
-                        </div>
-                        <div className="flex-1 overflow-y-auto p-4 lg:p-6 scrollbar-none">
-                            {activePanel.content}
+                        <div
+                            className={cn(
+                                "relative min-w-0 flex-1 transition-[opacity,transform] duration-250 ease-out",
+                                isExpanded ? "opacity-100 translate-x-0" : "pointer-events-none opacity-0 translate-x-4",
+                            )}
+                            aria-hidden={!isExpanded}
+                        >
+                            {activePanel ? (
+                                <div className="flex h-full flex-col bg-background/58 dark:bg-card/60">
+                                    <div className="flex items-center justify-between gap-4 border-b border-border/55 px-6 py-5 lg:px-7">
+                                        <h2 className="flex items-center gap-3 font-semibold text-[1.85rem] tracking-tight text-foreground">
+                                            <span className="flex size-10 items-center justify-center rounded-full border border-border/70 bg-background/72 text-muted-foreground [&>svg]:size-5">
+                                                {activePanel.icon}
+                                            </span>
+                                            <span>{activePanel.label}</span>
+                                        </h2>
+                                        <button
+                                            onClick={() => setActivePanelId(null)}
+                                            className="flex size-11 items-center justify-center rounded-full border border-transparent text-muted-foreground transition-colors hover:border-border/70 hover:bg-secondary/65 hover:text-foreground"
+                                        >
+                                            <LuX className="size-6" />
+                                        </button>
+                                    </div>
+
+                                    <div className="min-h-0 flex-1 overflow-y-auto px-6 py-6 lg:px-8 lg:py-7 scrollbar-none">
+                                        <div className="mx-auto flex min-h-full w-full max-w-[30rem] flex-col">
+                                            {activePanel.content}
+                                        </div>
+                                    </div>
+                                </div>
+                            ) : null}
                         </div>
                     </div>
-                )}
+                </div>
             </div>
         </TooltipProvider>
     );
