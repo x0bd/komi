@@ -367,3 +367,169 @@
 .tabular-nums {
     font-variant-numeric: tabular-nums;
 }
+
+/* ══════════════════════════════════════════════
+   Account Surface
+   Scoped refinements for Neon account UI
+   ══════════════════════════════════════════════ */
+
+.account-page {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+}
+
+.account-page__glow {
+    pointer-events: none;
+    position: absolute;
+    border-radius: 9999px;
+    filter: blur(72px);
+    opacity: 0.5;
+}
+
+.account-page__glow--primary {
+    top: 3rem;
+    right: -4rem;
+    height: 18rem;
+    width: 18rem;
+    background:
+        radial-gradient(circle, oklch(0.78 0.08 55 / 0.22) 0%, transparent 72%);
+}
+
+.account-page__glow--secondary {
+    left: -7rem;
+    top: 18rem;
+    height: 24rem;
+    width: 24rem;
+    background:
+        radial-gradient(circle, oklch(0.92 0.03 80 / 0.65) 0%, transparent 72%);
+}
+
+.dark .account-page__glow--primary {
+    background:
+        radial-gradient(circle, oklch(0.68 0.1 45 / 0.12) 0%, transparent 72%);
+}
+
+.dark .account-page__glow--secondary {
+    background:
+        radial-gradient(circle, oklch(0.3 0.01 80 / 0.2) 0%, transparent 72%);
+}
+
+.account-hero,
+.account-surface,
+.account-aesthetic {
+    position: relative;
+}
+
+.account-aesthetic > * {
+    position: relative;
+    z-index: 1;
+}
+
+.account-aesthetic :is(h1, h2, h3, h4) {
+    letter-spacing: -0.03em;
+}
+
+.account-aesthetic [data-slot="card"],
+.account-aesthetic .card,
+.account-aesthetic section {
+    border-radius: 1.75rem;
+}
+
+.account-aesthetic :is(button, a[role="button"], [role="tab"], input, select, textarea) {
+    transition:
+        border-color 180ms ease,
+        background-color 180ms ease,
+        box-shadow 180ms ease,
+        color 180ms ease,
+        transform 180ms ease;
+}
+
+.account-aesthetic :is(input, select, textarea) {
+    min-height: 3rem;
+    border-radius: 9999px;
+    border: 1px solid color-mix(in srgb, var(--border) 88%, transparent);
+    background: color-mix(in srgb, var(--background) 86%, transparent);
+    box-shadow: inset 0 1px 0 color-mix(in srgb, var(--foreground) 3%, transparent);
+}
+
+.account-aesthetic textarea {
+    min-height: 8rem;
+    border-radius: 1.5rem;
+}
+
+.account-aesthetic :is(input, select, textarea):focus-visible {
+    box-shadow:
+        0 0 0 4px color-mix(in srgb, var(--secondary) 85%, transparent),
+        inset 0 1px 0 color-mix(in srgb, var(--foreground) 5%, transparent);
+}
+
+.account-aesthetic :is(button, a[role="button"], [role="tab"]) {
+    border-radius: 9999px;
+}
+
+.account-aesthetic button:not([data-variant="ghost"]),
+.account-aesthetic a[role="button"] {
+    box-shadow: 0 10px 30px -20px color-mix(in srgb, var(--foreground) 28%, transparent);
+}
+
+.account-aesthetic [role="tablist"] {
+    border-radius: 9999px;
+    border: 1px solid color-mix(in srgb, var(--border) 80%, transparent);
+    background: color-mix(in srgb, var(--secondary) 68%, transparent);
+    padding: 0.35rem;
+}
+
+.account-aesthetic [role="tab"] {
+    min-height: 2.9rem;
+    padding-inline: 1rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+}
+
+.account-aesthetic [role="tab"][data-state="active"] {
+    background: var(--card);
+    color: var(--foreground);
+    box-shadow:
+        0 1px 0 color-mix(in srgb, var(--foreground) 4%, transparent),
+        0 12px 24px -20px color-mix(in srgb, var(--foreground) 20%, transparent);
+}
+
+.account-aesthetic [data-state="active"][role="tab"] {
+    background: var(--card);
+    color: var(--foreground);
+}
+
+.account-aesthetic [role="tabpanel"] {
+    border-radius: 1.9rem;
+}
+
+.account-aesthetic hr,
+.account-aesthetic [role="separator"] {
+    border-color: color-mix(in srgb, var(--border) 88%, transparent);
+}
+
+.account-aesthetic :is(table, [role="table"]) {
+    border-radius: 1.5rem;
+    overflow: hidden;
+}
+
+.account-aesthetic [class*="shadow"] {
+    box-shadow:
+        0 20px 50px -36px color-mix(in srgb, var(--foreground) 30%, transparent);
+}
+
+.dark .account-aesthetic :is(input, select, textarea) {
+    background: color-mix(in srgb, var(--secondary) 48%, transparent);
+    border-color: color-mix(in srgb, var(--border) 92%, transparent);
+}
+
+.dark .account-aesthetic [role="tablist"] {
+    background: color-mix(in srgb, var(--secondary) 55%, transparent);
+}
+
+.dark .account-aesthetic [role="tab"][data-state="active"],
+.dark .account-aesthetic [data-state="active"][role="tab"] {
+    background: color-mix(in srgb, var(--card) 94%, transparent);
+}
