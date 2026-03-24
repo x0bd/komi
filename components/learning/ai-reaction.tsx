@@ -4,7 +4,6 @@ import { useEffect, useState, useRef } from "react";
 import { useLearningStore } from "@/lib/stores/learning-store";
 import { cn } from "@/lib/utils";
 import { LuBot, LuSparkles, LuFlame, LuTriangleAlert } from "react-icons/lu";
-import { Card, CardContent } from "@/components/ui/card";
 import { gsap } from "gsap";
 
 const BAR_COUNT = 5;
@@ -122,105 +121,120 @@ export function AIReaction({ className }: { className?: string }) {
     let moodColorClass = "from-primary/40 via-primary/20 to-primary/10";
     let iconColorClass = "text-primary";
     let Icon = LuBot;
-    let title = "Sensei";
+    let title = "Sensei note";
+    let accentClass = "bg-primary/10 text-primary";
+    let borderClass = "border-border/70";
     let glowColor = "var(--primary)";
-    let progressColor = "bg-primary/40";
+    let progressColor = "bg-primary/30";
 
     if (displayMood === "celebrate") {
         moodColorClass = "from-status-active via-accent to-status-active/20";
         iconColorClass = "text-status-active";
         Icon = LuSparkles;
-        title = "Sensei is impressed";
+        title = "Strong move";
+        accentClass = "bg-status-active/10 text-status-active";
+        borderClass = "border-status-active/20";
         glowColor = "var(--status-active)";
-        progressColor = "bg-status-active";
+        progressColor = "bg-status-active/40";
     } else if (displayMood === "warning") {
         moodColorClass =
             "from-destructive via-destructive/50 to-destructive/20";
         iconColorClass = "text-destructive";
         Icon = LuTriangleAlert;
-        title = "Sensei is concerned";
+        title = "Sensei note";
+        accentClass = "bg-destructive/10 text-destructive";
+        borderClass = "border-destructive/20";
         glowColor = "var(--destructive)";
-        progressColor = "bg-destructive";
+        progressColor = "bg-destructive/35";
     } else if (displayMood === "focus") {
         moodColorClass = "from-accent via-accent/50 to-xp-streak/50";
         iconColorClass = "text-accent-foreground";
         Icon = LuFlame;
-        title = "Sensei is focused";
+        title = "Focus cue";
+        accentClass = "bg-amber-500/10 text-amber-600 dark:text-amber-400";
+        borderClass = "border-amber-500/20";
         glowColor = "var(--accent)";
-        progressColor = "bg-accent";
+        progressColor = "bg-amber-500/35";
     }
 
     return (
         <div
             className={cn(
-                "pointer-events-none fixed inset-x-4 top-4 z-50 flex justify-center lg:top-6",
+                "pointer-events-none fixed left-20 right-4 top-4 z-50 flex justify-start lg:left-28 lg:right-auto lg:top-6",
                 className,
             )}
         >
             <div
                 className={cn(
-                    "pointer-events-auto w-full max-w-[24rem] transition-all duration-700 ease-out",
+                    "pointer-events-auto w-full max-w-[26rem] transition-all duration-500 ease-out lg:max-w-[22rem]",
                     visible
-                        ? "translate-y-0 scale-100 opacity-100"
-                        : "-translate-y-10 scale-95 opacity-0",
+                        ? "translate-y-0 opacity-100"
+                        : "-translate-y-3 opacity-0",
                 )}
             >
-                <Card className="relative overflow-hidden rounded-2xl border border-border bg-card shadow-xl">
-                    {/* Background mood glow */}
+                <div
+                    className={cn(
+                        "relative overflow-hidden rounded-[1.7rem] border bg-background/88 shadow-[0_18px_55px_-32px_rgba(20,16,10,0.35)] backdrop-blur-xl",
+                        borderClass,
+                    )}
+                >
                     <div
                         ref={glowRef}
-                        className="absolute inset-0 pointer-events-none blur-2xl transition-colors duration-500"
+                        className="absolute inset-0 pointer-events-none opacity-[0.06] blur-3xl transition-colors duration-500"
                         style={{ backgroundColor: glowColor }}
                     />
+                    <div className="pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-foreground/10 to-transparent" />
 
-                    <CardContent className="relative p-0">
-                        <div className="flex items-center gap-4 p-4">
-                            {/* Graphic Bars Area - similar to live streak */}
-                            <div className="relative flex size-[52px] shrink-0 items-center justify-center overflow-hidden rounded-xl border border-border/60 bg-secondary/80 shadow-sm">
-                                <div className="absolute inset-x-1.5 bottom-1.5 top-2 flex items-end justify-between gap-0.5 opacity-60">
-                                    {Array.from({ length: BAR_COUNT }).map(
-                                        (_, i) => (
-                                            <div
-                                                key={i}
-                                                ref={(el) => {
-                                                    barRefs.current[i] = el;
-                                                }}
-                                                className={cn(
-                                                    "w-[4.5px] rounded-full bg-gradient-to-t shadow-[0_4px_12px_-4px_rgba(0,0,0,0.5)]",
-                                                    moodColorClass,
-                                                )}
-                                            />
-                                        ),
-                                    )}
+                    <div className="relative p-3.5 lg:p-4">
+                        <div className="flex items-start gap-3.5">
+                            <div className="relative mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-full border border-border/60 bg-secondary/60">
+                                <div className="absolute inset-[7px] flex items-end justify-between gap-[2px] opacity-55">
+                                    {Array.from({ length: BAR_COUNT }).map((_, i) => (
+                                        <div
+                                            key={i}
+                                            ref={(el) => {
+                                                barRefs.current[i] = el;
+                                            }}
+                                            className={cn(
+                                                "w-[3px] rounded-full bg-gradient-to-t",
+                                                moodColorClass,
+                                            )}
+                                        />
+                                    ))}
                                 </div>
                                 <Icon
                                     className={cn(
-                                        "relative z-10 size-5 drop-shadow-sm",
+                                        "relative z-10 size-4",
                                         iconColorClass,
                                     )}
                                 />
                             </div>
 
-                            {/* Text Content */}
                             <div className="min-w-0 flex-1">
-                                <p className="font-display text-[10.5px] font-bold uppercase tracking-[0.18em] text-muted-foreground">
-                                    {title}
-                                </p>
-                                <p className="mt-0.5 font-body text-[13.5px] font-medium leading-snug text-foreground text-pretty">
+                                <div className="flex items-center gap-2">
+                                    <span
+                                        className={cn(
+                                            "inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.18em]",
+                                            accentClass,
+                                        )}
+                                    >
+                                        {title}
+                                    </span>
+                                </div>
+                                <p className="mt-2 text-[14px] font-semibold leading-[1.45] text-foreground text-balance">
                                     {displayMessage.text}
                                 </p>
                             </div>
                         </div>
 
-                        {/* Timeout progress line */}
-                        <div className="h-[3px] w-full bg-secondary/50">
+                        <div className="mt-3 h-[2px] w-full overflow-hidden rounded-full bg-secondary/55">
                             <div
                                 ref={progressRef}
-                                className={cn("h-full", progressColor)}
+                                className={cn("h-full rounded-full", progressColor)}
                             />
                         </div>
-                    </CardContent>
-                </Card>
+                    </div>
+                </div>
             </div>
         </div>
     );
