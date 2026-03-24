@@ -6,8 +6,6 @@ import { cn } from "@/lib/utils";
 import { LuBot, LuSparkles, LuFlame, LuTriangleAlert } from "react-icons/lu";
 import { gsap } from "gsap";
 
-const BAR_COUNT = 5;
-
 export function AIReaction({ className }: { className?: string }) {
     const chatMessages = useLearningStore((state) => state.chatMessages);
     const tutorMood = useLearningStore((state) => state.tutorMood);
@@ -21,7 +19,7 @@ export function AIReaction({ className }: { className?: string }) {
     const [displayMood, setDisplayMood] = useState(tutorMood);
 
     const glowRef = useRef<HTMLDivElement | null>(null);
-    const barRefs = useRef<Array<HTMLDivElement | null>>([]);
+    const iconRef = useRef<HTMLDivElement | null>(null);
     const progressRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
@@ -63,24 +61,23 @@ export function AIReaction({ className }: { className?: string }) {
     useEffect(() => {
         if (!visible) return;
 
-        const activeBars = barRefs.current.filter(Boolean);
         let timeline: gsap.core.Timeline | null = null;
 
-        if (activeBars.length) {
+        if (iconRef.current) {
             timeline = gsap.timeline({
                 defaults: { ease: "power2.inOut" },
             });
 
-            // Bounce the bars
             timeline.fromTo(
-                activeBars,
-                { height: "20%" },
+                iconRef.current,
+                { y: 0, rotate: 0, scale: 1 },
                 {
-                    height: () => `${40 + Math.random() * 60}%`,
-                    duration: 0.4,
+                    y: -1.5,
+                    rotate: 3,
+                    scale: 1.04,
+                    duration: 1.2,
                     repeat: -1,
                     yoyo: true,
-                    stagger: { amount: 0.3, from: "center" },
                 },
                 0,
             );
@@ -88,10 +85,11 @@ export function AIReaction({ className }: { className?: string }) {
             if (glowRef.current) {
                 timeline.fromTo(
                     glowRef.current,
-                    { opacity: 0.1 },
+                    { opacity: 0.05, scale: 0.92 },
                     {
-                        opacity: 0.25,
-                        duration: 1,
+                        opacity: 0.14,
+                        scale: 1.04,
+                        duration: 1.4,
                         repeat: -1,
                         yoyo: true,
                     },
@@ -124,35 +122,35 @@ export function AIReaction({ className }: { className?: string }) {
     let title = "Sensei note";
     let accentClass = "bg-primary/10 text-primary";
     let borderClass = "border-border/70";
+    let iconSurfaceClass = "bg-primary/10 text-primary";
     let glowColor = "var(--primary)";
     let progressColor = "bg-primary/30";
 
     if (displayMood === "celebrate") {
-        moodColorClass = "from-status-active via-accent to-status-active/20";
         iconColorClass = "text-status-active";
         Icon = LuSparkles;
         title = "Strong move";
         accentClass = "bg-status-active/10 text-status-active";
         borderClass = "border-status-active/20";
+        iconSurfaceClass = "bg-status-active/12 text-status-active";
         glowColor = "var(--status-active)";
         progressColor = "bg-status-active/40";
     } else if (displayMood === "warning") {
-        moodColorClass =
-            "from-destructive via-destructive/50 to-destructive/20";
         iconColorClass = "text-destructive";
         Icon = LuTriangleAlert;
         title = "Sensei note";
         accentClass = "bg-destructive/10 text-destructive";
         borderClass = "border-destructive/20";
+        iconSurfaceClass = "bg-destructive/10 text-destructive";
         glowColor = "var(--destructive)";
         progressColor = "bg-destructive/35";
     } else if (displayMood === "focus") {
-        moodColorClass = "from-accent via-accent/50 to-xp-streak/50";
-        iconColorClass = "text-accent-foreground";
+        iconColorClass = "text-amber-600 dark:text-amber-400";
         Icon = LuFlame;
         title = "Focus cue";
         accentClass = "bg-amber-500/10 text-amber-600 dark:text-amber-400";
         borderClass = "border-amber-500/20";
+        iconSurfaceClass = "bg-amber-500/10 text-amber-600 dark:text-amber-400";
         glowColor = "var(--accent)";
         progressColor = "bg-amber-500/35";
     }
@@ -160,58 +158,51 @@ export function AIReaction({ className }: { className?: string }) {
     return (
         <div
             className={cn(
-                "pointer-events-none fixed left-20 right-4 top-4 z-50 flex justify-start lg:left-28 lg:right-auto lg:top-6",
+                "pointer-events-none fixed bottom-5 right-5 z-50 flex justify-end lg:bottom-6 lg:right-6",
                 className,
             )}
         >
             <div
                 className={cn(
-                    "pointer-events-auto w-full max-w-[26rem] transition-all duration-500 ease-out lg:max-w-[22rem]",
+                    "pointer-events-auto w-full max-w-[22rem] transition-all duration-500 ease-out",
                     visible
                         ? "translate-y-0 opacity-100"
-                        : "-translate-y-3 opacity-0",
+                        : "translate-y-4 opacity-0",
                 )}
             >
                 <div
                     className={cn(
-                        "relative overflow-hidden rounded-[1.7rem] border bg-background/88 shadow-[0_18px_55px_-32px_rgba(20,16,10,0.35)] backdrop-blur-xl",
+                        "relative overflow-hidden rounded-[1.6rem] border bg-background/90 shadow-[0_20px_60px_-34px_rgba(20,16,10,0.38)] backdrop-blur-xl",
                         borderClass,
                     )}
                 >
                     <div
                         ref={glowRef}
-                        className="absolute inset-0 pointer-events-none opacity-[0.06] blur-3xl transition-colors duration-500"
+                        className="absolute inset-0 pointer-events-none opacity-[0.05] blur-3xl transition-colors duration-500"
                         style={{ backgroundColor: glowColor }}
                     />
                     <div className="pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-foreground/10 to-transparent" />
 
-                    <div className="relative p-3.5 lg:p-4">
+                    <div className="relative p-3.5">
                         <div className="flex items-start gap-3.5">
-                            <div className="relative mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-full border border-border/60 bg-secondary/60">
-                                <div className="absolute inset-[7px] flex items-end justify-between gap-[2px] opacity-55">
-                                    {Array.from({ length: BAR_COUNT }).map((_, i) => (
-                                        <div
-                                            key={i}
-                                            ref={(el) => {
-                                                barRefs.current[i] = el;
-                                            }}
-                                            className={cn(
-                                                "w-[3px] rounded-full bg-gradient-to-t",
-                                                moodColorClass,
-                                            )}
-                                        />
-                                    ))}
-                                </div>
+                            <div
+                                ref={iconRef}
+                                className={cn(
+                                    "relative mt-0.5 flex size-11 shrink-0 items-center justify-center rounded-2xl border border-border/55 shadow-sm",
+                                    iconSurfaceClass,
+                                )}
+                            >
+                                <div className="absolute inset-[6px] rounded-[0.9rem] bg-background/55" />
                                 <Icon
                                     className={cn(
-                                        "relative z-10 size-4",
+                                        "relative z-10 size-4.5",
                                         iconColorClass,
                                     )}
                                 />
                             </div>
 
                             <div className="min-w-0 flex-1">
-                                <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-2.5">
                                     <span
                                         className={cn(
                                             "inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.18em]",
@@ -221,13 +212,13 @@ export function AIReaction({ className }: { className?: string }) {
                                         {title}
                                     </span>
                                 </div>
-                                <p className="mt-2 text-[14px] font-semibold leading-[1.45] text-foreground text-balance">
+                                <p className="mt-2 text-[13.5px] font-semibold leading-[1.5] text-foreground text-balance">
                                     {displayMessage.text}
                                 </p>
                             </div>
                         </div>
 
-                        <div className="mt-3 h-[2px] w-full overflow-hidden rounded-full bg-secondary/55">
+                        <div className="mt-3 h-[2px] w-full overflow-hidden rounded-full bg-secondary/50">
                             <div
                                 ref={progressRef}
                                 className={cn("h-full rounded-full", progressColor)}
