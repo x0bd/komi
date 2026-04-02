@@ -14,10 +14,10 @@ export function GameControls({
     className?: string;
 }) {
     return (
-        <div className={cn("flex w-full items-center h-[52px] rounded-none border-2 border-white overflow-hidden shadow-[4px_4px_0_0_white]", className)}>
+        <div className={cn("flex w-full items-center h-[52px] rounded-none border-[3px] border-white bg-white overflow-hidden shadow-[6px_6px_0_0_var(--swiss-red)]", className)}>
             <button
                 type="button"
-                className="flex-1 h-full font-mono text-[13px] bg-swiss-yellow text-black font-bold uppercase tracking-widest hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed border-r-2 border-white"
+                className="flex-1 h-full font-mono text-[13px] bg-transparent text-black font-black uppercase tracking-widest hover:bg-black hover:text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed border-r-[3px] border-black"
                 onClick={onPass}
                 disabled={disabled}
             >
@@ -25,7 +25,7 @@ export function GameControls({
             </button>
             <button
                 type="button"
-                className="flex-1 h-full font-mono text-[13px] bg-swiss-red text-white font-bold uppercase tracking-widest hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 h-full font-mono text-[13px] bg-transparent text-black font-black uppercase tracking-widest hover:bg-swiss-red hover:text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 onClick={onResign}
                 disabled={disabled}
             >
