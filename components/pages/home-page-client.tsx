@@ -1142,8 +1142,26 @@ export function useSidebarPanels({
         : null;
 
     const rightPanel = (
-        <div className="flex flex-col justify-center animate-in fade-in slide-in-from-right-4 duration-500 w-full pb-10">
-            <div className="flex flex-col gap-5">
+        <div className="flex flex-col gap-0 w-24 border-4 border-black bg-black shadow-[6px_6px_0_0_var(--foreground)] uppercase font-display font-black tracking-widest text-[10px]">
+            <div className="flex flex-col items-center bg-black text-white py-4 border-b-2 border-white/20">
+                <span className="text-white/50 mb-2">BLK</span>
+                <span className="text-3xl">{liveScore.black.total}</span>
+            </div>
+            <div className="flex flex-col items-center bg-white text-black py-4">
+                <span className="text-black/50 mb-2">WHT</span>
+                <span className="text-3xl font-bold">{Math.floor(liveScore.white.total)}</span>
+            </div>
+        </div>
+    );
+
+    const panels = [
+        {
+            id: "game",
+            label: "Game Info",
+            icon: <LuGamepad2 />,
+            content: (
+                <div className="flex flex-col h-full animate-in fade-in slide-in-from-bottom-2 duration-300">
+                    <div className="flex flex-col gap-3">
                         <PlayerCard
                             name="Player 1"
                             initial="P1"
@@ -1191,7 +1209,7 @@ export function useSidebarPanels({
                         </div>
                     ) : null}
 
-                    <div className="mt-8 flex flex-col gap-4 shrink-0">
+                    <div className="mt-auto pt-6 flex flex-col gap-4 shrink-0">
                         <LiveScoreCard
                             score={liveScore}
                             moveCount={mappedMoves.length}
@@ -1204,10 +1222,9 @@ export function useSidebarPanels({
                             disabled={isGameOver || controlsDisabled}
                         />
                     </div>
-        </div>
-    );
-
-    const panels = [
+                </div>
+            )
+        },
         {
             id: "analysis",
             label: "Sensei & Analysis",
