@@ -1240,26 +1240,26 @@ export function useSidebarPanels({
                             onExportSgf={handleExportSgf}
                         />
                     ) : null}
-                    <div className="flex items-center justify-between bg-swiss-blue p-5 border-2 border-border rounded-none shadow-[4px_4px_0_0_var(--foreground)] transition-all group hover:translate-x-[2px] hover:-translate-y-[2px]">
+                    <div className="flex items-center justify-between bg-white p-5 border-[3px] border-white rounded-none shadow-[6px_6px_0_0_var(--swiss-blue)] transition-all group hover:translate-x-[2px] hover:-translate-y-[2px]">
                         <div className="flex flex-col gap-1">
-                            <span className="text-[14px] font-display font-black text-white tracking-tight uppercase">
+                            <span className="text-[14px] font-display font-black text-black tracking-tight uppercase">
                                 Sensei Move Hints
                             </span>
-                            <span className="text-[12px] font-bold text-white/80 uppercase">
+                            <span className="text-[12px] font-bold text-black/60 uppercase">
                                 Overlay optimal AI suggestions directly on the board
                             </span>
                         </div>
                         <button
                             onClick={() => setAnalysisOverlayEnabled(!analysisOverlayEnabled)}
                             className={cn(
-                                "w-14 h-8 rounded-none transition-all relative outline-none focus-visible:ring-2 focus-visible:ring-ring shrink-0 border-2 border-white",
-                                analysisOverlayEnabled ? "bg-white" : "bg-transparent",
+                                "w-14 h-8 rounded-none transition-all relative outline-none focus-visible:ring-2 focus-visible:ring-ring shrink-0 border-[3px] border-black",
+                                analysisOverlayEnabled ? "bg-black" : "bg-transparent",
                             )}
                         >
                             <span
                                 className={cn(
-                                    "absolute top-1 left-1 w-5 h-5 rounded-none bg-white transition-transform shadow-[2px_2px_0_0_var(--foreground)]",
-                                    analysisOverlayEnabled ? "translate-x-6 border-2 border-transparent bg-swiss-blue" : "translate-x-0 border-2 border-white"
+                                    "absolute top-[2px] left-[2px] w-5 h-5 rounded-none transition-transform shadow-[2px_2px_0_0_var(--foreground)]",
+                                    analysisOverlayEnabled ? "translate-x-7 border border-transparent bg-swiss-yellow" : "translate-x-0 border-[3px] border-black bg-white"
                                 )}
                             />
                         </button>

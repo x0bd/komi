@@ -316,26 +316,25 @@ export function AIChatPanel({
                 className,
             )}
         >
-            <div className="rounded-none border-2 border-border bg-card p-4 shadow-[4px_4px_0_0_var(--foreground)] shrink-0">
-                <div className="flex items-start gap-3">
-                    <span className="mt-0.5 flex size-7 items-center justify-center rounded-none border-2 border-border bg-background text-foreground shadow-[2px_2px_0_0_var(--foreground)]">
-                        <LuSparkles className="size-3.5" />
+            <div className="rounded-none border-[3px] border-white bg-white p-4 shadow-[6px_6px_0_0_var(--swiss-red)] shrink-0">
+                <div className="flex items-start gap-4">
+                    <span className="mt-0.5 flex size-8 items-center justify-center rounded-none border-[3px] border-black bg-white text-black shadow-[3px_3px_0_0_var(--swiss-blue)]">
+                        <LuSparkles className="size-4" />
                     </span>
                     <div className="min-w-0">
-                        <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-muted-foreground">
-                            Current Goal • <span className="text-foreground/80 lowercase">{moodLabel}</span>
+                        <p className="text-[10px] font-black uppercase tracking-[0.15em] text-black/60">
+                            Current Goal • <span className="text-black/90 lowercase">{moodLabel}</span>
                         </p>
-                        <p className="mt-1 font-sans text-sm font-medium text-foreground">
+                        <p className="mt-1 flex font-sans text-sm font-black tracking-tight text-black">
                             {tutorGoal}
                         </p>
-                        <p className="mt-1.5 text-[13px] text-muted-foreground/80 leading-relaxed">
+                        <p className="mt-1.5 text-[13px] text-black/80 leading-snug font-medium">
                             {tutorCue}
                         </p>
                     </div>
                 </div>
             </div>
-
-            <div className="grid grid-cols-3 gap-[2px] bg-border p-[2px] shrink-0 border-2 border-border shadow-[4px_4px_0_0_var(--foreground)]">
+            <div className="grid grid-cols-3 gap-[3px] bg-black p-[3px] shrink-0 border-[3px] border-white shadow-[6px_6px_0_0_var(--swiss-blue)]">
                         {(["passive", "active", "review"] as TutorMode[]).map(
                             (mode) => (
                                 <button
@@ -343,10 +342,10 @@ export function AIChatPanel({
                                     type="button"
                                     onClick={() => setTutorMode(mode)}
                                     className={cn(
-                                        "rounded-lg px-2 py-1.5 text-[11px] font-semibold uppercase tracking-[0.1em] transition-all duration-200",
+                                        "rounded-none px-2 py-2 text-[11px] font-black uppercase tracking-[0.1em] transition-all duration-200 border border-transparent",
                                         tutorMode === mode
-                                            ? "bg-background text-foreground shadow-sm"
-                                            : "text-muted-foreground hover:text-foreground",
+                                            ? "bg-white text-black shadow-none border-black/20"
+                                            : "text-white/60 hover:text-white bg-transparent",
                                     )}
                                 >
                                     {mode}
@@ -356,18 +355,18 @@ export function AIChatPanel({
                     </div>
 
                     {latestAnalysis ? (
-                        <div className="rounded-none border-2 border-border bg-background p-4 shadow-[4px_4px_0_0_var(--foreground)] shrink-0">
+                        <div className="rounded-none border-[3px] border-white bg-white p-4 shadow-[6px_6px_0_0_white] shrink-0">
                             <div className="flex items-start justify-between gap-3">
                                 <div className="min-w-0">
-                                    <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
+                                    <p className="text-[10px] font-black uppercase tracking-[0.16em] text-black/60">
                                         Engine Read
                                     </p>
-                                    <p className="mt-1 text-sm text-foreground">
+                                    <p className="mt-1 text-sm font-semibold text-black tracking-tight">
                                         {latestAnalysis.summary}
                                     </p>
                                 </div>
-                                <div className="inline-flex items-center gap-1 rounded-none border-2 border-border bg-background px-2.5 py-1 font-mono text-[11px] font-bold text-foreground shadow-[2px_2px_0_0_var(--foreground)]">
-                                    <LuGauge className="size-3.5 text-accent" />
+                                <div className="inline-flex items-center gap-1 rounded-none border-[3px] border-black bg-black px-2.5 py-1 font-mono text-[11px] font-bold text-white shadow-[2px_2px_0_0_var(--swiss-blue)]">
+                                    <LuGauge className="size-3.5 text-swiss-yellow" />
                                     {Math.round(
                                         Math.max(
                                             0,
@@ -378,24 +377,24 @@ export function AIChatPanel({
                                 </div>
                             </div>
 
-                            <div className="mt-3 space-y-1.5">
+                            <div className="mt-4 space-y-2">
                                 {latestAnalysis.topMoves.map((move, index) => (
                                     <div
                                         key={`${move.coordinate}-${index}`}
-                                        className="grid grid-cols-[auto_1fr_auto] items-center gap-2 rounded-none border border-border bg-background px-2.5 py-1.5"
+                                        className="grid grid-cols-[auto_1fr_auto] items-center gap-3 rounded-none border-2 border-black/10 bg-black/5 px-2.5 py-2"
                                     >
-                                        <span className="font-mono text-xs text-muted-foreground">
+                                        <span className="font-mono text-xs text-black/50 font-bold">
                                             #{index + 1}
                                         </span>
                                         <div className="min-w-0">
-                                            <p className="truncate font-mono text-xs font-bold text-foreground">
+                                            <p className="truncate font-mono text-[13px] font-bold text-black">
                                                 {move.coordinate}
                                             </p>
-                                            <p className="truncate font-mono text-[10px] text-muted-foreground">
+                                            <p className="truncate font-mono text-[10px] text-black/60 font-semibold tracking-tight">
                                                 {move.reason}
                                             </p>
                                         </div>
-                                        <span className="font-mono text-[11px] font-semibold text-muted-foreground">
+                                        <span className="font-mono text-[11px] font-black text-black/80">
                                             {move.confidence}%
                                         </span>
                                     </div>
@@ -405,9 +404,9 @@ export function AIChatPanel({
                     ) : null}
 
                     {tutorMode === "review" ? (
-                        <div className="rounded-none border-2 border-border bg-background p-4 shadow-[4px_4px_0_0_var(--foreground)] shrink-0">
+                        <div className="rounded-none border-[3px] border-white bg-white p-4 shadow-[6px_6px_0_0_white] shrink-0">
                             <div className="flex items-center justify-between gap-3">
-                                <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
+                                <p className="text-[10px] font-black uppercase tracking-[0.16em] text-black/60">
                                     Post-Game Review
                                 </p>
                                 {isGameOver ? (
@@ -415,163 +414,134 @@ export function AIChatPanel({
                                         type="button"
                                         onClick={() => void generateReview()}
                                         disabled={isGeneratingReview}
-                                        className="rounded-full border border-border/70 bg-secondary/25 px-2.5 py-1 text-[11px] font-semibold text-foreground disabled:opacity-60"
+                                        className="rounded-none border-2 border-black bg-black px-2.5 py-1 text-[11px] font-bold text-white hover:bg-swiss-red transition-all disabled:opacity-60"
                                     >
-                                        {isGeneratingReview
-                                            ? "Updating..."
-                                            : "Refresh"}
+                                        {isGeneratingReview ? "Updating..." : "Refresh"}
                                     </button>
                                 ) : null}
                             </div>
-
                             {!isGameOver ? (
-                                <p className="mt-2 text-sm text-muted-foreground">
-                                    Review unlocks after game end. Finish the
-                                    current game to get a move-by-move
-                                    walkthrough.
+                                <p className="mt-4 text-sm font-bold text-black/60 tracking-tight">
+                                    Review unlocks after game end. Finish the current game to get a move-by-move walkthrough.
                                 </p>
                             ) : (
                                 <>
-                                    <p className="mt-2 text-sm text-foreground">
-                                        {isGeneratingReview
-                                            ? "Sensei is preparing your recap..."
-                                            : reviewSummary ||
-                                              "Generating review..."}
+                                    <p className="mt-4 text-sm font-bold text-black tracking-tight border-b-2 border-black/10 pb-3">
+                                        {isGeneratingReview ? "Sensei is preparing your recap..." : reviewSummary || "Generating review..."}
                                     </p>
-                                    <div className="mt-3 space-y-1.5">
-                                        {recentReviewMoves.map(
-                                            (line, index) => (
-                                                <p
-                                                    key={`${line}-${index}`}
-                                                    className="rounded-none border-l-4 border-l-border border border-border bg-background px-2.5 py-1.5 font-mono text-[11px] font-bold text-muted-foreground"
-                                                >
-                                                    {line}
-                                                </p>
-                                            ),
-                                        )}
+                                    <div className="mt-4 space-y-2">
+                                        {recentReviewMoves.map((line, index) => (
+                                            <p
+                                                key={`${line}-${index}`}
+                                                className="rounded-none border-l-4 border-l-black bg-black/5 px-2.5 py-2 font-mono text-[11px] font-bold text-black/80"
+                                            >
+                                                {line}
+                                            </p>
+                                        ))}
                                     </div>
                                 </>
                             )}
                         </div>
                     ) : null}
 
-                    <div className="flex-1 overflow-hidden rounded-xl border border-border/60 bg-secondary/15 relative min-h-[250px] shrink-0">
+                    <div className="flex-1 overflow-hidden rounded-none border-[3px] border-white bg-white relative min-h-[250px] shrink-0 shadow-[6px_6px_0_0_white]">
                         <ScrollArea className="absolute inset-0 top-0 h-full w-full">
-                            <div className="p-4">
+                            <div className="p-5">
                                 {visibleMessages.map((message) => (
-                                    <div
-                                        key={message.id}
-                                        className="mb-5 flex gap-3"
-                                    >
-                                        <div className="flex size-8 shrink-0 select-none items-center justify-center rounded-full border border-border/50 bg-secondary text-primary shadow-sm">
+                                    <div key={message.id} className="mb-6 flex gap-4">
+                                        <div className="flex size-8 shrink-0 select-none items-center justify-center rounded-none border-[3px] border-black bg-black text-white shadow-[2px_2px_0_0_var(--swiss-red)]">
                                             <LuBot className="size-4" />
                                         </div>
-                                        <div className="flex-1 space-y-1">
-                                            <p className="text-sm font-semibold text-foreground">
+                                        <div className="flex-1 space-y-1 mt-0.5">
+                                            <p className="text-[13px] font-black text-black">
                                                 Sensei
-                                                <span className="ml-2 font-normal text-muted-foreground text-[10px] uppercase tracking-wider">
-                                                    {message.tone === "coach"
-                                                        ? "Coach"
-                                                        : message.tone}
+                                                <span className="ml-2 font-bold text-black/50 text-[10px] uppercase tracking-wider">
+                                                    {message.tone === "coach" ? "Coach" : message.tone}
                                                 </span>
                                             </p>
-                                            <p className="text-[13px] text-foreground/80 text-pretty leading-relaxed">
+                                            <p className="text-[13px] text-black/80 font-medium text-pretty leading-relaxed">
                                                 {message.text}
                                             </p>
                                         </div>
                                     </div>
                                 ))}
                                 {isStreaming ? (
-                                    <div className="mb-5 flex gap-3">
-                                        <div className="flex size-8 shrink-0 select-none items-center justify-center rounded-full border border-border/50 bg-secondary text-primary shadow-sm animate-pulse">
+                                    <div className="mb-6 flex gap-4">
+                                        <div className="flex size-8 shrink-0 select-none items-center justify-center rounded-none border-[3px] border-black bg-black text-white shadow-[2px_2px_0_0_var(--swiss-red)] animate-pulse">
                                             <LuBot className="size-4" />
                                         </div>
-                                        <div className="flex-1 space-y-1">
-                                            <p className="text-sm font-semibold text-foreground">
+                                        <div className="flex-1 space-y-1 mt-0.5">
+                                            <p className="text-[13px] font-black text-black">
                                                 Sensei
-                                                <span className="ml-2 font-normal text-muted-foreground text-[10px] uppercase tracking-wider">
-                                                    Thinking
-                                                </span>
+                                                <span className="ml-2 font-bold text-black/50 text-[10px] uppercase tracking-wider">Thinking</span>
                                             </p>
-                                            <p className="text-[13px] text-foreground/80 text-pretty leading-relaxed">
+                                            <p className="text-[13px] text-black/80 font-medium text-pretty leading-relaxed">
                                                 {streamingReply || "..."}
                                             </p>
                                         </div>
                                     </div>
                                 ) : null}
                                 {!visibleMessages.length && !isStreaming ? (
-                                    <p className="py-8 text-center text-sm text-muted-foreground">
-                                        Sensei will react after your next move.
+                                    <p className="py-10 text-center text-[13px] font-bold text-black/40 uppercase tracking-widest">
+                                        Sensei will react after your next move
                                     </p>
                                 ) : null}
                             </div>
                         </ScrollArea>
                     </div>
 
-                    <div className="flex flex-col gap-2 shrink-0 pb-4">
+                    <div className="flex flex-col gap-3 shrink-0 pb-4">
                         {tutorMode === "active" ? (
-                            <div className="flex flex-col gap-2">
-                                <div className="w-full rounded-xl border border-border/60 bg-secondary/20 p-3">
+                            <div className="flex flex-col gap-3">
+                                <div className="w-full rounded-none border-[3px] border-white bg-white p-3 shadow-[4px_4px_0_0_white]">
                                     <div className="flex items-center justify-between gap-2">
-                                        <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                                        <p className="text-[11px] font-black uppercase tracking-[0.14em] text-black/60">
                                             AI Key
                                         </p>
                                         <button
                                             type="button"
-                                            onClick={() =>
-                                                setShowKeyEditor(
-                                                    (current) => !current,
-                                                )
-                                            }
-                                            className="inline-flex items-center gap-1 rounded-full border border-border/70 bg-background/80 px-2.5 py-1 text-[11px] font-medium text-muted-foreground hover:text-foreground"
+                                            onClick={() => setShowKeyEditor((current) => !current)}
+                                            className="inline-flex items-center gap-1 rounded-none border-2 border-black bg-black px-2.5 py-1 text-[11px] font-bold text-white hover:bg-swiss-blue transition-all"
                                         >
                                             <LuKeyRound className="size-3.5" />
-                                            {hasApiKey
-                                                ? "Configured"
-                                                : "Set key"}
+                                            {hasApiKey ? "Configured" : "Set key"}
                                         </button>
                                     </div>
                                     {showKeyEditor ? (
-                                        <div className="mt-2 space-y-2">
+                                        <div className="mt-3 space-y-2">
                                             <input
                                                 value={openAIApiKey}
-                                                onChange={(event) =>
-                                                    setOpenAIApiKey(
-                                                        event.target.value,
-                                                    )
-                                                }
+                                                onChange={(event) => setOpenAIApiKey(event.target.value)}
                                                 placeholder="sk-..."
                                                 type="password"
-                                                className="h-10 w-full rounded-full border border-border/70 bg-background/85 px-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-accent/60"
+                                                className="h-10 w-full rounded-none border-[3px] border-black bg-white px-3 text-sm font-bold text-black outline-none transition-all placeholder:text-black/40 focus:border-swiss-yellow"
                                             />
                                             <div className="flex items-center justify-end gap-2">
                                                 <button
                                                     type="button"
                                                     onClick={clearApiKey}
-                                                    className="inline-flex h-8 items-center rounded-full border border-border/70 bg-background/85 px-3 text-xs font-medium text-muted-foreground hover:text-foreground"
+                                                    className="inline-flex h-8 items-center rounded-none border-2 border-black bg-white px-3 text-xs font-bold text-black hover:bg-black hover:text-white transition-all"
                                                 >
                                                     Clear
                                                 </button>
                                                 <button
                                                     type="button"
                                                     onClick={saveApiKey}
-                                                    className="inline-flex h-8 items-center rounded-full border border-border/70 bg-secondary/30 px-3 text-xs font-semibold text-foreground hover:bg-secondary/50"
+                                                    className="inline-flex h-8 items-center rounded-none border-2 border-black bg-black px-3 text-xs font-bold text-white hover:bg-swiss-red transition-all"
                                                 >
                                                     Save key
                                                 </button>
                                             </div>
                                         </div>
                                     ) : (
-                                        <p className="mt-1 text-xs text-muted-foreground">
-                                            {hasApiKey
-                                                ? "Using your key for live tutor responses."
-                                                : "No key set. Sensei uses local fallback responses."}
+                                        <p className="mt-2 text-xs font-medium text-black/60">
+                                            {hasApiKey ? "Using your key for live tutor responses." : "No key set. Sensei uses local fallback responses."}
                                         </p>
                                     )}
                                 </div>
 
                                 <form
-                                    className="flex w-full items-center gap-2 relative mt-2"
+                                    className="flex w-full items-center gap-2 relative"
                                     onSubmit={(event) => {
                                         event.preventDefault();
                                         void handleAskSensei();
@@ -579,16 +549,14 @@ export function AIChatPanel({
                                 >
                                     <input
                                         value={question}
-                                        onChange={(event) =>
-                                            setQuestion(event.target.value)
-                                        }
+                                        onChange={(event) => setQuestion(event.target.value)}
                                         placeholder="Ask Sensei about this position..."
-                                        className="h-10 flex-1 rounded-full border border-border/50 bg-background/50 backdrop-blur-md pl-4 pr-12 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-accent/60 shadow-sm"
+                                        className="h-[44px] flex-1 rounded-none border-[3px] border-white bg-white pl-4 pr-12 text-sm font-bold text-black outline-none transition-all placeholder:text-black/40 focus:border-swiss-yellow shadow-[4px_4px_0_0_white]"
                                     />
                                     <button
                                         type="submit"
                                         disabled={!canAsk}
-                                        className="absolute right-1 inline-flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
+                                        className="absolute right-2 top-[6px] inline-flex h-8 w-8 items-center justify-center rounded-none border-2 border-black bg-black text-white transition-all hover:bg-swiss-red hover:border-swiss-red hover:-translate-y-[1px] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
                                     >
                                         <LuSend className="size-3.5" />
                                     </button>
@@ -597,9 +565,8 @@ export function AIChatPanel({
                         ) : null}
 
                         {tutorMode === "passive" ? (
-                            <p className="w-full rounded-xl border border-border/60 bg-secondary/15 px-3 py-2 text-xs text-muted-foreground">
-                                Passive mode keeps hints lightweight while you
-                                focus on play.
+                            <p className="w-full rounded-none border-[3px] border-white bg-white px-4 py-3 text-sm font-bold text-black/60 shadow-[4px_4px_0_0_white]">
+                                Passive mode keeps hints lightweight while you focus on play.
                             </p>
                         ) : null}
 
@@ -609,7 +576,7 @@ export function AIChatPanel({
                                       key={topic}
                                       type="button"
                                       onClick={() => requestTip(topic)}
-                                      className="inline-flex min-h-9 items-center rounded-full border border-border/70 bg-background/80 px-3 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                                      className="inline-flex min-h-9 items-center rounded-none border-[3px] border-white bg-white px-4 text-sm font-black text-black transition-all hover:bg-black hover:text-white hover:border-white shadow-[3px_3px_0_0_white]"
                                   >
                                       {topic}
                                   </button>
