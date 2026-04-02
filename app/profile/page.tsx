@@ -1,9 +1,8 @@
 import Link from "next/link"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
 import { db } from "@/lib/db"
 import { ensureDbUser } from "@/lib/auth/session"
-import { LuArrowLeft, LuTrophy, LuSwords, LuMinus, LuClock3, LuStar } from "react-icons/lu"
+import { LuArrowRight, LuTrophy, LuSwords, LuMinus, LuClock3, LuStar } from "react-icons/lu"
 import { cn } from "@/lib/utils"
 
 export const dynamic = "force-dynamic"
@@ -38,10 +37,15 @@ function formatDate(date: Date) {
 function initials(name: string, email: string) {
   const source = name.trim() || email.trim()
   const chunks = source.split(/\s+/).filter(Boolean)
-  if (chunks.length >= 2) {
-    return `${chunks[0][0]}${chunks[1][0]}`.toUpperCase()
-  }
+  if (chunks.length >= 2) return `${chunks[0][0]}${chunks[1][0]}`.toUpperCase()
   return source.slice(0, 2).toUpperCase()
+}
+
+function outcomeBg(outcome: Outcome) {
+  if (outcome === "win") return "bg-[var(--swiss-blue)] text-white"
+  if (outcome === "loss") return "bg-[var(--swiss-red)] text-white"
+  if (outcome === "draw") return "bg-[var(--swiss-yellow)] text-black"
+  return "bg-black text-white"
 }
 
 export default async function ProfilePage() {
@@ -71,220 +75,187 @@ export default async function ProfilePage() {
     { wins: 0, losses: 0, draws: 0 }
   )
 
-  const winRate = games.length > 0
-    ? Math.round((summary.wins / games.length) * 100)
-    : 0
-
+  const winRate = games.length > 0 ? Math.round((summary.wins / games.length) * 100) : 0
   const displayName = user.name?.trim() || "Komi Player"
 
   return (
-    <main className="min-h-svh bg-background">
-      {/* ─── Hero Header ─── */}
-      <div className="relative overflow-hidden border-b border-border/40 px-6 pb-10 pt-14 lg:px-14">
-        <div className="absolute inset-0 bg-gradient-to-b from-background/0 to-background pointer-events-none" />
+    <main className="min-h-svh bg-white">
 
-        <div className="relative mx-auto flex w-full max-w-5xl flex-col gap-8">
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-            <div className="flex items-center gap-5">
-              <div className="relative shrink-0">
-                <Avatar className="size-20 rounded-none border-2 border-border shadow-[4px_4px_0_0_var(--foreground)]">
-                  {user.avatar ? <AvatarImage src={user.avatar} alt={displayName} /> : null}
-                  <AvatarFallback className="font-sans text-2xl font-bold text-foreground bg-secondary">
-                    {initials(displayName, user.email)}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="absolute -bottom-1 -right-1 size-5 rounded-none bg-status-active border-2 border-border shadow-[2px_2px_0_0_var(--foreground)]" />
-              </div>
+      {/* ── HERO ── */}
+      <header className="bg-black border-b-[8px] border-b-swiss-red">
+        <div className="mx-auto max-w-5xl px-6 lg:px-10 py-10 lg:py-16">
+          <p className="text-[10px] font-black uppercase tracking-[0.35em] text-white/40 mb-4">
+            Komi / Profile
+          </p>
 
-              <div className="flex flex-col gap-1">
-                <h1 className="font-display text-4xl lg:text-5xl font-bold tracking-tight text-foreground leading-none">
+          <div className="flex flex-wrap items-end justify-between gap-8">
+            {/* Avatar + name */}
+            <div className="flex items-center gap-6">
+              <Avatar className="size-20 rounded-none border-[3px] border-white shadow-[6px_6px_0_0_var(--swiss-red)]">
+                {user.avatar ? <AvatarImage src={user.avatar} alt={displayName} /> : null}
+                <AvatarFallback className="font-black text-2xl bg-white text-black rounded-none">
+                  {initials(displayName, user.email)}
+                </AvatarFallback>
+              </Avatar>
+              <div>
+                <h1 className="font-sans text-4xl lg:text-[3.5rem] font-black tracking-tight text-white leading-none uppercase">
                   {displayName}
                 </h1>
-                <p className="text-[14px] font-medium text-muted-foreground">{user.email}</p>
+                <p className="mt-2 font-mono text-[12px] text-white/40 uppercase tracking-widest">
+                  {user.email}
+                </p>
               </div>
             </div>
 
-            <div className="flex items-center gap-2 mt-2 sm:mt-0 shrink-0">
-              <Button
-                render={<Link href="/" />}
-                variant="ghost"
-                className="rounded-none h-9 px-4 font-mono font-bold uppercase tracking-widest text-[11px] border-2 border-border shadow-[2px_2px_0_0_var(--foreground)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none hover:bg-foreground hover:text-primary-foreground transition-all"
-              >
-                <LuArrowLeft className="size-4 mr-1.5" />
-                Back to Board
-              </Button>
-              <Button
-                render={<Link href="/account/settings" />}
-                variant="outline"
-                className="rounded-none h-9 px-4 font-mono font-bold uppercase tracking-widest text-[11px] border-2 border-border shadow-[2px_2px_0_0_var(--foreground)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none hover:bg-foreground hover:text-primary-foreground transition-all"
+            {/* Header actions */}
+            <div className="flex items-center gap-3 self-end">
+              <Link
+                href="/account/settings"
+                className="inline-flex items-center gap-2 h-11 px-5 rounded-none border-[3px] border-white bg-transparent text-white font-mono font-black uppercase tracking-widest text-[12px] hover:bg-white hover:text-black transition-all"
               >
                 Settings
-              </Button>
+              </Link>
+              <Link
+                href="/"
+                className="inline-flex items-center gap-2 h-11 px-5 rounded-none border-[3px] border-white bg-white text-black font-mono font-black uppercase tracking-widest text-[12px] hover:bg-swiss-yellow hover:border-swiss-yellow transition-all"
+              >
+                ← Board
+              </Link>
             </div>
           </div>
+        </div>
+      </header>
 
-          {/* Rating pill */}
-          <div className="flex items-center gap-3 flex-wrap">
-            <div className="flex items-center gap-2 bg-background border-2 border-border rounded-none px-4 py-1.5 shadow-[2px_2px_0_0_var(--foreground)]">
-              <LuStar className="size-3.5 text-amber-500" />
-              <span className="font-mono text-[11px] font-bold uppercase tracking-widest text-foreground">Rating {user.rating}</span>
-            </div>
-            <div className="flex items-center gap-2 bg-background border-2 border-border rounded-none px-4 py-1.5 shadow-[2px_2px_0_0_var(--foreground)]">
-              <LuSwords className="size-3.5 text-muted-foreground" />
-              <span className="font-mono text-[11px] font-bold uppercase tracking-widest text-foreground">{games.length} games played</span>
-            </div>
+      {/* ── STAT ROW ── */}
+      <div className="border-b-[3px] border-black bg-white">
+        <div className="mx-auto max-w-5xl px-6 lg:px-10">
+          <div className="grid grid-cols-4 divide-x-[3px] divide-black">
+            {[
+              { label: "Wins", value: summary.wins, accent: "var(--swiss-blue)" },
+              { label: "Losses", value: summary.losses, accent: "var(--swiss-red)" },
+              { label: "Draws", value: summary.draws, accent: "black" },
+              { label: "Win Rate", value: `${winRate}%`, accent: "var(--swiss-yellow)" },
+            ].map((stat) => (
+              <div key={stat.label} className="flex flex-col gap-1 py-6 px-6 first:pl-0 last:pr-0">
+                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-black/40">
+                  {stat.label}
+                </span>
+                <span
+                  className="text-4xl font-mono font-black tabular-nums leading-none mt-1"
+                  style={{ color: stat.accent }}
+                >
+                  {stat.value}
+                </span>
+              </div>
+            ))}
           </div>
         </div>
       </div>
 
-      {/* ─── Body ─── */}
-      <div className="mx-auto flex w-full max-w-5xl flex-col gap-10 px-6 py-10 lg:px-14">
+      {/* ── META PILLS ── */}
+      <div className="border-b-[2px] border-black/10 bg-white">
+        <div className="mx-auto max-w-5xl px-6 lg:px-10 py-4 flex items-center gap-4 flex-wrap">
+          <div className="inline-flex items-center gap-2 border-[2px] border-black px-3 py-1.5">
+            <LuStar className="size-3.5 text-black" />
+            <span className="font-mono text-[11px] font-black uppercase tracking-widest text-black">
+              Rating {user.rating}
+            </span>
+          </div>
+          <div className="inline-flex items-center gap-2 border-[2px] border-black px-3 py-1.5">
+            <LuSwords className="size-3.5 text-black" />
+            <span className="font-mono text-[11px] font-black uppercase tracking-widest text-black">
+              {games.length} games played
+            </span>
+          </div>
+        </div>
+      </div>
 
-        {/* ─── Stat Blocks ─── */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          {[
-            {
-              label: "Wins",
-              value: summary.wins,
-              icon: <LuTrophy className="size-4" />,
-              color: "text-status-active",
-              bg: "bg-status-active/5",
-            },
-            {
-              label: "Losses",
-              value: summary.losses,
-              icon: <LuSwords className="size-4" />,
-              color: "text-destructive",
-              bg: "bg-destructive/5",
-            },
-            {
-              label: "Draws",
-              value: summary.draws,
-              icon: <LuMinus className="size-4" />,
-              color: "text-muted-foreground",
-              bg: "bg-secondary/60",
-            },
-            {
-              label: "Win Rate",
-              value: `${winRate}%`,
-              icon: <LuStar className="size-4" />,
-              color: "text-amber-500",
-              bg: "bg-amber-500/5",
-            },
-          ].map((stat) => (
-            <div
-              key={stat.label}
-              className={cn(
-                "flex flex-col gap-3 rounded-none border-2 border-border p-6 shadow-[4px_4px_0_0_var(--foreground)] transition-all bg-card hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0_0_var(--foreground)]",
-                stat.bg,
-              )}
-            >
-              <div className={cn("flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest", stat.color)}>
-                {stat.icon}
-                {stat.label}
-              </div>
-              <span className={cn("text-4xl font-mono font-bold tracking-tighter", stat.color)}>
-                {stat.value}
-              </span>
-            </div>
+      {/* ── RECENT GAMES ── */}
+      <div className="mx-auto max-w-5xl px-6 lg:px-10 py-10">
+        <div className="flex items-center justify-between mb-2">
+          <h2 className="font-sans text-[11px] font-black uppercase tracking-[0.25em] text-black/40">
+            Recent Games
+          </h2>
+          <Link
+            href="/games"
+            className="inline-flex items-center gap-1 font-mono text-[11px] font-black uppercase tracking-widest text-black hover:text-swiss-red transition-colors"
+          >
+            View all <LuArrowRight className="size-3.5" />
+          </Link>
+        </div>
+
+        {/* Table header */}
+        <div className="grid grid-cols-[3fr_1fr_1fr_1fr] border-b-[3px] border-black pb-3 mt-4 mb-1">
+          {["Opponent", "Result", "Color", "Date"].map((col) => (
+            <span key={col} className="text-[10px] font-black uppercase tracking-[0.2em] text-black/40">
+              {col}
+            </span>
           ))}
         </div>
 
-        {/* ─── Recent Games ─── */}
-        <div className="flex flex-col gap-6">
-          <div className="flex items-center justify-between px-1">
-            <h2 className="text-xl font-bold tracking-tight text-foreground">Recent Games</h2>
-            <Link
-              href="/games"
-              className="text-[13px] font-bold text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
-            >
-              View all
-              <LuArrowLeft className="size-3.5 rotate-180" />
-            </Link>
+        {games.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-20 gap-4">
+            <LuTrophy className="size-8 text-black/20" />
+            <p className="font-mono font-black text-[12px] uppercase tracking-widest text-black/40">
+              No saved games yet
+            </p>
           </div>
+        ) : (
+          <div className="divide-y-[2px] divide-black/10">
+            {games.map((game) => {
+              const isBlack = game.blackPlayerId === user.id
+              const myColor = isBlack ? "black" : "white"
+              const opponent = isBlack ? game.whitePlayer : game.blackPlayer
+              const opponentLabel =
+                opponent.email === user.email
+                  ? "Self play"
+                  : opponent.name?.trim() || opponent.email
+              const outcome = getOutcome(game.result, myColor)
 
-          {games.length === 0 ? (
-            <div className="rounded-none border-2 border-border bg-card p-12 text-center flex flex-col items-center gap-3 shadow-[4px_4px_0_0_var(--foreground)]">
-              <LuTrophy className="size-8 text-muted-foreground/40" />
-              <p className="text-[15px] font-medium text-muted-foreground">No saved games yet.</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-5">
-              {games.map((game) => {
-                const isBlack = game.blackPlayerId === user.id
-                const myColor = isBlack ? "black" : "white"
-                const opponent = isBlack ? game.whitePlayer : game.blackPlayer
-                const opponentLabel =
-                  opponent.email === user.email
-                    ? "Self play"
-                    : opponent.name?.trim() || opponent.email
-                const outcome = getOutcome(game.result, myColor)
-                const isWin = outcome === "win"
-                const isLoss = outcome === "loss"
-
-                return (
-                  <Link
-                    key={game.id}
-                    href={`/replay/${game.id}`}
-                    className="group relative flex flex-col justify-between overflow-hidden rounded-none border-2 border-border bg-card p-6 lg:p-8 shadow-[6px_6px_0_0_var(--foreground)] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0_0_var(--foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                  >
-                    <div className="absolute inset-0 opacity-0 group-hover:opacity-[0.03] dark:group-hover:opacity-10 pointer-events-none transition-opacity duration-300 bg-gradient-to-br from-foreground to-transparent" />
-
-                    <div className="relative z-10 flex items-start justify-between gap-4 mb-6">
-                      <div className="flex items-center gap-4">
-                        <div className={cn(
-                          "flex size-14 shrink-0 items-center justify-center rounded-none font-bold text-xl border-2 border-border",
-                          isWin ? "bg-status-active text-background border-status-active" :
-                          isLoss ? "bg-destructive text-background border-destructive" :
-                          "bg-background text-foreground border-border"
-                        )}>
-                          {opponentLabel.charAt(0).toUpperCase()}
-                        </div>
-                        <div className="flex flex-col min-w-0">
-                          <h3 className="font-sans text-lg font-bold tracking-tight text-foreground truncate">
-                            {opponentLabel}
-                          </h3>
-                          <span className="text-[12px] font-medium text-muted-foreground mt-0.5 flex items-center gap-1.5">
-                            <LuClock3 className="size-3" />
-                            {formatDate(game.startedAt)}
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className={cn(
-                        "flex items-center justify-center px-3 py-1.5 rounded-none border-2 font-mono text-[11px] font-bold uppercase tracking-widest shrink-0",
-                        isWin ? "bg-status-active text-background border-status-active" :
-                        isLoss ? "bg-destructive text-background border-destructive" :
-                        "bg-background text-muted-foreground border-border"
-                      )}>
-                        {outcome}
-                      </div>
+              return (
+                <Link
+                  key={game.id}
+                  href={`/replay/${game.id}`}
+                  className="group grid grid-cols-[3fr_1fr_1fr_1fr] items-center py-5 hover:bg-black -mx-2 px-2 transition-colors duration-100"
+                >
+                  {/* Opponent */}
+                  <div className="flex items-center gap-3 min-w-0">
+                    <span className="flex size-8 shrink-0 items-center justify-center font-black text-[13px] bg-black text-white border-[2px] border-black group-hover:border-white">
+                      {opponentLabel.charAt(0).toUpperCase()}
+                    </span>
+                    <div className="min-w-0">
+                      <p className="font-sans font-black text-[14px] tracking-tight truncate text-black group-hover:text-white">
+                        {opponentLabel}
+                      </p>
                     </div>
+                  </div>
 
-                    <div className="relative z-10 flex items-center justify-between mt-auto">
-                      <div className="flex items-center gap-2">
-                        <div className="flex items-center gap-1.5 bg-background px-3 py-1.5 rounded-none border-2 border-border shadow-[2px_2px_0_0_var(--foreground)]">
-                          <div className={cn(
-                            "size-3 rounded-none border border-border",
-                            myColor === "black" ? "bg-[#111]" : "bg-stone-200 border-border"
-                          )} />
-                          <span className="text-foreground capitalize text-[12px] font-semibold">{myColor}</span>
-                        </div>
-                        {game.result && (
-                          <span className="text-[12px] font-medium text-muted-foreground">{game.result}</span>
-                        )}
-                      </div>
+                  {/* Result */}
+                  <span className="font-mono text-[12px] font-black uppercase tracking-widest text-black group-hover:text-white">
+                    {outcome}
+                  </span>
 
-                      <span className="text-foreground font-bold text-[12px] uppercase tracking-wide opacity-0 translate-x-3 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
-                        Replay →
-                      </span>
-                    </div>
-                  </Link>
-                )
-              })}
-            </div>
-          )}
-        </div>
+                  {/* Color */}
+                  <div className="flex items-center gap-2">
+                    <div className={cn(
+                      "size-3 border-[2px] border-black group-hover:border-white",
+                      myColor === "black" ? "bg-black group-hover:bg-white" : "bg-white"
+                    )} />
+                    <span className="font-mono text-[11px] font-bold text-black/50 group-hover:text-white/60 capitalize">
+                      {myColor}
+                    </span>
+                  </div>
+
+                  {/* Date */}
+                  <div className="flex items-center gap-1.5 font-mono text-[11px] font-bold text-black/40 group-hover:text-white/50">
+                    <LuClock3 className="size-3 shrink-0" />
+                    {formatDate(game.startedAt)}
+                  </div>
+                </Link>
+              )
+            })}
+          </div>
+        )}
       </div>
     </main>
   )

@@ -42,20 +42,17 @@ function formatDate(value: string) {
 }
 
 function outcomeBadge(outcome: GameSummary["outcome"]) {
-  if (outcome === "win")
-    return "bg-swiss-blue text-white"
-  if (outcome === "loss")
-    return "bg-swiss-red text-white"
-  if (outcome === "draw")
-    return "bg-swiss-yellow text-black"
-  return "bg-black/10 text-black"
+  if (outcome === "win")  return "bg-[var(--swiss-blue)] text-white"
+  if (outcome === "loss") return "bg-[var(--swiss-red)] text-white"
+  if (outcome === "draw") return "bg-[var(--swiss-yellow)] text-black"
+  return "bg-black text-white"
 }
 
 function avatarBg(outcome: GameSummary["outcome"]) {
-  if (outcome === "win") return "bg-swiss-blue text-white"
-  if (outcome === "loss") return "bg-swiss-red text-white"
-  if (outcome === "draw") return "bg-swiss-yellow text-black"
-  return "bg-black/10 text-black"
+  if (outcome === "win")  return "bg-[var(--swiss-blue)] text-white"
+  if (outcome === "loss") return "bg-[var(--swiss-red)] text-white"
+  if (outcome === "draw") return "bg-[var(--swiss-yellow)] text-black"
+  return "bg-black text-white"
 }
 
 export function GameHistoryPageClient() {
@@ -244,12 +241,9 @@ export function GameHistoryPageClient() {
               >
                 {/* Opponent col */}
                 <div className="flex items-center gap-4 min-w-0">
-                  <div className={cn(
-                    "flex size-9 shrink-0 items-center justify-center rounded-none font-black text-[15px] border-[2px] border-black group-hover:border-white transition-colors",
-                    avatarBg(game.outcome)
-                  )}>
+                  <span className="flex size-9 shrink-0 items-center justify-center rounded-none font-black text-[15px] border-[2px] border-black bg-black text-white group-hover:border-white">
                     {game.opponent.label.charAt(0).toUpperCase()}
-                  </div>
+                  </span>
                   <div className="min-w-0">
                     <p className="font-sans font-black text-[15px] tracking-tight leading-tight truncate group-hover:text-white">
                       {game.opponent.label}
@@ -262,10 +256,7 @@ export function GameHistoryPageClient() {
 
                 {/* Result col */}
                 <div>
-                  <span className={cn(
-                    "inline-flex items-center px-3 py-1 font-mono text-[11px] font-black uppercase tracking-widest border-[2px] border-transparent group-hover:border-white/20",
-                    outcomeBadge(game.outcome)
-                  )}>
+                  <span className="font-mono text-[12px] font-black uppercase tracking-widest text-black group-hover:text-white">
                     {game.outcome}
                   </span>
                 </div>

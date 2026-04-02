@@ -1,6 +1,6 @@
 import { AccountView } from "@neondatabase/auth/react/ui"
 import Link from "next/link"
-import { LuArrowLeft, LuShield, LuSparkles } from "react-icons/lu"
+import { LuArrowLeft, LuShield } from "react-icons/lu"
 import { ensureDbUser } from "@/lib/auth/session"
 
 type AccountPageProps = {
@@ -12,21 +12,21 @@ export const dynamic = "force-dynamic"
 const ACCOUNT_COPY: Record<string, { eyebrow: string; title: string; description: string }> = {
   settings: {
     eyebrow: "Control Room",
-    title: "Account settings",
+    title: "Account Settings",
     description:
-      "Manage identity, security, and account preferences inside the same refined workspace as the rest of Komi.",
+      "Manage identity, security, and account preferences.",
   },
   security: {
     eyebrow: "Security",
-    title: "Security settings",
+    title: "Security Settings",
     description:
-      "Keep your sessions, sign-in methods, and account access under tight control without losing the calm product feel.",
+      "Control sessions, sign-in methods, and account access.",
   },
   profile: {
     eyebrow: "Profile",
-    title: "Profile settings",
+    title: "Profile Settings",
     description:
-      "Tune your public identity, avatar, and personal details with the same careful surface design as your profile view.",
+      "Tune your public identity, avatar, and personal details.",
   },
 }
 
@@ -37,88 +37,74 @@ export default async function AccountPage({ params }: AccountPageProps) {
   const { path } = resolvedParams
   const content = ACCOUNT_COPY[path] ?? {
     eyebrow: "Account",
-    title: "Account workspace",
-    description:
-      "Handle the operational details of your Komi account inside a polished control surface built to match the rest of the app.",
+    title: "Account Workspace",
+    description: "Handle the operational details of your Komi account.",
   }
 
   return (
-    <main className="account-page min-h-svh bg-background px-6 pb-10 pt-8 lg:px-10 lg:pb-14 lg:pt-10">
-      <div className="account-page__glow account-page__glow--primary" />
-      <div className="account-page__glow account-page__glow--secondary" />
+    <main className="min-h-svh bg-white">
+      {/* ── HERO ── */}
+      <header className="bg-black border-b-[8px] border-b-swiss-red">
+        <div className="mx-auto max-w-5xl px-6 lg:px-10 py-10 lg:py-16">
+          <p className="text-[10px] font-black uppercase tracking-[0.35em] text-white/40 mb-4">
+            Komi / {content.eyebrow}
+          </p>
 
-      <div className="relative mx-auto flex w-full max-w-6xl flex-col gap-6">
-        <header className="account-hero rounded-none border-4 border-border bg-card px-7 py-8 shadow-[8px_8px_0_0_var(--foreground)] lg:px-10 lg:py-10">
-          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-foreground/10 to-transparent" />
-          <div className="absolute -right-20 top-0 h-56 w-56 rounded-full bg-[radial-gradient(circle,_rgba(225,147,63,0.16),_transparent_70%)] blur-3xl" />
+          <div className="flex flex-wrap items-end justify-between gap-8">
+            <div>
+              <h1 className="font-sans text-4xl lg:text-[4rem] font-black tracking-tight text-white leading-none uppercase">
+                {content.title}
+              </h1>
+              <p className="mt-3 text-[14px] text-white/50 max-w-md leading-relaxed font-medium">
+                {content.description}
+              </p>
+            </div>
 
-          <div className="relative flex flex-col gap-7">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div className="flex flex-wrap items-center gap-3">
-                <Link
-                  href="/profile"
-                  className="inline-flex h-11 items-center gap-2 rounded-none border-2 border-border bg-background px-5 font-mono text-[11px] font-bold uppercase tracking-widest text-foreground shadow-[2px_2px_0_0_var(--foreground)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none hover:bg-foreground hover:text-primary-foreground transition-all"
-                >
-                  <LuArrowLeft className="size-4" />
-                  Back to profile
-                </Link>
-
-                <div className="inline-flex h-11 items-center gap-2 rounded-none border-2 border-border bg-background px-5 font-mono text-[11px] font-bold uppercase tracking-widest text-muted-foreground shadow-[2px_2px_0_0_var(--foreground)]">
-                  <LuShield className="size-4 text-foreground/80" />
-                  Protected workspace
-                </div>
+            {/* Nav actions */}
+            <div className="flex items-center gap-3 self-end flex-wrap">
+              <div className="inline-flex items-center gap-2 h-11 px-4 border-[3px] border-white/30 text-white/40 font-mono font-black uppercase tracking-widest text-[11px]">
+                <LuShield className="size-4" />
+                Protected
               </div>
-
+              <Link
+                href="/profile"
+                className="inline-flex items-center gap-2 h-11 px-5 rounded-none border-[3px] border-white bg-transparent text-white font-mono font-black uppercase tracking-widest text-[12px] hover:bg-white hover:text-black transition-all"
+              >
+                <LuArrowLeft className="size-4" />
+                Profile
+              </Link>
               <Link
                 href="/"
-                className="inline-flex h-11 items-center gap-2 rounded-none border-2 border-border bg-background px-5 font-mono text-[11px] font-bold uppercase tracking-widest text-muted-foreground shadow-[2px_2px_0_0_var(--foreground)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none hover:bg-foreground hover:text-primary-foreground transition-all"
+                className="inline-flex items-center gap-2 h-11 px-5 rounded-none border-[3px] border-white bg-white text-black font-mono font-black uppercase tracking-widest text-[12px] hover:bg-swiss-yellow hover:border-swiss-yellow transition-all"
               >
-                Return to board
+                ← Board
               </Link>
             </div>
-
-            <div className="grid gap-6 lg:grid-cols-[minmax(0,1.1fr)_auto] lg:items-end">
-              <div className="max-w-3xl">
-                <p className="mb-4 text-[11px] font-bold uppercase tracking-[0.28em] text-muted-foreground">
-                  {content.eyebrow}
-                </p>
-                <h1 className="max-w-2xl font-sans text-4xl font-bold tracking-tight text-foreground lg:text-6xl lg:leading-[0.94]">
-                  {content.title}
-                </h1>
-                <p className="mt-5 max-w-2xl text-[15px] leading-7 text-muted-foreground lg:text-[16px]">
-                  {content.description}
-                </p>
-              </div>
-
-              <div className="grid gap-3 sm:grid-cols-2 lg:w-[22rem]">
-                <div className="rounded-none border-2 border-border bg-background px-5 py-4 shadow-[4px_4px_0_0_var(--foreground)]">
-                  <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-muted-foreground">
-                    Surface
-                  </p>
-                  <p className="mt-2 text-lg font-bold text-foreground">Calm, focused</p>
-                </div>
-                <div className="rounded-none border-2 border-border bg-background px-5 py-4 shadow-[4px_4px_0_0_var(--foreground)]">
-                  <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-muted-foreground">
-                    Feel
-                  </p>
-                  <div className="mt-2 inline-flex items-center gap-2 text-lg font-bold text-foreground">
-                    <LuSparkles className="size-4 text-[#df7b38]" />
-                    Apple precise
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
-        </header>
+        </div>
+      </header>
 
-        <section className="account-surface relative overflow-hidden rounded-none border-4 border-border bg-card px-4 py-4 shadow-[8px_8px_0_0_var(--foreground)] sm:px-5 sm:py-5 lg:px-6 lg:py-6">
-          <div className="pointer-events-none absolute inset-x-10 top-0 h-px bg-gradient-to-r from-transparent via-foreground/10 to-transparent" />
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-secondary/18 to-transparent" />
+      {/* ── SETTINGS SURFACE ── */}
+      <div className="mx-auto max-w-5xl px-6 lg:px-10 py-10">
+        {/* Section divider nav */}
+        <div className="flex items-center gap-[3px] bg-black p-[3px] w-full mb-8">
+          {["settings", "security", "profile"].map((tab) => (
+            <Link
+              key={tab}
+              href={`/account/${tab}`}
+              className={`flex-1 py-2.5 text-center rounded-none font-mono text-[12px] font-black uppercase tracking-widest transition-none ${
+                path === tab ? "bg-white text-black" : "text-white/50 hover:text-white"
+              }`}
+            >
+              {tab}
+            </Link>
+          ))}
+        </div>
 
-          <div className="account-aesthetic relative rounded-none border-2 border-border bg-background p-3 sm:p-4 lg:p-5 shadow-[4px_4px_0_0_var(--foreground)]">
-            <AccountView path={path} />
-          </div>
-        </section>
+        {/* Account widget */}
+        <div className="border-[3px] border-black bg-white shadow-[6px_6px_0_0_black] p-4 sm:p-6">
+          <AccountView path={path} />
+        </div>
       </div>
     </main>
   )
