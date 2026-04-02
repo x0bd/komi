@@ -35,6 +35,11 @@
     --color-input: var(--input);
     --color-ring: var(--ring);
 
+    /* ── Swiss Primary Colors ── */
+    --color-swiss-red: var(--swiss-red);
+    --color-swiss-blue: var(--swiss-blue);
+    --color-swiss-yellow: var(--swiss-yellow);
+
     /* ── Game-Specific Colors ── */
     --color-board-surface: var(--board-surface);
     --color-board-frame: var(--board-frame);
@@ -120,12 +125,17 @@
     --muted: oklch(0.92 0 0);
     --muted-foreground: oklch(0.4 0 0);
 
-    /* ── Accent (Technical Orange) ── */
-    --accent: oklch(0.65 0.2 45);
+    /* ── Swiss Primary Accents ── */
+    --swiss-red: #DA291C;
+    --swiss-blue: #0033A0;
+    --swiss-yellow: #FFD100;
+
+    /* ── Accent (Swiss Red) ── */
+    --accent: var(--swiss-red);
     --accent-foreground: oklch(1 0 0); /* White text on orange */
 
     /* ── Destructive (Solid Red) ── */
-    --destructive: oklch(0.6 0.2 20);
+    --destructive: var(--swiss-red);
 
     /* ── Borders & Focus ── */
     --border: oklch(0 0 0); /* PURE BLACK BORDERS */
@@ -134,11 +144,11 @@
     --radius: 0rem; /* BRUTALIST SHARP */
 
     /* ── Chart ── */
-    --chart-1: oklch(0.85 0.1 230); /* Cyan */
-    --chart-2: oklch(0.8 0.1 320); /* Pastel Pink */
-    --chart-3: oklch(0.65 0.2 45); /* Orange */
-    --chart-4: oklch(0.6 0.2 20); /* Red */
-    --chart-5: oklch(0.6 0 0); /* Gray */
+    --chart-1: var(--swiss-blue);
+    --chart-2: var(--swiss-red);
+    --chart-3: var(--swiss-yellow);
+    --chart-4: var(--swiss-red);
+    --chart-5: var(--swiss-blue);
 
     /* ── Sidebar ── */
     --sidebar: oklch(0.96 0 0);
@@ -209,12 +219,17 @@
     --muted: oklch(0.1 0 0);
     --muted-foreground: oklch(0.6 0 0);
 
+    /* ── Swiss Primary Accents ── */
+    --swiss-red: #DA291C;
+    --swiss-blue: #0033A0;
+    --swiss-yellow: #FFD100;
+
     /* ── Accent ── */
-    --accent: oklch(0.65 0.2 45); /* Orange */
+    --accent: var(--swiss-yellow); /* Yellow */
     --accent-foreground: oklch(0 0 0);
 
     /* ── Destructive ── */
-    --destructive: oklch(0.6 0.2 20);
+    --destructive: var(--swiss-red);
 
     /* ── Borders & Focus ── */
     --border: oklch(1 0 0); /* PURE WHITE BORDERS */
@@ -222,11 +237,11 @@
     --ring: oklch(1 0 0);
 
     /* ── Chart ── */
-    --chart-1: oklch(0.85 0.1 230); /* Cyan */
-    --chart-2: oklch(0.8 0.1 320); /* Pastel Pink */
-    --chart-3: oklch(0.65 0.2 45); /* Orange */
-    --chart-4: oklch(0.6 0.2 20); /* Red */
-    --chart-5: oklch(0.4 0 0); /* Dark Gray */
+    --chart-1: var(--swiss-blue);
+    --chart-2: var(--swiss-red);
+    --chart-3: var(--swiss-yellow);
+    --chart-4: var(--swiss-red);
+    --chart-5: var(--swiss-blue);
 
     /* ── Sidebar ── */
     --sidebar: oklch(0.05 0 0);

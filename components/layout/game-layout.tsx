@@ -73,7 +73,7 @@ export function GameLayout({
                     <div className="relative flex h-full overflow-hidden rounded-none border-2 border-border bg-card shadow-[4px_4px_0_0_var(--foreground)]">
                         <nav className="relative flex h-full w-[68px] shrink-0 flex-col items-center gap-2 border-r border-border/60 py-6 lg:w-[76px]">
                             <div className="flex items-center justify-center mb-6 mt-1.5">
-                                <span className="font-sans text-[15px] font-bold tracking-tight text-foreground select-none">
+                                <span className="font-display text-2xl font-black tracking-tighter uppercase text-foreground select-none">
                                     Komi
                                 </span>
                             </div>
@@ -133,17 +133,17 @@ export function GameLayout({
                             aria-hidden={!isExpanded}
                         >
                             {activePanel ? (
-                                <div className="flex h-full flex-col bg-background/58 dark:bg-card/60">
-                                    <div className="flex items-center justify-between gap-4 border-b border-border/55 px-6 py-5 lg:px-7">
-                                        <h2 className="flex items-center gap-3 font-mono font-bold text-xl tracking-widest text-foreground uppercase">
-                                            <span className="flex size-10 items-center justify-center rounded-none border border-border bg-transparent text-foreground [&>svg]:size-5">
+                                <div className="flex h-full flex-col bg-swiss-red dark:bg-card/90">
+                                    <div className="flex items-center justify-between gap-4 border-b-2 border-border px-6 py-5 lg:px-7 bg-card">
+                                        <h2 className="flex items-center gap-3 font-display font-black text-2xl tracking-tighter text-foreground uppercase">
+                                            <span className="flex size-10 items-center justify-center rounded-none border-2 border-border bg-foreground text-card [&>svg]:size-5">
                                                 {activePanel.icon}
                                             </span>
                                             <span>{activePanel.label}</span>
                                         </h2>
                                         <button
                                             onClick={() => setActivePanelId(null)}
-                                            className="flex size-11 items-center justify-center rounded-none border border-transparent text-muted-foreground transition-colors hover:border-border hover:bg-foreground hover:text-primary-foreground"
+                                            className="flex size-11 items-center justify-center rounded-none border-2 border-transparent text-muted-foreground transition-all hover:border-border hover:bg-foreground hover:text-primary-foreground focus:outline-none"
                                         >
                                             <LuX className="size-6" />
                                         </button>

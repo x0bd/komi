@@ -65,10 +65,10 @@ export function PostGameReviewCard({
         <div className="flex flex-col gap-6 w-full rounded-none border-2 border-border bg-card p-5 lg:p-6 shadow-[4px_4px_0_0_var(--foreground)]">
             <div className="flex items-start justify-between gap-3 px-1">
                 <div>
-                    <h3 className="text-xl font-bold tracking-tight text-foreground">
+                    <h3 className="text-2xl font-display font-black uppercase tracking-tighter text-foreground">
                         Post-game review
                     </h3>
-                    <p className="font-medium text-[13px] text-muted-foreground mt-1">
+                    <p className="font-mono text-[11px] font-bold uppercase text-muted-foreground mt-1">
                         {formatOutcome({ winner, reason, scoreResult })}
                     </p>
                 </div>
@@ -84,46 +84,46 @@ export function PostGameReviewCard({
             {scoreResult ? (
                 <div className="grid grid-cols-2 gap-4">
                     {/* Black Stat Block */}
-                    <div className="flex flex-col bg-background border-2 border-border rounded-none p-5 shadow-[4px_4px_0_0_var(--foreground)] w-full transition-transform hover:-translate-y-1 group">
+                    <div className="flex flex-col bg-swiss-blue text-white border-2 border-border rounded-none p-5 shadow-[4px_4px_0_0_var(--foreground)] w-full transition-transform hover:-translate-y-1 group">
                         <div className="flex items-center justify-between mb-6">
-                            <span className="text-[12px] font-mono font-bold uppercase tracking-widest text-[#111] dark:text-foreground">Black</span>
-                            <div className="size-4 rounded-none bg-[#111] border border-border" />
+                            <span className="text-[12px] font-mono font-bold uppercase tracking-widest text-white">Black</span>
+                            <div className="size-4 rounded-none bg-black border-2 border-transparent" />
                         </div>
                         <div className="mt-auto">
-                            <span className="text-4xl font-mono font-bold tracking-tighter text-foreground group-hover:scale-105 transition-transform origin-left inline-block">
+                            <span className="text-5xl font-display font-black tracking-tighter text-white group-hover:scale-105 transition-transform origin-left inline-block">
                                 {scoreResult.black.total.toFixed(1)}
                             </span>
-                            <div className="flex flex-col gap-2 mt-4 pt-4 border-t border-border/50">
-                                <div className="flex items-center justify-between text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+                            <div className="flex flex-col gap-2 mt-4 pt-4 border-t border-white/20">
+                                <div className="flex items-center justify-between text-[11px] font-bold text-white/70 uppercase tracking-wider">
                                     <span>Territory</span>
-                                    <span className="font-mono text-foreground text-[13px]">{scoreResult.black.territory}</span>
+                                    <span className="font-mono text-white text-[13px]">{scoreResult.black.territory}</span>
                                 </div>
-                                <div className="flex items-center justify-between text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+                                <div className="flex items-center justify-between text-[11px] font-bold text-white/70 uppercase tracking-wider">
                                     <span>Captures</span>
-                                    <span className="font-mono text-foreground text-[13px]">{scoreResult.black.captures}</span>
+                                    <span className="font-mono text-white text-[13px]">{scoreResult.black.captures}</span>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     {/* White Stat Block */}
-                    <div className="flex flex-col bg-background border-2 border-border rounded-none p-5 shadow-[4px_4px_0_0_var(--foreground)] w-full transition-transform hover:-translate-y-1 group">
+                    <div className="flex flex-col bg-swiss-red text-white border-2 border-border rounded-none p-5 shadow-[4px_4px_0_0_var(--foreground)] w-full transition-transform hover:-translate-y-1 group">
                         <div className="flex items-center justify-between mb-6">
-                            <span className="text-[12px] font-mono font-bold uppercase tracking-widest text-muted-foreground">White</span>
-                            <div className="size-4 rounded-none bg-stone-200 border border-border/80" />
+                            <span className="text-[12px] font-mono font-bold uppercase tracking-widest text-white">White</span>
+                            <div className="size-4 rounded-none bg-white border-2 border-transparent" />
                         </div>
                         <div className="mt-auto">
-                            <span className="text-4xl font-mono font-bold tracking-tighter text-foreground group-hover:scale-105 transition-transform origin-left inline-block">
+                            <span className="text-5xl font-display font-black tracking-tighter text-white group-hover:scale-105 transition-transform origin-left inline-block">
                                 {scoreResult.white.total.toFixed(1)}
                             </span>
-                            <div className="flex flex-col gap-2 mt-4 pt-4 border-t border-border/50">
-                                <div className="flex items-center justify-between text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+                            <div className="flex flex-col gap-2 mt-4 pt-4 border-t border-white/20">
+                                <div className="flex items-center justify-between text-[11px] font-bold text-white/70 uppercase tracking-wider">
                                     <span>Territory</span>
-                                    <span className="font-mono text-foreground text-[13px]">{scoreResult.white.territory}</span>
+                                    <span className="font-mono text-white text-[13px]">{scoreResult.white.territory}</span>
                                 </div>
-                                <div className="flex items-center justify-between text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+                                <div className="flex items-center justify-between text-[11px] font-bold text-white/70 uppercase tracking-wider">
                                     <span>Komi</span>
-                                    <span className="font-mono text-foreground text-[13px]">+{scoreResult.white.komi?.toFixed(1) ?? "0.0"}</span>
+                                    <span className="font-mono text-white text-[13px]">+{scoreResult.white.komi?.toFixed(1) ?? "0.0"}</span>
                                 </div>
                             </div>
                         </div>

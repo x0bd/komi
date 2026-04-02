@@ -250,9 +250,9 @@ export function GameHistoryPageClient() {
                       <div className="flex items-center gap-4">
                         <div className={cn(
                           "flex size-14 shrink-0 items-center justify-center rounded-none font-bold text-xl border-2 border-border",
-                          isWin ? "bg-status-active text-background border-status-active" : 
-                          isLoss ? "bg-destructive text-background border-destructive" :
-                          "bg-background text-foreground border-border"
+                          isWin ? "bg-swiss-blue text-white" : 
+                          isLoss ? "bg-swiss-red text-white" :
+                          "bg-swiss-yellow text-black"
                         )}>
                           {game.opponent.label.charAt(0).toUpperCase()}
                         </div>
@@ -269,9 +269,9 @@ export function GameHistoryPageClient() {
 
                       <div className={cn(
                         "flex items-center justify-center px-4 py-1.5 rounded-none border-2 font-mono text-[11px] font-bold uppercase tracking-widest",
-                        isWin ? "bg-status-active text-background border-status-active" :
-                        isLoss ? "bg-destructive text-background border-destructive" :
-                        "bg-background text-muted-foreground border-border"
+                        isWin ? "bg-swiss-blue text-white border-border" :
+                        isLoss ? "bg-swiss-red text-white border-border" :
+                        "bg-swiss-yellow text-black border-border"
                       )}>
                         {game.outcome}
                       </div>

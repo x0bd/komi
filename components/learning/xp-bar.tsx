@@ -144,7 +144,7 @@ export function XPBar({
                 onClick={onToggle}
                 className="group w-full text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
-                <div className="overflow-hidden rounded-none border-2 border-border bg-card shadow-[4px_4px_0_0_var(--foreground)] transition-all duration-300 hover:shadow-[6px_6px_0_0_var(--foreground)]">
+                <div className="overflow-hidden rounded-none border-2 border-border bg-swiss-yellow shadow-[4px_4px_0_0_var(--foreground)] transition-all duration-300 hover:shadow-[6px_6px_0_0_var(--foreground)]">
                     <div className="px-5 py-4">
                         <div className="flex items-center justify-between gap-3">
                             <div className="flex items-center gap-4 min-w-0">
@@ -178,10 +178,10 @@ export function XPBar({
                                             ))}
                                         </div>
                                     </div>
-                                    <p className="truncate font-sans text-[17px] font-semibold text-foreground leading-tight">
+                                    <p className="truncate font-display font-black text-[20px] uppercase text-black leading-tight mt-1">
                                         {momentumTone}
                                     </p>
-                                    <p className="truncate text-[13px] text-muted-foreground leading-tight mt-0.5">
+                                    <p className="truncate text-[13px] text-black/80 font-bold leading-tight mt-0.5">
                                         {lastStreakEvent}
                                     </p>
                                 </div>
@@ -252,7 +252,7 @@ export function XPBar({
                     </div>
                 </div>
 
-                <div className="mt-4 rounded-none border-2 border-border bg-card p-4 shadow-[4px_4px_0_0_var(--foreground)]">
+                <div className="mt-4 rounded-none border-2 border-border bg-swiss-yellow p-4 shadow-[4px_4px_0_0_var(--foreground)]">
                     <div className="flex items-end justify-between gap-5">
                         <div className="min-w-0 flex-1">
                             <div className="flex h-[60px] max-w-[220px] items-end gap-1">
