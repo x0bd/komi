@@ -114,18 +114,18 @@ export function GameHistoryPageClient() {
   return (
     <main className="min-h-svh bg-background px-6 py-10 lg:px-10">
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-6">
-        <header className="relative flex flex-col justify-end min-h-[160px] lg:min-h-[220px] rounded-none bg-card border-b-4 border-border p-8 lg:p-12 overflow-hidden shadow-none">
-          <div className="absolute top-0 right-0 w-2/3 h-full opacity-[0.03] dark:opacity-5 pointer-events-none bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-foreground via-foreground/50 to-transparent" />
+        <header className="relative flex flex-col justify-end min-h-[160px] lg:min-h-[220px] rounded-none bg-black text-white border-b-[8px] border-b-swiss-red p-8 lg:p-12 overflow-hidden shadow-[4px_4px_0_0_var(--foreground)]">
+          <div className="absolute top-0 right-0 w-2/3 h-full opacity-20 pointer-events-none bg-[radial-gradient(ellipse_at_top_right,_white,_transparent)]" />
           
           <div className="relative z-10 flex flex-wrap items-end justify-between gap-6">
             <div className="max-w-xl">
-              <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-muted-foreground mb-4">
+              <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-white/50 mb-4">
                 Komi Archive
               </p>
-              <h1 className="font-sans text-5xl lg:text-[5rem] font-bold tracking-tighter text-foreground leading-[0.95] mb-6">
+              <h1 className="font-sans text-5xl lg:text-[5rem] font-black tracking-widest text-white leading-[0.95] mb-6 uppercase">
                 Game<br />History.
               </h1>
-              <p className="text-[15px] lg:text-base text-muted-foreground/90 leading-relaxed max-w-md">
+              <p className="text-[15px] lg:text-base text-white/80 leading-relaxed max-w-md">
                 Review past matches, trace your improvement, and jump straight into deep replay analysis.
               </p>
             </div>

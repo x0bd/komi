@@ -18,10 +18,12 @@ export type DockPanel = {
 export function GameLayout({
     board,
     panels = [],
+    rightPanel,
     className,
 }: {
     board: React.ReactNode;
     panels?: DockPanel[];
+    rightPanel?: React.ReactNode;
     className?: string;
 }) {
     const [activePanelId, setActivePanelId] = useState<string | null>(null);
@@ -40,24 +42,30 @@ export function GameLayout({
                     <div className="flex items-center gap-2 pointer-events-auto">
                         <Button
                             render={<Link href="/games" />}
-                            variant="ghost"
+                            variant="outline"
                             size="sm"
-                            className="rounded-full hidden sm:inline-flex"
+                            className="rounded-none hidden sm:inline-flex border-2 border-black bg-white text-black hover:bg-black hover:text-white font-mono font-bold tracking-widest uppercase text-xs px-6 py-5 shadow-[4px_4px_0_0_var(--foreground)] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none"
                         >
                             History
                         </Button>
-                        <ThemeToggle className="rounded-full" />
                     </div>
                 </header>
 
                 {/* Main Workspace */}
-                <div className="relative z-10 flex flex-1 w-full mx-auto px-24 lg:px-32 h-svh">
+                <div className="relative z-10 flex flex-1 w-full mx-auto px-[100px] lg:px-[140px] xl:px-[200px] h-svh items-center justify-between pointer-events-none gap-10">
                     {/* Board Area */}
-                    <main className="flex flex-1 items-center justify-center h-full">
-                        <div className="w-full flex justify-center max-w-3xl">
+                    <main className="flex flex-1 items-center justify-center h-full pointer-events-auto">
+                        <div className="w-full flex justify-center max-w-2xl 2xl:max-w-3xl">
                             {board}
                         </div>
                     </main>
+
+                    {/* Right Floating Dashboard */}
+                    {rightPanel && (
+                        <aside className="w-[300px] shrink-0 pointer-events-auto flex flex-col justify-center translate-y-[-2%]">
+                            {rightPanel}
+                        </aside>
+                    )}
                 </div>
 
                 {/* Left Dock */}
@@ -70,15 +78,15 @@ export function GameLayout({
                             : "w-[68px] lg:w-[76px]",
                     )}
                 >
-                    <div className="relative flex h-full overflow-hidden rounded-none border-2 border-border bg-card shadow-[4px_4px_0_0_var(--foreground)]">
-                        <nav className="relative flex h-full w-[68px] shrink-0 flex-col items-center gap-2 border-r border-border/60 py-6 lg:w-[76px]">
-                            <div className="flex items-center justify-center mb-6 mt-1.5">
-                                <span className="font-display text-2xl font-black tracking-tighter uppercase text-foreground select-none">
+                    <div className="relative flex h-full overflow-hidden rounded-none border-2 border-border bg-black shadow-[4px_4px_0_0_var(--foreground)] text-white">
+                        <nav className="relative flex h-full w-[68px] shrink-0 flex-col items-center gap-2 border-r border-white/20 py-6 lg:w-[76px]">
+                            <div className="flex items-center justify-center mb-8 mt-4">
+                                <span className="font-display text-2xl font-black tracking-tighter uppercase text-white select-none">
                                     Komi
                                 </span>
                             </div>
 
-                            <div className="flex flex-1 flex-col items-center gap-3 w-full px-3">
+                            <div className="flex flex-1 flex-col items-center gap-6 w-full px-3 mt-4">
                                 {panels.map((panel) => {
                                     const isActive = activePanelId === panel.id;
                                     return (
@@ -90,8 +98,8 @@ export function GameLayout({
                                                         className={cn(
                                                             "relative flex min-h-12 w-full items-center justify-center rounded-none transition-all duration-200 group border border-transparent",
                                                             isActive
-                                                                ? "bg-foreground text-primary-foreground border-border"
-                                                                : "text-muted-foreground hover:bg-foreground hover:text-primary-foreground",
+                                                                ? "bg-white text-black border-white"
+                                                                : "text-white/50 hover:bg-white hover:text-black",
                                                         )}
                                                     />
                                                 }
@@ -112,7 +120,7 @@ export function GameLayout({
                                         render={
                                             <Link
                                                 href="/profile"
-                                                className="relative flex min-h-12 w-full items-center justify-center rounded-2xl transition-all duration-200 group text-muted-foreground hover:bg-foreground/5 dark:hover:bg-secondary/80 hover:text-foreground"
+                                                className="relative flex min-h-12 w-full items-center justify-center rounded-2xl transition-all duration-200 group text-white/50 hover:bg-white hover:text-black"
                                             />
                                         }
                                     >
@@ -133,9 +141,9 @@ export function GameLayout({
                             aria-hidden={!isExpanded}
                         >
                             {activePanel ? (
-                                <div className="flex h-full flex-col bg-swiss-red dark:bg-card/90">
-                                    <div className="flex items-center justify-between gap-4 border-b-2 border-border px-6 py-5 lg:px-7 bg-card">
-                                        <h2 className="flex items-center gap-3 font-display font-black text-2xl tracking-tighter text-foreground uppercase">
+                                <div className="flex h-full flex-col bg-black text-white">
+                                    <div className="flex items-center justify-between gap-4 border-b-2 border-white/20 px-6 py-5 lg:px-7 bg-black">
+                                        <h2 className="flex items-center gap-3 font-display font-black text-2xl tracking-tighter text-white uppercase">
                                             <span className="flex size-10 items-center justify-center rounded-none border-2 border-border bg-foreground text-card [&>svg]:size-5">
                                                 {activePanel.icon}
                                             </span>

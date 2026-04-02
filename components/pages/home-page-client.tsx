@@ -497,7 +497,7 @@ export default function HomePageClient() {
         replayPlaybackSpeed,
     ]);
 
-    const sidebarPanels = useSidebarPanels({
+    const { panels: sidebarPanels, rightPanel } = useSidebarPanels({
         replayState: {
             enabled: replayEnabled,
             isPlaying: replayIsPlaying,
@@ -570,6 +570,7 @@ export default function HomePageClient() {
                         />
                     }
                     panels={sidebarPanels}
+                    rightPanel={rightPanel}
                 />
             )}
             <AIReaction />
@@ -796,7 +797,7 @@ function OnlineGameplayLayout() {
         return true;
     }, []);
 
-    const sidebarPanels = useSidebarPanels({
+    const { panels: sidebarPanels } = useSidebarPanels({
         onPassAction: commitPass,
         onResignAction: commitResign,
         controlsDisabled: waitingForOpponent,
@@ -1074,7 +1075,7 @@ export function useSidebarPanels({
     onReplaySkipStart?: () => void;
     onReplaySkipEnd?: () => void;
     onReplaySpeedChange?: (speed: number) => void;
-} = {}): DockPanel[] {
+} = {}): { panels: DockPanel[]; rightPanel: React.ReactNode } {
     const gameState = useGameStore((state) => state.gameState);
     const moveHistory = useGameStore((state) => state.moveHistory);
     const mode = useGameStore((state) => state.mode);
@@ -1140,14 +1141,9 @@ export function useSidebarPanels({
         ? Math.round(Math.max(0, Math.min(1, latestAnalysis.winRate)) * 100)
         : null;
 
-    return [
-        {
-            id: "game",
-            label: "Game Info",
-            icon: <LuGamepad2 />,
-            content: (
-                <div className="flex flex-col h-full animate-in fade-in slide-in-from-bottom-2 duration-300">
-                    <div className="flex flex-col gap-3">
+    const rightPanel = (
+        <div className="flex flex-col justify-center animate-in fade-in slide-in-from-right-4 duration-500 w-full pb-10">
+            <div className="flex flex-col gap-5">
                         <PlayerCard
                             name="Player 1"
                             initial="P1"
@@ -1195,7 +1191,7 @@ export function useSidebarPanels({
                         </div>
                     ) : null}
 
-                    <div className="mt-auto pt-6 flex flex-col gap-4 shrink-0">
+                    <div className="mt-8 flex flex-col gap-4 shrink-0">
                         <LiveScoreCard
                             score={liveScore}
                             moveCount={mappedMoves.length}
@@ -1208,9 +1204,10 @@ export function useSidebarPanels({
                             disabled={isGameOver || controlsDisabled}
                         />
                     </div>
-                </div>
-            )
-        },
+        </div>
+    );
+
+    const panels = [
         {
             id: "analysis",
             label: "Sensei & Analysis",
@@ -1339,4 +1336,6 @@ export function useSidebarPanels({
             )
         }
     ];
+
+    return { panels, rightPanel };
 }

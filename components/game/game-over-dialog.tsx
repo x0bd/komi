@@ -44,7 +44,7 @@ export function GameOverDialog({
       <DialogContent
         showCloseButton={true}
         className={cn(
-          "rounded-none border-2 border-border bg-background shadow-[8px_8px_0_0_var(--foreground)]",
+          "rounded-none border-4 border-black bg-black text-white shadow-[8px_8px_0_0_var(--swiss-red)]",
           className
         )}
       >
