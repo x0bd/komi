@@ -31,20 +31,20 @@ export function AIDifficultySelector({
     return (
         <div
             className={cn(
-                "flex flex-col gap-5 rounded-none border-2 border-border bg-card shadow-[4px_4px_0_0_var(--foreground)] p-6",
+                "flex flex-col gap-5 rounded-none border-[3px] border-white bg-white shadow-[6px_6px_0_0_var(--swiss-blue)] p-6",
                 className,
             )}
         >
             <div className="flex flex-col gap-1 px-1">
-                <span className="text-[11px] font-bold uppercase tracking-[0.15em] text-muted-foreground">
+                <span className="text-[11px] font-black uppercase tracking-[0.15em] text-black/50">
                     AI Engine · Sensei
                 </span>
-                <p className="font-sans text-[15px] font-semibold text-foreground leading-tight">
+                <p className="font-sans text-[15px] font-black text-black leading-tight">
                     {descMap[value ?? "easy"]}
                 </p>
             </div>
 
-            <div className="flex bg-background rounded-none p-1 border-2 border-border">
+            <div className="flex bg-black rounded-none p-[3px] border-[3px] border-black">
                 {OPTIONS.map((option) => {
                     const active = option.value === value;
 
@@ -59,10 +59,10 @@ export function AIDifficultySelector({
                                 }
                             }}
                             className={cn(
-                                "flex-1 px-3 py-2 rounded-none text-[13px] font-mono font-bold tracking-wide uppercase transition-all duration-300 border border-transparent",
+                                "flex-1 px-3 py-2 rounded-none text-[13px] font-mono font-black tracking-wide uppercase transition-all duration-300 border border-transparent",
                                 active
-                                    ? "bg-foreground text-primary-foreground border-border shadow-[2px_2px_0_0_var(--border)]"
-                                    : "text-muted-foreground hover:text-foreground",
+                                    ? "bg-white text-black border-black/20 shadow-[2px_2px_0_0_var(--swiss-red)]"
+                                    : "text-white/50 hover:text-white",
                                 !option.enabled && "cursor-not-allowed opacity-40",
                             )}
                             aria-pressed={active}

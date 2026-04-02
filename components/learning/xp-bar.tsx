@@ -144,17 +144,17 @@ export function XPBar({
                 onClick={onToggle}
                 className="group w-full text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
-                <div className="overflow-hidden rounded-none border-2 border-border bg-swiss-yellow shadow-[4px_4px_0_0_var(--foreground)] transition-all duration-300 hover:shadow-[6px_6px_0_0_var(--foreground)]">
+                <div className="overflow-hidden rounded-none border-[3px] border-white bg-white shadow-[6px_6px_0_0_var(--swiss-red)] transition-all duration-300 hover:shadow-[8px_8px_0_0_var(--swiss-red)]">
                     <div className="px-5 py-4">
                         <div className="flex items-center justify-between gap-3">
                             <div className="flex items-center gap-4 min-w-0">
-                                <div className="flex size-12 items-center justify-center rounded-none border-2 border-border bg-background text-xp-streak shadow-[2px_2px_0_0_var(--foreground)]">
+                                <div className="flex size-12 items-center justify-center rounded-none border-[3px] border-black bg-black text-swiss-yellow shadow-[3px_3px_0_0_var(--swiss-red)]">
                                     <LuFlame className="size-[20px]" />
                                 </div>
 
                                 <div className="min-w-0 flex flex-col justify-center">
                                     <div className="flex items-center gap-2 mb-0.5">
-                                        <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-muted-foreground">
+                                        <p className="text-[10px] font-black uppercase tracking-[0.15em] text-black/50">
                                             Live Streak
                                         </p>
                                         <div className="hidden items-end gap-[3px] min-[430px]:flex">
@@ -162,17 +162,14 @@ export function XPBar({
                                                 <span
                                                     key={index}
                                                     className={cn(
-                                                        "w-1.5 rounded-none bg-gradient-to-t",
+                                                        "w-1.5 rounded-none",
                                                         bar.isActive
-                                                            ? "from-status-active via-accent to-xp-streak"
-                                                            : "bg-muted-foreground/20",
+                                                            ? "bg-black"
+                                                            : "bg-black/20",
                                                     )}
                                                     style={{
                                                         height: `${Math.max(10, Math.round(bar.height * 0.4))}px`,
-                                                        opacity: Math.max(
-                                                            0.3,
-                                                            bar.opacity,
-                                                        ),
+                                                        opacity: Math.max(0.3, bar.opacity),
                                                     }}
                                                 />
                                             ))}
@@ -181,7 +178,7 @@ export function XPBar({
                                     <p className="truncate font-display font-black text-[20px] uppercase text-black leading-tight mt-1">
                                         {momentumTone}
                                     </p>
-                                    <p className="truncate text-[13px] text-black/80 font-bold leading-tight mt-0.5">
+                                    <p className="truncate text-[13px] text-black/60 font-bold leading-tight mt-0.5">
                                         {lastStreakEvent}
                                     </p>
                                 </div>
@@ -189,14 +186,14 @@ export function XPBar({
 
                             <div className="flex items-center gap-4 shrink-0">
                                 <div className="text-center flex flex-col items-center">
-                                    <p className="font-sans text-2xl font-bold leading-none text-[#d96645] dark:text-xp-streak">
+                                    <p className="font-sans text-2xl font-black leading-none text-black">
                                         {streak}
                                     </p>
-                                    <p className="mt-1 text-[11px] font-medium text-muted-foreground">
+                                    <p className="mt-1 text-[11px] font-bold text-black/50">
                                         {energy}% live
                                     </p>
                                 </div>
-                                <span className="flex size-9 items-center justify-center rounded-none border-2 border-border text-muted-foreground transition-colors group-hover:bg-foreground group-hover:text-primary-foreground shadow-[2px_2px_0_0_var(--foreground)]">
+                                <span className="flex size-9 items-center justify-center rounded-none border-[3px] border-black bg-black text-white transition-colors group-hover:bg-swiss-red shadow-[2px_2px_0_0_var(--swiss-blue)]">
                                     <LuChevronDown className="size-4" />
                                 </span>
                             </div>
@@ -208,23 +205,23 @@ export function XPBar({
     }
 
     return (
-        <div className="flex flex-col overflow-hidden transition-all duration-300 mt-2 border-t border-border/50 pt-2">
+        <div className="flex flex-col overflow-hidden transition-all duration-300 mt-2 border-t-[3px] border-white/20 pt-2">
             <div className="relative px-2 py-2">
                 <div
                     ref={glowRef}
-                    className="pointer-events-none absolute inset-x-4 bottom-3 top-3 rounded-2xl opacity-0 blur-2xl"
+                    className="pointer-events-none absolute inset-x-4 bottom-3 top-3 rounded-none opacity-0 blur-2xl"
                 />
 
                 <div className="flex items-start justify-between gap-4">
                     <div className="flex items-center gap-3">
-                        <span className="flex size-8 items-center justify-center rounded-none border-2 border-border bg-background text-accent shadow-[2px_2px_0_0_var(--foreground)]">
+                        <span className="flex size-8 items-center justify-center rounded-none border-[3px] border-white bg-white text-black shadow-[3px_3px_0_0_var(--swiss-yellow)]">
                             <LuFlame className="size-4" />
                         </span>
                         <div>
-                            <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-muted-foreground">
+                            <p className="text-[10px] font-black uppercase tracking-[0.15em] text-white/50">
                                 Live Streak
                             </p>
-                            <p className="font-sans text-base font-semibold text-foreground">
+                            <p className="font-sans text-base font-black text-white">
                                 {momentumTone}
                             </p>
                         </div>
@@ -232,10 +229,10 @@ export function XPBar({
 
                     <div className="flex items-start gap-2">
                         <div ref={valueRef} className="text-right">
-                            <div className="font-sans text-xl font-bold leading-none text-xp-streak">
+                            <div className="font-sans text-xl font-black leading-none text-swiss-yellow">
                                 {streak}
                             </div>
-                            <p className="mt-1 text-[10px] font-medium text-muted-foreground">
+                            <p className="mt-1 text-[10px] font-bold text-white/50">
                                 {energy}% live
                             </p>
                         </div>
@@ -244,7 +241,7 @@ export function XPBar({
                                 type="button"
                                 onClick={onToggle}
                                 aria-label="Collapse live streak"
-                                className="flex size-7 items-center justify-center rounded-full transition-colors hover:text-foreground hover:bg-secondary/80 text-muted-foreground ml-1"
+                                className="flex size-7 items-center justify-center rounded-none transition-colors hover:text-white hover:bg-white/10 text-white/50 ml-1"
                             >
                                 <LuChevronUp className="size-3.5" />
                             </button>
@@ -252,7 +249,7 @@ export function XPBar({
                     </div>
                 </div>
 
-                <div className="mt-4 rounded-none border-2 border-border bg-swiss-yellow p-4 shadow-[4px_4px_0_0_var(--foreground)]">
+                <div className="mt-4 rounded-none border-[3px] border-white bg-white p-4 shadow-[6px_6px_0_0_var(--swiss-yellow)]">
                     <div className="flex items-end justify-between gap-5">
                         <div className="min-w-0 flex-1">
                             <div className="flex h-[60px] max-w-[220px] items-end gap-1">
@@ -266,10 +263,10 @@ export function XPBar({
                                                 barRefs.current[index] = node;
                                             }}
                                             className={cn(
-                                                "w-full rounded-none bg-gradient-to-t shadow-none",
+                                                "w-full rounded-none shadow-none",
                                                 bar.isActive
-                                                    ? "from-status-active via-accent to-xp-streak"
-                                                    : "from-border/30 via-border/20 to-border/5",
+                                                    ? "bg-black"
+                                                    : "bg-black/15",
                                             )}
                                             style={{
                                                 height: `${bar.height * 0.8}px`,
@@ -283,12 +280,12 @@ export function XPBar({
                             <div
                                 ref={eventRef}
                                 className={cn(
-                                    "mt-3 inline-flex min-h-7 max-w-full items-center gap-2 rounded-none border-2 px-2.5 py-1 font-mono text-[11px] font-bold shadow-[2px_2px_0_0_var(--foreground)]",
+                                    "mt-3 inline-flex min-h-7 max-w-full items-center gap-2 rounded-none border-2 px-2.5 py-1 font-mono text-[11px] font-black shadow-[2px_2px_0_0_var(--foreground)]",
                                     lastStreakDelta > 0
-                                        ? "border-status-active/30 bg-status-active/10 text-status-active"
+                                        ? "border-black bg-black text-swiss-yellow"
                                         : lastStreakDelta < 0
-                                          ? "border-destructive/30 bg-destructive/10 text-destructive"
-                                          : "border-border/50 bg-secondary/30 text-muted-foreground",
+                                          ? "border-swiss-red bg-swiss-red text-white"
+                                          : "border-black/20 bg-black/5 text-black/60",
                                 )}
                             >
                                 {lastStreakDelta > 0 ? (
@@ -303,10 +300,10 @@ export function XPBar({
                         </div>
 
                         <div className="shrink-0 text-right">
-                            <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                            <p className="text-[10px] font-black uppercase tracking-[0.14em] text-black/50">
                                 Level Charge
                             </p>
-                            <p className="mt-1 font-sans text-xl font-bold leading-none text-foreground/90">
+                            <p className="mt-1 font-sans text-xl font-black leading-none text-black">
                                 {levelCharge}%
                             </p>
                         </div>

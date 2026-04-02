@@ -1307,8 +1307,8 @@ export function useSidebarPanels({
             icon: <LuSettings />,
             content: (
                 <div className="flex flex-col gap-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
-                    <div className="flex flex-col gap-2">
-                        <span className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground ml-1 px-1">
+                <div className="flex flex-col gap-2">
+                        <span className="text-[11px] font-black uppercase tracking-widest text-white/50 ml-1 px-1">
                             Game Mode
                         </span>
                         <ModeToggle
