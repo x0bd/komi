@@ -33,10 +33,10 @@ export function PlayerCard({
     return (
         <div
             className={cn(
-                "flex items-center gap-4 py-3 px-4 rounded-none transition-all duration-500 w-full border-2",
+                "flex items-center gap-4 py-3 px-4 rounded-none transition-all duration-300 w-full border-2",
                 isActive 
-                    ? "bg-card border-border shadow-[4px_4px_0_0_var(--foreground)] scale-[1.02]" 
-                    : "bg-background border-transparent opacity-60 grayscale-[0.2]",
+                    ? "bg-black border-white text-white shadow-[4px_4px_0_0_white] scale-[1.02]" 
+                    : "bg-transparent border-white/20 text-white/50 grayscale-[0.2]",
                 className,
             )}
         >
@@ -57,8 +57,8 @@ export function PlayerCard({
                         className={cn(
                             "font-sans text-[16px] font-medium tracking-tight",
                             stoneColor === "black"
-                                ? "bg-[#111] text-white"
-                                : "bg-transparent text-muted-foreground",
+                                ? "bg-white text-black"
+                                : "bg-transparent border border-white/40 text-white",
                         )}
                     >
                         {avatarIcon ? (
@@ -74,24 +74,24 @@ export function PlayerCard({
 
             <div className="min-w-0 flex-1 flex items-center justify-between">
                 <div className="flex flex-col gap-1">
-                    <p className="font-sans text-[16px] font-semibold tracking-tight text-foreground truncate">
+                    <p className={cn("font-sans text-[16px] font-semibold tracking-tight truncate", isActive ? "text-white" : "text-white/60")}>
                         {name}
                     </p>
-                    <div className="flex items-center gap-2 text-[12px] font-medium text-muted-foreground">
+                    <div className={cn("flex items-center gap-2 text-[12px] font-medium", isActive ? "text-white/80" : "text-white/40")}>
                         <div className="flex items-center gap-1.5 uppercase tracking-widest font-bold">
                             <div
                                 className={cn(
                                     "size-2 rounded-full",
                                     stoneColor === "black"
-                                        ? "bg-[#111]"
-                                        : "bg-transparent border border-muted-foreground/50",
+                                        ? "bg-white"
+                                        : "bg-transparent border border-white/50",
                                 )}
                             />
                             <span>{stoneColor}</span>
                         </div>
-                        <div className="size-1 rounded-full bg-border shrink-0" />
+                        <div className="size-1 rounded-full bg-white/20 shrink-0" />
                         <p className="truncate">
-                            <span className="text-foreground font-bold mr-1.5">
+                            <span className="font-bold mr-1.5">
                                 {captures}
                             </span>
                             captures
@@ -103,7 +103,7 @@ export function PlayerCard({
                     minutes={minutes}
                     seconds={seconds}
                     isLowTime={isLowTime}
-                    className="text-right text-2xl font-mono tracking-tighter text-foreground"
+                    className={cn("text-right text-2xl font-mono tracking-tighter", isActive ? "text-white" : "text-white/50")}
                 />
             </div>
         </div>
