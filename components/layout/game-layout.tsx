@@ -52,17 +52,15 @@ export function GameLayout({
                 </header>
 
                 {/* Main Workspace */}
-                <div className="relative z-10 flex flex-1 w-full mx-auto px-[100px] lg:px-[140px] xl:px-[200px] h-svh items-center justify-between pointer-events-none gap-10">
+                <div className="relative z-10 flex flex-1 w-full mx-auto px-6 h-svh items-center justify-center pointer-events-none">
                     {/* Board Area */}
-                    <main className="flex flex-1 items-center justify-center h-full pointer-events-auto">
-                        <div className="w-full flex justify-center max-w-2xl 2xl:max-w-3xl">
-                            {board}
-                        </div>
+                    <main className="flex items-center justify-center h-full pointer-events-auto max-w-2xl 2xl:max-w-3xl w-full">
+                        {board}
                     </main>
 
                     {/* Right Floating Dashboard */}
                     {rightPanel && (
-                        <aside className="w-[300px] shrink-0 pointer-events-auto flex flex-col justify-center translate-y-[-2%]">
+                        <aside className="absolute right-0 top-1/2 -translate-y-1/2 shrink-0 pointer-events-auto flex flex-col justify-center px-4 md:px-8 lg:px-12 xl:px-16">
                             {rightPanel}
                         </aside>
                     )}
