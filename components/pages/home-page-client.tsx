@@ -1194,15 +1194,15 @@ export function useSidebarPanels({
 
                     {winProbability !== null ? (
                         <div className="mt-8 mb-2 px-2">
-                            <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-widest text-white/50 mb-3">
-                                <span>Engine Read</span>
-                                <span className="font-mono text-white">
+                            <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-widest text-black mb-3">
+                                <span className="bg-white text-black px-2 py-1 tracking-widest">Engine Read</span>
+                                <span className="font-mono text-white text-base bg-black border-2 border-white px-2 py-0.5">
                                     {winProbability}%
                                 </span>
                             </div>
-                            <div className="h-4 rounded-none bg-white/20 overflow-hidden relative border-2 border-white">
+                            <div className="h-6 rounded-none bg-white overflow-hidden relative border-[3px] border-white shadow-[4px_4px_0_0_var(--swiss-red)]">
                                 <div
-                                    className="absolute inset-y-0 left-0 bg-swiss-yellow transition-[width] duration-1000 ease-out border-r-2 border-white"
+                                    className="absolute inset-y-0 left-0 bg-black transition-[width] duration-1000 ease-out border-r-[3px] border-white"
                                     style={{ width: `${winProbability}%` }}
                                 />
                             </div>
