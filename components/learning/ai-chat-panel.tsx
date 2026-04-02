@@ -316,9 +316,9 @@ export function AIChatPanel({
                 className,
             )}
         >
-            <div className="rounded-xl border border-border/40 bg-secondary/30 p-4 backdrop-blur-sm shrink-0">
+            <div className="rounded-none border-2 border-border bg-card p-4 shadow-[4px_4px_0_0_var(--foreground)] shrink-0">
                 <div className="flex items-start gap-3">
-                    <span className="mt-0.5 flex size-7 items-center justify-center rounded-full bg-background/80 text-accent shadow-sm border border-border/40">
+                    <span className="mt-0.5 flex size-7 items-center justify-center rounded-none border-2 border-border bg-background text-foreground shadow-[2px_2px_0_0_var(--foreground)]">
                         <LuSparkles className="size-3.5" />
                     </span>
                     <div className="min-w-0">
@@ -335,7 +335,7 @@ export function AIChatPanel({
                 </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-1 rounded-xl bg-secondary/40 p-1 shrink-0">
+            <div className="grid grid-cols-3 gap-[2px] bg-border p-[2px] shrink-0 border-2 border-border shadow-[4px_4px_0_0_var(--foreground)]">
                         {(["passive", "active", "review"] as TutorMode[]).map(
                             (mode) => (
                                 <button
@@ -356,7 +356,7 @@ export function AIChatPanel({
                     </div>
 
                     {latestAnalysis ? (
-                        <div className="rounded-xl border border-border/60 bg-background/80 p-4 shadow-sm shrink-0">
+                        <div className="rounded-none border-2 border-border bg-background p-4 shadow-[4px_4px_0_0_var(--foreground)] shrink-0">
                             <div className="flex items-start justify-between gap-3">
                                 <div className="min-w-0">
                                     <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
@@ -366,7 +366,7 @@ export function AIChatPanel({
                                         {latestAnalysis.summary}
                                     </p>
                                 </div>
-                                <div className="inline-flex items-center gap-1 rounded-full border border-border/70 bg-secondary/40 px-2.5 py-1 text-xs font-semibold text-foreground">
+                                <div className="inline-flex items-center gap-1 rounded-none border-2 border-border bg-background px-2.5 py-1 font-mono text-[11px] font-bold text-foreground shadow-[2px_2px_0_0_var(--foreground)]">
                                     <LuGauge className="size-3.5 text-accent" />
                                     {Math.round(
                                         Math.max(
@@ -382,16 +382,16 @@ export function AIChatPanel({
                                 {latestAnalysis.topMoves.map((move, index) => (
                                     <div
                                         key={`${move.coordinate}-${index}`}
-                                        className="grid grid-cols-[auto_1fr_auto] items-center gap-2 rounded-lg border border-border/55 bg-secondary/25 px-2.5 py-1.5"
+                                        className="grid grid-cols-[auto_1fr_auto] items-center gap-2 rounded-none border border-border bg-background px-2.5 py-1.5"
                                     >
                                         <span className="font-mono text-xs text-muted-foreground">
                                             #{index + 1}
                                         </span>
                                         <div className="min-w-0">
-                                            <p className="truncate font-mono text-xs font-semibold text-foreground">
+                                            <p className="truncate font-mono text-xs font-bold text-foreground">
                                                 {move.coordinate}
                                             </p>
-                                            <p className="truncate text-[10px] text-muted-foreground">
+                                            <p className="truncate font-mono text-[10px] text-muted-foreground">
                                                 {move.reason}
                                             </p>
                                         </div>
@@ -405,7 +405,7 @@ export function AIChatPanel({
                     ) : null}
 
                     {tutorMode === "review" ? (
-                        <div className="rounded-xl border border-border/60 bg-background/80 p-4 shadow-sm shrink-0">
+                        <div className="rounded-none border-2 border-border bg-background p-4 shadow-[4px_4px_0_0_var(--foreground)] shrink-0">
                             <div className="flex items-center justify-between gap-3">
                                 <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
                                     Post-Game Review
@@ -443,7 +443,7 @@ export function AIChatPanel({
                                             (line, index) => (
                                                 <p
                                                     key={`${line}-${index}`}
-                                                    className="rounded-lg border border-border/55 bg-secondary/20 px-2.5 py-1.5 text-[12px] text-muted-foreground"
+                                                    className="rounded-none border-l-4 border-l-border border border-border bg-background px-2.5 py-1.5 font-mono text-[11px] font-bold text-muted-foreground"
                                                 >
                                                     {line}
                                                 </p>

@@ -163,7 +163,7 @@ export function GoBoard({
                         {letters.map((letter) => (
                             <span
                                 key={letter}
-                                className="flex items-end justify-center font-sans text-[10px] font-semibold tracking-widest text-muted-foreground/70 pb-1"
+                                className="flex items-end justify-center font-mono text-[10px] font-bold tracking-widest text-foreground pb-1 uppercase"
                             >
                                 {letter}
                             </span>
@@ -178,7 +178,7 @@ export function GoBoard({
                         {numbers.map((number) => (
                             <span
                                 key={number}
-                                className="flex items-center justify-end font-sans text-[10px] font-semibold text-muted-foreground/70 pr-1"
+                                className="flex items-center justify-end font-mono text-[10px] font-bold text-foreground pr-1"
                             >
                                 {number}
                             </span>
@@ -186,7 +186,7 @@ export function GoBoard({
                     </div>
 
                     {/* [1,1] — the actual board */}
-                    <div className="relative w-full h-full rounded-sm">
+                    <div className="relative w-full h-full rounded-none bg-board-surface border-4 border-board-frame shadow-[6px_6px_0_0_var(--board-frame)]">
                         {/* SVG grid lines + hoshi */}
                         <GridLayer size={size} hoshiPoints={hoshiPoints} />
 
@@ -443,7 +443,7 @@ function GridLayer({
                     y2="100"
                     stroke="var(--board-grid)"
                     strokeOpacity="1"
-                    strokeWidth="0.5"
+                    strokeWidth="1"
                     vectorEffect="non-scaling-stroke"
                 />
             ))}
@@ -456,7 +456,7 @@ function GridLayer({
                     y2={p}
                     stroke="var(--board-grid)"
                     strokeOpacity="1"
-                    strokeWidth="0.5"
+                    strokeWidth="1"
                     vectorEffect="non-scaling-stroke"
                 />
             ))}

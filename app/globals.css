@@ -79,15 +79,11 @@
     --radius-4xl: calc(var(--radius) * 2.6);
 
     /* ── Shadows ── */
-    --shadow-sm: 0 1px 2px oklch(0 0 0 / 4%);
-    --shadow-md:
-        0 4px 6px -1px oklch(0 0 0 / 6%), 0 2px 4px -2px oklch(0 0 0 / 4%);
-    --shadow-lg:
-        0 10px 15px -3px oklch(0 0 0 / 8%), 0 4px 6px -4px oklch(0 0 0 / 4%);
-    --shadow-board:
-        0 20px 25px -5px oklch(0 0 0 / 10%), 0 8px 10px -6px oklch(0 0 0 / 4%);
-    --shadow-offset:
-        0 0 0 1px oklch(0 0 0 / 5%), 0 4px 6px -1px oklch(0 0 0 / 6%);
+    --shadow-sm: 2px 2px 0 var(--foreground);
+    --shadow-md: 4px 4px 0 var(--foreground);
+    --shadow-lg: 8px 8px 0 var(--foreground);
+    --shadow-board: 12px 12px 0 var(--foreground);
+    --shadow-offset: 4px 4px 0 var(--foreground);
 
     /* ── Grid Extensions ── */
     --grid-template-columns-19: repeat(19, 1fr);
@@ -105,86 +101,86 @@
 
 :root {
     /* ── Surface Hierarchy ── */
-    --background: oklch(0.965 0.01 80); /* Warm off-white/cream */
-    --foreground: oklch(0.145 0 0); /* Very dark gray text */
+    --background: oklch(0.96 0 0); /* Flat light gray */
+    --foreground: oklch(0 0 0); /* Pure black text */
     --card: oklch(1 0 0); /* Pure white card */
-    --card-foreground: oklch(0.145 0 0);
+    --card-foreground: oklch(0 0 0);
     --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.145 0 0);
+    --popover-foreground: oklch(0 0 0);
 
-    /* ── Primary (Vercel Black) ── */
-    --primary: oklch(0.145 0 0);
-    --primary-foreground: oklch(0.985 0 0);
+    /* ── Primary ── */
+    --primary: oklch(0 0 0);
+    --primary-foreground: oklch(1 0 0);
 
-    /* ── Secondary (Subtle Gray/Cream) ── */
-    --secondary: oklch(0.94 0.01 80);
-    --secondary-foreground: oklch(0.205 0 0);
+    /* ── Secondary ── */
+    --secondary: oklch(0.92 0 0);
+    --secondary-foreground: oklch(0 0 0);
 
     /* ── Muted ── */
-    --muted: oklch(0.92 0.01 80);
-    --muted-foreground: oklch(0.55 0 0);
+    --muted: oklch(0.92 0 0);
+    --muted-foreground: oklch(0.4 0 0);
 
-    /* ── Accent (Vercel Blue/Cyan glow vibe) ── */
-    --accent: oklch(0.9 0.02 80);
-    --accent-foreground: oklch(0.145 0 0);
+    /* ── Accent (Technical Orange) ── */
+    --accent: oklch(0.65 0.2 45);
+    --accent-foreground: oklch(1 0 0); /* White text on orange */
 
-    /* ── Destructive (Vercel Red) ── */
-    --destructive: oklch(0.6 0.18 20);
+    /* ── Destructive (Solid Red) ── */
+    --destructive: oklch(0.6 0.2 20);
 
     /* ── Borders & Focus ── */
-    --border: oklch(0.89 0.01 80);
-    --input: oklch(0.89 0.01 80);
-    --ring: oklch(0.145 0 0);
-    --radius: 0.5rem; /* Slightly sharper radius */
+    --border: oklch(0 0 0); /* PURE BLACK BORDERS */
+    --input: oklch(0 0 0);
+    --ring: oklch(0 0 0);
+    --radius: 0rem; /* BRUTALIST SHARP */
 
     /* ── Chart ── */
-    --chart-1: oklch(0.7 0.1 260); /* Blue */
-    --chart-2: oklch(0.6 0.15 320); /* Magenta/Purple */
-    --chart-3: oklch(0.65 0.15 45); /* Orange */
-    --chart-4: oklch(0.6 0.18 20); /* Red */
-    --chart-5: oklch(0.8 0 0); /* Gray */
+    --chart-1: oklch(0.85 0.1 230); /* Cyan */
+    --chart-2: oklch(0.8 0.1 320); /* Pastel Pink */
+    --chart-3: oklch(0.65 0.2 45); /* Orange */
+    --chart-4: oklch(0.6 0.2 20); /* Red */
+    --chart-5: oklch(0.6 0 0); /* Gray */
 
     /* ── Sidebar ── */
-    --sidebar: oklch(0.985 0 0);
-    --sidebar-foreground: oklch(0.145 0 0);
-    --sidebar-primary: oklch(0.145 0 0);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.96 0 0);
-    --sidebar-accent-foreground: oklch(0.145 0 0);
-    --sidebar-border: oklch(0.92 0 0);
-    --sidebar-ring: oklch(0.145 0 0);
+    --sidebar: oklch(0.96 0 0);
+    --sidebar-foreground: oklch(0 0 0);
+    --sidebar-primary: oklch(0 0 0);
+    --sidebar-primary-foreground: oklch(1 0 0);
+    --sidebar-accent: oklch(1 0 0);
+    --sidebar-accent-foreground: oklch(0 0 0);
+    --sidebar-border: oklch(0 0 0);
+    --sidebar-ring: oklch(0 0 0);
 
     /* ── Board ── */
     --board-surface: oklch(1 0 0); /* Pure white board */
-    --board-frame: oklch(0.96 0 0); /* Very subtle gray frame */
-    --board-grid: oklch(0.85 0 0); /* Light gray grid lines */
-    --board-hoshi: oklch(0.6 0 0); /* Medium gray hoshi */
+    --board-frame: oklch(0 0 0); /* Pure black frame */
+    --board-grid: oklch(0 0 0); /* Pure black grid lines */
+    --board-hoshi: oklch(0 0 0); /* Black hoshi */
 
     /* ── Stones ── */
-    --stone-black: oklch(0.145 0 0); /* Deep black */
-    --stone-black-highlight: oklch(0.25 0 0);
-    --stone-white: oklch(1 0 0); /* Pure white */
+    --stone-black: oklch(0 0 0); /* Solid black */
+    --stone-black-highlight: oklch(0 0 0); /* No highlight */
+    --stone-white: oklch(1 0 0); /* Solid white */
     --stone-white-highlight: oklch(1 0 0);
-    --stone-white-border: oklch(0.9 0 0);
-    --stone-shadow: oklch(0 0 0 / 15%);
+    --stone-white-border: oklch(0 0 0); /* Pure black border */
+    --stone-shadow: oklch(0 0 0); /* Solid offset shadow */
 
     /* ── Status ── */
-    --status-active: oklch(0.7 0.1 260); /* Blue */
-    --status-waiting: oklch(0.6 0 0); /* Gray */
-    --status-capture: oklch(0.6 0.18 20); /* Red */
-    --status-territory: oklch(0.7 0.1 260 / 20%); /* Faint Blue */
-    --status-danger: oklch(0.6 0.18 20); /* Red */
+    --status-active: oklch(0.85 0.1 230);
+    --status-waiting: oklch(0.6 0 0);
+    --status-capture: oklch(0.6 0.2 20);
+    --status-territory: oklch(0.85 0.1 230 / 30%);
+    --status-danger: oklch(0.6 0.2 20);
 
     /* ── AI Tutor ── */
-    --tutor-surface: oklch(0.96 0 0);
-    --tutor-accent: oklch(0.7 0.1 260); /* Blue accent */
-    --tutor-foreground: oklch(0.145 0 0);
+    --tutor-surface: oklch(1 0 0); /* White popovers */
+    --tutor-accent: oklch(0.8 0.1 320); /* Purple Pink */
+    --tutor-foreground: oklch(0 0 0);
 
     /* ── XP / Gamification ── */
-    --xp-bar-bg: oklch(0.92 0 0);
-    --xp-bar-fill-start: oklch(0.7 0.1 260); /* Blue gradient start */
-    --xp-bar-fill-end: oklch(0.6 0.15 320); /* Purple gradient end */
-    --xp-streak: oklch(0.65 0.15 45); /* Orange/Gold */
+    --xp-bar-bg: oklch(1 0 0); /* White background for track */
+    --xp-bar-fill-start: oklch(0.65 0.2 45); /* Orange */
+    --xp-bar-fill-end: oklch(0.65 0.2 45); /* Flat fill */
+    --xp-streak: oklch(0.65 0.2 45);
 }
 
 /* ══════════════════════════════════════════════
@@ -194,85 +190,85 @@
 
 .dark {
     /* ── Surface Hierarchy ── */
-    --background: oklch(0 0 0); /* Pure Black #000 */
-    --foreground: oklch(0.985 0 0); /* Pure white text */
-    --card: oklch(0.1 0 0); /* Very dark gray card */
-    --card-foreground: oklch(0.985 0 0);
-    --popover: oklch(0.1 0 0);
-    --popover-foreground: oklch(0.985 0 0);
+    --background: oklch(0.05 0 0); /* Almost black */
+    --foreground: oklch(1 0 0); /* Pure white text */
+    --card: oklch(0 0 0); /* Pure black card */
+    --card-foreground: oklch(1 0 0);
+    --popover: oklch(0 0 0);
+    --popover-foreground: oklch(1 0 0);
 
-    /* ── Primary (White) ── */
-    --primary: oklch(0.985 0 0);
+    /* ── Primary ── */
+    --primary: oklch(1 0 0);
     --primary-foreground: oklch(0 0 0);
 
     /* ── Secondary ── */
-    --secondary: oklch(0.15 0 0);
-    --secondary-foreground: oklch(0.9 0 0);
+    --secondary: oklch(0.1 0 0);
+    --secondary-foreground: oklch(1 0 0);
 
     /* ── Muted ── */
-    --muted: oklch(0.15 0 0);
-    --muted-foreground: oklch(0.6 0 0); /* Gray */
+    --muted: oklch(0.1 0 0);
+    --muted-foreground: oklch(0.6 0 0);
 
     /* ── Accent ── */
-    --accent: oklch(0.15 0 0);
-    --accent-foreground: oklch(0.985 0 0);
+    --accent: oklch(0.65 0.2 45); /* Orange */
+    --accent-foreground: oklch(0 0 0);
 
-    /* ── Destructive (Vercel Red) ── */
-    --destructive: oklch(0.6 0.18 20);
+    /* ── Destructive ── */
+    --destructive: oklch(0.6 0.2 20);
 
     /* ── Borders & Focus ── */
-    --border: oklch(0.2 0 0); /* Subtle dark gray border */
-    --input: oklch(0.2 0 0);
-    --ring: oklch(0.8 0 0);
+    --border: oklch(1 0 0); /* PURE WHITE BORDERS */
+    --input: oklch(1 0 0);
+    --ring: oklch(1 0 0);
 
     /* ── Chart ── */
-    --chart-1: oklch(0.7 0.1 260); /* Blue */
-    --chart-2: oklch(0.6 0.15 320); /* Magenta/Purple */
-    --chart-3: oklch(0.65 0.15 45); /* Orange */
-    --chart-4: oklch(0.6 0.18 20); /* Red */
+    --chart-1: oklch(0.85 0.1 230); /* Cyan */
+    --chart-2: oklch(0.8 0.1 320); /* Pastel Pink */
+    --chart-3: oklch(0.65 0.2 45); /* Orange */
+    --chart-4: oklch(0.6 0.2 20); /* Red */
     --chart-5: oklch(0.4 0 0); /* Dark Gray */
 
     /* ── Sidebar ── */
-    --sidebar: oklch(0.05 0 0); /* Almost pure black */
-    --sidebar-foreground: oklch(0.985 0 0);
-    --sidebar-primary: oklch(0.985 0 0);
+    --sidebar: oklch(0.05 0 0);
+    --sidebar-foreground: oklch(1 0 0);
+    --sidebar-primary: oklch(1 0 0);
     --sidebar-primary-foreground: oklch(0 0 0);
-    --sidebar-accent: oklch(0.15 0 0);
-    --sidebar-accent-foreground: oklch(0.985 0 0);
-    --sidebar-border: oklch(0.2 0 0);
-    --sidebar-ring: oklch(0.8 0 0);
+    --sidebar-accent: oklch(1 0 0);
+    --sidebar-accent-foreground: oklch(0 0 0);
+    --sidebar-border: oklch(1 0 0); /* White borders */
+    --sidebar-ring: oklch(1 0 0);
 
     /* ── Board ── */
-    --board-surface: oklch(0.05 0 0); /* Very dark gray, almost black */
-    --board-frame: oklch(0.1 0 0); /* Dark frame */
-    --board-grid: oklch(0.25 0 0); /* Subtle gray grid lines */
-    --board-hoshi: oklch(0.4 0 0); /* Gray hoshi */
+    --board-surface: oklch(0 0 0); /* Pure black board */
+    --board-frame: oklch(1 0 0); /* Pure white frame */
+    --board-grid: oklch(1 0 0); /* Pure white grid lines */
+    --board-hoshi: oklch(1 0 0); /* White hoshi */
 
     /* ── Stones ── */
-    --stone-black: oklch(0.08 0 0); /* Deep obsidian */
-    --stone-black-highlight: oklch(0.2 0 0);
-    --stone-white: oklch(0.95 0 0); /* Off-white */
+    --stone-black: oklch(0 0 0); /* Solid black */
+    --stone-black-highlight: oklch(0 0 0);
+    --stone-white: oklch(1 0 0); /* Solid white */
     --stone-white-highlight: oklch(1 0 0);
-    --stone-white-border: oklch(0.8 0 0);
-    --stone-shadow: oklch(0 0 0 / 80%); /* Deep shadow */
+    --stone-white-border: oklch(1 0 0); /* White border */
+    --stone-shadow: oklch(1 0 0); /* Pure white shadow */
 
     /* ── Status ── */
-    --status-active: oklch(0.7 0.1 260);
-    --status-waiting: oklch(0.4 0 0);
-    --status-capture: oklch(0.6 0.18 20);
-    --status-territory: oklch(0.7 0.1 260 / 20%);
-    --status-danger: oklch(0.6 0.18 20);
+    --status-active: oklch(0.85 0.1 230);
+    --status-waiting: oklch(0.6 0 0);
+    --status-capture: oklch(0.6 0.2 20);
+    --status-territory: oklch(0.85 0.1 230 / 30%);
+    --status-danger: oklch(0.6 0.2 20);
 
     /* ── AI Tutor ── */
-    --tutor-surface: oklch(0.15 0 0);
-    --tutor-accent: oklch(0.7 0.1 260);
-    --tutor-foreground: oklch(0.985 0 0);
+    --tutor-surface: oklch(0 0 0);
+    --tutor-accent: oklch(0.8 0.1 320);
+    --tutor-foreground: oklch(1 0 0);
 
     /* ── XP / Gamification ── */
-    --xp-bar-bg: oklch(0.2 0 0);
-    --xp-bar-fill-start: oklch(0.7 0.1 260);
-    --xp-bar-fill-end: oklch(0.6 0.15 320);
-    --xp-streak: oklch(0.65 0.15 45);
+    --xp-bar-bg: oklch(0 0 0);
+    --xp-bar-fill-start: oklch(0.65 0.2 45); /* Orange */
+    --xp-bar-fill-end: oklch(0.65 0.2 45);
+    --xp-streak: oklch(0.65 0.2 45);
 }
 
 /* ══════════════════════════════════════════════

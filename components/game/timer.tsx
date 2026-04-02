@@ -19,7 +19,7 @@ export function Timer({
     return (
         <span
             className={cn(
-                "font-mono text-xl tracking-tight font-semibold tabular-nums text-foreground/90",
+                "font-mono text-xl tracking-tight font-bold tabular-nums text-foreground",
                 isLowTime && "text-status-danger animate-pulse-gentle",
                 className,
             )}

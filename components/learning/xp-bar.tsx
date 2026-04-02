@@ -144,11 +144,11 @@ export function XPBar({
                 onClick={onToggle}
                 className="group w-full text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
-                <div className="overflow-hidden rounded-[1.75rem] border border-border/60 bg-white dark:bg-card/60 shadow-sm transition-all duration-300 hover:shadow-md">
+                <div className="overflow-hidden rounded-none border-2 border-border bg-card shadow-[4px_4px_0_0_var(--foreground)] transition-all duration-300 hover:shadow-[6px_6px_0_0_var(--foreground)]">
                     <div className="px-5 py-4">
                         <div className="flex items-center justify-between gap-3">
                             <div className="flex items-center gap-4 min-w-0">
-                                <div className="flex size-12 items-center justify-center rounded-full bg-[#f0eee9] dark:bg-secondary/40 text-xp-streak/80">
+                                <div className="flex size-12 items-center justify-center rounded-none border-2 border-border bg-background text-xp-streak shadow-[2px_2px_0_0_var(--foreground)]">
                                     <LuFlame className="size-[20px]" />
                                 </div>
 
@@ -162,7 +162,7 @@ export function XPBar({
                                                 <span
                                                     key={index}
                                                     className={cn(
-                                                        "w-1.5 rounded-full bg-gradient-to-t",
+                                                        "w-1.5 rounded-none bg-gradient-to-t",
                                                         bar.isActive
                                                             ? "from-status-active via-accent to-xp-streak"
                                                             : "bg-muted-foreground/20",
@@ -196,7 +196,7 @@ export function XPBar({
                                         {energy}% live
                                     </p>
                                 </div>
-                                <span className="flex size-9 items-center justify-center rounded-full border border-border/60 text-muted-foreground transition-colors group-hover:bg-secondary/50">
+                                <span className="flex size-9 items-center justify-center rounded-none border-2 border-border text-muted-foreground transition-colors group-hover:bg-foreground group-hover:text-primary-foreground shadow-[2px_2px_0_0_var(--foreground)]">
                                     <LuChevronDown className="size-4" />
                                 </span>
                             </div>
@@ -217,7 +217,7 @@ export function XPBar({
 
                 <div className="flex items-start justify-between gap-4">
                     <div className="flex items-center gap-3">
-                        <span className="flex size-8 items-center justify-center rounded-full bg-secondary/80 text-accent border border-border/50">
+                        <span className="flex size-8 items-center justify-center rounded-none border-2 border-border bg-background text-accent shadow-[2px_2px_0_0_var(--foreground)]">
                             <LuFlame className="size-4" />
                         </span>
                         <div>
@@ -252,7 +252,7 @@ export function XPBar({
                     </div>
                 </div>
 
-                <div className="mt-4 rounded-xl border border-border/40 bg-secondary/20 p-4 shadow-sm backdrop-blur-sm">
+                <div className="mt-4 rounded-none border-2 border-border bg-card p-4 shadow-[4px_4px_0_0_var(--foreground)]">
                     <div className="flex items-end justify-between gap-5">
                         <div className="min-w-0 flex-1">
                             <div className="flex h-[60px] max-w-[220px] items-end gap-1">
@@ -266,7 +266,7 @@ export function XPBar({
                                                 barRefs.current[index] = node;
                                             }}
                                             className={cn(
-                                                "w-full rounded-t-sm bg-gradient-to-t shadow-[0_4px_12px_rgba(0,0,0,0.1)]",
+                                                "w-full rounded-none bg-gradient-to-t shadow-none",
                                                 bar.isActive
                                                     ? "from-status-active via-accent to-xp-streak"
                                                     : "from-border/30 via-border/20 to-border/5",
@@ -283,7 +283,7 @@ export function XPBar({
                             <div
                                 ref={eventRef}
                                 className={cn(
-                                    "mt-3 inline-flex min-h-7 max-w-full items-center gap-2 rounded-full border px-2.5 py-1 text-[11px] font-medium",
+                                    "mt-3 inline-flex min-h-7 max-w-full items-center gap-2 rounded-none border-2 px-2.5 py-1 font-mono text-[11px] font-bold shadow-[2px_2px_0_0_var(--foreground)]",
                                     lastStreakDelta > 0
                                         ? "border-status-active/30 bg-status-active/10 text-status-active"
                                         : lastStreakDelta < 0

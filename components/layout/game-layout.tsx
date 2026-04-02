@@ -70,10 +70,7 @@ export function GameLayout({
                             : "w-[68px] lg:w-[76px]",
                     )}
                 >
-                    <div className="relative flex h-full overflow-hidden rounded-[2.15rem] border border-border/80 bg-background/82 shadow-[0_22px_80px_-34px_rgba(34,24,10,0.4)] backdrop-blur-2xl dark:bg-card/94">
-                        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-foreground/12 to-transparent" />
-                        <div className="pointer-events-none absolute inset-y-8 left-0 w-px bg-gradient-to-b from-transparent via-foreground/8 to-transparent" />
-
+                    <div className="relative flex h-full overflow-hidden rounded-none border-2 border-border bg-card shadow-[4px_4px_0_0_var(--foreground)]">
                         <nav className="relative flex h-full w-[68px] shrink-0 flex-col items-center gap-2 border-r border-border/60 py-6 lg:w-[76px]">
                             <div className="flex items-center justify-center mb-6 mt-1.5">
                                 <span className="font-sans text-[15px] font-bold tracking-tight text-foreground select-none">
@@ -91,10 +88,10 @@ export function GameLayout({
                                                     <button
                                                         onClick={() => setActivePanelId(isActive ? null : panel.id)}
                                                         className={cn(
-                                                            "relative flex min-h-12 w-full items-center justify-center rounded-2xl transition-all duration-200 group",
+                                                            "relative flex min-h-12 w-full items-center justify-center rounded-none transition-all duration-200 group border border-transparent",
                                                             isActive
-                                                                ? "bg-foreground/10 dark:bg-accent/20 text-foreground shadow-sm"
-                                                                : "text-muted-foreground hover:bg-foreground/5 dark:hover:bg-secondary/80 hover:text-foreground",
+                                                                ? "bg-foreground text-primary-foreground border-border"
+                                                                : "text-muted-foreground hover:bg-foreground hover:text-primary-foreground",
                                                         )}
                                                     />
                                                 }
@@ -138,15 +135,15 @@ export function GameLayout({
                             {activePanel ? (
                                 <div className="flex h-full flex-col bg-background/58 dark:bg-card/60">
                                     <div className="flex items-center justify-between gap-4 border-b border-border/55 px-6 py-5 lg:px-7">
-                                        <h2 className="flex items-center gap-3 font-semibold text-[1.85rem] tracking-tight text-foreground">
-                                            <span className="flex size-10 items-center justify-center rounded-full border border-border/70 bg-background/72 text-muted-foreground [&>svg]:size-5">
+                                        <h2 className="flex items-center gap-3 font-mono font-bold text-xl tracking-widest text-foreground uppercase">
+                                            <span className="flex size-10 items-center justify-center rounded-none border border-border bg-transparent text-foreground [&>svg]:size-5">
                                                 {activePanel.icon}
                                             </span>
                                             <span>{activePanel.label}</span>
                                         </h2>
                                         <button
                                             onClick={() => setActivePanelId(null)}
-                                            className="flex size-11 items-center justify-center rounded-full border border-transparent text-muted-foreground transition-colors hover:border-border/70 hover:bg-secondary/65 hover:text-foreground"
+                                            className="flex size-11 items-center justify-center rounded-none border border-transparent text-muted-foreground transition-colors hover:border-border hover:bg-foreground hover:text-primary-foreground"
                                         >
                                             <LuX className="size-6" />
                                         </button>

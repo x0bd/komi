@@ -53,23 +53,23 @@ export function MoveHistory({
                 onClick={onToggle}
                 className="group w-full text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-lg mt-2"
             >
-                <div className="px-2 py-3 flex items-center justify-between border-t border-border/50 transition-colors hover:bg-secondary/20 rounded-xl">
+                <div className="px-2 py-3 flex items-center justify-between border-t-2 border-t-border transition-colors hover:bg-foreground hover:text-primary-foreground rounded-none group-focus-visible:border-border">
                     <div className="flex items-center gap-3 min-w-0">
-                        <LuHistory className="size-4 text-muted-foreground" />
+                        <LuHistory className="size-4 opacity-70" />
                         <div className="min-w-0">
-                            <p className="font-sans text-[13px] font-medium text-foreground">
+                            <p className="font-mono text-[13px] font-bold uppercase tracking-widest text-inherit">
                                 History
                             </p>
-                            <p className="truncate text-[11px] text-muted-foreground font-sans">
+                            <p className="truncate text-[11px] opacity-70 font-sans">
                                 {summaryText}
                             </p>
                         </div>
                     </div>
-                    <div className="flex items-center gap-2 shrink-0 text-muted-foreground">
-                        <span className="font-mono text-[10px] bg-secondary/50 px-2 py-0.5 rounded-full">
+                    <div className="flex items-center gap-2 shrink-0 opacity-70">
+                        <span className="font-mono text-[10px] border border-inherit px-2 py-0.5 rounded-none">
                             {moveCount}
                         </span>
-                        <LuChevronDown className="size-4 transition-colors group-hover:text-foreground" />
+                        <LuChevronDown className="size-4" />
                     </div>
                 </div>
             </button>
@@ -93,7 +93,7 @@ export function MoveHistory({
                         </span>
                     </div>
                     <div className="flex items-center gap-2 text-muted-foreground">
-                        <span className="font-mono text-[10px] bg-secondary/50 px-2 py-0.5 rounded-full">
+                        <span className="font-mono text-[10px] border border-border px-2 py-0.5 rounded-none">
                             {moveCount}
                         </span>
                         {onToggle && (
@@ -101,7 +101,7 @@ export function MoveHistory({
                                 type="button"
                                 onClick={onToggle}
                                 aria-label="Collapse history"
-                                className="flex size-6 items-center justify-center rounded-full transition-colors hover:bg-secondary/80 hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                                className="flex size-6 items-center justify-center rounded-none border border-transparent transition-colors hover:border-border hover:bg-foreground hover:text-primary-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                             >
                                 <LuChevronUp className="size-3.5" />
                             </button>
@@ -135,12 +135,12 @@ export function MoveHistory({
                                         highlightedMoveNumber === m.moveNumber
                                     }
                                     className={cn(
-                                        "flex w-full items-center justify-between rounded-lg px-3 py-1.5 text-left transition-colors",
+                                        "flex w-full items-center justify-between rounded-none px-3 py-1.5 text-left transition-colors border-2 border-transparent",
                                         onMoveSelect &&
-                                            "cursor-pointer hover:bg-secondary/40",
+                                            "cursor-pointer hover:border-border hover:bg-foreground hover:text-primary-foreground",
                                         highlightedMoveNumber ===
                                             m.moveNumber &&
-                                            "bg-secondary/60 font-medium",
+                                            "border-border bg-foreground text-primary-foreground font-bold",
                                     )}
                                 >
                                     <div className="flex items-center gap-3">

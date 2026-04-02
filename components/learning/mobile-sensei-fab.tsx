@@ -55,7 +55,7 @@ export function MobileSenseiFab() {
                             onFocus={() => setExpanded(true)}
                             onBlur={() => setExpanded(false)}
                             aria-label="Open Sensei tutor"
-                            className="flex h-12 w-12 items-center gap-2 overflow-hidden rounded-full border border-border/70 bg-accent/90 pl-3 pr-4 text-accent-foreground shadow-lg backdrop-blur-sm transition-colors"
+                            className="flex h-12 w-12 items-center gap-2 overflow-hidden rounded-none border-2 border-border bg-accent pl-3 pr-4 text-accent-foreground shadow-[4px_4px_0_0_var(--foreground)] transition-colors"
                         />
                     }
                 >
@@ -72,7 +72,7 @@ export function MobileSenseiFab() {
 
                 <SheetContent
                     side="bottom"
-                    className="h-[min(84svh,680px)] rounded-t-3xl border-t border-border bg-background p-0 sm:max-w-none"
+                    className="h-[min(84svh,680px)] rounded-none border-t-4 border-border bg-background p-0 sm:max-w-none"
                 >
                     <SheetHeader className="pb-3">
                         <SheetTitle className="font-display text-xl">

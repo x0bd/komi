@@ -31,7 +31,7 @@ export function AIDifficultySelector({
     return (
         <div
             className={cn(
-                "flex flex-col gap-5 rounded-[2rem] border border-border/60 bg-card/40 backdrop-blur-xl shadow-sm p-6",
+                "flex flex-col gap-5 rounded-none border-2 border-border bg-card shadow-[4px_4px_0_0_var(--foreground)] p-6",
                 className,
             )}
         >
@@ -44,7 +44,7 @@ export function AIDifficultySelector({
                 </p>
             </div>
 
-            <div className="flex bg-background/70 dark:bg-secondary/40 rounded-full p-1.5 border border-border/50 shadow-inner">
+            <div className="flex bg-background rounded-none p-1 border-2 border-border">
                 {OPTIONS.map((option) => {
                     const active = option.value === value;
 
@@ -59,9 +59,9 @@ export function AIDifficultySelector({
                                 }
                             }}
                             className={cn(
-                                "flex-1 px-3 py-2 rounded-full text-[13px] font-sans font-bold tracking-wide transition-all duration-300",
+                                "flex-1 px-3 py-2 rounded-none text-[13px] font-mono font-bold tracking-wide uppercase transition-all duration-300 border border-transparent",
                                 active
-                                    ? "bg-foreground text-background shadow-md scale-[1.02]"
+                                    ? "bg-foreground text-primary-foreground border-border shadow-[2px_2px_0_0_var(--border)]"
                                     : "text-muted-foreground hover:text-foreground",
                                 !option.enabled && "cursor-not-allowed opacity-40",
                             )}

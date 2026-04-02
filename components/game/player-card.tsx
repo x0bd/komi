@@ -33,10 +33,10 @@ export function PlayerCard({
     return (
         <div
             className={cn(
-                "flex items-center gap-4 py-3 px-4 rounded-[1.5rem] transition-all duration-500 w-full",
+                "flex items-center gap-4 py-3 px-4 rounded-none transition-all duration-500 w-full border-2",
                 isActive 
-                    ? "bg-card/60 backdrop-blur-md shadow-sm border border-border/60 scale-[1.02]" 
-                    : "opacity-60 grayscale-[0.2]",
+                    ? "bg-card border-border shadow-[4px_4px_0_0_var(--foreground)] scale-[1.02]" 
+                    : "bg-background border-transparent opacity-60 grayscale-[0.2]",
                 className,
             )}
         >

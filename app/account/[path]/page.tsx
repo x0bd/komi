@@ -48,7 +48,7 @@ export default async function AccountPage({ params }: AccountPageProps) {
       <div className="account-page__glow account-page__glow--secondary" />
 
       <div className="relative mx-auto flex w-full max-w-6xl flex-col gap-6">
-        <header className="account-hero rounded-[2.25rem] border border-border/60 bg-card/70 px-7 py-8 shadow-[0_24px_70px_-30px_rgba(32,24,8,0.28)] backdrop-blur-xl lg:px-10 lg:py-10">
+        <header className="account-hero rounded-none border-4 border-border bg-card px-7 py-8 shadow-[8px_8px_0_0_var(--foreground)] lg:px-10 lg:py-10">
           <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-foreground/10 to-transparent" />
           <div className="absolute -right-20 top-0 h-56 w-56 rounded-full bg-[radial-gradient(circle,_rgba(225,147,63,0.16),_transparent_70%)] blur-3xl" />
 
@@ -57,13 +57,13 @@ export default async function AccountPage({ params }: AccountPageProps) {
               <div className="flex flex-wrap items-center gap-3">
                 <Link
                   href="/profile"
-                  className="inline-flex h-11 items-center gap-2 rounded-full border border-border/70 bg-background/75 px-5 text-[13px] font-bold text-foreground transition-colors hover:bg-secondary/80"
+                  className="inline-flex h-11 items-center gap-2 rounded-none border-2 border-border bg-background px-5 font-mono text-[11px] font-bold uppercase tracking-widest text-foreground shadow-[2px_2px_0_0_var(--foreground)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none hover:bg-foreground hover:text-primary-foreground transition-all"
                 >
                   <LuArrowLeft className="size-4" />
                   Back to profile
                 </Link>
 
-                <div className="inline-flex h-11 items-center gap-2 rounded-full border border-border/60 bg-secondary/55 px-5 text-[12px] font-bold uppercase tracking-[0.24em] text-muted-foreground">
+                <div className="inline-flex h-11 items-center gap-2 rounded-none border-2 border-border bg-background px-5 font-mono text-[11px] font-bold uppercase tracking-widest text-muted-foreground shadow-[2px_2px_0_0_var(--foreground)]">
                   <LuShield className="size-4 text-foreground/80" />
                   Protected workspace
                 </div>
@@ -71,7 +71,7 @@ export default async function AccountPage({ params }: AccountPageProps) {
 
               <Link
                 href="/"
-                className="inline-flex h-11 items-center gap-2 rounded-full border border-border/60 bg-background/60 px-5 text-[13px] font-semibold text-muted-foreground transition-colors hover:text-foreground"
+                className="inline-flex h-11 items-center gap-2 rounded-none border-2 border-border bg-background px-5 font-mono text-[11px] font-bold uppercase tracking-widest text-muted-foreground shadow-[2px_2px_0_0_var(--foreground)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none hover:bg-foreground hover:text-primary-foreground transition-all"
               >
                 Return to board
               </Link>
@@ -91,13 +91,13 @@ export default async function AccountPage({ params }: AccountPageProps) {
               </div>
 
               <div className="grid gap-3 sm:grid-cols-2 lg:w-[22rem]">
-                <div className="rounded-[1.75rem] border border-border/60 bg-background/72 px-5 py-4 shadow-sm">
+                <div className="rounded-none border-2 border-border bg-background px-5 py-4 shadow-[4px_4px_0_0_var(--foreground)]">
                   <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-muted-foreground">
                     Surface
                   </p>
                   <p className="mt-2 text-lg font-bold text-foreground">Calm, focused</p>
                 </div>
-                <div className="rounded-[1.75rem] border border-border/60 bg-background/72 px-5 py-4 shadow-sm">
+                <div className="rounded-none border-2 border-border bg-background px-5 py-4 shadow-[4px_4px_0_0_var(--foreground)]">
                   <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-muted-foreground">
                     Feel
                   </p>
@@ -111,11 +111,11 @@ export default async function AccountPage({ params }: AccountPageProps) {
           </div>
         </header>
 
-        <section className="account-surface relative overflow-hidden rounded-[2.5rem] border border-border/60 bg-card/82 px-4 py-4 shadow-[0_34px_90px_-42px_rgba(32,24,8,0.35)] backdrop-blur-xl sm:px-5 sm:py-5 lg:px-6 lg:py-6">
+        <section className="account-surface relative overflow-hidden rounded-none border-4 border-border bg-card px-4 py-4 shadow-[8px_8px_0_0_var(--foreground)] sm:px-5 sm:py-5 lg:px-6 lg:py-6">
           <div className="pointer-events-none absolute inset-x-10 top-0 h-px bg-gradient-to-r from-transparent via-foreground/10 to-transparent" />
           <div className="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-secondary/18 to-transparent" />
 
-          <div className="account-aesthetic relative rounded-[2rem] border border-border/55 bg-background/84 p-3 sm:p-4 lg:p-5">
+          <div className="account-aesthetic relative rounded-none border-2 border-border bg-background p-3 sm:p-4 lg:p-5 shadow-[4px_4px_0_0_var(--foreground)]">
             <AccountView path={path} />
           </div>
         </section>

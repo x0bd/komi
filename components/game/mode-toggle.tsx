@@ -19,25 +19,25 @@ export function ModeToggle({
             value={value ? [value] : []}
             onValueChange={(v) => v?.[0] && onValueChange?.(v[0] as GameMode)}
             className={cn(
-                "w-full rounded-full border border-border/60 bg-[#f0eee9] dark:bg-secondary/40 p-1.5 shadow-sm",
+                "w-full rounded-none border-2 border-border bg-background p-1.5 shadow-[4px_4px_0_0_var(--foreground)]",
                 className,
             )}
         >
             <ToggleGroupItem
                 value="local"
-                className="flex-1 rounded-full h-10 font-sans font-medium text-[14px] data-[state=on]:bg-[#e4e2dd] dark:data-[state=on]:bg-background data-[state=on]:text-foreground transition-all duration-300 text-muted-foreground hover:text-foreground"
+                className="flex-1 rounded-none h-10 font-mono font-bold uppercase tracking-widest text-[12px] border border-transparent data-[state=on]:border-border data-[state=on]:bg-foreground data-[state=on]:text-primary-foreground transition-all duration-300 text-muted-foreground hover:text-foreground"
             >
                 Local
             </ToggleGroupItem>
             <ToggleGroupItem
                 value="versus-ai"
-                className="flex-1 rounded-full h-10 font-sans font-medium text-[14px] data-[state=on]:bg-[#e4e2dd] dark:data-[state=on]:bg-background data-[state=on]:text-foreground transition-all duration-300 text-muted-foreground hover:text-foreground"
+                className="flex-1 rounded-none h-10 font-mono font-bold uppercase tracking-widest text-[12px] border border-transparent data-[state=on]:border-border data-[state=on]:bg-foreground data-[state=on]:text-primary-foreground transition-all duration-300 text-muted-foreground hover:text-foreground"
             >
                 Versus AI
             </ToggleGroupItem>
             <ToggleGroupItem
                 value="online"
-                className="flex-1 rounded-full h-10 font-sans font-medium text-[14px] data-[state=on]:bg-[#e4e2dd] dark:data-[state=on]:bg-background data-[state=on]:text-foreground transition-all duration-300 text-muted-foreground hover:text-foreground"
+                className="flex-1 rounded-none h-10 font-mono font-bold uppercase tracking-widest text-[12px] border border-transparent data-[state=on]:border-border data-[state=on]:bg-foreground data-[state=on]:text-primary-foreground transition-all duration-300 text-muted-foreground hover:text-foreground"
             >
                 Online
             </ToggleGroupItem>

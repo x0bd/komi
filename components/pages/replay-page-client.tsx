@@ -692,7 +692,7 @@ export function ReplayPageClient({ gameId }: { gameId: string }) {
     if (isLoadingGame) {
         return (
             <main className="flex min-h-svh items-center justify-center bg-background">
-                <div className="flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm text-muted-foreground">
+                <div className="flex items-center gap-2 rounded-none border-2 border-border bg-card shadow-[4px_4px_0_0_var(--foreground)] px-4 py-2 font-mono text-sm font-bold text-foreground">
                     <LuLoaderCircle className="size-4 animate-spin" />
                     Loading replay...
                 </div>

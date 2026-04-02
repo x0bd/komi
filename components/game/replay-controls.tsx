@@ -37,7 +37,7 @@ export function ReplayControls({
     onSpeedChange,
 }: ReplayControlsProps) {
     return (
-        <div className="rounded-2xl border border-border bg-card p-4 shadow-sm">
+        <div className="rounded-none border-2 border-border bg-card p-4 shadow-[4px_4px_0_0_var(--foreground)]">
             <div className="flex items-center justify-between gap-3">
                 <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
                     Replay
@@ -55,14 +55,14 @@ export function ReplayControls({
                 onChange={(event) =>
                     onSeek(Number.parseInt(event.target.value, 10) || 0)
                 }
-                className="mt-3 h-2 w-full cursor-pointer appearance-none rounded-full bg-secondary"
+                className="mt-3 h-2 w-full cursor-pointer appearance-none rounded-none border border-border bg-background"
             />
 
             <div className="mt-3 flex items-center justify-between gap-2">
                 <button
                     type="button"
                     onClick={onSkipStart}
-                    className="inline-flex size-8 items-center justify-center rounded-full border border-border/70 bg-secondary/30 text-foreground"
+                    className="inline-flex size-8 items-center justify-center rounded-none border-2 border-border bg-background text-foreground transition-colors hover:bg-foreground hover:text-primary-foreground shadow-[2px_2px_0_0_var(--foreground)] active:shadow-none active:translate-x-[2px] active:translate-y-[2px]"
                     aria-label="Skip to start"
                 >
                     <LuSkipBack className="size-4" />
@@ -70,7 +70,7 @@ export function ReplayControls({
                 <button
                     type="button"
                     onClick={onStepBack}
-                    className="inline-flex size-8 items-center justify-center rounded-full border border-border/70 bg-secondary/30 text-foreground"
+                    className="inline-flex size-8 items-center justify-center rounded-none border-2 border-border bg-background text-foreground transition-colors hover:bg-foreground hover:text-primary-foreground shadow-[2px_2px_0_0_var(--foreground)] active:shadow-none active:translate-x-[2px] active:translate-y-[2px]"
                     aria-label="Step backward"
                 >
                     <LuStepBack className="size-4" />
@@ -78,7 +78,7 @@ export function ReplayControls({
                 <button
                     type="button"
                     onClick={onTogglePlay}
-                    className="inline-flex size-9 items-center justify-center rounded-full border border-border/70 bg-secondary/40 text-foreground"
+                    className="inline-flex size-9 items-center justify-center rounded-none border-2 border-border bg-background text-foreground transition-colors hover:bg-foreground hover:text-primary-foreground shadow-[2px_2px_0_0_var(--foreground)] active:shadow-none active:translate-x-[2px] active:translate-y-[2px]"
                     aria-label={isPlaying ? "Pause replay" : "Play replay"}
                 >
                     {isPlaying ? (
@@ -90,7 +90,7 @@ export function ReplayControls({
                 <button
                     type="button"
                     onClick={onStepForward}
-                    className="inline-flex size-8 items-center justify-center rounded-full border border-border/70 bg-secondary/30 text-foreground"
+                    className="inline-flex size-8 items-center justify-center rounded-none border-2 border-border bg-background text-foreground transition-colors hover:bg-foreground hover:text-primary-foreground shadow-[2px_2px_0_0_var(--foreground)] active:shadow-none active:translate-x-[2px] active:translate-y-[2px]"
                     aria-label="Step forward"
                 >
                     <LuStepForward className="size-4" />
@@ -98,7 +98,7 @@ export function ReplayControls({
                 <button
                     type="button"
                     onClick={onSkipEnd}
-                    className="inline-flex size-8 items-center justify-center rounded-full border border-border/70 bg-secondary/30 text-foreground"
+                    className="inline-flex size-8 items-center justify-center rounded-none border-2 border-border bg-background text-foreground transition-colors hover:bg-foreground hover:text-primary-foreground shadow-[2px_2px_0_0_var(--foreground)] active:shadow-none active:translate-x-[2px] active:translate-y-[2px]"
                     aria-label="Skip to end"
                 >
                     <LuSkipForward className="size-4" />
@@ -112,7 +112,7 @@ export function ReplayControls({
                     onChange={(event) =>
                         onSpeedChange(Number.parseFloat(event.target.value) || 1)
                     }
-                    className="h-8 rounded-full border border-border/70 bg-background px-2.5 text-xs text-foreground"
+                    className="h-8 rounded-none border-2 border-border bg-background px-2.5 font-mono text-xs font-bold text-foreground shadow-[2px_2px_0_0_var(--foreground)] cursor-pointer"
                 >
                     <option value="0.5">0.5x</option>
                     <option value="1">1x</option>

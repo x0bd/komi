@@ -114,7 +114,7 @@ export function GameHistoryPageClient() {
   return (
     <main className="min-h-svh bg-background px-6 py-10 lg:px-10">
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-6">
-        <header className="relative flex flex-col justify-end min-h-[160px] lg:min-h-[220px] rounded-[32px] bg-card border border-border/50 p-8 lg:p-12 overflow-hidden shadow-sm">
+        <header className="relative flex flex-col justify-end min-h-[160px] lg:min-h-[220px] rounded-none bg-card border-b-4 border-border p-8 lg:p-12 overflow-hidden shadow-none">
           <div className="absolute top-0 right-0 w-2/3 h-full opacity-[0.03] dark:opacity-5 pointer-events-none bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-foreground via-foreground/50 to-transparent" />
           
           <div className="relative z-10 flex flex-wrap items-end justify-between gap-6">
@@ -134,7 +134,7 @@ export function GameHistoryPageClient() {
               <Button
                 variant="outline"
                 size="lg"
-                className="rounded-full shadow-sm hover:shadow-md transition-shadow bg-background/50 backdrop-blur-xl h-12 px-6"
+                className="rounded-none border-2 border-border bg-background h-12 px-6 font-mono font-bold uppercase tracking-widest text-[13px] shadow-[4px_4px_0_0_var(--foreground)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none hover:bg-foreground hover:text-primary-foreground transition-all"
                 onClick={() => setRefreshTick((value) => value + 1)}
               >
                 <LuRefreshCw className="size-4 mr-2" />
@@ -143,7 +143,7 @@ export function GameHistoryPageClient() {
               <Button 
                 variant="secondary"
                 size="lg" 
-                className="rounded-full shadow-sm hover:shadow-md transition-shadow h-12 px-6 bg-secondary/80"
+                className="rounded-none border-2 border-border bg-background h-12 px-6 font-mono font-bold uppercase tracking-widest text-[13px] shadow-[4px_4px_0_0_var(--foreground)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none hover:bg-foreground hover:text-primary-foreground transition-all"
                 render={<Link href="/" />}
               >
                 <LuArrowLeft className="size-4 mr-2" />
@@ -154,9 +154,9 @@ export function GameHistoryPageClient() {
         </header>
 
         {/* Sleek Filter Control Bar */}
-        <div className="flex flex-col lg:flex-row items-center justify-between gap-4 p-2 bg-card/60 backdrop-blur-xl border border-border/80 rounded-[2rem] shadow-sm">
+        <div className="flex flex-col lg:flex-row items-center justify-between gap-4 p-2 bg-card border-none shadow-none mt-2">
           
-          <div className="flex items-center bg-secondary/50 p-1.5 rounded-full w-full lg:w-auto overflow-x-auto scrollbar-none">
+          <div className="flex items-center bg-border p-[2px] border-2 border-border w-full lg:w-auto overflow-x-auto scrollbar-none gap-[2px]">
             {RESULT_FILTERS.map((option) => {
               const isActive = resultFilter === option.value;
               return (
@@ -164,10 +164,10 @@ export function GameHistoryPageClient() {
                   key={option.value}
                   onClick={() => setResultFilter(option.value as any)}
                   className={cn(
-                    "flex-1 lg:flex-none px-6 py-2.5 rounded-full text-[13px] font-bold tracking-wide uppercase transition-all duration-300 whitespace-nowrap",
+                    "flex-1 lg:flex-none px-6 py-2.5 rounded-none font-mono text-[13px] font-bold tracking-widest uppercase transition-none whitespace-nowrap",
                     isActive 
-                      ? "bg-foreground text-background shadow-md scale-[1.02]" 
-                      : "text-muted-foreground hover:text-foreground hover:bg-secondary/80"
+                      ? "bg-foreground text-primary-foreground shadow-none" 
+                      : "bg-background text-muted-foreground hover:bg-foreground hover:text-primary-foreground"
                   )}
                 >
                   {option.label}
@@ -183,11 +183,11 @@ export function GameHistoryPageClient() {
                 value={opponentFilter}
                 onChange={(event) => setOpponentFilter(event.target.value)}
                 placeholder="Search opponent..."
-                className="w-full pl-10 h-11 rounded-full border-border/50 bg-background/50 focus-visible:bg-background focus-visible:ring-accent/20 transition-all font-medium text-[14px]"
+                className="w-full pl-10 h-11 rounded-none border-2 border-border bg-background focus-visible:shadow-[4px_4px_0_0_var(--foreground)] transition-shadow font-mono font-bold text-[14px]"
               />
             </div>
             
-            <div className="flex items-center gap-2 bg-background/50 border border-border/50 rounded-full h-11 px-4 focus-within:ring-2 focus-within:ring-accent/20 focus-within:bg-background transition-colors">
+            <div className="flex items-center gap-2 bg-background border-2 border-border rounded-none h-11 px-4 focus-within:shadow-[4px_4px_0_0_var(--foreground)] transition-shadow">
               <LuCalendar className="size-4 text-muted-foreground shrink-0" />
               <input
                 type="date"
@@ -242,17 +242,17 @@ export function GameHistoryPageClient() {
                   <Link
                     key={game.id}
                     href={`/replay/${game.id}`}
-                    className="group relative flex flex-col justify-between overflow-hidden rounded-[2.5rem] border border-border/60 bg-card/60 hover:bg-card p-6 lg:p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    className="group relative flex flex-col justify-between overflow-hidden rounded-none border-2 border-border bg-card p-6 lg:p-8 shadow-[6px_6px_0_0_var(--foreground)] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0_0_var(--foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   >
                     <div className="absolute inset-0 opacity-0 group-hover:opacity-[0.03] dark:group-hover:opacity-10 pointer-events-none transition-opacity duration-300 bg-gradient-to-br from-foreground to-transparent" />
                     
                     <div className="relative z-10 flex items-start justify-between gap-4 mb-8">
                       <div className="flex items-center gap-4">
                         <div className={cn(
-                          "flex size-14 shrink-0 items-center justify-center rounded-full font-bold text-xl shadow-inner",
-                          isWin ? "bg-status-active/10 text-status-active border border-status-active/20" : 
-                          isLoss ? "bg-destructive/10 text-destructive border border-destructive/20" :
-                          "bg-secondary text-muted-foreground border border-border"
+                          "flex size-14 shrink-0 items-center justify-center rounded-none font-bold text-xl border-2 border-border",
+                          isWin ? "bg-status-active text-background border-status-active" : 
+                          isLoss ? "bg-destructive text-background border-destructive" :
+                          "bg-background text-foreground border-border"
                         )}>
                           {game.opponent.label.charAt(0).toUpperCase()}
                         </div>
@@ -268,10 +268,10 @@ export function GameHistoryPageClient() {
                       </div>
 
                       <div className={cn(
-                        "flex items-center justify-center px-4 py-1.5 rounded-full text-[11px] font-black uppercase tracking-widest border",
-                        isWin ? "bg-status-active/10 text-status-active border-status-active/20" :
-                        isLoss ? "bg-destructive/10 text-destructive border-destructive/20" :
-                        "bg-secondary/50 text-muted-foreground border-border/50"
+                        "flex items-center justify-center px-4 py-1.5 rounded-none border-2 font-mono text-[11px] font-bold uppercase tracking-widest",
+                        isWin ? "bg-status-active text-background border-status-active" :
+                        isLoss ? "bg-destructive text-background border-destructive" :
+                        "bg-background text-muted-foreground border-border"
                       )}>
                         {game.outcome}
                       </div>
@@ -279,10 +279,10 @@ export function GameHistoryPageClient() {
 
                     <div className="relative z-10 flex items-end justify-between mt-auto pt-2">
                       <div className="flex items-center gap-3 lg:gap-4 text-sm font-medium">
-                        <div className="flex items-center gap-2 bg-secondary/40 px-3 py-1.5 rounded-full border border-border/50">
+                        <div className="flex items-center gap-2 bg-background px-3 py-1.5 rounded-none border-2 border-border shadow-[2px_2px_0_0_var(--foreground)]">
                           <div className={cn(
-                            "size-2.5 rounded-full shadow-inner",
-                            game.myColor === "black" ? "bg-[#111]" : "bg-stone-200 border border-border/80"
+                            "size-3 rounded-none border border-border",
+                            game.myColor === "black" ? "bg-[#111]" : "bg-stone-200 border-border"
                           )} />
                           <span className="text-foreground capitalize text-[13px]">{game.myColor}</span>
                         </div>

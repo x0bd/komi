@@ -32,7 +32,7 @@ export function LiveScoreCard({
     return (
         <div
             className={cn(
-                "flex flex-col w-full p-5 rounded-3xl border border-border/60 bg-card/40 backdrop-blur-md dark:bg-card/60 shadow-sm transition-all duration-300",
+                "flex flex-col w-full p-5 rounded-none border-2 border-border bg-card shadow-[4px_4px_0_0_var(--foreground)] transition-all duration-300",
                 className,
             )}
         >
@@ -43,18 +43,18 @@ export function LiveScoreCard({
                         {leadText}
                     </span>
                 </div>
-                <div className="flex items-center justify-center text-[10px] font-mono font-medium text-muted-foreground bg-secondary/60 px-2.5 py-1 rounded-full">
+                <div className="flex items-center justify-center text-[10px] font-mono font-bold text-foreground border border-border bg-background px-2.5 py-1 rounded-none uppercase tracking-wider">
                     {isGameOver ? "Final" : `${moveCount} moves`}
                 </div>
             </div>
 
-            <div className="relative w-full h-2.5 rounded-full overflow-hidden flex bg-border/40">
+            <div className="relative w-full h-4 rounded-none border-2 border-border overflow-hidden flex bg-background">
                 <div
-                    className="h-full bg-[#111] dark:bg-foreground transition-[width] duration-500 shadow-sm"
+                    className="h-full bg-stone-black transition-[width] duration-500 border-r-2 border-border"
                     style={{ width: `${blackShare}%` }}
                 />
                 <div
-                    className="h-full bg-stone-300 dark:bg-muted-foreground/30 transition-[width] duration-500"
+                    className="h-full bg-stone-white transition-[width] duration-500"
                     style={{ width: `${whiteShare}%` }}
                 />
             </div>

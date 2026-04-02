@@ -24,10 +24,10 @@ export function OnlineRoomPanel({
   const [roomInput, setRoomInput] = useState("")
 
   return (
-    <div className="flex flex-col gap-4 rounded-[2rem] border border-border/60 bg-card/40 backdrop-blur-xl shadow-sm p-6">
+    <div className="flex flex-col gap-4 rounded-none border-2 border-border bg-card shadow-[4px_4px_0_0_var(--foreground)] p-6">
       <div className="flex items-center justify-between px-1">
         <div className="flex flex-col gap-1">
-          <span className="text-[11px] font-bold uppercase tracking-[0.15em] text-muted-foreground">
+          <span className="text-[11px] font-mono font-bold uppercase tracking-[0.15em] text-muted-foreground">
             Online Room
           </span>
           <p className="text-[15px] font-semibold text-foreground">
@@ -35,10 +35,10 @@ export function OnlineRoomPanel({
           </p>
         </div>
         <div className={cn(
-          "flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-widest border",
+          "flex items-center gap-1.5 px-3 py-1 rounded-none text-[11px] font-mono font-bold uppercase tracking-widest border-2",
           roomId
-            ? "bg-status-active/10 text-status-active border-status-active/20"
-            : "bg-secondary/50 text-muted-foreground border-border/50"
+            ? "bg-status-active text-background border-status-active"
+            : "bg-background text-muted-foreground border-border"
         )}>
           <LuWifi className="size-3" />
           {roomId ? "Live" : "Offline"}
@@ -58,7 +58,7 @@ export function OnlineRoomPanel({
           type="button"
           disabled={isConnecting}
           onClick={onCreateRoom}
-          className="flex-1 h-11 rounded-full font-bold text-[13px]"
+          className="flex-1 h-11 rounded-none font-mono font-bold uppercase tracking-widest text-[11px] border border-transparent shadow-[2px_2px_0_0_var(--foreground)]"
         >
           {isConnecting ? "Creating..." : "Create Room"}
         </Button>
@@ -67,7 +67,7 @@ export function OnlineRoomPanel({
           variant="outline"
           disabled={isConnecting || roomInput.trim().length < 6}
           onClick={() => onJoinRoom(roomInput)}
-          className="flex-1 h-11 rounded-full font-bold text-[13px] border-border/60"
+          className="flex-1 h-11 rounded-none font-mono font-bold uppercase tracking-widest text-[11px] border-2 border-border shadow-[2px_2px_0_0_var(--border)]"
         >
           Join Room
         </Button>
@@ -77,7 +77,7 @@ export function OnlineRoomPanel({
         value={roomInput}
         onChange={(event) => setRoomInput(event.target.value)}
         placeholder="Paste room ID..."
-        className="h-11 w-full rounded-full border border-border/60 bg-background/70 px-4 text-[13px] font-medium text-foreground placeholder:text-muted-foreground/60 outline-none transition-all focus:border-foreground/30 focus:shadow-sm"
+        className="h-11 w-full rounded-none border-2 border-border bg-background px-4 font-mono text-[13px] font-bold text-foreground placeholder:text-muted-foreground outline-none focus:border-foreground focus:shadow-[2px_2px_0_0_var(--foreground)] transition-shadow"
       />
 
       {error ? (
@@ -115,7 +115,7 @@ function ConnectedRoomDetails({
   }
 
   return (
-    <div className="flex flex-col gap-3 rounded-2xl bg-background/50 border border-border/50 p-4">
+    <div className="flex flex-col gap-3 rounded-none bg-background border-2 border-border p-4 shadow-[2px_2px_0_0_var(--foreground)]">
       <div className="flex items-center justify-between">
         <span className="font-mono text-[12px] text-muted-foreground truncate max-w-[160px]">{roomId}</span>
         <span className={cn(
@@ -126,10 +126,10 @@ function ConnectedRoomDetails({
         </span>
       </div>
 
-      <div className="flex items-center gap-2 text-[12px] text-muted-foreground font-medium">
+      <div className="flex items-center gap-2 text-[12px] text-muted-foreground font-mono font-bold">
         <LuUsers className="size-3.5" />
         <span>{otherConnectionIds.length + 1} in room</span>
-        <div className="w-1 h-1 rounded-full bg-border" />
+        <div className="w-[2px] h-[2px] rounded-none bg-border" />
         <span>Opponent: {opponentStatus}</span>
       </div>
 
@@ -137,12 +137,12 @@ function ConnectedRoomDetails({
         <button
           type="button"
           onClick={handleCopy}
-          className="flex items-center justify-between gap-3 h-9 rounded-full border border-border/60 bg-background/80 px-3 text-[12px] font-medium text-muted-foreground hover:text-foreground transition-colors group"
+          className="flex items-center justify-between gap-3 h-9 rounded-none border border-border bg-background px-3 font-mono text-[12px] font-bold text-muted-foreground transition-colors hover:text-foreground hover:bg-foreground hover:border-transparent group"
         >
           <span className="truncate">{shareUrl}</span>
           {copied
             ? <LuCheck className="size-3.5 shrink-0 text-status-active" />
-            : <LuCopy className="size-3.5 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" />
+            : <LuCopy className="size-3.5 shrink-0 hover:text-primary-foreground opacity-30 group-hover:opacity-100 transition-opacity" />
           }
         </button>
       ) : null}

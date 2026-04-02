@@ -87,13 +87,13 @@ export default async function ProfilePage() {
           <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
             <div className="flex items-center gap-5">
               <div className="relative shrink-0">
-                <Avatar className="size-20 rounded-full border-2 border-border/60 shadow-xl">
+                <Avatar className="size-20 rounded-none border-2 border-border shadow-[4px_4px_0_0_var(--foreground)]">
                   {user.avatar ? <AvatarImage src={user.avatar} alt={displayName} /> : null}
                   <AvatarFallback className="font-sans text-2xl font-bold text-foreground bg-secondary">
                     {initials(displayName, user.email)}
                   </AvatarFallback>
                 </Avatar>
-                <div className="absolute -bottom-1 -right-1 size-5 rounded-full bg-status-active border-2 border-background shadow-sm" />
+                <div className="absolute -bottom-1 -right-1 size-5 rounded-none bg-status-active border-2 border-border shadow-[2px_2px_0_0_var(--foreground)]" />
               </div>
 
               <div className="flex flex-col gap-1">
@@ -108,7 +108,7 @@ export default async function ProfilePage() {
               <Button
                 render={<Link href="/" />}
                 variant="ghost"
-                className="rounded-full h-9 px-4 text-[13px] border border-border/60 hover:bg-secondary/60 transition-colors"
+                className="rounded-none h-9 px-4 font-mono font-bold uppercase tracking-widest text-[11px] border-2 border-border shadow-[2px_2px_0_0_var(--foreground)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none hover:bg-foreground hover:text-primary-foreground transition-all"
               >
                 <LuArrowLeft className="size-4 mr-1.5" />
                 Back to Board
@@ -116,7 +116,7 @@ export default async function ProfilePage() {
               <Button
                 render={<Link href="/account/settings" />}
                 variant="outline"
-                className="rounded-full h-9 px-4 text-[13px] border-border/60"
+                className="rounded-none h-9 px-4 font-mono font-bold uppercase tracking-widest text-[11px] border-2 border-border shadow-[2px_2px_0_0_var(--foreground)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none hover:bg-foreground hover:text-primary-foreground transition-all"
               >
                 Settings
               </Button>
@@ -125,13 +125,13 @@ export default async function ProfilePage() {
 
           {/* Rating pill */}
           <div className="flex items-center gap-3 flex-wrap">
-            <div className="flex items-center gap-2 bg-secondary/60 border border-border/50 rounded-full px-4 py-1.5">
+            <div className="flex items-center gap-2 bg-background border-2 border-border rounded-none px-4 py-1.5 shadow-[2px_2px_0_0_var(--foreground)]">
               <LuStar className="size-3.5 text-amber-500" />
-              <span className="text-[13px] font-bold text-foreground">Rating {user.rating}</span>
+              <span className="font-mono text-[11px] font-bold uppercase tracking-widest text-foreground">Rating {user.rating}</span>
             </div>
-            <div className="flex items-center gap-2 bg-secondary/60 border border-border/50 rounded-full px-4 py-1.5">
+            <div className="flex items-center gap-2 bg-background border-2 border-border rounded-none px-4 py-1.5 shadow-[2px_2px_0_0_var(--foreground)]">
               <LuSwords className="size-3.5 text-muted-foreground" />
-              <span className="text-[13px] font-bold text-foreground">{games.length} games played</span>
+              <span className="font-mono text-[11px] font-bold uppercase tracking-widest text-foreground">{games.length} games played</span>
             </div>
           </div>
         </div>
@@ -148,34 +148,34 @@ export default async function ProfilePage() {
               value: summary.wins,
               icon: <LuTrophy className="size-4" />,
               color: "text-status-active",
-              bg: "bg-status-active/5 border-status-active/20",
+              bg: "bg-status-active/5",
             },
             {
               label: "Losses",
               value: summary.losses,
               icon: <LuSwords className="size-4" />,
               color: "text-destructive",
-              bg: "bg-destructive/5 border-destructive/20",
+              bg: "bg-destructive/5",
             },
             {
               label: "Draws",
               value: summary.draws,
               icon: <LuMinus className="size-4" />,
               color: "text-muted-foreground",
-              bg: "bg-secondary/60 border-border/50",
+              bg: "bg-secondary/60",
             },
             {
               label: "Win Rate",
               value: `${winRate}%`,
               icon: <LuStar className="size-4" />,
               color: "text-amber-500",
-              bg: "bg-amber-500/5 border-amber-500/20",
+              bg: "bg-amber-500/5",
             },
           ].map((stat) => (
             <div
               key={stat.label}
               className={cn(
-                "flex flex-col gap-3 rounded-[2rem] border p-6 shadow-sm transition-all hover:shadow-md",
+                "flex flex-col gap-3 rounded-none border-2 border-border p-6 shadow-[4px_4px_0_0_var(--foreground)] transition-all bg-card hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0_0_var(--foreground)]",
                 stat.bg,
               )}
             >
@@ -204,7 +204,7 @@ export default async function ProfilePage() {
           </div>
 
           {games.length === 0 ? (
-            <div className="rounded-[2rem] border border-border/50 bg-background/50 p-12 text-center flex flex-col items-center gap-3">
+            <div className="rounded-none border-2 border-border bg-card p-12 text-center flex flex-col items-center gap-3 shadow-[4px_4px_0_0_var(--foreground)]">
               <LuTrophy className="size-8 text-muted-foreground/40" />
               <p className="text-[15px] font-medium text-muted-foreground">No saved games yet.</p>
             </div>
@@ -226,17 +226,17 @@ export default async function ProfilePage() {
                   <Link
                     key={game.id}
                     href={`/replay/${game.id}`}
-                    className="group relative flex flex-col justify-between overflow-hidden rounded-[2.5rem] border border-border/60 bg-card/60 hover:bg-card p-6 lg:p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    className="group relative flex flex-col justify-between overflow-hidden rounded-none border-2 border-border bg-card p-6 lg:p-8 shadow-[6px_6px_0_0_var(--foreground)] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0_0_var(--foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   >
                     <div className="absolute inset-0 opacity-0 group-hover:opacity-[0.03] dark:group-hover:opacity-10 pointer-events-none transition-opacity duration-300 bg-gradient-to-br from-foreground to-transparent" />
 
                     <div className="relative z-10 flex items-start justify-between gap-4 mb-6">
                       <div className="flex items-center gap-4">
                         <div className={cn(
-                          "flex size-14 shrink-0 items-center justify-center rounded-full font-bold text-xl shadow-inner",
-                          isWin ? "bg-status-active/10 text-status-active border border-status-active/20" :
-                          isLoss ? "bg-destructive/10 text-destructive border border-destructive/20" :
-                          "bg-secondary text-muted-foreground border border-border"
+                          "flex size-14 shrink-0 items-center justify-center rounded-none font-bold text-xl border-2 border-border",
+                          isWin ? "bg-status-active text-background border-status-active" :
+                          isLoss ? "bg-destructive text-background border-destructive" :
+                          "bg-background text-foreground border-border"
                         )}>
                           {opponentLabel.charAt(0).toUpperCase()}
                         </div>
@@ -252,10 +252,10 @@ export default async function ProfilePage() {
                       </div>
 
                       <div className={cn(
-                        "flex items-center justify-center px-3 py-1.5 rounded-full text-[11px] font-black uppercase tracking-widest border shrink-0",
-                        isWin ? "bg-status-active/10 text-status-active border-status-active/20" :
-                        isLoss ? "bg-destructive/10 text-destructive border-destructive/20" :
-                        "bg-secondary/50 text-muted-foreground border-border/50"
+                        "flex items-center justify-center px-3 py-1.5 rounded-none border-2 font-mono text-[11px] font-bold uppercase tracking-widest shrink-0",
+                        isWin ? "bg-status-active text-background border-status-active" :
+                        isLoss ? "bg-destructive text-background border-destructive" :
+                        "bg-background text-muted-foreground border-border"
                       )}>
                         {outcome}
                       </div>
@@ -263,10 +263,10 @@ export default async function ProfilePage() {
 
                     <div className="relative z-10 flex items-center justify-between mt-auto">
                       <div className="flex items-center gap-2">
-                        <div className="flex items-center gap-1.5 bg-secondary/40 px-3 py-1.5 rounded-full border border-border/50">
+                        <div className="flex items-center gap-1.5 bg-background px-3 py-1.5 rounded-none border-2 border-border shadow-[2px_2px_0_0_var(--foreground)]">
                           <div className={cn(
-                            "size-2 rounded-full",
-                            myColor === "black" ? "bg-[#111]" : "bg-stone-200 border border-border/80"
+                            "size-3 rounded-none border border-border",
+                            myColor === "black" ? "bg-[#111]" : "bg-stone-200 border-border"
                           )} />
                           <span className="text-foreground capitalize text-[12px] font-semibold">{myColor}</span>
                         </div>

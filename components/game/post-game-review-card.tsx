@@ -62,7 +62,7 @@ export function PostGameReviewCard({
     onExportSgf: () => void;
 }) {
     return (
-        <div className="flex flex-col gap-6 w-full rounded-[2rem] border border-border/60 bg-card/40 backdrop-blur-xl p-5 lg:p-6 shadow-sm">
+        <div className="flex flex-col gap-6 w-full rounded-none border-2 border-border bg-card p-5 lg:p-6 shadow-[4px_4px_0_0_var(--foreground)]">
             <div className="flex items-start justify-between gap-3 px-1">
                 <div>
                     <h3 className="text-xl font-bold tracking-tight text-foreground">
@@ -73,8 +73,8 @@ export function PostGameReviewCard({
                     </p>
                 </div>
                 <Badge
-                    variant="secondary"
-                    className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 font-bold text-[11px] uppercase tracking-widest bg-secondary/80 text-foreground border-border/50 shadow-sm"
+                    variant="outline"
+                    className="inline-flex items-center gap-1.5 rounded-none border-2 border-border px-3 py-1 font-mono font-bold text-[11px] uppercase tracking-widest bg-background text-foreground shadow-[2px_2px_0_0_var(--foreground)]"
                 >
                     <LuFlag className="size-3.5" />
                     Final
@@ -82,12 +82,12 @@ export function PostGameReviewCard({
             </div>
 
             {scoreResult ? (
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 gap-4">
                     {/* Black Stat Block */}
-                    <div className="flex flex-col bg-background/50 border border-border/60 rounded-3xl p-5 shadow-sm w-full transition-all hover:bg-background/80 group">
+                    <div className="flex flex-col bg-background border-2 border-border rounded-none p-5 shadow-[4px_4px_0_0_var(--foreground)] w-full transition-transform hover:-translate-y-1 group">
                         <div className="flex items-center justify-between mb-6">
-                            <span className="text-[12px] font-bold uppercase tracking-widest text-[#111] dark:text-foreground">Black</span>
-                            <div className="size-3.5 rounded-full bg-[#111] shadow-inner" />
+                            <span className="text-[12px] font-mono font-bold uppercase tracking-widest text-[#111] dark:text-foreground">Black</span>
+                            <div className="size-4 rounded-none bg-[#111] border border-border" />
                         </div>
                         <div className="mt-auto">
                             <span className="text-4xl font-mono font-bold tracking-tighter text-foreground group-hover:scale-105 transition-transform origin-left inline-block">
@@ -107,10 +107,10 @@ export function PostGameReviewCard({
                     </div>
 
                     {/* White Stat Block */}
-                    <div className="flex flex-col bg-background/50 border border-border/60 rounded-3xl p-5 shadow-sm w-full transition-all hover:bg-background/80 group">
+                    <div className="flex flex-col bg-background border-2 border-border rounded-none p-5 shadow-[4px_4px_0_0_var(--foreground)] w-full transition-transform hover:-translate-y-1 group">
                         <div className="flex items-center justify-between mb-6">
-                            <span className="text-[12px] font-bold uppercase tracking-widest text-muted-foreground">White</span>
-                            <div className="size-3.5 rounded-full bg-stone-200 border border-border/80 shadow-inner" />
+                            <span className="text-[12px] font-mono font-bold uppercase tracking-widest text-muted-foreground">White</span>
+                            <div className="size-4 rounded-none bg-stone-200 border border-border/80" />
                         </div>
                         <div className="mt-auto">
                             <span className="text-4xl font-mono font-bold tracking-tighter text-foreground group-hover:scale-105 transition-transform origin-left inline-block">
@@ -147,7 +147,7 @@ export function PostGameReviewCard({
                                     <div className="absolute -left-[5px] top-1.5 size-2.5 rounded-full bg-foreground shadow-[0_0_10px_currentColor]" />
                                     <div className="flex flex-col">
                                         <div className="flex items-center gap-2 mb-1.5">
-                                            <span className="px-2 py-0.5 rounded-md bg-secondary text-muted-foreground font-mono text-[10px] font-bold">
+                                            <span className="px-2 py-0.5 rounded-none border-2 border-border bg-background text-muted-foreground font-mono text-[10px] font-bold">
                                                 M{moment.moveNumber}
                                             </span>
                                             <span className="font-semibold text-foreground text-[14px]">
@@ -175,7 +175,7 @@ export function PostGameReviewCard({
                                     <div className="absolute -left-[5px] top-1.5 size-2.5 rounded-full bg-tutor-accent shadow-[0_0_10px_var(--color-tutor-accent)]" />
                                     <div className="flex flex-col">
                                         <div className="flex items-center gap-2 mb-1.5">
-                                            <span className="px-2 py-0.5 rounded-md bg-tutor-accent/10 text-tutor-accent font-mono text-[10px] font-bold">
+                                            <span className="px-2 py-0.5 rounded-none border-2 border-tutor-accent bg-background text-tutor-accent font-mono text-[10px] font-bold shadow-[2px_2px_0_0_var(--color-tutor-accent)]">
                                                 M{note.moveNumber}
                                             </span>
                                         </div>
@@ -193,7 +193,7 @@ export function PostGameReviewCard({
             <Button
                 type="button"
                 onClick={onExportSgf}
-                className="w-full h-12 rounded-full font-bold text-[14px] uppercase tracking-wide shadow-md transition-shadow hover:shadow-lg mt-2"
+                className="w-full h-12 rounded-none border-2 border-transparent font-mono font-bold text-[14px] uppercase tracking-widest shadow-[4px_4px_0_0_var(--foreground)] transition-all hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] active:shadow-none mt-2"
             >
                 <LuDownload className="size-4 mr-2" />
                 Export SGF

@@ -172,7 +172,7 @@ export function AIReaction({ className }: { className?: string }) {
             >
                 <div
                     className={cn(
-                        "relative overflow-hidden rounded-[1.6rem] border bg-background/90 shadow-[0_20px_60px_-34px_rgba(20,16,10,0.38)] backdrop-blur-xl",
+                        "relative overflow-hidden rounded-none border-[3px] border-border bg-background shadow-[8px_8px_0_0_var(--foreground)]",
                         borderClass,
                     )}
                 >
@@ -188,11 +188,11 @@ export function AIReaction({ className }: { className?: string }) {
                             <div
                                 ref={iconRef}
                                 className={cn(
-                                    "relative mt-0.5 flex size-11 shrink-0 items-center justify-center rounded-2xl border border-border/55 shadow-sm",
+                                    "relative mt-0.5 flex size-11 shrink-0 items-center justify-center rounded-none border-2 border-border shadow-[2px_2px_0_0_var(--foreground)]",
                                     iconSurfaceClass,
                                 )}
                             >
-                                <div className="absolute inset-[6px] rounded-[0.9rem] bg-background/55" />
+                                <div className="absolute inset-[4px] rounded-none bg-background/90" />
                                 <Icon
                                     className={cn(
                                         "relative z-10 size-4.5",
