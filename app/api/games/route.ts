@@ -3,6 +3,7 @@ import { db } from "@/lib/db"
 import { getApiDbUser } from "@/lib/auth/api"
 import type { Move } from "@/lib/engine/types"
 import { sgfToGame } from "@/lib/engine/sgf"
+import { normalizeBoardSize, type BoardSize } from "@/lib/engine/board-size"
 
 const AI_EMAIL = "sensei-ai@komi.local"
 const AI_NAME = "Sensei AI"
@@ -89,14 +90,14 @@ function coerceMoves(moves: unknown): Move[] {
     }))
 }
 
-function coerceBoardSize(value: unknown, sgf: string | null): 9 | 13 | 19 {
-  if (value === 9 || value === 13 || value === 19) return value
+function coerceBoardSize(value: unknown, sgf: string | null): BoardSize {
+  const directSize = normalizeBoardSize(value, 19)
+  if (directSize === value) return directSize
+
   if (sgf) {
     try {
       const parsedSize = sgfToGame(sgf).metadata.size
-      if (parsedSize === 9 || parsedSize === 13 || parsedSize === 19) {
-        return parsedSize
-      }
+      return normalizeBoardSize(parsedSize, 19)
     } catch {
       return 19
     }

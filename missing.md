@@ -59,12 +59,12 @@ Static audit compiled from code review only. No build, test, or browser verifica
 
 ## P1: Tutor, Sensei, And AI UX
 
-- [ ] Verify the default OpenAI model in `app/api/tutor/route.ts` before relying on it.
-- [ ] Make it clear in UI that BYO OpenAI keys are sent through the app server, not used purely client-side.
+- [x] Stop relying on a hard-coded OpenAI tutor model in `app/api/tutor/route.ts`; allow an env override.
+- [x] Make it clear in UI that BYO OpenAI keys are sent through the app server, not used purely client-side.
 - [x] Add request cancellation and error recovery for streaming tutor responses in `components/learning/ai-chat-panel.tsx`.
-- [ ] Prevent tutor spam by tying coaching triggers to meaningful game events rather than global module counters.
-- [ ] Move tutor rate state out of module-level globals in `lib/stores/game-store.ts`.
-- [ ] Separate beginner coaching, move review, and chat modes so Sensei does not feel random or repetitive.
+- [x] Prevent tutor spam by tying coaching triggers to meaningful game events rather than global module counters.
+- [x] Move tutor rate state out of module-level globals in `lib/stores/game-store.ts`.
+- [x] Separate beginner coaching, move review, and chat modes so Sensei does not feel random or repetitive.
 - [x] Add a deterministic fallback message when the tutor API fails.
 - [x] Clean up stale animation/comment code in `components/learning/ai-reaction.tsx`.
 
@@ -79,7 +79,7 @@ Static audit compiled from code review only. No build, test, or browser verifica
 - [ ] Fix the theme system: `components/providers.tsx` forces light mode while the app still has dark tokens and theme-toggle remnants.
 - [x] Remove unused `ThemeToggle` imports from `components/layout/game-layout.tsx`, or restore a working theme switcher.
 - [ ] Replace mixed icon systems with one intentional set; docs mention Hugeicons, but components still use `react-icons` and `lucide-react`.
-- [ ] Audit all verbose empty states so they fit compact cards and dock panes without awkward wrapping.
+- [x] Audit all verbose empty states so they fit compact cards and dock panes without awkward wrapping.
 - [ ] Rework dock-expanded panes so they feel connected to the dock and do not cover important board context unexpectedly.
 
 ## P2: Page And Routing Gaps
@@ -99,7 +99,7 @@ Static audit compiled from code review only. No build, test, or browser verifica
 - [ ] Remove unused imports across UI files, especially after the recent icon and panel iterations.
 - [ ] Replace broad `any` usage in multiplayer and Liveblocks code.
 - [ ] Add explicit types for API request and response payloads.
-- [ ] Centralize supported board sizes instead of repeating `9 | 13 | 19` assumptions.
+- [x] Centralize supported board sizes instead of repeating `9 | 13 | 19` assumptions.
 
 ## P2: Docs And Configuration
 

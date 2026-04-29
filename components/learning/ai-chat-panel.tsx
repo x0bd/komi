@@ -173,7 +173,7 @@ export function AIChatPanel({
         }
 
         window.localStorage.setItem("komi_openai_api_key", next);
-        addMessage("Personal API key saved locally on this device.", "tip");
+        addMessage("Personal API key saved locally. Tutor requests still route through the Komi server.", "tip");
     }
 
     function clearApiKey() {
@@ -483,7 +483,7 @@ export function AIChatPanel({
                             </div>
                             {!isGameOver ? (
                                 <p className="mt-4 text-sm font-bold text-black/60 tracking-tight">
-                                    Review unlocks after game end. Finish the current game to get a move-by-move walkthrough.
+                                    Review unlocks after game end.
                                 </p>
                             ) : (
                                 <>
@@ -544,7 +544,7 @@ export function AIChatPanel({
                                 ) : null}
                                 {!visibleMessages.length && !isStreaming ? (
                                     <p className="py-10 text-center text-[13px] font-bold text-black/40 uppercase tracking-widest">
-                                        Sensei will react after your next move
+                                        Awaiting next move
                                     </p>
                                 ) : null}
                             </div>
@@ -596,7 +596,9 @@ export function AIChatPanel({
                                         </div>
                                     ) : (
                                         <p className="mt-2 text-xs font-medium text-black/60">
-                                            {hasApiKey ? "Using your key for live tutor responses." : "No key set. Sensei uses local fallback responses."}
+                                            {hasApiKey
+                                                ? "Using your key through the Komi server for live tutor responses."
+                                                : "No key set. Sensei uses local fallback responses."}
                                         </p>
                                     )}
                                 </div>

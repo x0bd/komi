@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef } from "react"
 import { useStorage } from "@liveblocks/react"
 import { useGameStore, type MultiplayerSnapshot } from "@/lib/stores/game-store"
+import { normalizeBoardSize } from "@/lib/engine/board-size"
 
 function createSnapshotFingerprint(snapshot: MultiplayerSnapshot) {
   return [
@@ -33,7 +34,7 @@ export function OnlineRoomSync() {
     }
 
     return {
-      size: root.size === 9 || root.size === 13 || root.size === 19 ? root.size : 19,
+      size: normalizeBoardSize(root.size, 19),
       komi: typeof root.komi === "number" && Number.isFinite(root.komi) ? root.komi : 6.5,
       board: [...root.board],
       turn: root.turn,

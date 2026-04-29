@@ -16,6 +16,7 @@ import type { GameState, Move } from "@/lib/engine/types";
 import { createInitialState } from "@/lib/engine/game";
 import { applyMove, applyPass } from "@/lib/engine/rules";
 import { boardToString } from "@/lib/engine/board";
+import { normalizeBoardSize, type BoardSize } from "@/lib/engine/board-size";
 import { calculateScore, type ScoreResult } from "@/lib/engine/scoring";
 import { gameToSGF, sgfToGame } from "@/lib/engine/sgf";
 import { GoBoard } from "@/components/game/go-board";
@@ -238,9 +239,9 @@ function inferQuality(move: Move, analysis: EngineAnalysis | null) {
     return "ok" as const;
 }
 
-function normalizeSize(size: number): 9 | 13 | 19 | null {
-    if (size === 9 || size === 13 || size === 19) return size;
-    return null;
+function normalizeSize(size: number): BoardSize | null {
+    const normalized = normalizeBoardSize(size, 19);
+    return normalized === size ? normalized : null;
 }
 
 function formatDate(value: string) {

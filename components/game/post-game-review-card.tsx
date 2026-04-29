@@ -185,7 +185,7 @@ export function PostGameReviewCard({
                 </div>
             ) : (
                 <div className="rounded-3xl border border-border/50 bg-secondary/30 p-6 text-center text-[13px] font-medium text-muted-foreground">
-                    Final score details are unavailable for this game end type.
+                    No score detail for this finish.
                 </div>
             )}
 

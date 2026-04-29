@@ -115,8 +115,6 @@ function getLearningOutcome(
 
 const initialState = createInitialState(19)
 const DEFAULT_TIME_SECONDS = 15 * 60
-const TUTOR_MIN_INTERVAL_MS = 5500
-const TUTOR_MAX_REQUESTS_PER_GAME = 18
 const INITIAL_SCORE = calculateScore(
   initialState.board,
   19,
@@ -124,8 +122,6 @@ const INITIAL_SCORE = calculateScore(
   6.5,
 )
 let captureClearTimeout: ReturnType<typeof setTimeout> | null = null
-let nextTutorRequestAt = 0
-let tutorRequestsThisGame = 0
 
 function deriveCapturedStones(
   previousBoard: GameState["board"],
@@ -198,15 +194,10 @@ async function requestTutorMessage(payload: {
     topMoves: Array<{ coordinate: string; reason: string }>
   }
 }) {
-  const now = Date.now()
-  if (now < nextTutorRequestAt) {
+  const learningStore = useLearningStore.getState()
+  if (!learningStore.claimTutorNarrationSlot()) {
     return
   }
-  if (tutorRequestsThisGame >= TUTOR_MAX_REQUESTS_PER_GAME) {
-    return
-  }
-  nextTutorRequestAt = now + TUTOR_MIN_INTERVAL_MS
-  tutorRequestsThisGame += 1
 
   try {
     const apiKey =
@@ -242,7 +233,7 @@ async function requestTutorMessage(payload: {
       message?: unknown
     }
     if (typeof json.message === "string" && json.message.trim().length > 0) {
-      useLearningStore.getState().addMessage(json.message)
+      learningStore.addMessage(json.message)
     }
   } catch {
     // Ignore transient network errors for tutor narration.
@@ -670,10 +661,6 @@ export const useGameStore = create<KomiStore>((set, get) => ({
       refreshedLearningStore.requestTip("Opening tips")
       refreshedLearningStore.markTipShown("opening")
     }
-    
-    tutorRequestsThisGame = 0
-    nextTutorRequestAt = 0
-
     set({
       size,
       komi,

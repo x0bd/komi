@@ -66,6 +66,8 @@ interface LearningStore {
   latestAnalysis: TutorAnalysisSnapshot | null
   tutorPulseKey: number
   tutorEventCount: number
+  tutorNextRequestAt: number
+  tutorRequestCount: number
   tipFlags: {
     opening: boolean
     firstCapture: boolean
@@ -79,6 +81,7 @@ interface LearningStore {
   addXP: (amount: number) => void
   registerStreakEvent: (event: StreakEvent) => void
   registerTutorEvent: (event: TutorEvent) => void
+  claimTutorNarrationSlot: (now?: number) => boolean
   resetLiveStreak: () => void
   addMessage: (text: string, tone?: ChatMessageTone) => void
   requestTip: (topic: string) => void
@@ -89,6 +92,8 @@ interface LearningStore {
 const LEVEL_THRESHOLD = 1000
 const LIVE_STREAK_BASELINE = 24
 const MAX_CHAT_MESSAGES = 28
+const TUTOR_MIN_INTERVAL_MS = 5500
+const TUTOR_MAX_REQUESTS_PER_GAME = 18
 
 function pushChatMessage(
   messages: ChatMessage[],
@@ -310,6 +315,8 @@ export const useLearningStore = create<LearningStore>()(
       latestAnalysis: null,
       tutorPulseKey: 0,
       tutorEventCount: 0,
+      tutorNextRequestAt: 0,
+      tutorRequestCount: 0,
       tipFlags: {
         opening: false,
         firstCapture: false,
@@ -383,6 +390,19 @@ export const useLearningStore = create<LearningStore>()(
         })
       },
 
+      claimTutorNarrationSlot: (now = Date.now()) => {
+        const { tutorNextRequestAt, tutorRequestCount } = get()
+        if (now < tutorNextRequestAt) return false
+        if (tutorRequestCount >= TUTOR_MAX_REQUESTS_PER_GAME) return false
+
+        set({
+          tutorNextRequestAt: now + TUTOR_MIN_INTERVAL_MS,
+          tutorRequestCount: tutorRequestCount + 1,
+        })
+
+        return true
+      },
+
       resetLiveStreak: () =>
         set({
           liveStreak: LIVE_STREAK_BASELINE,
@@ -395,6 +415,8 @@ export const useLearningStore = create<LearningStore>()(
           latestAnalysis: null,
           tutorPulseKey: 0,
           tutorEventCount: 0,
+          tutorNextRequestAt: 0,
+          tutorRequestCount: 0,
           tipFlags: {
             opening: false,
             firstCapture: false,
