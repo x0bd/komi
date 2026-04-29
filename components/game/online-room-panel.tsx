@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react"
 import { useOthersConnectionIds, useStatus } from "@liveblocks/react"
 import { Button } from "@/components/ui/button"
-import { LuWifi, LuCopy, LuCheck, LuUsers } from "react-icons/lu"
+import { LuWifi, LuCopy, LuCheck, LuUsers, LuLogOut } from "react-icons/lu"
 import { cn } from "@/lib/utils"
 
 export function OnlineRoomPanel({
@@ -13,6 +13,7 @@ export function OnlineRoomPanel({
   error,
   onCreateRoom,
   onJoinRoom,
+  onLeaveRoom,
 }: {
   roomId: string | null
   shareUrl: string | null
@@ -20,6 +21,7 @@ export function OnlineRoomPanel({
   error: string | null
   onCreateRoom: () => void
   onJoinRoom: (roomId: string) => void
+  onLeaveRoom: () => void
 }) {
   const [roomInput, setRoomInput] = useState("")
 
@@ -46,7 +48,11 @@ export function OnlineRoomPanel({
       </div>
 
       {roomId ? (
-        <ConnectedRoomDetails roomId={roomId} shareUrl={shareUrl} />
+        <ConnectedRoomDetails
+          roomId={roomId}
+          shareUrl={shareUrl}
+          onLeaveRoom={onLeaveRoom}
+        />
       ) : (
         <p className="text-[13px] text-muted-foreground font-medium px-1">
           Create a room to invite someone, or paste a room ID to join.
@@ -90,9 +96,11 @@ export function OnlineRoomPanel({
 function ConnectedRoomDetails({
   roomId,
   shareUrl,
+  onLeaveRoom,
 }: {
   roomId: string
   shareUrl: string | null
+  onLeaveRoom: () => void
 }) {
   const status = useStatus()
   const otherConnectionIds = useOthersConnectionIds()
@@ -146,6 +154,15 @@ function ConnectedRoomDetails({
           }
         </button>
       ) : null}
+
+      <button
+        type="button"
+        onClick={onLeaveRoom}
+        className="flex h-9 items-center justify-center gap-2 rounded-none border border-border bg-background px-3 font-mono text-[12px] font-bold uppercase tracking-widest text-muted-foreground transition-colors hover:border-destructive hover:bg-destructive hover:text-destructive-foreground"
+      >
+        <LuLogOut className="size-3.5" />
+        Leave Room
+      </button>
     </div>
   )
 }

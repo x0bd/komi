@@ -381,6 +381,8 @@ export default function HomePageClient() {
     const moveHistory = useGameStore((state) => state.moveHistory);
     const exportSGF = useGameStore((state) => state.exportSGF);
     const resetGame = useGameStore((state) => state.resetGame);
+    const size = useGameStore((state) => state.size);
+    const komi = useGameStore((state) => state.komi);
     const roomId = useMultiplayerStore((state) => state.roomId);
     const onlineRole = useMultiplayerStore((state) => state.role);
     const createRoom = useMultiplayerStore((state) => state.createRoom);
@@ -580,6 +582,8 @@ export default function HomePageClient() {
         <OnlineRoomShell
             mode={mode}
             roomId={roomId}
+            size={size}
+            komi={komi}
             gameState={gameState}
             moveHistory={moveHistory}
             timers={timers}
@@ -617,6 +621,8 @@ export default function HomePageClient() {
 function OnlineRoomShell({
     mode,
     roomId,
+    size,
+    komi,
     gameState,
     moveHistory,
     timers,
@@ -627,6 +633,8 @@ function OnlineRoomShell({
 }: {
     mode: GameMode;
     roomId: string | null;
+    size: 9 | 13 | 19;
+    komi: number;
     gameState: GameState;
     moveHistory: Move[];
     timers: { black: number; white: number };
@@ -640,7 +648,7 @@ function OnlineRoomShell({
     }
 
     return (
-                <RoomProvider
+        <RoomProvider
             id={roomId}
             initialPresence={{
                 cursor: null,
@@ -649,8 +657,8 @@ function OnlineRoomShell({
                 stoneColor: null,
             }}
             initialStorage={{
-                size: gameState.board.length === 81 ? 9 : gameState.board.length === 169 ? 13 : 19,
-                komi: 6.5,
+                size,
+                komi,
                 board: [...gameState.board],
                 turn: gameState.turn,
                 captured: {
@@ -1182,6 +1190,7 @@ export function useSidebarPanels({
     const multiplayerError = useMultiplayerStore((state) => state.error);
     const createRoom = useMultiplayerStore((state) => state.createRoom);
     const joinRoom = useMultiplayerStore((state) => state.joinRoom);
+    const leaveRoom = useMultiplayerStore((state) => state.leaveRoom);
     const latestAnalysis = useLearningStore((state) => state.latestAnalysis);
 
     const blackTimer = splitClock(timers.black);
@@ -1424,6 +1433,7 @@ export function useSidebarPanels({
                                 onJoinRoom={(nextRoomId) => {
                                     void joinRoom(nextRoomId);
                                 }}
+                                onLeaveRoom={leaveRoom}
                             />
                         </div>
                     )}

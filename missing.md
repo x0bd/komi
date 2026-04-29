@@ -4,24 +4,24 @@ Static audit compiled from code review only. No build, test, or browser verifica
 
 ## P0: Security And Access Control
 
-- [ ] Protect Liveblocks auth so users cannot request full access to any room id from `app/api/liveblocks-auth/route.ts`.
-- [ ] Stop allowing anonymous/random guest ids in `app/api/liveblocks-auth/route.ts` unless guest multiplayer is an explicit product feature.
-- [ ] Validate Liveblocks room membership before issuing `session.FULL_ACCESS` in `app/api/liveblocks-auth/route.ts`.
-- [ ] Add route protection for `/games` and `/replay/:gameId` in `proxy.ts`, or make the route-level auth behavior explicit and consistent.
-- [ ] Add an auth check to `app/api/analyze/route.ts` if analysis should only be available to signed-in users.
-- [ ] Add auth and basic rate limiting to `app/api/tutor/route.ts`, especially if server-side AI keys are ever added.
-- [ ] Add payload size limits or strict validation for analysis and tutor API board payloads.
+- [x] Protect Liveblocks auth so users cannot request full access to any room id from `app/api/liveblocks-auth/route.ts`.
+- [x] Stop allowing anonymous/random guest ids in `app/api/liveblocks-auth/route.ts` unless guest multiplayer is an explicit product feature.
+- [x] Validate Liveblocks room membership before issuing `session.FULL_ACCESS` in `app/api/liveblocks-auth/route.ts`.
+- [x] Add route protection for `/games` and `/replay/:gameId` in `proxy.ts`, or make the route-level auth behavior explicit and consistent.
+- [x] Add an auth check to `app/api/analyze/route.ts` if analysis should only be available to signed-in users.
+- [x] Add auth and basic rate limiting to `app/api/tutor/route.ts`, especially if server-side AI keys are ever added.
+- [x] Add payload size limits or strict validation for analysis and tutor API board payloads.
 
 ## P0: Multiplayer Correctness
 
-- [ ] Enforce online turn ownership before allowing a user to play in `components/pages/home-page-client.tsx`; currently a connected user can likely play whichever color is active.
-- [ ] Enforce online pass and resign ownership so only the current assigned player can pass or resign.
-- [ ] Persist online games once, not once per participant, when a Liveblocks game ends.
-- [ ] Implement online timer sync; `useGameClock(mode !== "online")` disables local timers but no Liveblocks timer loop replaces it.
-- [ ] Store and sync board size, komi, and timer settings in Liveblocks storage so all clients score and render the same game.
-- [ ] Add a clear leave-room/reset-room path for online games.
-- [ ] Make room creation/joining verify ownership or invitation intent instead of blindly reusing room ids.
-- [ ] Replace the `as any` Liveblocks server calls in `lib/liveblocks/server.ts` and `app/api/liveblocks/rooms/route.ts` with typed SDK calls.
+- [x] Enforce online turn ownership before allowing a user to play in `components/pages/home-page-client.tsx`; currently a connected user can likely play whichever color is active.
+- [x] Enforce online pass and resign ownership so only the current assigned player can pass or resign.
+- [x] Persist online games once, not once per participant, when a Liveblocks game ends.
+- [x] Implement online timer sync; `useGameClock(mode !== "online")` disables local timers but no Liveblocks timer loop replaces it.
+- [x] Store and sync board size, komi, and timer settings in Liveblocks storage so all clients score and render the same game.
+- [x] Add a clear leave-room/reset-room path for online games.
+- [x] Make room creation/joining verify ownership or invitation intent instead of blindly reusing room ids.
+- [x] Replace the `as any` Liveblocks server calls in `lib/liveblocks/server.ts` and `app/api/liveblocks/rooms/route.ts` with typed SDK calls.
 
 ## P1: Game Data And Persistence
 

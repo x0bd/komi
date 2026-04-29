@@ -33,8 +33,8 @@ export function OnlineRoomSync() {
     }
 
     return {
-      size: root.size,
-      komi: root.komi,
+      size: root.size === 9 || root.size === 13 || root.size === 19 ? root.size : 19,
+      komi: typeof root.komi === "number" && Number.isFinite(root.komi) ? root.komi : 6.5,
       board: [...root.board],
       turn: root.turn,
       moveNumber: root.moveNumber,

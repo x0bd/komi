@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto"
 
+import type { RoomData } from "@liveblocks/node"
 import { NextRequest, NextResponse } from "next/server"
 
 import { getApiDbUser } from "@/lib/auth/api"
@@ -11,7 +12,7 @@ type RoomsRequestBody = {
 }
 
 const ROOM_ID_PATTERN = /^komi-[a-z0-9-]{4,48}$/
-const ROOM_WRITE_ACCESS = ["room:write"] as const
+const ROOM_WRITE_ACCESS: ["room:write"] = ["room:write"]
 
 function createRoomId() {
   return `komi-${randomUUID().slice(0, 8)}`
@@ -21,7 +22,7 @@ function isValidRoomId(roomId: string) {
   return ROOM_ID_PATTERN.test(roomId)
 }
 
-function roomRole(room: Awaited<ReturnType<ReturnType<typeof getLiveblocksServer>["getRoom"]>>, userId: string) {
+function roomRole(room: RoomData, userId: string) {
   return room.metadata?.ownerId === userId ? "host" : "guest"
 }
 
