@@ -37,7 +37,7 @@ Static audit compiled from code review only. No build, test, or browser verifica
 ## P1: Game Engine And Rules
 
 - [x] Make scoring limitations explicit in UI; `lib/engine/scoring.ts` is an approximate territory estimator and can be wrong for dead stones, seki, and neutral points.
-- [ ] Add a dead-stone marking or review phase before final scoring.
+- [x] Add a dead-stone marking or review phase before final scoring.
 - [x] Fix black-only player identity assumptions in `lib/stores/game-store.ts`; black is treated as "the player" across XP, tutor insights, win/loss reactions, and pass scoring.
 - [x] Avoid generating player feedback for AI/opponent moves unless the UX intentionally frames it that way.
 - [x] Handle AI illegal or stale moves in `hooks/use-ai-turn.ts` by retrying, passing, or surfacing an error.
@@ -54,7 +54,7 @@ Static audit compiled from code review only. No build, test, or browser verifica
 - [ ] Ensure hit targets match visual intersections on all board sizes.
 - [ ] Add responsive collision handling between the board, dock, and right-side panels in `components/layout/game-layout.tsx`.
 - [ ] Add a mobile-specific dock/panel behavior; `min(620px, calc(100vw - 2rem))` can cover most of the game on small screens.
-- [ ] Fix `GameOverDialog` close behavior in `components/pages/home-page-client.tsx`; `onOpenChange={() => {}}` makes the close affordance non-functional.
+- [x] Fix `GameOverDialog` close behavior in `components/pages/home-page-client.tsx`; `onOpenChange={() => {}}` makes the close affordance non-functional.
 - [ ] Add richer game-over actions: review, save status, replay, rematch, and share.
 
 ## P1: Tutor, Sensei, And AI UX

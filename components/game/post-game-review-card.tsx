@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { LuDownload, LuFlag } from "react-icons/lu";
+import { LuCheck, LuDownload, LuFlag, LuRotateCcw } from "react-icons/lu";
 import type { ScoreResult } from "@/lib/engine/scoring";
 
 type KeyMoment = {
@@ -51,6 +51,11 @@ export function PostGameReviewCard({
     reason,
     keyMoments,
     tutorNotes = [],
+    canReviewDeadStones = false,
+    deadStoneCount = 0,
+    scoreReviewPending = false,
+    onClearDeadStones,
+    onConfirmScore,
     onExportSgf,
 }: {
     scoreResult: ScoreResult | null;
@@ -58,6 +63,11 @@ export function PostGameReviewCard({
     reason: "score" | "resignation" | "timeout" | null;
     keyMoments: KeyMoment[];
     tutorNotes?: TutorNote[];
+    canReviewDeadStones?: boolean;
+    deadStoneCount?: number;
+    scoreReviewPending?: boolean;
+    onClearDeadStones?: () => void;
+    onConfirmScore?: () => void;
     onExportSgf: () => void;
 }) {
     return (
@@ -129,6 +139,46 @@ export function PostGameReviewCard({
                             </div>
                         </div>
                     </div>
+                    {canReviewDeadStones ? (
+                        <div className="flex flex-col gap-3 border-2 border-border bg-background/80 p-3 shadow-[3px_3px_0_0_var(--foreground)]">
+                            <div className="flex items-start justify-between gap-3">
+                                <div>
+                                    <p className="font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
+                                        Dead-stone review
+                                    </p>
+                                    <p className="mt-1 text-[12px] font-semibold leading-snug text-foreground">
+                                        Select stones on the board before confirming the final score.
+                                    </p>
+                                </div>
+                                <Badge
+                                    variant="outline"
+                                    className="rounded-none border-2 border-border bg-card px-2 py-1 font-mono text-[10px] font-bold uppercase"
+                                >
+                                    Marked: {deadStoneCount}
+                                </Badge>
+                            </div>
+                            <div className="grid grid-cols-2 gap-2">
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    onClick={onClearDeadStones}
+                                    disabled={deadStoneCount === 0}
+                                    className="h-10 rounded-none border-2 border-border font-mono text-[11px] font-bold uppercase tracking-widest"
+                                >
+                                    <LuRotateCcw className="mr-2 size-3.5" />
+                                    Clear
+                                </Button>
+                                <Button
+                                    type="button"
+                                    onClick={onConfirmScore}
+                                    className="h-10 rounded-none border-2 border-foreground font-mono text-[11px] font-bold uppercase tracking-widest shadow-[3px_3px_0_0_var(--foreground)]"
+                                >
+                                    <LuCheck className="mr-2 size-3.5" />
+                                    {scoreReviewPending ? "Confirm" : "Confirmed"}
+                                </Button>
+                            </div>
+                        </div>
+                    ) : null}
                     <p className="border-2 border-dashed border-border/60 bg-background/70 px-3 py-2 font-mono text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
                         Estimate only. Dead stones, seki, and neutral points are not manually adjudicated yet.
                     </p>

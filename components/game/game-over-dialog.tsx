@@ -54,6 +54,15 @@ export function GameOverDialog({
           </DialogTitle>
         </DialogHeader>
         <DialogFooter className="sm:justify-center pt-2">
+          {reason === "score" ? (
+            <Button
+              variant="outline"
+              onClick={() => onOpenChange?.(false)}
+              className="font-display"
+            >
+              Review Score
+            </Button>
+          ) : null}
           <Button variant="accent" onClick={onPlayAgain} className="font-display">
             Play Again
           </Button>

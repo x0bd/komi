@@ -372,6 +372,9 @@ export default function HomePageClient() {
     const isGameOver = useGameStore((state) => state.isGameOver);
     const scoreResult = useGameStore((state) => state.scoreResult);
     const gameOverReason = useGameStore((state) => state.gameOverReason);
+    const scoreReviewConfirmed = useGameStore(
+        (state) => state.scoreReviewConfirmed,
+    );
     const winner = useGameStore((state) => state.winner);
     const mode = useGameStore((state) => state.mode);
     const setMode = useGameStore((state) => state.setMode);
@@ -379,6 +382,7 @@ export default function HomePageClient() {
     const size = useGameStore((state) => state.size);
     const timers = useGameStore((state) => state.timers);
     const moveHistory = useGameStore((state) => state.moveHistory);
+    const deadStones = useGameStore((state) => state.deadStones);
     const exportSGF = useGameStore((state) => state.exportSGF);
     const resetGame = useGameStore((state) => state.resetGame);
     const komi = useGameStore((state) => state.komi);
@@ -393,6 +397,8 @@ export default function HomePageClient() {
     );
     const [replayIsPlaying, setReplayIsPlaying] = useState(false);
     const [replayPlaybackSpeed, setReplayPlaybackSpeed] = useState(1);
+    const [gameOverDialogDismissed, setGameOverDialogDismissed] =
+        useState(false);
 
     // Attach AI turn listener
     useAITurn();
@@ -449,9 +455,10 @@ export default function HomePageClient() {
             return;
         }
         if (!gameOverReason || !winner) return;
+        if (gameOverReason === "score" && !scoreReviewConfirmed) return;
         if (mode === "online" && onlineRole !== "host") return;
 
-        const persistenceKey = `${gameOverReason}:${winner}:${moveHistory.length}`;
+        const persistenceKey = `${gameOverReason}:${winner}:${moveHistory.length}:${deadStones.join(",")}`;
         if (persistedGameKeyRef.current === persistenceKey) return;
         persistedGameKeyRef.current = persistenceKey;
 
@@ -483,9 +490,11 @@ export default function HomePageClient() {
         exportSGF,
         gameOverReason,
         isGameOver,
+        deadStones,
         mode,
         moveHistory,
         onlineRole,
+        scoreReviewConfirmed,
         scoreResult,
         winner,
     ]);
@@ -494,6 +503,7 @@ export default function HomePageClient() {
         if (isGameOver) return;
         setReplayMoveNumber(null);
         setReplayIsPlaying(false);
+        setGameOverDialogDismissed(false);
     }, [isGameOver]);
 
     useEffect(() => {
@@ -611,8 +621,10 @@ export default function HomePageClient() {
             <AIReaction />
             <MobileSenseiFab />
             <GameOverDialog
-                open={isGameOver}
-                onOpenChange={() => {}}
+                open={isGameOver && !gameOverDialogDismissed}
+                onOpenChange={(open) => {
+                    if (!open) setGameOverDialogDismissed(true);
+                }}
                 result={result}
                 reason={gameOverReason ?? "score"}
                 onPlayAgain={() => resetGame()}
@@ -941,6 +953,10 @@ function LocalBoardView({
     const liveValidMoves = useGameStore((state) => state.validMoves);
     const liveRecentCaptures = useGameStore((state) => state.recentCaptures);
     const liveScore = useGameStore((state) => state.liveScore);
+    const isGameOver = useGameStore((state) => state.isGameOver);
+    const gameOverReason = useGameStore((state) => state.gameOverReason);
+    const deadStones = useGameStore((state) => state.deadStones);
+    const toggleDeadStone = useGameStore((state) => state.toggleDeadStone);
     const analysisOverlayEnabled = useGameStore(
         (state) => state.analysisOverlayEnabled,
     );
@@ -953,7 +969,10 @@ function LocalBoardView({
     const board = replayEnabled && replayFrame ? replayFrame.board : liveBoard;
     const currentPlayer =
         replayEnabled && replayFrame ? replayFrame.turn : liveCurrentPlayer;
-    const validMoves = replayEnabled ? [] : liveValidMoves;
+    const deadStoneMarkingEnabled =
+        !replayEnabled && isGameOver && gameOverReason === "score";
+    const validMoves =
+        replayEnabled || deadStoneMarkingEnabled ? [] : liveValidMoves;
     const capturedStones = replayEnabled ? [] : liveRecentCaptures;
     const displayLastMove =
         replayEnabled && replayFrame
@@ -1007,7 +1026,13 @@ function LocalBoardView({
                     ? replayScore.territoryMap
                     : liveScore.territoryMap
             }
-            showTerritoryHeatmap={analysisOverlayEnabled && !replayEnabled}
+            showTerritoryHeatmap={
+                (analysisOverlayEnabled || deadStoneMarkingEnabled) &&
+                !replayEnabled
+            }
+            deadStoneMarkingEnabled={deadStoneMarkingEnabled}
+            markedDeadStones={deadStones}
+            onDeadStoneToggle={toggleDeadStone}
             onIntersectionClick={
                 replayEnabled ? undefined : (x, y) => placeStone(x, y)
             }
@@ -1182,6 +1207,14 @@ export function useSidebarPanels({
     const winner = useGameStore((state) => state.winner);
     const gameOverReason = useGameStore((state) => state.gameOverReason);
     const scoreResult = useGameStore((state) => state.scoreResult);
+    const deadStones = useGameStore((state) => state.deadStones);
+    const scoreReviewConfirmed = useGameStore(
+        (state) => state.scoreReviewConfirmed,
+    );
+    const clearDeadStones = useGameStore((state) => state.clearDeadStones);
+    const confirmScoreReview = useGameStore(
+        (state) => state.confirmScoreReview,
+    );
     const timers = useGameStore((state) => state.timers);
     const liveScore = useGameStore((state) => state.liveScore);
     const exportSGF = useGameStore((state) => state.exportSGF);
@@ -1331,6 +1364,16 @@ export function useSidebarPanels({
                             winner={winner}
                             reason={gameOverReason}
                             keyMoments={keyMoments}
+                            canReviewDeadStones={
+                                mode !== "online" && gameOverReason === "score"
+                            }
+                            deadStoneCount={deadStones.length}
+                            scoreReviewPending={
+                                gameOverReason === "score" &&
+                                !scoreReviewConfirmed
+                            }
+                            onClearDeadStones={clearDeadStones}
+                            onConfirmScore={confirmScoreReview}
                             onExportSgf={handleExportSgf}
                         />
                     ) : null}
