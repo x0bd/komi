@@ -158,6 +158,14 @@ export async function POST(request: NextRequest) {
 
   const mode =
     body.mode === "versus-ai" || body.mode === "online" ? body.mode : "local"
+
+  if (mode === "local") {
+    return NextResponse.json({
+      skipped: true,
+      reason: "Local casual games are not persisted.",
+    })
+  }
+
   const moves = coerceMoves(body.moves)
   const result = typeof body.result === "string" ? body.result.slice(0, 64) : null
   const sgf = typeof body.sgf === "string" ? body.sgf : null

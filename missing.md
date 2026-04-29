@@ -30,7 +30,7 @@ Static audit compiled from code review only. No build, test, or browser verifica
 - [x] Fix self-play stats: local games can save the same user as both black and white, making win/loss calculations unreliable.
 - [x] Save enough move metadata to replay a game without depending on SGF parsing.
 - [x] Add indexes needed for game history queries, especially by player/date/result.
-- [ ] Decide whether local casual games should be persisted at all, or whether only ranked/online games should affect profile stats.
+- [x] Decide whether local casual games should be persisted at all, or whether only ranked/online games should affect profile stats.
 - [x] Add a migration plan for saved games before changing the Prisma schema.
 - [ ] Stop the dev server and rerun `pnpm exec prisma generate` if Windows is locking Prisma's query engine DLL.
 
@@ -53,7 +53,7 @@ Static audit compiled from code review only. No build, test, or browser verifica
 - [x] Align hoshi points with the same coordinate system as stones and grid intersections.
 - [x] Ensure hit targets match visual intersections on all board sizes.
 - [x] Add responsive collision handling between the board, dock, and right-side panels in `components/layout/game-layout.tsx`.
-- [ ] Add a mobile-specific dock/panel behavior; `min(620px, calc(100vw - 2rem))` can cover most of the game on small screens.
+- [x] Add a mobile-specific dock/panel behavior; `min(620px, calc(100vw - 2rem))` can cover most of the game on small screens.
 - [x] Fix `GameOverDialog` close behavior in `components/pages/home-page-client.tsx`; `onOpenChange={() => {}}` makes the close affordance non-functional.
 - [ ] Add richer game-over actions: review, save status, replay, rematch, and share.
 

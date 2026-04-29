@@ -53,7 +53,7 @@ export function GameLayout({
                 {/* Main Workspace */}
                 <div
                     className={cn(
-                        "relative z-10 flex flex-1 w-full mx-auto h-svh items-center justify-center px-6 pointer-events-none transition-[padding] duration-300 ease-out",
+                        "relative z-10 flex flex-1 w-full mx-auto h-svh items-center justify-center px-6 pb-24 pointer-events-none transition-[padding] duration-300 ease-out lg:pb-0",
                         isExpanded ? "lg:pl-[680px]" : "lg:pl-32",
                         rightPanel ? "lg:pr-40 xl:pr-56" : "lg:pr-6",
                     )}
@@ -74,22 +74,22 @@ export function GameLayout({
                 {/* Left Dock */}
                 <div
                     className={cn(
-                        "fixed left-3 top-3 bottom-3 z-40 pointer-events-auto lg:left-4 lg:top-4 lg:bottom-4",
-                        "transition-[width] duration-300 ease-out",
+                        "fixed inset-x-3 bottom-3 z-40 pointer-events-auto lg:inset-x-auto lg:left-4 lg:top-4 lg:bottom-4",
+                        "transition-[width,height] duration-300 ease-out",
                         isExpanded
-                            ? "w-[min(560px,calc(100vw-1.5rem))] lg:w-[min(620px,calc(100vw-2rem))]"
-                            : "w-[68px] lg:w-[76px]",
+                            ? "h-[min(76svh,640px)] lg:h-auto lg:w-[min(620px,calc(100vw-2rem))]"
+                            : "h-[72px] lg:h-auto lg:w-[76px]",
                     )}
                 >
-                    <div className="relative flex h-full overflow-hidden rounded-none border-2 border-border bg-black shadow-[4px_4px_0_0_var(--foreground)] text-white">
-                        <nav className="relative flex h-full w-[68px] shrink-0 flex-col items-center gap-2 border-r border-white/20 py-6 lg:w-[76px]">
-                            <div className="flex items-center justify-center mb-8 mt-4">
-                                <span className="font-display text-2xl font-black tracking-tighter uppercase text-white select-none">
+                    <div className="relative flex h-full flex-col overflow-hidden rounded-none border-2 border-border bg-black shadow-[4px_4px_0_0_var(--foreground)] text-white lg:flex-row">
+                        <nav className="relative flex h-[72px] w-full shrink-0 flex-row items-center gap-2 border-b border-white/20 px-3 py-2 lg:h-full lg:w-[76px] lg:flex-col lg:border-b-0 lg:border-r lg:px-0 lg:py-6">
+                            <div className="mr-2 flex items-center justify-center lg:mb-8 lg:mr-0 lg:mt-4">
+                                <span className="font-display text-lg font-black tracking-tighter uppercase text-white select-none lg:text-2xl">
                                     Komi
                                 </span>
                             </div>
 
-                            <div className="flex flex-1 flex-col items-center gap-6 w-full px-3 mt-4">
+                            <div className="flex flex-1 flex-row items-center justify-center gap-2 lg:mt-4 lg:w-full lg:flex-col lg:gap-6 lg:px-3">
                                 {panels.map((panel) => {
                                     const isActive = activePanelId === panel.id;
                                     return (
@@ -99,7 +99,7 @@ export function GameLayout({
                                                     <button
                                                         onClick={() => setActivePanelId(isActive ? null : panel.id)}
                                                         className={cn(
-                                                            "relative flex min-h-12 w-full items-center justify-center rounded-none transition-all duration-200 group border border-transparent",
+                                                            "relative flex size-12 items-center justify-center rounded-none transition-all duration-200 group border border-transparent lg:w-full",
                                                             isActive
                                                                 ? "bg-white text-black border-white"
                                                                 : "text-white/50 hover:bg-white hover:text-black",
@@ -117,13 +117,13 @@ export function GameLayout({
                                 })}
                             </div>
 
-                            <div className="mt-auto flex flex-col items-center gap-3 w-full px-3">
+                            <div className="ml-2 flex items-center gap-3 lg:mt-auto lg:ml-0 lg:w-full lg:flex-col lg:px-3">
                                 <Tooltip>
                                     <TooltipTrigger
                                         render={
                                             <Link
                                                 href="/profile"
-                                                className="relative flex min-h-12 w-full items-center justify-center rounded-2xl transition-all duration-200 group text-white/50 hover:bg-white hover:text-black"
+                                                className="relative flex size-12 items-center justify-center rounded-none transition-all duration-200 group text-white/50 hover:bg-white hover:text-black lg:w-full"
                                             />
                                         }
                                     >
@@ -139,15 +139,15 @@ export function GameLayout({
                         <div
                             className={cn(
                                 "relative min-w-0 flex-1 transition-[opacity,transform] duration-250 ease-out",
-                                isExpanded ? "opacity-100 translate-x-0" : "pointer-events-none opacity-0 translate-x-4",
+                                isExpanded ? "opacity-100 translate-y-0 lg:translate-x-0" : "pointer-events-none opacity-0 translate-y-4 lg:translate-x-4 lg:translate-y-0",
                             )}
                             aria-hidden={!isExpanded}
                         >
                             {activePanel ? (
                                 <div className="flex h-full flex-col bg-black text-white">
-                                    <div className="flex items-center justify-between gap-4 border-b-2 border-white/20 px-6 py-5 lg:px-7 bg-black">
-                                        <h2 className="flex items-center gap-3 font-display font-black text-2xl tracking-tighter text-white uppercase">
-                                            <span className="flex size-10 items-center justify-center rounded-none border-2 border-border bg-foreground text-card [&>svg]:size-5">
+                                    <div className="flex items-center justify-between gap-4 border-b-2 border-white/20 bg-black px-4 py-4 lg:px-7 lg:py-5">
+                                        <h2 className="flex items-center gap-3 font-display font-black text-xl tracking-tighter text-white uppercase lg:text-2xl">
+                                            <span className="flex size-9 items-center justify-center rounded-none border-2 border-border bg-foreground text-card [&>svg]:size-4 lg:size-10 lg:[&>svg]:size-5">
                                                 {activePanel.icon}
                                             </span>
                                             <span>{activePanel.label}</span>
@@ -160,7 +160,7 @@ export function GameLayout({
                                         </button>
                                     </div>
 
-                                    <div className="min-h-0 flex-1 overflow-y-auto px-6 py-6 lg:px-8 lg:py-7 scrollbar-none">
+                                    <div className="min-h-0 flex-1 overflow-y-auto px-4 py-5 lg:px-8 lg:py-7 scrollbar-none">
                                         <div className="mx-auto flex min-h-full w-full max-w-[30rem] flex-col">
                                             {activePanel.content}
                                         </div>

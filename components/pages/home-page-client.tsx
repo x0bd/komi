@@ -456,6 +456,7 @@ export default function HomePageClient() {
         }
         if (!gameOverReason || !winner) return;
         if (gameOverReason === "score" && !scoreReviewConfirmed) return;
+        if (mode === "local") return;
         if (mode === "online" && onlineRole !== "host") return;
 
         const persistenceKey = `${gameOverReason}:${winner}:${moveHistory.length}:${deadStones.join(",")}`;
