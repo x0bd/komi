@@ -115,7 +115,8 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid JSON payload" }, { status: 400 })
   }
 
-  const mode = body.mode === "versus-ai" ? "versus-ai" : "local"
+  const mode =
+    body.mode === "versus-ai" || body.mode === "online" ? body.mode : "local"
   const moves = coerceMoves(body.moves)
   const result = typeof body.result === "string" ? body.result.slice(0, 64) : null
   const sgf = typeof body.sgf === "string" ? body.sgf : null

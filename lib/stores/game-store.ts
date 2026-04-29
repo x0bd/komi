@@ -13,6 +13,8 @@ export type GameMode = "local" | "versus-ai" | "online"
 export type AIDifficulty = "easy" | "medium" | "hard"
 
 export type MultiplayerSnapshot = {
+  size: 9 | 13 | 19
+  komi: number
   board: number[]
   turn: GameState["turn"]
   moveNumber: number
@@ -659,8 +661,8 @@ export const useGameStore = create<KomiStore>((set, get) => ({
   },
 
   hydrateFromMultiplayer: (snapshot) => {
-    const size = get().size
-    const komi = get().komi
+    const size = snapshot.size
+    const komi = snapshot.komi
     const nextGameState: GameState = {
       board: [...snapshot.board] as GameState["board"],
       turn: snapshot.turn,
@@ -709,6 +711,8 @@ export const useGameStore = create<KomiStore>((set, get) => ({
     }
 
     set({
+      size,
+      komi,
       gameState: nextGameState,
       moveHistory: [...snapshot.moveHistory],
       consecutivePasses: snapshot.consecutivePasses,

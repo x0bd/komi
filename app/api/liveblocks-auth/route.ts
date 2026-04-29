@@ -1,10 +1,16 @@
-import { randomUUID } from "node:crypto"
-
 import { NextRequest, NextResponse } from "next/server"
 
+import { getApiDbUser } from "@/lib/auth/api"
 import { LiveblocksConfigError, getLiveblocksServer } from "@/lib/liveblocks/server"
 
+const ROOM_ID_PATTERN = /^komi-[a-z0-9-]{4,48}$/
+
 export async function POST(request: NextRequest) {
+  const user = await getApiDbUser(request)
+  if (!user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
+
   let liveblocks: ReturnType<typeof getLiveblocksServer>
 
   try {
@@ -24,25 +30,28 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "room is required" }, { status: 400 })
   }
 
-  let userId = request.headers.get("x-user-id") ?? `guest-${randomUUID().slice(0, 8)}`
-
-  try {
-    const authModule = await import("@/lib/auth/server")
-    const auth = (authModule as any).auth
-
-    if (auth && typeof auth.getSession === "function") {
-      const session = await auth.getSession(request)
-      const signedInUserId = session?.user?.id ?? session?.id
-
-      if (typeof signedInUserId === "string" && signedInUserId.length > 0) {
-        userId = signedInUserId
-      }
-    }
-  } catch {
-    // Keep guest fallback user id when auth module or session is unavailable.
+  if (!ROOM_ID_PATTERN.test(room)) {
+    return NextResponse.json({ error: "Invalid room id" }, { status: 400 })
   }
 
-  const session = (liveblocks as any).prepareSession(userId)
+  try {
+    const liveblocksRoom = await liveblocks.getRoom(room)
+    const access = liveblocksRoom.usersAccesses[user.id]
+
+    if (!access?.includes("room:write")) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+    }
+  } catch {
+    return NextResponse.json({ error: "Room not found" }, { status: 404 })
+  }
+
+  const session = liveblocks.prepareSession(user.id, {
+    userInfo: {
+      name: user.name ?? user.email,
+      email: user.email,
+      avatar: user.avatar ?? undefined,
+    },
+  })
   session.allow(room, session.FULL_ACCESS)
   const { status, body: authBody } = await session.authorize()
 

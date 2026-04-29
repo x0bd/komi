@@ -1,10 +1,12 @@
 import { create } from "zustand"
 
 type ConnectionState = "idle" | "creating-room" | "joining-room" | "ready" | "error"
+type MultiplayerRole = "host" | "guest"
 
 type MultiplayerStore = {
   roomId: string | null
   shareUrl: string | null
+  role: MultiplayerRole | null
   state: ConnectionState
   error: string | null
   createRoom: () => Promise<string | null>
@@ -22,6 +24,7 @@ function buildShareUrl(roomId: string) {
 export const useMultiplayerStore = create<MultiplayerStore>((set, get) => ({
   roomId: null,
   shareUrl: null,
+  role: null,
   state: "idle",
   error: null,
 
@@ -35,7 +38,11 @@ export const useMultiplayerStore = create<MultiplayerStore>((set, get) => ({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ action: "create" }),
       })
-      const payload = (await response.json()) as { roomId?: string; error?: string }
+      const payload = (await response.json()) as {
+        roomId?: string
+        role?: MultiplayerRole
+        error?: string
+      }
       if (!response.ok || !payload.roomId) {
         throw new Error(payload.error ?? "Failed to create room")
       }
@@ -44,6 +51,7 @@ export const useMultiplayerStore = create<MultiplayerStore>((set, get) => ({
       set({
         roomId,
         shareUrl: buildShareUrl(roomId),
+        role: payload.role ?? "host",
         state: "ready",
         error: null,
       })
@@ -68,7 +76,11 @@ export const useMultiplayerStore = create<MultiplayerStore>((set, get) => ({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ action: "join", roomId: trimmed }),
       })
-      const payload = (await response.json()) as { roomId?: string; error?: string }
+      const payload = (await response.json()) as {
+        roomId?: string
+        role?: MultiplayerRole
+        error?: string
+      }
       if (!response.ok || !payload.roomId) {
         throw new Error(payload.error ?? "Failed to join room")
       }
@@ -76,6 +88,7 @@ export const useMultiplayerStore = create<MultiplayerStore>((set, get) => ({
       set({
         roomId: payload.roomId,
         shareUrl: buildShareUrl(payload.roomId),
+        role: payload.role ?? "guest",
         state: "ready",
         error: null,
       })
@@ -93,9 +106,9 @@ export const useMultiplayerStore = create<MultiplayerStore>((set, get) => ({
     set({
       roomId: null,
       shareUrl: null,
+      role: null,
       state: "idle",
       error: null,
     })
   },
 }))
-

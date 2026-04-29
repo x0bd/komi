@@ -55,6 +55,25 @@ import { cn } from "@/lib/utils";
 
 const LETTERS = "ABCDEFGHJKLMNOPQRST".split("");
 
+function getAssignedOnlineColor(
+    selfConnectionId: number | null,
+    otherConnectionIds: number[],
+): StoneColor | null {
+    if (selfConnectionId === null) {
+        return null;
+    }
+
+    const ids = [selfConnectionId, ...otherConnectionIds]
+        .sort((a, b) => a - b)
+        .slice(0, 2);
+
+    if (ids.length < 2) {
+        return null;
+    }
+
+    return ids[0] === selfConnectionId ? "black" : "white";
+}
+
 function formatResultCode(
     reason: "score" | "resignation" | "timeout" | null,
     winner: "black" | "white" | "draw" | null,
@@ -277,6 +296,8 @@ function buildReplayFrame(
 function readSnapshotFromMutableStorage(storage: {
     get: (key: keyof Liveblocks["Storage"]) => unknown;
 }): MultiplayerSnapshot {
+    const rawSize = storage.get("size");
+    const rawKomi = storage.get("komi");
     const board = storage.get("board") as number[];
     const turn = storage.get("turn") as MultiplayerSnapshot["turn"];
     const moveNumber = storage.get("moveNumber") as number;
@@ -293,6 +314,8 @@ function readSnapshotFromMutableStorage(storage: {
     ) as MultiplayerSnapshot["gameOverReason"];
 
     return {
+        size: rawSize === 9 || rawSize === 13 || rawSize === 19 ? rawSize : 19,
+        komi: typeof rawKomi === "number" && Number.isFinite(rawKomi) ? rawKomi : 6.5,
         board: [...board],
         turn,
         moveNumber,
@@ -318,6 +341,8 @@ function writeSnapshotToMutableStorage(
     storage: { set: (key: keyof Liveblocks["Storage"], value: any) => void },
     snapshot: MultiplayerSnapshot,
 ) {
+    storage.set("size", snapshot.size);
+    storage.set("komi", snapshot.komi);
     storage.set("board", [...snapshot.board]);
     storage.set("turn", snapshot.turn);
     storage.set("moveNumber", snapshot.moveNumber);
@@ -357,6 +382,7 @@ export default function HomePageClient() {
     const exportSGF = useGameStore((state) => state.exportSGF);
     const resetGame = useGameStore((state) => state.resetGame);
     const roomId = useMultiplayerStore((state) => state.roomId);
+    const onlineRole = useMultiplayerStore((state) => state.role);
     const createRoom = useMultiplayerStore((state) => state.createRoom);
     const joinRoom = useMultiplayerStore((state) => state.joinRoom);
     const leaveRoom = useMultiplayerStore((state) => state.leaveRoom);
@@ -422,6 +448,7 @@ export default function HomePageClient() {
             return;
         }
         if (!gameOverReason || !winner) return;
+        if (mode === "online" && onlineRole !== "host") return;
 
         const persistenceKey = `${gameOverReason}:${winner}:${moveHistory.length}`;
         if (persistedGameKeyRef.current === persistenceKey) return;
@@ -453,6 +480,7 @@ export default function HomePageClient() {
         isGameOver,
         mode,
         moveHistory,
+        onlineRole,
         scoreResult,
         winner,
     ]);
@@ -612,7 +640,7 @@ function OnlineRoomShell({
     }
 
     return (
-        <RoomProvider
+                <RoomProvider
             id={roomId}
             initialPresence={{
                 cursor: null,
@@ -621,6 +649,8 @@ function OnlineRoomShell({
                 stoneColor: null,
             }}
             initialStorage={{
+                size: gameState.board.length === 81 ? 9 : gameState.board.length === 169 ? 13 : 19,
+                komi: 6.5,
                 board: [...gameState.board],
                 turn: gameState.turn,
                 captured: {
@@ -645,10 +675,15 @@ function OnlineRoomShell({
 }
 
 function OnlineGameplayLayout() {
-    const size = useGameStore((state) => state.size);
-    const komi = useGameStore((state) => state.komi);
     const otherConnectionIds = useOthersConnectionIds();
+    const selfConnectionId = useSelf((me) => me.connectionId);
     const waitingForOpponent = otherConnectionIds.length === 0;
+    const currentPlayer = useGameStore((state) => state.currentPlayer);
+    const myAssignedColor = useMemo(
+        () => getAssignedOnlineColor(selfConnectionId, otherConnectionIds),
+        [otherConnectionIds, selfConnectionId],
+    );
+    const canAct = !waitingForOpponent && myAssignedColor === currentPlayer;
 
     const commitStone = useMutation(
         ({ storage }, x: number, y: number) => {
@@ -662,6 +697,10 @@ function OnlineGameplayLayout() {
             }
 
             const currentTurn = snapshot.turn;
+            if (myAssignedColor !== currentTurn) {
+                return false;
+            }
+
             const gameState: GameState = {
                 board: [...snapshot.board] as GameState["board"],
                 turn: snapshot.turn,
@@ -674,12 +713,14 @@ function OnlineGameplayLayout() {
                 ko: snapshot.ko,
                 history: [...snapshot.history],
             };
-            const nextState = applyMove(gameState, size, x, y, currentTurn);
+            const nextState = applyMove(gameState, snapshot.size, x, y, currentTurn);
             if (!nextState) {
                 return false;
             }
 
             const nextSnapshot: MultiplayerSnapshot = {
+                size: snapshot.size,
+                komi: snapshot.komi,
                 board: [...nextState.board],
                 turn: nextState.turn,
                 moveNumber: nextState.moveNumber,
@@ -706,7 +747,7 @@ function OnlineGameplayLayout() {
             writeSnapshotToMutableStorage(storage, nextSnapshot);
             return true;
         },
-        [size, waitingForOpponent],
+        [myAssignedColor, waitingForOpponent],
     );
 
     const commitPass = useMutation(
@@ -721,6 +762,10 @@ function OnlineGameplayLayout() {
             }
 
             const passingPlayer = snapshot.turn;
+            if (myAssignedColor !== passingPlayer) {
+                return false;
+            }
+
             const gameState: GameState = {
                 board: [...snapshot.board] as GameState["board"],
                 turn: snapshot.turn,
@@ -738,13 +783,15 @@ function OnlineGameplayLayout() {
             const score = finished
                 ? calculateScore(
                       nextState.board,
-                      size,
+                      snapshot.size,
                       nextState.captured,
-                      komi,
+                      snapshot.komi,
                   )
                 : null;
 
             const nextSnapshot: MultiplayerSnapshot = {
+                size: snapshot.size,
+                komi: snapshot.komi,
                 board: [...nextState.board],
                 turn: nextState.turn,
                 moveNumber: nextState.moveNumber,
@@ -771,7 +818,7 @@ function OnlineGameplayLayout() {
             writeSnapshotToMutableStorage(storage, nextSnapshot);
             return true;
         },
-        [komi, size, waitingForOpponent],
+        [myAssignedColor, waitingForOpponent],
     );
 
     const commitResign = useMutation(({ storage }) => {
@@ -781,6 +828,9 @@ function OnlineGameplayLayout() {
 
         const snapshot = readSnapshotFromMutableStorage(storage);
         if (snapshot.isGameOver) {
+            return false;
+        }
+        if (myAssignedColor !== snapshot.turn) {
             return false;
         }
 
@@ -795,12 +845,60 @@ function OnlineGameplayLayout() {
 
         writeSnapshotToMutableStorage(storage, nextSnapshot);
         return true;
-    }, []);
+    }, [myAssignedColor, waitingForOpponent]);
+
+    const tickOnlineClock = useMutation(
+        ({ storage }) => {
+            if (waitingForOpponent || myAssignedColor !== "black") {
+                return;
+            }
+
+            const snapshot = readSnapshotFromMutableStorage(storage);
+            if (snapshot.isGameOver) {
+                return;
+            }
+
+            const activeTimer = Math.max(0, snapshot.timers[snapshot.turn] - 1);
+            const nextTimers = {
+                ...snapshot.timers,
+                [snapshot.turn]: activeTimer,
+            };
+
+            if (activeTimer > 0) {
+                writeSnapshotToMutableStorage(storage, {
+                    ...snapshot,
+                    timers: nextTimers,
+                });
+                return;
+            }
+
+            writeSnapshotToMutableStorage(storage, {
+                ...snapshot,
+                timers: nextTimers,
+                isGameOver: true,
+                winner: snapshot.turn === "black" ? "white" : "black",
+                gameOverReason: "timeout",
+            });
+        },
+        [myAssignedColor, waitingForOpponent],
+    );
+
+    useEffect(() => {
+        if (waitingForOpponent || myAssignedColor !== "black") {
+            return;
+        }
+
+        const interval = window.setInterval(() => {
+            tickOnlineClock();
+        }, 1000);
+
+        return () => window.clearInterval(interval);
+    }, [myAssignedColor, tickOnlineClock, waitingForOpponent]);
 
     const { panels: sidebarPanels } = useSidebarPanels({
         onPassAction: commitPass,
         onResignAction: commitResign,
-        controlsDisabled: waitingForOpponent,
+        controlsDisabled: !canAct,
     });
 
     return (
@@ -808,6 +906,7 @@ function OnlineGameplayLayout() {
             board={
                 <OnlineBoardView
                     onIntersectionClick={commitStone}
+                    assignedColor={myAssignedColor}
                     waitingForOpponent={waitingForOpponent}
                 />
             }
@@ -907,9 +1006,11 @@ function LocalBoardView({
 
 function OnlineBoardView({
     onIntersectionClick,
+    assignedColor,
     waitingForOpponent = false,
 }: {
     onIntersectionClick?: (x: number, y: number) => boolean;
+    assignedColor: StoneColor | null;
     waitingForOpponent?: boolean;
 }) {
     const board = useGameStore((state) => state.gameState.board);
@@ -939,28 +1040,9 @@ function OnlineBoardView({
     );
 
     const others = useOthers();
-    const selfConnectionId = useSelf((me) => me.connectionId);
     const status = useStatus();
     const updateMyPresence = useUpdateMyPresence();
-
-    const myAssignedColor = useMemo<StoneColor | null>(() => {
-        if (selfConnectionId === null) {
-            return null;
-        }
-
-        const ids = [
-            selfConnectionId,
-            ...others.map((other) => other.connectionId),
-        ]
-            .sort((a, b) => a - b)
-            .slice(0, 2);
-
-        if (ids.length === 0) {
-            return null;
-        }
-
-        return ids[0] === selfConnectionId ? "black" : "white";
-    }, [others, selfConnectionId]);
+    const canPlay = !waitingForOpponent && assignedColor === currentPlayer;
 
     const opponentHover = useMemo(() => {
         const hovered = others.find(
@@ -973,14 +1055,14 @@ function OnlineBoardView({
         }
 
         const fallbackColor: StoneColor =
-            myAssignedColor === "black" ? "white" : "black";
+            assignedColor === "black" ? "white" : "black";
 
         return {
             x: intersection.x,
             y: intersection.y,
             color: hovered.presence.stoneColor ?? fallbackColor,
         };
-    }, [myAssignedColor, others]);
+    }, [assignedColor, others]);
 
     useEffect(() => {
         const connectionQuality =
@@ -991,10 +1073,10 @@ function OnlineBoardView({
                   : "offline";
 
         updateMyPresence({
-            stoneColor: myAssignedColor,
+            stoneColor: assignedColor,
             connectionQuality,
         });
-    }, [myAssignedColor, status, updateMyPresence]);
+    }, [assignedColor, status, updateMyPresence]);
 
     useEffect(
         () => () => {
@@ -1009,7 +1091,7 @@ function OnlineBoardView({
                 board={board}
                 size={size}
                 currentPlayer={currentPlayer}
-                validMoves={waitingForOpponent ? [] : validMoves}
+                validMoves={canPlay ? validMoves : []}
                 capturedStones={recentCaptures}
                 opponentHover={opponentHover}
                 lastMove={
@@ -1024,7 +1106,7 @@ function OnlineBoardView({
                     updateMyPresence({ hoveredIntersection: next });
                 }}
                 onIntersectionClick={(x, y) => {
-                    if (waitingForOpponent) {
+                    if (!canPlay) {
                         return;
                     }
                     if (onIntersectionClick) {

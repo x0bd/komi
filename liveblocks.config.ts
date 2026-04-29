@@ -6,6 +6,8 @@ type Presence = {
 }
 
 type Storage = {
+  size: 9 | 13 | 19
+  komi: number
   board: number[]
   turn: "black" | "white"
   captured: {

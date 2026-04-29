@@ -5,5 +5,5 @@ export default auth.middleware({
 })
 
 export const config = {
-  matcher: ["/", "/account/:path*", "/profile/:path*"],
+  matcher: ["/", "/account/:path*", "/games/:path*", "/profile/:path*", "/replay/:path*"],
 }

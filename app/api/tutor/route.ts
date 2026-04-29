@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server"
 
+import { readJsonBody } from "@/lib/api/request-guards"
+import { getApiDbUser } from "@/lib/auth/api"
+
 type TutorRequestBody = {
   question?: string
   apiKey?: string
@@ -31,6 +34,31 @@ const tutorCache = new Map<string, TutorCacheEntry>()
 const CACHE_TTL_MS = 120_000
 const CACHE_MAX_ENTRIES = 300
 const OPENAI_MODEL = "gpt-4.1-mini"
+const MAX_TUTOR_PAYLOAD_BYTES = 48_000
+const RATE_LIMIT_WINDOW_MS = 60_000
+const RATE_LIMIT_MAX_REQUESTS = 40
+
+const tutorRateLimits = new Map<string, { resetAt: number; count: number }>()
+
+function consumeTutorQuota(userId: string) {
+  const now = Date.now()
+  const current = tutorRateLimits.get(userId)
+
+  if (!current || current.resetAt <= now) {
+    tutorRateLimits.set(userId, {
+      resetAt: now + RATE_LIMIT_WINDOW_MS,
+      count: 1,
+    })
+    return true
+  }
+
+  if (current.count >= RATE_LIMIT_MAX_REQUESTS) {
+    return false
+  }
+
+  current.count += 1
+  return true
+}
 
 function clamp01(value: number) {
   return Math.max(0, Math.min(1, value))
@@ -308,7 +336,30 @@ async function resolveTutorMessage(body: TutorRequestBody) {
 }
 
 export async function POST(request: NextRequest) {
-  const body = (await request.json().catch(() => ({}))) as TutorRequestBody
+  const user = await getApiDbUser(request)
+  if (!user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
+
+  if (!consumeTutorQuota(user.id)) {
+    return NextResponse.json(
+      { error: "Too many tutor requests. Slow down and try again shortly." },
+      { status: 429 },
+    )
+  }
+
+  const parsedBody = await readJsonBody<TutorRequestBody>(
+    request,
+    MAX_TUTOR_PAYLOAD_BYTES,
+  )
+  if (!parsedBody.ok) {
+    return NextResponse.json(
+      { error: parsedBody.error },
+      { status: parsedBody.status },
+    )
+  }
+
+  const body = parsedBody.body
   const resolved = await resolveTutorMessage(body)
 
   if (body.stream) {

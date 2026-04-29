@@ -13,6 +13,8 @@ function createSnapshotFingerprint(snapshot: MultiplayerSnapshot) {
     snapshot.captured.white,
     snapshot.timers.black,
     snapshot.timers.white,
+    snapshot.size,
+    snapshot.komi,
     snapshot.isGameOver ? 1 : 0,
     snapshot.winner ?? "-",
     snapshot.gameOverReason ?? "-",
@@ -31,6 +33,8 @@ export function OnlineRoomSync() {
     }
 
     return {
+      size: root.size,
+      komi: root.komi,
       board: [...root.board],
       turn: root.turn,
       moveNumber: root.moveNumber,

@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server"
 
 import { getActiveEngineProvider } from "@/lib/ai"
+import { readJsonBody } from "@/lib/api/request-guards"
+import { getApiDbUser } from "@/lib/auth/api"
 import type { EngineAnalysis, EngineDifficulty, EngineSearchBudget } from "@/lib/ai/engine-provider"
 import { boardToString } from "@/lib/engine/board"
 import { createInitialState } from "@/lib/engine/game"
@@ -34,6 +36,7 @@ type CacheEntry = {
 const analysisCache = new Map<string, CacheEntry>()
 const CACHE_TTL_MS = 30_000
 const CACHE_MAX_ENTRIES = 300
+const MAX_ANALYZE_PAYLOAD_BYTES = 96_000
 
 function parseSize(value: unknown): 9 | 13 | 19 {
   if (value === 9 || value === 13 || value === 19) {
@@ -189,7 +192,23 @@ function setCachedAnalysis(key: string, analysis: EngineAnalysis) {
 }
 
 export async function POST(request: NextRequest) {
-  const body = (await request.json().catch(() => ({}))) as AnalyzeRequestBody
+  const user = await getApiDbUser(request)
+  if (!user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
+
+  const parsedBody = await readJsonBody<AnalyzeRequestBody>(
+    request,
+    MAX_ANALYZE_PAYLOAD_BYTES,
+  )
+  if (!parsedBody.ok) {
+    return NextResponse.json(
+      { error: parsedBody.error },
+      { status: parsedBody.status },
+    )
+  }
+
+  const body = parsedBody.body
 
   const size = parseSize(body.size)
   const player = parsePlayerColor(body.player)
