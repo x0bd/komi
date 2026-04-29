@@ -18,11 +18,25 @@ function normalizeResult(result: string | null): "black" | "white" | "draw" | nu
   return null
 }
 
-function getOutcome(result: string | null, myColor: "black" | "white"): Outcome {
-  const winner = normalizeResult(result)
-  if (!winner) return "pending"
-  if (winner === "draw") return "draw"
-  if (winner === myColor) return "win"
+function getOutcome({
+  result,
+  winner,
+  myColor,
+  isSelfPlay,
+}: {
+  result: string | null
+  winner?: string | null
+  myColor: "black" | "white"
+  isSelfPlay?: boolean
+}): Outcome {
+  if (isSelfPlay) return "pending"
+  const normalizedWinner =
+    winner === "black" || winner === "white" || winner === "draw"
+      ? winner
+      : normalizeResult(result)
+  if (!normalizedWinner) return "pending"
+  if (normalizedWinner === "draw") return "draw"
+  if (normalizedWinner === myColor) return "win"
   return "loss"
 }
 
@@ -66,7 +80,12 @@ export default async function ProfilePage() {
   const summary = games.reduce(
     (acc, game) => {
       const myColor = game.blackPlayerId === user.id ? "black" : "white"
-      const outcome = getOutcome(game.result, myColor)
+      const outcome = getOutcome({
+        result: game.result,
+        winner: game.winner,
+        myColor,
+        isSelfPlay: game.blackPlayerId === game.whitePlayerId,
+      })
       if (outcome === "win") acc.wins += 1
       if (outcome === "loss") acc.losses += 1
       if (outcome === "draw") acc.draws += 1
@@ -206,11 +225,17 @@ export default async function ProfilePage() {
               const isBlack = game.blackPlayerId === user.id
               const myColor = isBlack ? "black" : "white"
               const opponent = isBlack ? game.whitePlayer : game.blackPlayer
+              const isSelfPlay = game.blackPlayerId === game.whitePlayerId
               const opponentLabel =
                 opponent.email === user.email
                   ? "Self play"
                   : opponent.name?.trim() || opponent.email
-              const outcome = getOutcome(game.result, myColor)
+              const outcome = getOutcome({
+                result: game.result,
+                winner: game.winner,
+                myColor,
+                isSelfPlay,
+              })
 
               return (
                 <Link

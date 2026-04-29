@@ -381,7 +381,6 @@ export default function HomePageClient() {
     const moveHistory = useGameStore((state) => state.moveHistory);
     const exportSGF = useGameStore((state) => state.exportSGF);
     const resetGame = useGameStore((state) => state.resetGame);
-    const size = useGameStore((state) => state.size);
     const komi = useGameStore((state) => state.komi);
     const roomId = useMultiplayerStore((state) => state.roomId);
     const onlineRole = useMultiplayerStore((state) => state.role);
@@ -468,6 +467,10 @@ export default function HomePageClient() {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 mode,
+                boardSize: size,
+                komi,
+                resultReason: gameOverReason,
+                winner,
                 moves: moveHistory,
                 result: resultCode,
                 sgf,

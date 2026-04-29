@@ -1,5 +1,5 @@
-import { NextResponse } from "next/server"
-import { getSession } from "@/lib/auth/session"
+import { NextRequest, NextResponse } from "next/server"
+import { getApiDbUser } from "@/lib/auth/api"
 import { db } from "@/lib/db"
 import { sgfToGame } from "@/lib/engine/sgf"
 
@@ -9,42 +9,30 @@ type RouteContext = {
   }>
 }
 
-async function getSessionUser() {
-  const session = await getSession()
-  const authUser = session?.user as
-    | { id?: string; email?: string | null; name?: string | null; image?: string | null }
-    | undefined
-
-  if (!authUser?.id || !authUser.email) {
-    return null
-  }
-
-  return db.user.upsert({
-    where: { email: authUser.email },
-    update: {
-      name: authUser.name ?? undefined,
-      avatar: authUser.image ?? undefined,
-    },
-    create: {
-      email: authUser.email,
-      name: authUser.name ?? undefined,
-      avatar: authUser.image ?? undefined,
-    },
-  })
-}
-
-function inferBoardSize(sgf: string | null) {
-  if (!sgf) return 19
+function inferBoardSize(boardSize: number | null | undefined, sgf: string | null) {
+  if (boardSize === 9 || boardSize === 13 || boardSize === 19) return boardSize
 
   try {
-    return sgfToGame(sgf).metadata.size
+    const parsedSize = sgf ? sgfToGame(sgf).metadata.size : 19
+    return parsedSize === 9 || parsedSize === 13 || parsedSize === 19 ? parsedSize : 19
   } catch {
     return 19
   }
 }
 
-export async function GET(_: Request, context: RouteContext) {
-  const user = await getSessionUser()
+function inferKomi(komi: number | null | undefined, sgf: string | null) {
+  if (typeof komi === "number" && Number.isFinite(komi)) return komi
+
+  try {
+    const parsedKomi = sgf ? sgfToGame(sgf).metadata.komi : 6.5
+    return Number.isFinite(parsedKomi) ? parsedKomi : 6.5
+  } catch {
+    return 6.5
+  }
+}
+
+export async function GET(request: NextRequest, context: RouteContext) {
+  const user = await getApiDbUser(request)
   if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
@@ -76,12 +64,18 @@ export async function GET(_: Request, context: RouteContext) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 })
   }
 
-  const boardSize = inferBoardSize(game.sgf)
+  const boardSize = inferBoardSize(game.boardSize, game.sgf)
+  const komi = inferKomi(game.komi, game.sgf)
 
   return NextResponse.json({
     game: {
       id: game.id,
+      mode: game.mode,
+      boardSize,
+      komi,
       result: game.result,
+      resultReason: game.resultReason,
+      winner: game.winner,
       sgf: game.sgf,
       startedAt: game.startedAt,
       endedAt: game.endedAt,

@@ -47,7 +47,9 @@ export async function getApiDbUser(request?: NextRequest): Promise<ApiDbUser | n
     return null
   }
 
-  return db.user.upsert({
+  // Keep this email-based until Prisma Client has been regenerated everywhere.
+  // The schema already has authProviderId, but stale dev clients reject it.
+  const user = await db.user.upsert({
     where: { email: authUser.email },
     update: {
       name: authUser.name ?? undefined,
@@ -58,11 +60,12 @@ export async function getApiDbUser(request?: NextRequest): Promise<ApiDbUser | n
       name: authUser.name ?? undefined,
       avatar: authUser.image ?? undefined,
     },
-    select: {
-      id: true,
-      email: true,
-      name: true,
-      avatar: true,
-    },
   })
+
+  return {
+    id: user.id,
+    email: user.email,
+    name: user.name,
+    avatar: user.avatar,
+  }
 }

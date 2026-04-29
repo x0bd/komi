@@ -59,11 +59,16 @@ type ReplayGame = {
 type ReplayApiResponse = {
     game: {
         id: string;
+        mode?: "local" | "versus-ai" | "online";
         result: string | null;
+        resultReason?: "score" | "resignation" | "timeout" | null;
+        winner?: "black" | "white" | "draw" | null;
         sgf: string | null;
         startedAt: string;
         endedAt: string | null;
         size: number;
+        boardSize?: number;
+        komi?: number;
         blackPlayer: { id: string; name: string | null; email: string };
         whitePlayer: { id: string; name: string | null; email: string };
         moves: Array<{
@@ -296,8 +301,11 @@ export function ReplayPageClient({ gameId }: { gameId: string }) {
                 const game = payload.game;
                 const size = normalizeSize(game.size) ?? 19;
 
-                let komi = 6.5;
-                if (game.sgf) {
+                let komi =
+                    typeof game.komi === "number" && Number.isFinite(game.komi)
+                        ? game.komi
+                        : 6.5;
+                if (game.sgf && typeof game.komi !== "number") {
                     try {
                         komi = sgfToGame(game.sgf).metadata.komi;
                     } catch {

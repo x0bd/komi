@@ -25,13 +25,14 @@ Static audit compiled from code review only. No build, test, or browser verifica
 
 ## P1: Game Data And Persistence
 
-- [ ] Add `mode`, `boardSize`, `komi`, `ruleset`, `resultReason`, and stronger participant metadata to the Prisma `Game` model.
-- [ ] Store an external auth/provider id on `User`; `lib/auth/session.ts` currently upserts by email only.
-- [ ] Fix self-play stats: local games can save the same user as both black and white, making win/loss calculations unreliable.
-- [ ] Save enough move metadata to replay a game without depending on SGF parsing.
-- [ ] Add indexes needed for game history queries, especially by player/date/result.
+- [x] Add `mode`, `boardSize`, `komi`, `ruleset`, `resultReason`, and stronger participant metadata to the Prisma `Game` model.
+- [x] Store an external auth/provider id on `User`; `lib/auth/session.ts` currently upserts by email only.
+- [x] Fix self-play stats: local games can save the same user as both black and white, making win/loss calculations unreliable.
+- [x] Save enough move metadata to replay a game without depending on SGF parsing.
+- [x] Add indexes needed for game history queries, especially by player/date/result.
 - [ ] Decide whether local casual games should be persisted at all, or whether only ranked/online games should affect profile stats.
-- [ ] Add a migration plan for saved games before changing the Prisma schema.
+- [x] Add a migration plan for saved games before changing the Prisma schema.
+- [ ] Stop the dev server and rerun `pnpm exec prisma generate` if Windows is locking Prisma's query engine DLL.
 
 ## P1: Game Engine And Rules
 

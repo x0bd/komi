@@ -1,13 +1,19 @@
 import { NextRequest, NextResponse } from "next/server"
 import { db } from "@/lib/db"
-import { getSession } from "@/lib/auth/session"
+import { getApiDbUser } from "@/lib/auth/api"
 import type { Move } from "@/lib/engine/types"
+import { sgfToGame } from "@/lib/engine/sgf"
 
 const AI_EMAIL = "sensei-ai@komi.local"
 const AI_NAME = "Sensei AI"
 
 type SaveGamePayload = {
   mode?: "local" | "versus-ai" | "online"
+  boardSize?: number
+  komi?: number
+  ruleset?: string
+  winner?: "black" | "white" | "draw" | null
+  resultReason?: "score" | "resignation" | "timeout" | null
   moves?: Move[]
   result?: string | null
   sgf?: string | null
@@ -26,15 +32,20 @@ function normalizeWinner(result: string | null) {
 
 function getOutcomeForUser({
   result,
+  winner,
   myColor,
+  isSelfPlay,
 }: {
   result: string | null
+  winner?: "black" | "white" | "draw" | null
   myColor: "black" | "white"
+  isSelfPlay?: boolean
 }): "win" | "loss" | "draw" | "pending" {
-  const winner = normalizeWinner(result)
-  if (!winner) return "pending"
-  if (winner === "draw") return "draw"
-  return winner === myColor ? "win" : "loss"
+  if (isSelfPlay) return "pending"
+  const normalizedWinner = winner ?? normalizeWinner(result)
+  if (!normalizedWinner) return "pending"
+  if (normalizedWinner === "draw") return "draw"
+  return normalizedWinner === myColor ? "win" : "loss"
 }
 
 function parseDateParam(value: string | null, endOfDay = false) {
@@ -54,30 +65,6 @@ function clampInteger(value: string | null, fallback: number, min: number, max: 
   const parsed = Number.parseInt(value, 10)
   if (!Number.isFinite(parsed)) return fallback
   return Math.max(min, Math.min(max, parsed))
-}
-
-async function getOrCreateDbUserFromSession() {
-  const session = await getSession()
-  const authUser = session?.user as
-    | { id?: string; email?: string | null; name?: string | null; image?: string | null }
-    | undefined
-
-  if (!authUser?.id || !authUser.email) {
-    return null
-  }
-
-  return db.user.upsert({
-    where: { email: authUser.email },
-    update: {
-      name: authUser.name ?? undefined,
-      avatar: authUser.image ?? undefined,
-    },
-    create: {
-      email: authUser.email,
-      name: authUser.name ?? undefined,
-      avatar: authUser.image ?? undefined,
-    },
-  })
 }
 
 function coerceMoves(moves: unknown): Move[] {
@@ -102,8 +89,62 @@ function coerceMoves(moves: unknown): Move[] {
     }))
 }
 
-export async function POST(request: Request) {
-  const user = await getOrCreateDbUserFromSession()
+function coerceBoardSize(value: unknown, sgf: string | null): 9 | 13 | 19 {
+  if (value === 9 || value === 13 || value === 19) return value
+  if (sgf) {
+    try {
+      const parsedSize = sgfToGame(sgf).metadata.size
+      if (parsedSize === 9 || parsedSize === 13 || parsedSize === 19) {
+        return parsedSize
+      }
+    } catch {
+      return 19
+    }
+  }
+  return 19
+}
+
+function coerceKomi(value: unknown, sgf: string | null) {
+  if (typeof value === "number" && Number.isFinite(value)) {
+    return Math.max(0, Math.min(20, value))
+  }
+  if (sgf) {
+    try {
+      const parsedKomi = sgfToGame(sgf).metadata.komi
+      if (Number.isFinite(parsedKomi)) {
+        return parsedKomi
+      }
+    } catch {
+      return 6.5
+    }
+  }
+  return 6.5
+}
+
+function coerceWinner(
+  value: unknown,
+  result: string | null,
+): "black" | "white" | "draw" | null {
+  if (value === "black" || value === "white" || value === "draw") return value
+  return normalizeWinner(result)
+}
+
+function coerceResultReason(
+  value: unknown,
+  result: string | null,
+): "score" | "resignation" | "timeout" | null {
+  if (value === "score" || value === "resignation" || value === "timeout") {
+    return value
+  }
+  const normalized = result?.toLowerCase().trim() ?? ""
+  if (!normalized) return null
+  if (normalized.includes("resign")) return "resignation"
+  if (normalized.includes("time")) return "timeout"
+  return "score"
+}
+
+export async function POST(request: NextRequest) {
+  const user = await getApiDbUser(request)
   if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
@@ -120,6 +161,14 @@ export async function POST(request: Request) {
   const moves = coerceMoves(body.moves)
   const result = typeof body.result === "string" ? body.result.slice(0, 64) : null
   const sgf = typeof body.sgf === "string" ? body.sgf : null
+  const boardSize = coerceBoardSize(body.boardSize, sgf)
+  const komi = coerceKomi(body.komi, sgf)
+  const ruleset =
+    typeof body.ruleset === "string" && body.ruleset.trim().length > 0
+      ? body.ruleset.trim().slice(0, 32)
+      : "japanese"
+  const winner = coerceWinner(body.winner, result)
+  const resultReason = coerceResultReason(body.resultReason, result)
 
   let blackPlayerId = user.id
   let whitePlayerId = user.id
@@ -137,31 +186,65 @@ export async function POST(request: Request) {
     whitePlayerId = aiUser.id
   }
 
-  const game = await db.game.create({
-    data: {
-      blackPlayerId,
-      whitePlayerId,
-      result,
-      sgf,
-      endedAt: new Date(),
-      moves: {
-        create: moves.map((move, index) => ({
-          moveNumber: index + 1,
-          player: move.player,
-          x: move.isPass ? null : move.x,
-          y: move.isPass ? null : move.y,
-          isPass: move.isPass,
-        })),
+  const moveCreates = moves.map((move, index) => ({
+    moveNumber: index + 1,
+    player: move.player,
+    x: move.isPass ? null : move.x,
+    y: move.isPass ? null : move.y,
+    isPass: move.isPass,
+  }))
+
+  let game: { id: string }
+  try {
+    game = await db.game.create({
+      data: {
+        blackPlayerId,
+        whitePlayerId,
+        ownerId: user.id,
+        mode,
+        boardSize,
+        komi,
+        ruleset,
+        result,
+        resultReason,
+        winner,
+        sgf,
+        endedAt: new Date(),
+        moves: {
+          create: moveCreates,
+        },
       },
-    },
-    select: { id: true },
-  })
+      select: { id: true },
+    })
+  } catch (error) {
+    const message = error instanceof Error ? error.message : ""
+    if (
+      !message.includes("Unknown argument") &&
+      !message.includes("Unknown field")
+    ) {
+      throw error
+    }
+
+    game = await db.game.create({
+      data: {
+        blackPlayerId,
+        whitePlayerId,
+        result,
+        sgf,
+        endedAt: new Date(),
+        moves: {
+          create: moveCreates,
+        },
+      },
+      select: { id: true },
+    })
+  }
 
   return NextResponse.json({ id: game.id })
 }
 
 export async function GET(request: NextRequest) {
-  const user = await getOrCreateDbUserFromSession()
+  const user = await getApiDbUser(request)
   if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
@@ -215,18 +298,28 @@ export async function GET(request: NextRequest) {
   const filteredGames = games
     .map((game) => {
       const myColor = game.blackPlayerId === user.id ? "black" : "white"
+      const isSelfPlay = game.blackPlayerId === game.whitePlayerId
       const opponent = myColor === "black" ? game.whitePlayer : game.blackPlayer
       const opponentLabel = opponent.name?.trim() || opponent.email
       const outcome = getOutcomeForUser({
         result: game.result,
+        winner:
+          game.winner === "black" || game.winner === "white" || game.winner === "draw"
+            ? game.winner
+            : null,
         myColor,
+        isSelfPlay,
       })
 
       return {
         id: game.id,
         startedAt: game.startedAt,
         endedAt: game.endedAt,
+        mode: game.mode,
+        boardSize: game.boardSize,
         result: game.result,
+        resultReason: game.resultReason,
+        winner: game.winner,
         outcome,
         myColor,
         opponent: {
