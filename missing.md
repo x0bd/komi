@@ -44,7 +44,7 @@ Static audit compiled from code review only. No build, test, or browser verifica
 - [x] Improve timer accuracy in `hooks/use-timer.ts`; interval ticks can drift badly in inactive tabs.
 - [x] Review `resign()` state semantics in `lib/stores/game-store.ts`; it sets `currentPlayer` to the winner, which is surprising.
 - [x] Append or intentionally ignore board history on pass in `lib/engine/rules.ts`; the current behavior should be documented.
-- [ ] Tighten SGF parsing in `lib/engine/sgf.ts` for escaped values, invalid board sizes, and non-linear variations.
+- [x] Tighten SGF parsing in `lib/engine/sgf.ts` for escaped values, invalid board sizes, and non-linear variations.
 - [x] Fix `gameToSGF` so `komi: 0` is preserved instead of falling back to `6.5`.
 
 ## P1: Board UI And Interaction
