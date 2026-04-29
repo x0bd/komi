@@ -36,16 +36,16 @@ Static audit compiled from code review only. No build, test, or browser verifica
 
 ## P1: Game Engine And Rules
 
-- [ ] Make scoring limitations explicit in UI; `lib/engine/scoring.ts` is an approximate territory estimator and can be wrong for dead stones, seki, and neutral points.
+- [x] Make scoring limitations explicit in UI; `lib/engine/scoring.ts` is an approximate territory estimator and can be wrong for dead stones, seki, and neutral points.
 - [ ] Add a dead-stone marking or review phase before final scoring.
-- [ ] Fix black-only player identity assumptions in `lib/stores/game-store.ts`; black is treated as "the player" across XP, tutor insights, win/loss reactions, and pass scoring.
-- [ ] Avoid generating player feedback for AI/opponent moves unless the UX intentionally frames it that way.
-- [ ] Handle AI illegal or stale moves in `hooks/use-ai-turn.ts` by retrying, passing, or surfacing an error.
-- [ ] Improve timer accuracy in `hooks/use-timer.ts`; interval ticks can drift badly in inactive tabs.
-- [ ] Review `resign()` state semantics in `lib/stores/game-store.ts`; it sets `currentPlayer` to the winner, which is surprising.
-- [ ] Append or intentionally ignore board history on pass in `lib/engine/rules.ts`; the current behavior should be documented.
+- [x] Fix black-only player identity assumptions in `lib/stores/game-store.ts`; black is treated as "the player" across XP, tutor insights, win/loss reactions, and pass scoring.
+- [x] Avoid generating player feedback for AI/opponent moves unless the UX intentionally frames it that way.
+- [x] Handle AI illegal or stale moves in `hooks/use-ai-turn.ts` by retrying, passing, or surfacing an error.
+- [x] Improve timer accuracy in `hooks/use-timer.ts`; interval ticks can drift badly in inactive tabs.
+- [x] Review `resign()` state semantics in `lib/stores/game-store.ts`; it sets `currentPlayer` to the winner, which is surprising.
+- [x] Append or intentionally ignore board history on pass in `lib/engine/rules.ts`; the current behavior should be documented.
 - [ ] Tighten SGF parsing in `lib/engine/sgf.ts` for escaped values, invalid board sizes, and non-linear variations.
-- [ ] Fix `gameToSGF` so `komi: 0` is preserved instead of falling back to `6.5`.
+- [x] Fix `gameToSGF` so `komi: 0` is preserved instead of falling back to `6.5`.
 
 ## P1: Board UI And Interaction
 

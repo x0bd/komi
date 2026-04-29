@@ -1,5 +1,5 @@
 import { create } from "zustand"
-import type { GameState, Move } from "../engine/types"
+import type { GameState, Move, PlayerColor } from "../engine/types"
 import { createInitialState, getValidMoves, isGameOver } from "../engine/game"
 import { applyMove, applyPass } from "../engine/rules"
 import { calculateScore, type ScoreResult } from "../engine/scoring"
@@ -84,6 +84,28 @@ interface KomiStore {
 
 function deriveValidMoves(state: GameState, size: 9 | 13 | 19) {
   return getValidMoves(state, size, state.turn)
+}
+
+type LearningActor = "player" | "opponent" | "none"
+
+function getLearningActor(mode: GameMode, player: PlayerColor): LearningActor {
+  if (mode === "local") return "player"
+  if (mode === "versus-ai") return player === "black" ? "player" : "opponent"
+  return "none"
+}
+
+function getLearningOutcome(
+  mode: GameMode,
+  winner: "black" | "white" | "draw" | null,
+) {
+  if (!winner || winner === "draw") return null
+  if (mode === "local") return { type: "player-win" } as const
+  if (mode === "versus-ai") {
+    return winner === "black"
+      ? ({ type: "player-win" } as const)
+      : ({ type: "player-loss" } as const)
+  }
+  return null
 }
 
 const initialState = createInitialState(19)
@@ -227,6 +249,7 @@ async function registerEngineMoveInsight({
   nextState,
   size,
   player,
+  actor,
   aiDifficulty,
   x,
   y,
@@ -236,6 +259,7 @@ async function registerEngineMoveInsight({
   nextState: GameState
   size: 9 | 13 | 19
   player: GameState["turn"]
+  actor: "player" | "opponent"
   aiDifficulty: AIDifficulty
   x: number
   y: number
@@ -294,7 +318,7 @@ async function registerEngineMoveInsight({
 
     useLearningStore.getState().registerTutorEvent({
       type: "analysis",
-      actor: player === "black" ? "player" : "opponent",
+      actor,
       moveCoordinate: coordinate,
       suggestedCoordinate,
       quality,
@@ -347,7 +371,7 @@ export const useGameStore = create<KomiStore>((set, get) => ({
   scoreResult: null,
 
   placeStone: (x, y) => {
-    const { gameState, size, isGameOver, aiDifficulty } = get()
+    const { gameState, size, mode, isGameOver, aiDifficulty } = get()
     
     if (isGameOver) return false
 
@@ -370,8 +394,9 @@ export const useGameStore = create<KomiStore>((set, get) => ({
 
     const learningStore = useLearningStore.getState()
     const coordinate = toCoordinate(x, y, size)
+    const learningActor = getLearningActor(mode, currentPlayer)
 
-    if (currentPlayer === "black") { // Assuming player is black initially
+    if (learningActor === "player") {
       learningStore.addXP(xpGained)
       learningStore.registerStreakEvent(
         capturedCount > 0
@@ -387,7 +412,7 @@ export const useGameStore = create<KomiStore>((set, get) => ({
         learningStore.requestTip("How to capture")
         learningStore.markTipShown("firstCapture")
       }
-    } else {
+    } else if (learningActor === "opponent") {
       learningStore.registerStreakEvent(
         capturedCount > 0
           ? { type: "opponent-capture", count: capturedCount }
@@ -400,7 +425,7 @@ export const useGameStore = create<KomiStore>((set, get) => ({
       )
     }
 
-    if (nextState.moveNumber >= 50 && !learningStore.tipFlags.territory) {
+    if (learningActor === "player" && nextState.moveNumber >= 50 && !learningStore.tipFlags.territory) {
       learningStore.requestTip("Territory")
       learningStore.markTipShown("territory")
     }
@@ -434,22 +459,25 @@ export const useGameStore = create<KomiStore>((set, get) => ({
       }, 260)
     }
 
-    void registerEngineMoveInsight({
-      previousState: gameState,
-      nextState,
-      size,
-      player: currentPlayer,
-      aiDifficulty,
-      x,
-      y,
-      coordinate,
-    })
+    if (learningActor === "player") {
+      void registerEngineMoveInsight({
+        previousState: gameState,
+        nextState,
+        size,
+        player: currentPlayer,
+        actor: learningActor,
+        aiDifficulty,
+        x,
+        y,
+        coordinate,
+      })
+    }
 
     return true
   },
 
   passTurn: () => {
-    const { gameState, size, komi, isGameOver: gameAlreadyOver } = get()
+    const { gameState, size, komi, mode, isGameOver: gameAlreadyOver } = get()
     
     if (gameAlreadyOver) return
 
@@ -466,28 +494,21 @@ export const useGameStore = create<KomiStore>((set, get) => ({
     }
 
     const learningStore = useLearningStore.getState()
+    const learningActor = getLearningActor(mode, currentPlayer)
     if (gameOver && scoreResult) {
-      learningStore.registerStreakEvent(
-        scoreResult.winner === "black"
-          ? { type: "player-win" }
-          : { type: "player-loss" }
-      )
-      learningStore.registerTutorEvent(
-        scoreResult.winner === "black"
-          ? { type: "player-win" }
-          : { type: "player-loss" }
-      )
+      const outcome = getLearningOutcome(mode, scoreResult.winner)
+      if (outcome) {
+        learningStore.registerStreakEvent(outcome)
+        learningStore.registerTutorEvent(outcome)
+      }
     } else {
-      learningStore.registerStreakEvent(
-        currentPlayer === "black"
-          ? { type: "player-pass" }
-          : { type: "opponent-pass" }
-      )
-      learningStore.registerTutorEvent(
-        currentPlayer === "black"
-          ? { type: "player-pass" }
-          : { type: "opponent-pass" }
-      )
+      if (learningActor === "player") {
+        learningStore.registerStreakEvent({ type: "player-pass" })
+        learningStore.registerTutorEvent({ type: "player-pass" })
+      } else if (learningActor === "opponent") {
+        learningStore.registerStreakEvent({ type: "opponent-pass" })
+        learningStore.registerTutorEvent({ type: "opponent-pass" })
+      }
     }
 
     set((state) => ({
@@ -506,27 +527,38 @@ export const useGameStore = create<KomiStore>((set, get) => ({
   },
 
   resign: () => {
-    const { isGameOver, gameState } = get()
+    const { isGameOver, gameState, mode } = get()
     if (isGameOver) return
     if (captureClearTimeout) {
       clearTimeout(captureClearTimeout)
       captureClearTimeout = null
     }
 
+    const winner = gameState.turn === "black" ? "white" : "black"
     const learningStore = useLearningStore.getState()
-    learningStore.registerStreakEvent(gameState.turn === "black" ? { type: "player-loss" } : { type: "player-win" })
-    learningStore.registerTutorEvent(gameState.turn === "black" ? { type: "player-loss" } : { type: "player-win" })
+    const learningActor = getLearningActor(mode, gameState.turn)
+    const outcome =
+      learningActor === "player"
+        ? ({ type: "player-loss" } as const)
+        : learningActor === "opponent"
+          ? ({ type: "player-win" } as const)
+          : null
+
+    if (outcome) {
+      learningStore.registerStreakEvent(outcome)
+      learningStore.registerTutorEvent(outcome)
+    }
 
     set({
-      currentPlayer: gameState.turn === "black" ? "white" : "black",
+      currentPlayer: gameState.turn,
       validMoves: [],
       recentCaptures: [],
       isGameOver: true,
-      winner: gameState.turn === "black" ? "white" : "black",
+      winner,
       gameOverReason: "resignation",
       liveScore: calculateScore(gameState.board, get().size, gameState.captured, get().komi),
       scoreResult: {
-        winner: gameState.turn === "black" ? "white" : "black", // Current turn player resigns
+        winner,
         margin: Infinity,
         black: { territory: 0, captures: 0, stones: 0, total: 0 },
         white: { territory: 0, captures: 0, stones: 0, komi: 0, total: 0 },
@@ -615,16 +647,18 @@ export const useGameStore = create<KomiStore>((set, get) => ({
 
     const winner = currentPlayer === "black" ? "white" : "black"
     const learningStore = useLearningStore.getState()
-    learningStore.registerStreakEvent(
-      currentPlayer === "black"
-        ? { type: "player-loss" }
-        : { type: "player-win" }
-    )
-    learningStore.registerTutorEvent(
-      currentPlayer === "black"
-        ? { type: "player-loss" }
-        : { type: "player-win" }
-    )
+    const learningActor = getLearningActor(get().mode, currentPlayer)
+    const outcome =
+      learningActor === "player"
+        ? ({ type: "player-loss" } as const)
+        : learningActor === "opponent"
+          ? ({ type: "player-win" } as const)
+          : null
+
+    if (outcome) {
+      learningStore.registerStreakEvent(outcome)
+      learningStore.registerTutorEvent(outcome)
+    }
 
     set({
       timers: {

@@ -33,8 +33,8 @@ export function gameToSGF(
   moves: Move[],
   metadata: SGFMetadata = {}
 ): string {
-  const size = metadata.size || 19
-  const komi = metadata.komi || 6.5
+  const size = metadata.size ?? 19
+  const komi = metadata.komi ?? 6.5
   
   let header = `(;GM[1]FF[4]SZ[${size}]KM[${komi}]`
   if (metadata.blackName) header += `PB[${escapeSGFValue(metadata.blackName)}]`

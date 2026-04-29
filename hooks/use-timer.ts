@@ -7,9 +7,18 @@ export function useGameClock(enabled = true) {
       return
     }
 
+    let lastTickAt = Date.now()
     const intervalId = window.setInterval(() => {
-      useGameStore.getState().tickActiveTimer(1)
-    }, 1000)
+      const now = Date.now()
+      const elapsedSeconds = Math.floor((now - lastTickAt) / 1000)
+
+      if (elapsedSeconds <= 0) {
+        return
+      }
+
+      lastTickAt += elapsedSeconds * 1000
+      useGameStore.getState().tickActiveTimer(elapsedSeconds)
+    }, 250)
 
     return () => {
       window.clearInterval(intervalId)

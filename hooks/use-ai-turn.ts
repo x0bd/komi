@@ -64,7 +64,24 @@ export function useAITurn() {
           if (move.isPass) {
             passTurn()
           } else {
-            placeStone(move.x, move.y)
+            const played = placeStone(move.x, move.y)
+
+            if (!played) {
+              const fallbackState = useGameStore.getState()
+              const fallbackMove = fallbackState.validMoves[0]
+
+              if (
+                fallbackState.mode === "versus-ai" &&
+                !fallbackState.isGameOver &&
+                fallbackState.gameState.turn === "white"
+              ) {
+                if (fallbackMove) {
+                  fallbackState.placeStone(fallbackMove.x, fallbackMove.y)
+                } else {
+                  fallbackState.passTurn()
+                }
+              }
+            }
           }
         } finally {
           if (requestId === requestIdRef.current) {

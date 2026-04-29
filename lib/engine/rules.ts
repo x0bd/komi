@@ -105,6 +105,7 @@ export function applyPass(state: GameState): GameState {
     turn: nextTurn,
     moveNumber: state.moveNumber + 1,
     consecutivePasses: state.consecutivePasses + 1,
+    // Passing does not create a new board position, so superko history stays unchanged.
     ko: null, // Ko implies immediate recapture
   }
 }

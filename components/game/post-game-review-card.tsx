@@ -1,6 +1,5 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { LuDownload, LuFlag } from "react-icons/lu";
@@ -82,52 +81,57 @@ export function PostGameReviewCard({
             </div>
 
             {scoreResult ? (
-                <div className="grid grid-cols-2 gap-4">
-                    {/* Black Stat Block */}
-                    <div className="flex flex-col bg-swiss-blue text-white border-2 border-border rounded-none p-5 shadow-[4px_4px_0_0_var(--foreground)] w-full transition-transform hover:-translate-y-1 group">
-                        <div className="flex items-center justify-between mb-6">
-                            <span className="text-[12px] font-mono font-bold uppercase tracking-widest text-white">Black</span>
-                            <div className="size-4 rounded-none bg-black border-2 border-transparent" />
-                        </div>
-                        <div className="mt-auto">
-                            <span className="text-5xl font-display font-black tracking-tighter text-white group-hover:scale-105 transition-transform origin-left inline-block">
-                                {scoreResult.black.total.toFixed(1)}
-                            </span>
-                            <div className="flex flex-col gap-2 mt-4 pt-4 border-t border-white/20">
-                                <div className="flex items-center justify-between text-[11px] font-bold text-white/70 uppercase tracking-wider">
-                                    <span>Territory</span>
-                                    <span className="font-mono text-white text-[13px]">{scoreResult.black.territory}</span>
-                                </div>
-                                <div className="flex items-center justify-between text-[11px] font-bold text-white/70 uppercase tracking-wider">
-                                    <span>Captures</span>
-                                    <span className="font-mono text-white text-[13px]">{scoreResult.black.captures}</span>
+                <div className="flex flex-col gap-3">
+                    <div className="grid grid-cols-2 gap-4">
+                        {/* Black Stat Block */}
+                        <div className="flex flex-col bg-swiss-blue text-white border-2 border-border rounded-none p-5 shadow-[4px_4px_0_0_var(--foreground)] w-full transition-transform hover:-translate-y-1 group">
+                            <div className="flex items-center justify-between mb-6">
+                                <span className="text-[12px] font-mono font-bold uppercase tracking-widest text-white">Black</span>
+                                <div className="size-4 rounded-none bg-black border-2 border-transparent" />
+                            </div>
+                            <div className="mt-auto">
+                                <span className="text-5xl font-display font-black tracking-tighter text-white group-hover:scale-105 transition-transform origin-left inline-block">
+                                    {scoreResult.black.total.toFixed(1)}
+                                </span>
+                                <div className="flex flex-col gap-2 mt-4 pt-4 border-t border-white/20">
+                                    <div className="flex items-center justify-between text-[11px] font-bold text-white/70 uppercase tracking-wider">
+                                        <span>Territory</span>
+                                        <span className="font-mono text-white text-[13px]">{scoreResult.black.territory}</span>
+                                    </div>
+                                    <div className="flex items-center justify-between text-[11px] font-bold text-white/70 uppercase tracking-wider">
+                                        <span>Captures</span>
+                                        <span className="font-mono text-white text-[13px]">{scoreResult.black.captures}</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    {/* White Stat Block */}
-                    <div className="flex flex-col bg-swiss-red text-white border-2 border-border rounded-none p-5 shadow-[4px_4px_0_0_var(--foreground)] w-full transition-transform hover:-translate-y-1 group">
-                        <div className="flex items-center justify-between mb-6">
-                            <span className="text-[12px] font-mono font-bold uppercase tracking-widest text-white">White</span>
-                            <div className="size-4 rounded-none bg-white border-2 border-transparent" />
-                        </div>
-                        <div className="mt-auto">
-                            <span className="text-5xl font-display font-black tracking-tighter text-white group-hover:scale-105 transition-transform origin-left inline-block">
-                                {scoreResult.white.total.toFixed(1)}
-                            </span>
-                            <div className="flex flex-col gap-2 mt-4 pt-4 border-t border-white/20">
-                                <div className="flex items-center justify-between text-[11px] font-bold text-white/70 uppercase tracking-wider">
-                                    <span>Territory</span>
-                                    <span className="font-mono text-white text-[13px]">{scoreResult.white.territory}</span>
-                                </div>
-                                <div className="flex items-center justify-between text-[11px] font-bold text-white/70 uppercase tracking-wider">
-                                    <span>Komi</span>
-                                    <span className="font-mono text-white text-[13px]">+{scoreResult.white.komi?.toFixed(1) ?? "0.0"}</span>
+                        {/* White Stat Block */}
+                        <div className="flex flex-col bg-swiss-red text-white border-2 border-border rounded-none p-5 shadow-[4px_4px_0_0_var(--foreground)] w-full transition-transform hover:-translate-y-1 group">
+                            <div className="flex items-center justify-between mb-6">
+                                <span className="text-[12px] font-mono font-bold uppercase tracking-widest text-white">White</span>
+                                <div className="size-4 rounded-none bg-white border-2 border-transparent" />
+                            </div>
+                            <div className="mt-auto">
+                                <span className="text-5xl font-display font-black tracking-tighter text-white group-hover:scale-105 transition-transform origin-left inline-block">
+                                    {scoreResult.white.total.toFixed(1)}
+                                </span>
+                                <div className="flex flex-col gap-2 mt-4 pt-4 border-t border-white/20">
+                                    <div className="flex items-center justify-between text-[11px] font-bold text-white/70 uppercase tracking-wider">
+                                        <span>Territory</span>
+                                        <span className="font-mono text-white text-[13px]">{scoreResult.white.territory}</span>
+                                    </div>
+                                    <div className="flex items-center justify-between text-[11px] font-bold text-white/70 uppercase tracking-wider">
+                                        <span>Komi</span>
+                                        <span className="font-mono text-white text-[13px]">+{scoreResult.white.komi?.toFixed(1) ?? "0.0"}</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    <p className="border-2 border-dashed border-border/60 bg-background/70 px-3 py-2 font-mono text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
+                        Estimate only. Dead stones, seki, and neutral points are not manually adjudicated yet.
+                    </p>
                 </div>
             ) : (
                 <div className="rounded-3xl border border-border/50 bg-secondary/30 p-6 text-center text-[13px] font-medium text-muted-foreground">
