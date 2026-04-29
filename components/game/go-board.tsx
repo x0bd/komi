@@ -456,8 +456,8 @@ function GridLayer({
     size: 9 | 13 | 19;
     hoshiPoints: Array<{ x: number; y: number }>;
 }) {
-    const cellPct = 100 / (size - 1);
-    const positions = Array.from({ length: size }, (_, i) => i * cellPct);
+    const cellPct = 100 / size;
+    const positions = Array.from({ length: size }, (_, i) => (i + 0.5) * cellPct);
     const hoshiR = size === 19 ? 0.9 : 1.1;
 
     return (
@@ -496,8 +496,8 @@ function GridLayer({
             {hoshiPoints.map((pt, i) => (
                 <circle
                     key={`hoshi-${i}`}
-                    cx={(pt.x / (size - 1)) * 100}
-                    cy={(pt.y / (size - 1)) * 100}
+                    cx={((pt.x + 0.5) / size) * 100}
+                    cy={((pt.y + 0.5) / size) * 100}
                     r={hoshiR}
                     fill="var(--board-hoshi)"
                     fillOpacity="1"

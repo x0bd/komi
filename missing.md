@@ -49,10 +49,10 @@ Static audit compiled from code review only. No build, test, or browser verifica
 
 ## P1: Board UI And Interaction
 
-- [ ] Verify and fix stone/grid alignment in `components/game/go-board.tsx`; grid lines use `size - 1` spacing while stones are placed in `size` CSS grid cells.
-- [ ] Align hoshi points with the same coordinate system as stones and grid intersections.
-- [ ] Ensure hit targets match visual intersections on all board sizes.
-- [ ] Add responsive collision handling between the board, dock, and right-side panels in `components/layout/game-layout.tsx`.
+- [x] Verify and fix stone/grid alignment in `components/game/go-board.tsx`; grid lines use `size - 1` spacing while stones are placed in `size` CSS grid cells.
+- [x] Align hoshi points with the same coordinate system as stones and grid intersections.
+- [x] Ensure hit targets match visual intersections on all board sizes.
+- [x] Add responsive collision handling between the board, dock, and right-side panels in `components/layout/game-layout.tsx`.
 - [ ] Add a mobile-specific dock/panel behavior; `min(620px, calc(100vw - 2rem))` can cover most of the game on small screens.
 - [x] Fix `GameOverDialog` close behavior in `components/pages/home-page-client.tsx`; `onOpenChange={() => {}}` makes the close affordance non-functional.
 - [ ] Add richer game-over actions: review, save status, replay, rematch, and share.
@@ -61,7 +61,7 @@ Static audit compiled from code review only. No build, test, or browser verifica
 
 - [ ] Verify the default OpenAI model in `app/api/tutor/route.ts` before relying on it.
 - [ ] Make it clear in UI that BYO OpenAI keys are sent through the app server, not used purely client-side.
-- [ ] Add request cancellation and error recovery for streaming tutor responses in `components/learning/ai-chat-panel.tsx`.
+- [x] Add request cancellation and error recovery for streaming tutor responses in `components/learning/ai-chat-panel.tsx`.
 - [ ] Prevent tutor spam by tying coaching triggers to meaningful game events rather than global module counters.
 - [ ] Move tutor rate state out of module-level globals in `lib/stores/game-store.ts`.
 - [ ] Separate beginner coaching, move review, and chat modes so Sensei does not feel random or repetitive.
@@ -77,7 +77,7 @@ Static audit compiled from code review only. No build, test, or browser verifica
 - [ ] Replace leftover rounded premium card patterns with the new dock/page grammar where appropriate.
 - [ ] Remove or consolidate old `.account-*` scoped styles in `app/globals.css` if they are no longer part of the direction.
 - [ ] Fix the theme system: `components/providers.tsx` forces light mode while the app still has dark tokens and theme-toggle remnants.
-- [ ] Remove unused `ThemeToggle` imports from `components/layout/game-layout.tsx`, or restore a working theme switcher.
+- [x] Remove unused `ThemeToggle` imports from `components/layout/game-layout.tsx`, or restore a working theme switcher.
 - [ ] Replace mixed icon systems with one intentional set; docs mention Hugeicons, but components still use `react-icons` and `lucide-react`.
 - [ ] Audit all verbose empty states so they fit compact cards and dock panes without awkward wrapping.
 - [ ] Rework dock-expanded panes so they feel connected to the dock and do not cover important board context unexpectedly.

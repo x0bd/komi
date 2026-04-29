@@ -2,6 +2,7 @@ import type { NextRequest } from "next/server"
 
 import { auth } from "@/lib/auth/server"
 import { db } from "@/lib/db"
+import { ensureDatabaseCompatibility } from "@/lib/db-compat"
 
 type AuthSessionUser = {
   id?: string
@@ -49,6 +50,8 @@ export async function getApiDbUser(request?: NextRequest): Promise<ApiDbUser | n
 
   // Keep this email-based until Prisma Client has been regenerated everywhere.
   // The schema already has authProviderId, but stale dev clients reject it.
+  await ensureDatabaseCompatibility()
+
   const user = await db.user.upsert({
     where: { email: authUser.email },
     update: {

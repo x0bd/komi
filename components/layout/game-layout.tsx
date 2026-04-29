@@ -4,7 +4,6 @@ import { useState } from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { LuX, LuUser } from "react-icons/lu";
 
@@ -52,7 +51,13 @@ export function GameLayout({
                 </header>
 
                 {/* Main Workspace */}
-                <div className="relative z-10 flex flex-1 w-full mx-auto px-6 h-svh items-center justify-center pointer-events-none">
+                <div
+                    className={cn(
+                        "relative z-10 flex flex-1 w-full mx-auto h-svh items-center justify-center px-6 pointer-events-none transition-[padding] duration-300 ease-out",
+                        isExpanded ? "lg:pl-[680px]" : "lg:pl-32",
+                        rightPanel ? "lg:pr-40 xl:pr-56" : "lg:pr-6",
+                    )}
+                >
                     {/* Board Area */}
                     <main className="flex items-center justify-center h-full pointer-events-auto max-w-2xl 2xl:max-w-3xl w-full">
                         {board}

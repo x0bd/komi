@@ -1,17 +1,14 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
     LuBot,
-    LuChevronDown,
-    LuChevronUp,
     LuGauge,
     LuKeyRound,
-    LuMessageSquareQuote,
     LuSend,
     LuSparkles,
+    LuX,
 } from "react-icons/lu";
-import { Card, CardContent } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useLearningStore } from "@/lib/stores/learning-store";
 import { useGameStore } from "@/lib/stores/game-store";
@@ -29,19 +26,6 @@ const QUICK_TIPS = ["Opening tips", "How to capture", "Territory"] as const;
 const LETTERS = "ABCDEFGHJKLMNOPQRST".split("");
 
 type TutorMode = "passive" | "active" | "review";
-
-function getToneClasses(tone: ChatMessageTone) {
-    switch (tone) {
-        case "celebrate":
-            return "border-status-active/25 bg-status-active/10 text-foreground";
-        case "warning":
-            return "border-destructive/20 bg-destructive/8 text-foreground";
-        case "tip":
-            return "border-accent/25 bg-accent/10 text-foreground";
-        default:
-            return "border-border/60 bg-secondary/35 text-foreground";
-    }
-}
 
 function toCoordinate(x: number, y: number, size: number) {
     const col = LETTERS[x] ?? "?";
@@ -100,6 +84,8 @@ export function AIChatPanel({
     const [reviewSummary, setReviewSummary] = useState("");
     const [isGeneratingReview, setIsGeneratingReview] = useState(false);
     const [lastReviewedGameKey, setLastReviewedGameKey] = useState("");
+    const askAbortRef = useRef<AbortController | null>(null);
+    const reviewAbortRef = useRef<AbortController | null>(null);
 
     const latestMessage = chatMessages[chatMessages.length - 1];
     const visibleMessages = chatMessages.slice(-12);
@@ -145,6 +131,13 @@ export function AIChatPanel({
         }
     }, []);
 
+    useEffect(() => {
+        return () => {
+            askAbortRef.current?.abort();
+            reviewAbortRef.current?.abort();
+        };
+    }, []);
+
     function saveApiKey() {
         if (typeof window === "undefined") return;
         const next = openAIApiKey.trim();
@@ -181,6 +174,10 @@ export function AIChatPanel({
     async function generateReview() {
         if (!isGameOver || isGeneratingReview || !reviewKey) return;
 
+        reviewAbortRef.current?.abort();
+        const controller = new AbortController();
+        reviewAbortRef.current = controller;
+        let shouldMarkReviewed = false;
         setIsGeneratingReview(true);
         try {
             const finalResult = !scoreResult
@@ -192,6 +189,7 @@ export function AIChatPanel({
             const response = await fetch("/api/tutor", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
+                signal: controller.signal,
                 body: JSON.stringify({
                     question: [
                         "Give a compact post-game Go review.",
@@ -208,6 +206,7 @@ export function AIChatPanel({
                 setReviewSummary(
                     "Review unavailable right now. Check shape efficiency in your last 8 moves and prioritize safer liberties next game.",
                 );
+                shouldMarkReviewed = true;
                 return;
             }
 
@@ -224,13 +223,23 @@ export function AIChatPanel({
                     "Game complete. Revisit the final sequence and choose one defensive pattern to sharpen before your next match.",
                 );
             }
-        } catch {
+            shouldMarkReviewed = true;
+        } catch (error) {
+            if (error instanceof DOMException && error.name === "AbortError") {
+                return;
+            }
             setReviewSummary(
                 "Could not fetch review notes. Quick check: identify one over-extended group and one missed forcing move from the final phase.",
             );
+            shouldMarkReviewed = true;
         } finally {
-            setIsGeneratingReview(false);
-            setLastReviewedGameKey(reviewKey);
+            if (reviewAbortRef.current === controller) {
+                reviewAbortRef.current = null;
+                setIsGeneratingReview(false);
+                if (shouldMarkReviewed) {
+                    setLastReviewedGameKey(reviewKey);
+                }
+            }
         }
     }
 
@@ -245,6 +254,11 @@ export function AIChatPanel({
         const nextQuestion = question.trim();
         if (!nextQuestion || isAsking || isStreaming) return;
 
+        askAbortRef.current?.abort();
+        const controller = new AbortController();
+        askAbortRef.current = controller;
+        let shouldClearQuestion = false;
+
         setIsAsking(true);
         setIsStreaming(true);
         setStreamingReply("");
@@ -252,6 +266,7 @@ export function AIChatPanel({
             const response = await fetch("/api/tutor", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
+                signal: controller.signal,
                 body: JSON.stringify({
                     question: nextQuestion,
                     apiKey: hasApiKey ? openAIApiKey.trim() : undefined,
@@ -261,7 +276,9 @@ export function AIChatPanel({
 
             if (!response.ok) {
                 addMessage(
-                    "I could not answer that just now. Ask again in a moment.",
+                    response.status === 429
+                        ? "Sensei is rate-limited for a moment. Let the board breathe, then ask again."
+                        : "I could not answer that just now. Ask again in a moment.",
                     "warning",
                 );
                 return;
@@ -276,6 +293,7 @@ export function AIChatPanel({
                     json.message.trim().length > 0
                 ) {
                     addMessage(json.message, "coach");
+                    shouldClearQuestion = true;
                 }
                 return;
             }
@@ -295,18 +313,32 @@ export function AIChatPanel({
 
             if (fullText.trim().length > 0) {
                 addMessage(fullText.trim(), "coach");
+                shouldClearQuestion = true;
             }
-        } catch {
+        } catch (error) {
+            if (error instanceof DOMException && error.name === "AbortError") {
+                addMessage("Sensei paused that answer. Ask again when ready.", "tip");
+                return;
+            }
             addMessage(
                 "Connection issue while asking Sensei. Try once more.",
                 "warning",
             );
         } finally {
-            setIsAsking(false);
-            setIsStreaming(false);
-            setStreamingReply("");
-            setQuestion("");
+            if (askAbortRef.current === controller) {
+                askAbortRef.current = null;
+                setIsAsking(false);
+                setIsStreaming(false);
+                setStreamingReply("");
+                if (shouldClearQuestion) {
+                    setQuestion("");
+                }
+            }
         }
+    }
+
+    function cancelAskSensei() {
+        askAbortRef.current?.abort();
     }
 
     return (
@@ -553,13 +585,25 @@ export function AIChatPanel({
                                         placeholder="Ask Sensei about this position..."
                                         className="h-[44px] flex-1 rounded-none border-[3px] border-white bg-white pl-4 pr-12 text-sm font-bold text-black outline-none transition-all placeholder:text-black/40 focus:border-swiss-yellow shadow-[4px_4px_0_0_white]"
                                     />
-                                    <button
-                                        type="submit"
-                                        disabled={!canAsk}
-                                        className="absolute right-2 top-[6px] inline-flex h-8 w-8 items-center justify-center rounded-none border-2 border-black bg-black text-white transition-all hover:bg-swiss-red hover:border-swiss-red hover:-translate-y-[1px] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
-                                    >
-                                        <LuSend className="size-3.5" />
-                                    </button>
+                                    {isStreaming ? (
+                                        <button
+                                            type="button"
+                                            onClick={cancelAskSensei}
+                                            className="absolute right-2 top-[6px] inline-flex h-8 w-8 items-center justify-center rounded-none border-2 border-black bg-swiss-red text-white transition-all hover:bg-black hover:-translate-y-[1px]"
+                                            aria-label="Stop Sensei response"
+                                        >
+                                            <LuX className="size-3.5" />
+                                        </button>
+                                    ) : (
+                                        <button
+                                            type="submit"
+                                            disabled={!canAsk}
+                                            className="absolute right-2 top-[6px] inline-flex h-8 w-8 items-center justify-center rounded-none border-2 border-black bg-black text-white transition-all hover:bg-swiss-red hover:border-swiss-red hover:-translate-y-[1px] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
+                                            aria-label="Ask Sensei"
+                                        >
+                                            <LuSend className="size-3.5" />
+                                        </button>
+                                    )}
                                 </form>
                             </div>
                         ) : null}

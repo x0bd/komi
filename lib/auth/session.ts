@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation"
 import { auth } from "@/lib/auth/server"
 import { db } from "@/lib/db"
+import { ensureDatabaseCompatibility } from "@/lib/db-compat"
 
 export async function getSession() {
   const { data: session } = await auth.getSession()
@@ -46,6 +47,8 @@ export async function ensureDbUser() {
 
   // Keep this email-based until Prisma Client has been regenerated everywhere.
   // The schema already has authProviderId, but stale dev clients reject it.
+  await ensureDatabaseCompatibility()
+
   return db.user.upsert({
     where: { email: user.email },
     update: {
