@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -28,6 +28,19 @@ export function GameLayout({
     const [activePanelId, setActivePanelId] = useState<string | null>(null);
     const activePanel = panels.find((p) => p.id === activePanelId);
     const isExpanded = Boolean(activePanel);
+
+    useEffect(() => {
+        if (!isExpanded) return;
+
+        function handleKeyDown(event: KeyboardEvent) {
+            if (event.key === "Escape") {
+                setActivePanelId(null);
+            }
+        }
+
+        window.addEventListener("keydown", handleKeyDown);
+        return () => window.removeEventListener("keydown", handleKeyDown);
+    }, [isExpanded]);
 
     return (
         <TooltipProvider>
@@ -97,6 +110,8 @@ export function GameLayout({
                                             <TooltipTrigger
                                                 render={
                                                     <button
+                                                        aria-label={panel.label}
+                                                        aria-pressed={isActive}
                                                         onClick={() => setActivePanelId(isActive ? null : panel.id)}
                                                         className={cn(
                                                             "relative flex size-12 items-center justify-center rounded-none transition-all duration-200 group border border-transparent lg:w-full",
@@ -123,6 +138,7 @@ export function GameLayout({
                                         render={
                                             <Link
                                                 href="/profile"
+                                                aria-label="Open profile"
                                                 className="relative flex size-12 items-center justify-center rounded-none transition-all duration-200 group text-white/50 hover:bg-white hover:text-black lg:w-full"
                                             />
                                         }
@@ -153,6 +169,7 @@ export function GameLayout({
                                             <span>{activePanel.label}</span>
                                         </h2>
                                         <button
+                                            aria-label="Close panel"
                                             onClick={() => setActivePanelId(null)}
                                             className="flex size-11 items-center justify-center rounded-none border-2 border-transparent text-muted-foreground transition-all hover:border-border hover:bg-foreground hover:text-primary-foreground focus:outline-none"
                                         >

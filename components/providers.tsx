@@ -11,8 +11,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
       <NeonAuthUIProvider authClient={authClient} redirectTo="/">
         <ThemeProvider
           attribute="class"
-          defaultTheme="light"
-          forcedTheme="light"
+          defaultTheme="system"
+          enableSystem
           disableTransitionOnChange
         >
           {children}

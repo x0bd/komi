@@ -113,13 +113,14 @@ function ConnectedRoomDetails({
     return "Disconnected"
   }, [status])
 
-  const opponentStatus = otherConnectionIds.length > 0 ? "Online" : "Waiting..."
+  const opponentStatus = otherConnectionIds.length > 0 ? "Rival seated" : "Seat open"
 
   function handleCopy() {
     if (!shareUrl) return
-    void navigator.clipboard.writeText(shareUrl)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
+    void navigator.clipboard.writeText(shareUrl).then(() => {
+      setCopied(true)
+      window.setTimeout(() => setCopied(false), 2000)
+    })
   }
 
   return (
@@ -138,7 +139,7 @@ function ConnectedRoomDetails({
         <LuUsers className="size-3.5" />
         <span>{otherConnectionIds.length + 1} in room</span>
         <div className="w-[2px] h-[2px] rounded-none bg-border" />
-        <span>Opponent: {opponentStatus}</span>
+        <span>{opponentStatus}</span>
       </div>
 
       {shareUrl ? (
@@ -147,11 +148,12 @@ function ConnectedRoomDetails({
           onClick={handleCopy}
           className="flex items-center justify-between gap-3 h-9 rounded-none border border-border bg-background px-3 font-mono text-[12px] font-bold text-muted-foreground transition-colors hover:text-foreground hover:bg-foreground hover:border-transparent group"
         >
-          <span className="truncate">{shareUrl}</span>
-          {copied
-            ? <LuCheck className="size-3.5 shrink-0 text-status-active" />
-            : <LuCopy className="size-3.5 shrink-0 hover:text-primary-foreground opacity-30 group-hover:opacity-100 transition-opacity" />
-          }
+          <span className="truncate">{copied ? "Invite copied" : shareUrl}</span>
+          {copied ? (
+            <LuCheck className="size-3.5 shrink-0 text-status-active" />
+          ) : (
+            <LuCopy className="size-3.5 shrink-0 hover:text-primary-foreground opacity-30 group-hover:opacity-100 transition-opacity" />
+          )}
         </button>
       ) : null}
 

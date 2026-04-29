@@ -43,6 +43,8 @@ export function AIReaction({ className }: { className?: string }) {
 
     useEffect(() => {
         if (!visible) return;
+        const shouldReduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        if (shouldReduceMotion) return;
 
         let timeline: gsap.core.Timeline | null = null;
 

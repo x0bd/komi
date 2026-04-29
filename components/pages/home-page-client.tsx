@@ -337,8 +337,15 @@ function readSnapshotFromMutableStorage(storage: {
     };
 }
 
+type MutableLiveblocksStorage = {
+    set<TKey extends keyof Liveblocks["Storage"]>(
+        key: TKey,
+        value: Liveblocks["Storage"][TKey],
+    ): void;
+};
+
 function writeSnapshotToMutableStorage(
-    storage: { set: (key: keyof Liveblocks["Storage"], value: any) => void },
+    storage: MutableLiveblocksStorage,
     snapshot: MultiplayerSnapshot,
 ) {
     storage.set("size", snapshot.size);

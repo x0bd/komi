@@ -76,7 +76,7 @@ Static audit compiled from code review only. No build, test, or browser verifica
 - [ ] Restyle `app/account/[path]/page.tsx` or intentionally keep it as a separate auth-provider surface.
 - [ ] Replace leftover rounded premium card patterns with the new dock/page grammar where appropriate.
 - [ ] Remove or consolidate old `.account-*` scoped styles in `app/globals.css` if they are no longer part of the direction.
-- [ ] Fix the theme system: `components/providers.tsx` forces light mode while the app still has dark tokens and theme-toggle remnants.
+- [x] Fix the theme system: `components/providers.tsx` forces light mode while the app still has dark tokens and theme-toggle remnants.
 - [x] Remove unused `ThemeToggle` imports from `components/layout/game-layout.tsx`, or restore a working theme switcher.
 - [ ] Replace mixed icon systems with one intentional set; docs mention Hugeicons, but components still use `react-icons` and `lucide-react`.
 - [x] Audit all verbose empty states so they fit compact cards and dock panes without awkward wrapping.
@@ -97,7 +97,7 @@ Static audit compiled from code review only. No build, test, or browser verifica
 - [ ] Extract game persistence into a dedicated hook/service.
 - [ ] Extract dock panel content into smaller, independently testable components.
 - [ ] Remove unused imports across UI files, especially after the recent icon and panel iterations.
-- [ ] Replace broad `any` usage in multiplayer and Liveblocks code.
+- [x] Replace broad `any` usage in multiplayer and Liveblocks code.
 - [ ] Add explicit types for API request and response payloads.
 - [x] Centralize supported board sizes instead of repeating `9 | 13 | 19` assumptions.
 
@@ -115,11 +115,11 @@ Static audit compiled from code review only. No build, test, or browser verifica
 
 - [ ] Improve post-game review copy and layout so resign, timeout, pass-pass, and score wins all feel distinct.
 - [ ] Add compact replay controls for mobile.
-- [ ] Add better online presence labels than raw connection-based player assignment.
-- [ ] Add copy-to-clipboard feedback for room share links.
-- [ ] Add save-state feedback when a game has been persisted.
-- [ ] Add graceful fallback UI when Liveblocks env vars are missing instead of only throwing from server code.
+- [x] Add better online presence labels than raw connection-based player assignment.
+- [x] Add copy-to-clipboard feedback for room share links.
+- [x] Add save-state feedback when a game has been persisted.
+- [x] Add graceful fallback UI when Liveblocks env vars are missing instead of only throwing from server code.
 - [ ] Add a visual audit pass for spacing, z-index, shadows, and panel padding after the UI V2 direction is chosen.
-- [ ] Add accessibility labels for dock buttons, board intersections, panel toggles, and destructive actions.
-- [ ] Add keyboard support for dock navigation and modal/panel close actions.
-- [ ] Add reduced-motion handling for GSAP/motion animations.
+- [x] Add accessibility labels for dock buttons, board intersections, panel toggles, and destructive actions.
+- [x] Add keyboard support for dock navigation and modal/panel close actions.
+- [x] Add reduced-motion handling for GSAP/motion animations.

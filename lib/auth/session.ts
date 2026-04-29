@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation"
 import { auth } from "@/lib/auth/server"
 import { db } from "@/lib/db"
+import { isDatabaseConnectionError } from "@/lib/db-errors"
 import { ensureDatabaseCompatibility } from "@/lib/db-compat"
 
 export async function getSession() {
@@ -45,20 +46,29 @@ export async function ensureDbUser() {
     )
   }
 
-  // Keep this email-based until Prisma Client has been regenerated everywhere.
-  // The schema already has authProviderId, but stale dev clients reject it.
-  await ensureDatabaseCompatibility()
+  try {
+    // Keep this email-based until Prisma Client has been regenerated everywhere.
+    // The schema already has authProviderId, but stale dev clients reject it.
+    await ensureDatabaseCompatibility()
 
-  return db.user.upsert({
-    where: { email: user.email },
-    update: {
-      name: user.name ?? undefined,
-      avatar: user.image ?? undefined,
-    },
-    create: {
-      email: user.email,
-      name: user.name ?? undefined,
-      avatar: user.image ?? undefined,
-    },
-  })
+    return await db.user.upsert({
+      where: { email: user.email },
+      update: {
+        name: user.name ?? undefined,
+        avatar: user.image ?? undefined,
+      },
+      create: {
+        email: user.email,
+        name: user.name ?? undefined,
+        avatar: user.image ?? undefined,
+      },
+    })
+  } catch (error) {
+    if (isDatabaseConnectionError(error)) {
+      console.warn("Skipping Prisma user sync because the database is unreachable.")
+      return null
+    }
+
+    throw error
+  }
 }
