@@ -57,6 +57,28 @@ function buildReviewLine({
     return `#${moveNumber}: ${player === "black" ? "Black" : "White"} played ${coordinate}. Re-evaluate nearby liberties and territory balance for ${tone}.`;
 }
 
+function buildLocalTutorFallback(question: string) {
+    const normalized = question.toLowerCase();
+
+    if (normalized.includes("capture") || normalized.includes("atari")) {
+        return "Local read: count liberties first. If your move puts a group in atari but leaves your own stones short on liberties, connect before chasing.";
+    }
+
+    if (normalized.includes("territory") || normalized.includes("point")) {
+        return "Local read: compare secure points, not hopeful points. Reinforce the border where your opponent can cut or reduce in one move.";
+    }
+
+    if (normalized.includes("opening") || normalized.includes("fuseki")) {
+        return "Local read: in the opening, take corners, extend from strength, then approach weak corners. Avoid low-value contact fights too early.";
+    }
+
+    if (normalized.includes("live") || normalized.includes("die") || normalized.includes("eye")) {
+        return "Local read: make two eye-shape threats before expanding. A single big eye often still collapses if the opponent owns the vital point.";
+    }
+
+    return "Local read: pause and count liberties around the last fight, then choose the move that keeps your stones connected while reducing the opponent's easiest territory.";
+}
+
 export function AIChatPanel({
     className,
 }: {
@@ -278,9 +300,12 @@ export function AIChatPanel({
                 addMessage(
                     response.status === 429
                         ? "Sensei is rate-limited for a moment. Let the board breathe, then ask again."
-                        : "I could not answer that just now. Ask again in a moment.",
-                    "warning",
+                        : buildLocalTutorFallback(nextQuestion),
+                    response.status === 429 ? "warning" : "coach",
                 );
+                if (response.status !== 429) {
+                    shouldClearQuestion = true;
+                }
                 return;
             }
 
@@ -293,6 +318,9 @@ export function AIChatPanel({
                     json.message.trim().length > 0
                 ) {
                     addMessage(json.message, "coach");
+                    shouldClearQuestion = true;
+                } else {
+                    addMessage(buildLocalTutorFallback(nextQuestion), "coach");
                     shouldClearQuestion = true;
                 }
                 return;
@@ -321,9 +349,10 @@ export function AIChatPanel({
                 return;
             }
             addMessage(
-                "Connection issue while asking Sensei. Try once more.",
-                "warning",
+                buildLocalTutorFallback(nextQuestion),
+                "coach",
             );
+            shouldClearQuestion = true;
         } finally {
             if (askAbortRef.current === controller) {
                 askAbortRef.current = null;

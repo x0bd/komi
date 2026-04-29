@@ -65,8 +65,8 @@ Static audit compiled from code review only. No build, test, or browser verifica
 - [ ] Prevent tutor spam by tying coaching triggers to meaningful game events rather than global module counters.
 - [ ] Move tutor rate state out of module-level globals in `lib/stores/game-store.ts`.
 - [ ] Separate beginner coaching, move review, and chat modes so Sensei does not feel random or repetitive.
-- [ ] Add a deterministic fallback message when the tutor API fails.
-- [ ] Clean up stale animation/comment code in `components/learning/ai-reaction.tsx`.
+- [x] Add a deterministic fallback message when the tutor API fails.
+- [x] Clean up stale animation/comment code in `components/learning/ai-reaction.tsx`.
 
 ## P1: UI Consistency And Visual Drift
 

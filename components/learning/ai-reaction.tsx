@@ -11,11 +11,10 @@ export function AIReaction({ className }: { className?: string }) {
     const tutorMood = useLearningStore((state) => state.tutorMood);
     const tutorPulseKey = useLearningStore((state) => state.tutorPulseKey);
 
-    // Pick the most recent message as the "reaction"
     const latestMessage = chatMessages[chatMessages.length - 1];
 
     const [visible, setVisible] = useState(false);
-    const [displayMessage, setDisplayMessage] = useState(latestMessage);
+    const [displayMessage, setDisplayMessage] = useState<typeof latestMessage>();
     const [displayMood, setDisplayMood] = useState(tutorMood);
 
     const glowRef = useRef<HTMLDivElement | null>(null);
@@ -23,41 +22,25 @@ export function AIReaction({ className }: { className?: string }) {
     const progressRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
-        if (latestMessage && latestMessage.id !== displayMessage?.id) {
-            // New message arrived
-            setDisplayMessage(latestMessage);
-            setDisplayMood(tutorMood);
+        if (!latestMessage) return;
 
-            // Force re-trigger animation
-            setVisible(false);
-            const showTimer = setTimeout(() => {
-                setVisible(true);
-            }, 100);
+        setDisplayMessage(latestMessage);
+        setDisplayMood(tutorMood);
+        setVisible(false);
 
-            // Auto hide after some time
-            const hideTimer = setTimeout(() => {
-                setVisible(false);
-            }, 6000);
-
-            return () => {
-                clearTimeout(showTimer);
-                clearTimeout(hideTimer);
-            };
-        }
-    }, [tutorPulseKey, latestMessage, displayMessage?.id, tutorMood]);
-
-    // Initial mount visibility
-    useEffect(() => {
-        if (latestMessage) {
+        const showTimer = window.setTimeout(() => {
             setVisible(true);
-            const hideTimer = setTimeout(() => {
-                setVisible(false);
-            }, 6000);
-            return () => clearTimeout(hideTimer);
-        }
-    }, [latestMessage]);
+        }, 80);
+        const hideTimer = window.setTimeout(() => {
+            setVisible(false);
+        }, 6000);
 
-    // Animate bars and glow when visible
+        return () => {
+            window.clearTimeout(showTimer);
+            window.clearTimeout(hideTimer);
+        };
+    }, [tutorPulseKey, latestMessage, tutorMood]);
+
     useEffect(() => {
         if (!visible) return;
 
@@ -98,7 +81,6 @@ export function AIReaction({ className }: { className?: string }) {
             }
         }
 
-        // Animate the timeout progress bar at the bottom
         if (progressRef.current) {
             gsap.fromTo(
                 progressRef.current,
@@ -115,8 +97,6 @@ export function AIReaction({ className }: { className?: string }) {
 
     if (!displayMessage) return null;
 
-    // Theming logic based on AI mood
-    let moodColorClass = "from-primary/40 via-primary/20 to-primary/10";
     let iconColorClass = "text-primary";
     let Icon = LuBot;
     let title = "Sensei note";

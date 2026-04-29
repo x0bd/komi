@@ -6,7 +6,6 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
@@ -113,7 +112,7 @@ export function GameOverDialog({
           </div>
         </div>
 
-        <DialogFooter className="grid gap-3 p-5 sm:grid-cols-2">
+        <div className="grid gap-3 p-5 sm:grid-cols-2">
           <Button
             variant="outline"
             onClick={onReview ?? (() => onOpenChange?.(false))}
@@ -156,7 +155,7 @@ export function GameOverDialog({
           >
             Play Again
           </Button>
-        </DialogFooter>
+        </div>
       </DialogContent>
     </Dialog>
   )
