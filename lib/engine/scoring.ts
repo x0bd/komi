@@ -23,6 +23,7 @@ export type ScoreResult = {
 
 type ScoreOptions = {
   ruleset?: ScoringRuleset
+  deadStones?: number[]
 }
 
 function countPlacedStones(board: BoardState) {
@@ -45,14 +46,29 @@ export function calculateScore(
   options: ScoreOptions = {}
 ): ScoreResult {
   const ruleset = options.ruleset ?? "japanese"
-  const territoryMap = [...board]
+  const scoringBoard = [...board]
+  const scoringCaptures = { ...captures }
+  const deadStoneSet = new Set(options.deadStones ?? [])
+
+  for (const index of deadStoneSet) {
+    const stone = scoringBoard[index]
+    if (stone === 1) {
+      scoringBoard[index] = 0
+      scoringCaptures.white += 1
+    } else if (stone === 2) {
+      scoringBoard[index] = 0
+      scoringCaptures.black += 1
+    }
+  }
+
+  const territoryMap = [...scoringBoard]
   const visited = new Set<number>()
 
   let blackTerritory = 0
   let whiteTerritory = 0
 
-  for (let i = 0; i < board.length; i++) {
-    if (board[i] === 0 && !visited.has(i)) {
+  for (let i = 0; i < scoringBoard.length; i++) {
+    if (scoringBoard[i] === 0 && !visited.has(i)) {
       const region = new Set<number>()
       const queue = [i]
       let touchesBlack = false
@@ -66,7 +82,7 @@ export function calculateScore(
         region.add(curr)
 
         for (const neighbor of getNeighbors(curr, size)) {
-          const neighborColor = board[neighbor]
+          const neighborColor = scoringBoard[neighbor]
           if (neighborColor === 0 && !visited.has(neighbor)) {
             queue.push(neighbor)
           } else if (neighborColor === 1) {
@@ -87,15 +103,15 @@ export function calculateScore(
     }
   }
 
-  const stones = countPlacedStones(board)
+  const stones = countPlacedStones(scoringBoard)
   const blackTotal =
     ruleset === "chinese"
       ? blackTerritory + stones.black
-      : blackTerritory + captures.black
+      : blackTerritory + scoringCaptures.black
   const whiteTotal =
     ruleset === "chinese"
       ? whiteTerritory + stones.white + komi
-      : whiteTerritory + captures.white + komi
+      : whiteTerritory + scoringCaptures.white + komi
 
   let winner: "black" | "white" | "draw" = "draw"
   let margin = 0
@@ -111,13 +127,13 @@ export function calculateScore(
   return {
     black: {
       territory: blackTerritory,
-      captures: captures.black,
+      captures: scoringCaptures.black,
       stones: stones.black,
       total: blackTotal,
     },
     white: {
       territory: whiteTerritory,
-      captures: captures.white,
+      captures: scoringCaptures.white,
       stones: stones.white,
       komi,
       total: whiteTotal,

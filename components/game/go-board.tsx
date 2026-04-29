@@ -26,6 +26,9 @@ export function GoBoard({
     analysisHints = [],
     territoryMap,
     showTerritoryHeatmap = false,
+    deadStoneMarkingEnabled = false,
+    markedDeadStones = [],
+    onDeadStoneToggle,
     className,
 }: {
     size?: 9 | 13 | 19;
@@ -50,6 +53,9 @@ export function GoBoard({
     }>;
     territoryMap?: number[];
     showTerritoryHeatmap?: boolean;
+    deadStoneMarkingEnabled?: boolean;
+    markedDeadStones?: number[];
+    onDeadStoneToggle?: (x: number, y: number) => void;
     className?: string;
 }) {
     const [hovered, setHovered] = useState<{ x: number; y: number } | null>(
@@ -64,6 +70,10 @@ export function GoBoard({
     const validMoveSet = useMemo(
         () => new Set(validMoves.map(({ x, y }) => `${x}:${y}`)),
         [validMoves],
+    );
+    const markedDeadStoneSet = useMemo(
+        () => new Set(markedDeadStones),
+        [markedDeadStones],
     );
     const letters = LETTERS.slice(0, size);
     const numbers = Array.from({ length: size }, (_, i) => size - i);
@@ -109,6 +119,7 @@ export function GoBoard({
         x: number,
         y: number,
         isPlayable: boolean,
+        isDeadStoneMarkable: boolean,
     ) {
         switch (event.key) {
             case "ArrowLeft":
@@ -132,6 +143,8 @@ export function GoBoard({
                 event.preventDefault();
                 if (isPlayable) {
                     onIntersectionClick?.(x, y);
+                } else if (isDeadStoneMarkable) {
+                    onDeadStoneToggle?.(x, y);
                 }
                 break;
             default:
@@ -292,6 +305,13 @@ export function GoBoard({
                                     const isPlayable =
                                         !stoneColor &&
                                         validMoveSet.has(coordinateKey);
+                                    const isMarkedDead = markedDeadStoneSet.has(
+                                        y * size + x,
+                                    );
+                                    const isDeadStoneMarkable =
+                                        deadStoneMarkingEnabled && Boolean(stoneColor);
+                                    const isInteractive =
+                                        isPlayable || isDeadStoneMarkable;
                                     const isFocused =
                                         focused.x === x && focused.y === y;
                                     return (
@@ -310,9 +330,11 @@ export function GoBoard({
                                                 size,
                                                 stoneColor,
                                                 isPlayable,
+                                                isMarkedDead,
+                                                isDeadStoneMarkable,
                                             )}
                                             aria-selected={isFocused}
-                                            aria-disabled={!isPlayable}
+                                            aria-disabled={!isInteractive}
                                             className="h-full w-full appearance-none bg-transparent p-0 text-inherit outline-none"
                                             onFocus={() => setFocused({ x, y })}
                                             onMouseEnter={() => {
@@ -345,6 +367,8 @@ export function GoBoard({
                                             onClick={() => {
                                                 if (isPlayable) {
                                                     onIntersectionClick?.(x, y);
+                                                } else if (isDeadStoneMarkable) {
+                                                    onDeadStoneToggle?.(x, y);
                                                 }
                                             }}
                                             onKeyDown={(event) =>
@@ -353,6 +377,7 @@ export function GoBoard({
                                                     x,
                                                     y,
                                                     isPlayable,
+                                                    isDeadStoneMarkable,
                                                 )
                                             }
                                         >
@@ -380,7 +405,8 @@ export function GoBoard({
                                                     lastMove?.x === x &&
                                                     lastMove?.y === y
                                                 }
-                                                interactive={isPlayable}
+                                                markedDead={isMarkedDead}
+                                                interactive={isInteractive}
                                                 isFocused={isFocused}
                                             />
                                         </button>
@@ -405,10 +431,17 @@ function describeIntersection(
     size: number,
     stoneColor?: StoneColor,
     isPlayable?: boolean,
+    isMarkedDead?: boolean,
+    isDeadStoneMarkable?: boolean,
 ) {
     const coordinate = `${LETTERS[x]}${size - y}`;
     if (stoneColor) {
-        return `${coordinate}, occupied by ${stoneColor}`;
+        if (isMarkedDead) {
+            return `${coordinate}, ${stoneColor} stone marked dead`;
+        }
+        return isDeadStoneMarkable
+            ? `${coordinate}, occupied by ${stoneColor}, select to mark dead`
+            : `${coordinate}, occupied by ${stoneColor}`;
     }
 
     return isPlayable

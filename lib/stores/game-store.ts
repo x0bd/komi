@@ -66,11 +66,16 @@ interface KomiStore {
   winner: "black" | "white" | "draw" | null
   gameOverReason: "score" | "resignation" | "timeout" | null
   scoreResult: ScoreResult | null
+  deadStones: number[]
+  scoreReviewConfirmed: boolean
   
   // Actions
   placeStone: (x: number, y: number) => boolean
   passTurn: () => void
   resign: () => void
+  toggleDeadStone: (x: number, y: number) => void
+  clearDeadStones: () => void
+  confirmScoreReview: () => void
   setMode: (mode: GameMode) => void
   setAIDifficulty: (difficulty: AIDifficulty) => void
   setAnalysisOverlayEnabled: (enabled: boolean) => void
@@ -369,6 +374,8 @@ export const useGameStore = create<KomiStore>((set, get) => ({
   winner: null,
   gameOverReason: null,
   scoreResult: null,
+  deadStones: [],
+  scoreReviewConfirmed: true,
 
   placeStone: (x, y) => {
     const { gameState, size, mode, isGameOver, aiDifficulty } = get()
@@ -523,6 +530,8 @@ export const useGameStore = create<KomiStore>((set, get) => ({
       winner: gameOver && scoreResult ? scoreResult.winner : null,
       gameOverReason: gameOver ? "score" : null,
       scoreResult,
+      deadStones: gameOver ? [] : state.deadStones,
+      scoreReviewConfirmed: gameOver ? false : state.scoreReviewConfirmed,
     }))
   },
 
@@ -557,6 +566,8 @@ export const useGameStore = create<KomiStore>((set, get) => ({
       winner,
       gameOverReason: "resignation",
       liveScore: calculateScore(gameState.board, get().size, gameState.captured, get().komi),
+      deadStones: [],
+      scoreReviewConfirmed: true,
       scoreResult: {
         winner,
         margin: Infinity,
@@ -566,6 +577,66 @@ export const useGameStore = create<KomiStore>((set, get) => ({
         territoryMap: []
       }
     })
+  },
+
+  toggleDeadStone: (x, y) => {
+    const {
+      gameState,
+      size,
+      komi,
+      isGameOver,
+      gameOverReason,
+      deadStones,
+    } = get()
+
+    if (!isGameOver || gameOverReason !== "score") return
+
+    const index = y * size + x
+    const stone = gameState.board[index]
+    if (stone !== 1 && stone !== 2) return
+
+    const nextDeadStones = deadStones.includes(index)
+      ? deadStones.filter((deadStone) => deadStone !== index)
+      : [...deadStones, index].sort((a, b) => a - b)
+    const scoreResult = calculateScore(
+      gameState.board,
+      size,
+      gameState.captured,
+      komi,
+      { deadStones: nextDeadStones },
+    )
+
+    set({
+      deadStones: nextDeadStones,
+      scoreResult,
+      liveScore: scoreResult,
+      winner: scoreResult.winner,
+      scoreReviewConfirmed: false,
+    })
+  },
+
+  clearDeadStones: () => {
+    const { gameState, size, komi, isGameOver, gameOverReason } = get()
+    if (!isGameOver || gameOverReason !== "score") return
+
+    const scoreResult = calculateScore(
+      gameState.board,
+      size,
+      gameState.captured,
+      komi,
+    )
+
+    set({
+      deadStones: [],
+      scoreResult,
+      liveScore: scoreResult,
+      winner: scoreResult.winner,
+      scoreReviewConfirmed: false,
+    })
+  },
+
+  confirmScoreReview: () => {
+    set({ scoreReviewConfirmed: true })
   },
 
   setMode: (mode) => {
@@ -621,6 +692,8 @@ export const useGameStore = create<KomiStore>((set, get) => ({
       winner: null,
       gameOverReason: null,
       scoreResult: null,
+      deadStones: [],
+      scoreReviewConfirmed: true,
     })
   },
 
@@ -672,6 +745,8 @@ export const useGameStore = create<KomiStore>((set, get) => ({
       currentPlayer: gameState.turn,
       gameOverReason: "timeout",
       liveScore: calculateScore(gameState.board, get().size, gameState.captured, get().komi),
+      deadStones: [],
+      scoreReviewConfirmed: true,
       scoreResult: {
         winner,
         margin: Infinity,
@@ -762,6 +837,8 @@ export const useGameStore = create<KomiStore>((set, get) => ({
       winner: snapshot.winner,
       gameOverReason: snapshot.gameOverReason,
       scoreResult,
+      deadStones: [],
+      scoreReviewConfirmed: true,
     })
   },
 

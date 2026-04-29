@@ -8,6 +8,7 @@ export function Intersection({
   ghostColor,
   remoteGhostColor,
   isLastMove = false,
+  markedDead = false,
   hovered = false,
   remoteHovered = false,
   interactive = false,
@@ -17,6 +18,7 @@ export function Intersection({
   ghostColor?: StoneColor
   remoteGhostColor?: StoneColor
   isLastMove?: boolean
+  markedDead?: boolean
   hovered?: boolean
   remoteHovered?: boolean
   interactive?: boolean
@@ -36,7 +38,9 @@ export function Intersection({
         <Stone color={remoteGhostColor} ghost />
       ) : null}
       {!stone && hovered && ghostColor ? <Stone color={ghostColor} ghost /> : null}
-      {stone ? <Stone color={stone} isLastMove={isLastMove} /> : null}
+      {stone ? (
+        <Stone color={stone} isLastMove={isLastMove} markedDead={markedDead} />
+      ) : null}
     </div>
   )
 }
