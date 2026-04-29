@@ -55,7 +55,7 @@ Static audit compiled from code review only. No build, test, or browser verifica
 - [x] Add responsive collision handling between the board, dock, and right-side panels in `components/layout/game-layout.tsx`.
 - [x] Add a mobile-specific dock/panel behavior; `min(620px, calc(100vw - 2rem))` can cover most of the game on small screens.
 - [x] Fix `GameOverDialog` close behavior in `components/pages/home-page-client.tsx`; `onOpenChange={() => {}}` makes the close affordance non-functional.
-- [ ] Add richer game-over actions: review, save status, replay, rematch, and share.
+- [x] Add richer game-over actions: review, save status, replay, rematch, and share.
 
 ## P1: Tutor, Sensei, And AI UX
 

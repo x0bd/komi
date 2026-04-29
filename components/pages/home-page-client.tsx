@@ -392,6 +392,9 @@ export default function HomePageClient() {
     const joinRoom = useMultiplayerStore((state) => state.joinRoom);
     const leaveRoom = useMultiplayerStore((state) => state.leaveRoom);
     const persistedGameKeyRef = useRef<string | null>(null);
+    const [saveState, setSaveState] = useState<
+        "idle" | "saving" | "saved" | "skipped" | "failed"
+    >("idle");
     const [replayMoveNumber, setReplayMoveNumber] = useState<number | null>(
         null,
     );
@@ -452,16 +455,24 @@ export default function HomePageClient() {
     useEffect(() => {
         if (!isGameOver) {
             persistedGameKeyRef.current = null;
+            setSaveState("idle");
             return;
         }
         if (!gameOverReason || !winner) return;
         if (gameOverReason === "score" && !scoreReviewConfirmed) return;
-        if (mode === "local") return;
-        if (mode === "online" && onlineRole !== "host") return;
+        if (mode === "local") {
+            setSaveState("skipped");
+            return;
+        }
+        if (mode === "online" && onlineRole !== "host") {
+            setSaveState("skipped");
+            return;
+        }
 
         const persistenceKey = `${gameOverReason}:${winner}:${moveHistory.length}:${deadStones.join(",")}`;
         if (persistedGameKeyRef.current === persistenceKey) return;
         persistedGameKeyRef.current = persistenceKey;
+        setSaveState("saving");
 
         const resultCode = formatResultCode(
             gameOverReason,
@@ -483,22 +494,65 @@ export default function HomePageClient() {
                 result: resultCode,
                 sgf,
             }),
-        }).catch(() => {
-            // Allow retry after user starts a new game and ends again.
-            persistedGameKeyRef.current = null;
-        });
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Failed to save game");
+                }
+                setSaveState("saved");
+            })
+            .catch(() => {
+                // Allow retry after user starts a new game and ends again.
+                persistedGameKeyRef.current = null;
+                setSaveState("failed");
+            });
     }, [
         exportSGF,
         gameOverReason,
         isGameOver,
         deadStones,
+        komi,
         mode,
         moveHistory,
         onlineRole,
         scoreReviewConfirmed,
         scoreResult,
+        size,
         winner,
     ]);
+
+    const handleExportSgf = () => {
+        const sgf = exportSGF();
+        const filenameDate = new Date().toISOString().replace(/[:.]/g, "-");
+        const blob = new Blob([sgf], { type: "application/x-go-sgf" });
+        const objectUrl = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = objectUrl;
+        link.download = `komi-${filenameDate}.sgf`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(objectUrl);
+    };
+
+    const handleReplayFromDialog = () => {
+        if (maxReplayMove === 0) return;
+        setReplayMoveNumber(0);
+        setReplayIsPlaying(true);
+        setGameOverDialogDismissed(true);
+    };
+
+    const handleShareGame = () => {
+        const url = window.location.href;
+        const title = "Komi game";
+
+        if (navigator.share) {
+            void navigator.share({ title, url }).catch(() => undefined);
+            return;
+        }
+
+        void navigator.clipboard?.writeText(url);
+    };
 
     useEffect(() => {
         if (isGameOver) return;
@@ -628,6 +682,12 @@ export default function HomePageClient() {
                 }}
                 result={result}
                 reason={gameOverReason ?? "score"}
+                moveCount={moveHistory.length}
+                saveState={saveState}
+                onReview={() => setGameOverDialogDismissed(true)}
+                onReplay={handleReplayFromDialog}
+                onExportSgf={handleExportSgf}
+                onShare={handleShareGame}
                 onPlayAgain={() => resetGame()}
             />
         </OnlineRoomShell>
