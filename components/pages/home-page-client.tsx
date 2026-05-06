@@ -1463,31 +1463,6 @@ export function useSidebarPanels({
                             onExportSgf={handleExportSgf}
                         />
                     ) : null}
-                    <div className="flex items-center justify-between border border-border bg-background p-4">
-                        <div className="flex flex-col gap-1">
-                            <span className="font-sans text-sm font-semibold tracking-[-0.03em] text-foreground">
-                                Sensei Move Hints
-                            </span>
-                            <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
-                                Overlay optimal AI suggestions directly on the board
-                            </span>
-                        </div>
-                        <button
-                            onClick={() => setAnalysisOverlayEnabled(!analysisOverlayEnabled)}
-                            className={cn(
-                                "relative h-8 w-14 shrink-0 border border-border bg-transparent outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring",
-                                analysisOverlayEnabled && "bg-foreground",
-                            )}
-                        >
-                            <span
-                                className={cn(
-                                    "absolute left-[3px] top-[3px] h-5 w-5 border border-border bg-background transition-transform",
-                                    analysisOverlayEnabled && "translate-x-6 border-accent bg-accent"
-                                )}
-                            />
-                        </button>
-                    </div>
-
                     <AIChatPanel />
 
                     {isGameOver && replayState && replayState.maxMove > 0 ? (

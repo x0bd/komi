@@ -79,11 +79,21 @@ function buildLocalTutorFallback(question: string) {
     return "Local read: pause and count liberties around the last fight, then choose the move that keeps your stones connected while reducing the opponent's easiest territory.";
 }
 
-export function AIChatPanel({
-    className,
-}: {
-    className?: string;
-}) {
+function ToneIcon({ tone }: { tone: ChatMessageTone }) {
+    return (
+        <span
+            className={cn(
+                "flex size-9 shrink-0 items-center justify-center border border-border bg-foreground text-primary-foreground",
+                tone === "warning" && "border-accent bg-accent text-accent-foreground",
+                tone === "celebrate" && "border-status-active bg-status-active text-background",
+            )}
+        >
+            <LuBot className="size-4" />
+        </span>
+    );
+}
+
+export function AIChatPanel({ className }: { className?: string }) {
     const chatMessages = useLearningStore((state) => state.chatMessages);
     const tutorMood = useLearningStore((state) => state.tutorMood);
     const tutorGoal = useLearningStore((state) => state.tutorGoal);
@@ -96,6 +106,8 @@ export function AIChatPanel({
     const scoreResult = useGameStore((state) => state.scoreResult);
     const gameOverReason = useGameStore((state) => state.gameOverReason);
     const boardSize = useGameStore((state) => state.size);
+    const analysisOverlayEnabled = useGameStore((state) => state.analysisOverlayEnabled);
+    const setAnalysisOverlayEnabled = useGameStore((state) => state.setAnalysisOverlayEnabled);
     const [question, setQuestion] = useState("");
     const [isAsking, setIsAsking] = useState(false);
     const [isStreaming, setIsStreaming] = useState(false);
@@ -109,7 +121,6 @@ export function AIChatPanel({
     const askAbortRef = useRef<AbortController | null>(null);
     const reviewAbortRef = useRef<AbortController | null>(null);
 
-    const latestMessage = chatMessages[chatMessages.length - 1];
     const visibleMessages = chatMessages.slice(-12);
     const canAsk = question.trim().length > 0 && !isAsking && !isStreaming;
     const hasApiKey = openAIApiKey.trim().length > 0;
@@ -138,12 +149,12 @@ export function AIChatPanel({
 
     const moodLabel =
         tutorMood === "celebrate"
-            ? "Sensei is impressed"
+            ? "sensei is impressed"
             : tutorMood === "warning"
-              ? "Sensei sees danger"
+              ? "sensei sees danger"
               : tutorMood === "focus"
-                ? "Sensei sees a plan"
-                : "Sensei is calm";
+                ? "sensei sees a plan"
+                : "sensei is calm";
 
     useEffect(() => {
         if (typeof window === "undefined") return;
@@ -373,291 +384,317 @@ export function AIChatPanel({
     return (
         <div
             className={cn(
-                "flex flex-col gap-4 animate-in fade-in slide-in-from-bottom-2 duration-300 h-full",
+                "flex h-full min-h-0 flex-col gap-5 animate-in fade-in slide-in-from-bottom-2 duration-300",
                 className,
             )}
         >
-            <div className="rounded-none border-[3px] border-white bg-white p-4 shadow-[6px_6px_0_0_var(--swiss-red)] shrink-0">
-                <div className="flex items-start gap-4">
-                    <span className="mt-0.5 flex size-8 items-center justify-center rounded-none border-[3px] border-black bg-white text-black shadow-[3px_3px_0_0_var(--swiss-blue)]">
-                        <LuSparkles className="size-4" />
+            <section className="relative shrink-0 border border-border bg-background">
+                <div className="absolute bottom-0 left-0 h-1 w-full bg-accent" />
+                <div className="absolute right-0 top-0 h-full w-1 bg-accent" />
+                <div className="flex items-start gap-4 p-5 pr-6">
+                    <span className="mt-0.5 flex size-10 shrink-0 items-center justify-center border border-border bg-background">
+                        <LuSparkles className="size-5 text-foreground" />
                     </span>
                     <div className="min-w-0">
-                        <p className="text-[10px] font-black uppercase tracking-[0.15em] text-black/60">
-                            Current Goal • <span className="text-black/90 lowercase">{moodLabel}</span>
+                        <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+                            Current goal / <span className="lowercase tracking-[0.08em] text-foreground">{moodLabel}</span>
                         </p>
-                        <p className="mt-1 flex font-sans text-sm font-black tracking-tight text-black">
+                        <p className="mt-2 font-sans text-[17px] font-semibold leading-snug tracking-[-0.04em] text-foreground">
                             {tutorGoal}
                         </p>
-                        <p className="mt-1.5 text-[13px] text-black/80 leading-snug font-medium">
+                        <p className="mt-3 max-w-[26rem] font-sans text-[14px] leading-relaxed text-foreground/80">
                             {tutorCue}
                         </p>
                     </div>
                 </div>
-            </div>
-            <div className="grid grid-cols-3 gap-[3px] bg-black p-[3px] shrink-0 border-[3px] border-white shadow-[6px_6px_0_0_var(--swiss-blue)]">
-                        {(["passive", "active", "review"] as TutorMode[]).map(
-                            (mode) => (
-                                <button
-                                    key={mode}
-                                    type="button"
-                                    onClick={() => setTutorMode(mode)}
-                                    className={cn(
-                                        "rounded-none px-2 py-2 text-[11px] font-black uppercase tracking-[0.1em] transition-all duration-200 border border-transparent",
-                                        tutorMode === mode
-                                            ? "bg-white text-black shadow-none border-black/20"
-                                            : "text-white/60 hover:text-white bg-transparent",
-                                    )}
-                                >
-                                    {mode}
-                                </button>
-                            ),
+            </section>
+
+            <div className="grid shrink-0 grid-cols-3 gap-px border border-border bg-foreground p-px">
+                {(["passive", "active", "review"] as TutorMode[]).map((mode) => (
+                    <button
+                        key={mode}
+                        type="button"
+                        onClick={() => setTutorMode(mode)}
+                        className={cn(
+                            "h-11 bg-foreground font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-background/55 transition-colors hover:text-background",
+                            tutorMode === mode && "bg-background text-foreground",
                         )}
-                    </div>
+                    >
+                        {mode}
+                    </button>
+                ))}
+            </div>
 
-                    {latestAnalysis ? (
-                        <div className="rounded-none border-[3px] border-white bg-white p-4 shadow-[6px_6px_0_0_white] shrink-0">
-                            <div className="flex items-start justify-between gap-3">
-                                <div className="min-w-0">
-                                    <p className="text-[10px] font-black uppercase tracking-[0.16em] text-black/60">
-                                        Engine Read
-                                    </p>
-                                    <p className="mt-1 text-sm font-semibold text-black tracking-tight">
-                                        {latestAnalysis.summary}
-                                    </p>
-                                </div>
-                                <div className="inline-flex items-center gap-1 rounded-none border-[3px] border-black bg-black px-2.5 py-1 font-mono text-[11px] font-bold text-white shadow-[2px_2px_0_0_var(--swiss-blue)]">
-                                    <LuGauge className="size-3.5 text-swiss-yellow" />
-                                    {Math.round(
-                                        Math.max(
-                                            0,
-                                            Math.min(1, latestAnalysis.winRate),
-                                        ) * 100,
-                                    )}
-                                    %
-                                </div>
-                            </div>
+            <section className="flex shrink-0 items-center justify-between gap-4 border border-border bg-background px-4 py-3">
+                <div className="min-w-0">
+                    <p className="font-sans text-[14px] font-semibold tracking-[-0.03em] text-foreground">
+                        Board overlay
+                    </p>
+                    <p className="mt-1 truncate font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
+                        Show ranked move hints on the grid
+                    </p>
+                </div>
+                <button
+                    type="button"
+                    onClick={() => setAnalysisOverlayEnabled(!analysisOverlayEnabled)}
+                    className={cn(
+                        "relative h-8 w-14 shrink-0 border border-border bg-background outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring",
+                        analysisOverlayEnabled && "bg-foreground",
+                    )}
+                    aria-pressed={analysisOverlayEnabled}
+                    aria-label="Toggle board analysis overlay"
+                >
+                    <span
+                        className={cn(
+                            "absolute left-[3px] top-[3px] h-5 w-5 border border-border bg-background transition-transform",
+                            analysisOverlayEnabled && "translate-x-6 border-accent bg-accent",
+                        )}
+                    />
+                </button>
+            </section>
 
-                            <div className="mt-4 space-y-2">
-                                {latestAnalysis.topMoves.map((move, index) => (
-                                    <div
-                                        key={`${move.coordinate}-${index}`}
-                                        className="grid grid-cols-[auto_1fr_auto] items-center gap-3 rounded-none border-2 border-black/10 bg-black/5 px-2.5 py-2"
-                                    >
-                                        <span className="font-mono text-xs text-black/50 font-bold">
-                                            #{index + 1}
-                                        </span>
-                                        <div className="min-w-0">
-                                            <p className="truncate font-mono text-[13px] font-bold text-black">
-                                                {move.coordinate}
-                                            </p>
-                                            <p className="truncate font-mono text-[10px] text-black/60 font-semibold tracking-tight">
-                                                {move.reason}
-                                            </p>
-                                        </div>
-                                        <span className="font-mono text-[11px] font-black text-black/80">
-                                            {move.confidence}%
-                                        </span>
-                                    </div>
-                                ))}
-                            </div>
+            {latestAnalysis ? (
+                <section className="shrink-0 border border-border bg-background p-5">
+                    <div className="flex items-start justify-between gap-4">
+                        <div className="min-w-0">
+                            <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                                Engine read
+                            </p>
+                            <p className="mt-2 font-sans text-[15px] font-semibold leading-relaxed tracking-[-0.03em] text-foreground">
+                                {latestAnalysis.summary}
+                            </p>
                         </div>
-                    ) : null}
-
-                    {tutorMode === "review" ? (
-                        <div className="rounded-none border-[3px] border-white bg-white p-4 shadow-[6px_6px_0_0_white] shrink-0">
-                            <div className="flex items-center justify-between gap-3">
-                                <p className="text-[10px] font-black uppercase tracking-[0.16em] text-black/60">
-                                    Post-Game Review
-                                </p>
-                                {isGameOver ? (
-                                    <button
-                                        type="button"
-                                        onClick={() => void generateReview()}
-                                        disabled={isGeneratingReview}
-                                        className="rounded-none border-2 border-black bg-black px-2.5 py-1 text-[11px] font-bold text-white hover:bg-swiss-red transition-all disabled:opacity-60"
-                                    >
-                                        {isGeneratingReview ? "Updating..." : "Refresh"}
-                                    </button>
-                                ) : null}
-                            </div>
-                            {!isGameOver ? (
-                                <p className="mt-4 text-sm font-bold text-black/60 tracking-tight">
-                                    Review unlocks after game end.
-                                </p>
-                            ) : (
-                                <>
-                                    <p className="mt-4 text-sm font-bold text-black tracking-tight border-b-2 border-black/10 pb-3">
-                                        {isGeneratingReview ? "Sensei is preparing your recap..." : reviewSummary || "Generating review..."}
-                                    </p>
-                                    <div className="mt-4 space-y-2">
-                                        {recentReviewMoves.map((line, index) => (
-                                            <p
-                                                key={`${line}-${index}`}
-                                                className="rounded-none border-l-4 border-l-black bg-black/5 px-2.5 py-2 font-mono text-[11px] font-bold text-black/80"
-                                            >
-                                                {line}
-                                            </p>
-                                        ))}
-                                    </div>
-                                </>
+                        <div className="inline-flex shrink-0 items-center gap-1.5 border border-border bg-foreground px-3 py-2 font-mono text-[11px] font-semibold text-primary-foreground">
+                            <LuGauge className="size-3.5 text-warning" />
+                            {Math.round(
+                                Math.max(0, Math.min(1, latestAnalysis.winRate)) * 100,
                             )}
+                            %
                         </div>
-                    ) : null}
-
-                    <div className="flex-1 overflow-hidden rounded-none border-[3px] border-white bg-white relative min-h-[250px] shrink-0 shadow-[6px_6px_0_0_white]">
-                        <ScrollArea className="absolute inset-0 top-0 h-full w-full">
-                            <div className="p-5">
-                                {visibleMessages.map((message) => (
-                                    <div key={message.id} className="mb-6 flex gap-4">
-                                        <div className="flex size-8 shrink-0 select-none items-center justify-center rounded-none border-[3px] border-black bg-black text-white shadow-[2px_2px_0_0_var(--swiss-red)]">
-                                            <LuBot className="size-4" />
-                                        </div>
-                                        <div className="flex-1 space-y-1 mt-0.5">
-                                            <p className="text-[13px] font-black text-black">
-                                                Sensei
-                                                <span className="ml-2 font-bold text-black/50 text-[10px] uppercase tracking-wider">
-                                                    {message.tone === "coach" ? "Coach" : message.tone}
-                                                </span>
-                                            </p>
-                                            <p className="text-[13px] text-black/80 font-medium text-pretty leading-relaxed">
-                                                {message.text}
-                                            </p>
-                                        </div>
-                                    </div>
-                                ))}
-                                {isStreaming ? (
-                                    <div className="mb-6 flex gap-4">
-                                        <div className="flex size-8 shrink-0 select-none items-center justify-center rounded-none border-[3px] border-black bg-black text-white shadow-[2px_2px_0_0_var(--swiss-red)] animate-pulse">
-                                            <LuBot className="size-4" />
-                                        </div>
-                                        <div className="flex-1 space-y-1 mt-0.5">
-                                            <p className="text-[13px] font-black text-black">
-                                                Sensei
-                                                <span className="ml-2 font-bold text-black/50 text-[10px] uppercase tracking-wider">Thinking</span>
-                                            </p>
-                                            <p className="text-[13px] text-black/80 font-medium text-pretty leading-relaxed">
-                                                {streamingReply || "..."}
-                                            </p>
-                                        </div>
-                                    </div>
-                                ) : null}
-                                {!visibleMessages.length && !isStreaming ? (
-                                    <p className="py-10 text-center text-[13px] font-bold text-black/40 uppercase tracking-widest">
-                                        Awaiting next move
-                                    </p>
-                                ) : null}
-                            </div>
-                        </ScrollArea>
                     </div>
 
-                    <div className="flex flex-col gap-3 shrink-0 pb-4">
-                        {tutorMode === "active" ? (
-                            <div className="flex flex-col gap-3">
-                                <div className="w-full rounded-none border-[3px] border-white bg-white p-3 shadow-[4px_4px_0_0_white]">
-                                    <div className="flex items-center justify-between gap-2">
-                                        <p className="text-[11px] font-black uppercase tracking-[0.14em] text-black/60">
-                                            AI Key
-                                        </p>
-                                        <button
-                                            type="button"
-                                            onClick={() => setShowKeyEditor((current) => !current)}
-                                            className="inline-flex items-center gap-1 rounded-none border-2 border-black bg-black px-2.5 py-1 text-[11px] font-bold text-white hover:bg-swiss-blue transition-all"
-                                        >
-                                            <LuKeyRound className="size-3.5" />
-                                            {hasApiKey ? "Configured" : "Set key"}
-                                        </button>
-                                    </div>
-                                    {showKeyEditor ? (
-                                        <div className="mt-3 space-y-2">
-                                            <input
-                                                value={openAIApiKey}
-                                                onChange={(event) => setOpenAIApiKey(event.target.value)}
-                                                placeholder="sk-..."
-                                                type="password"
-                                                className="h-10 w-full rounded-none border-[3px] border-black bg-white px-3 text-sm font-bold text-black outline-none transition-all placeholder:text-black/40 focus:border-swiss-yellow"
-                                            />
-                                            <div className="flex items-center justify-end gap-2">
-                                                <button
-                                                    type="button"
-                                                    onClick={clearApiKey}
-                                                    className="inline-flex h-8 items-center rounded-none border-2 border-black bg-white px-3 text-xs font-bold text-black hover:bg-black hover:text-white transition-all"
-                                                >
-                                                    Clear
-                                                </button>
-                                                <button
-                                                    type="button"
-                                                    onClick={saveApiKey}
-                                                    className="inline-flex h-8 items-center rounded-none border-2 border-black bg-black px-3 text-xs font-bold text-white hover:bg-swiss-red transition-all"
-                                                >
-                                                    Save key
-                                                </button>
-                                            </div>
-                                        </div>
-                                    ) : (
-                                        <p className="mt-2 text-xs font-medium text-black/60">
-                                            {hasApiKey
-                                                ? "Using your key through the Komi server for live tutor responses."
-                                                : "No key set. Sensei uses local fallback responses."}
-                                        </p>
-                                    )}
+                    <div className="mt-5 grid gap-3">
+                        {latestAnalysis.topMoves.map((move, index) => (
+                            <div
+                                key={`${move.coordinate}-${index}`}
+                                className="grid grid-cols-[36px_1fr_auto] items-center gap-3 border border-border bg-subtle/40 px-3 py-3"
+                            >
+                                <span className="font-mono text-[12px] text-muted-foreground">
+                                    #{index + 1}
+                                </span>
+                                <div className="min-w-0">
+                                    <p className="truncate font-mono text-[13px] font-semibold text-foreground">
+                                        {move.coordinate}
+                                    </p>
+                                    <p className="truncate font-mono text-[10px] font-semibold tracking-[-0.02em] text-muted-foreground">
+                                        {move.reason}
+                                    </p>
                                 </div>
+                                <span className="font-mono text-[11px] font-semibold text-foreground">
+                                    {move.confidence}%
+                                </span>
+                            </div>
+                        ))}
+                    </div>
+                </section>
+            ) : null}
 
-                                <form
-                                    className="flex w-full items-center gap-2 relative"
-                                    onSubmit={(event) => {
-                                        event.preventDefault();
-                                        void handleAskSensei();
-                                    }}
-                                >
-                                    <input
-                                        value={question}
-                                        onChange={(event) => setQuestion(event.target.value)}
-                                        placeholder="Ask Sensei about this position..."
-                                        className="h-[44px] flex-1 rounded-none border-[3px] border-white bg-white pl-4 pr-12 text-sm font-bold text-black outline-none transition-all placeholder:text-black/40 focus:border-swiss-yellow shadow-[4px_4px_0_0_white]"
-                                    />
-                                    {isStreaming ? (
-                                        <button
-                                            type="button"
-                                            onClick={cancelAskSensei}
-                                            className="absolute right-2 top-[6px] inline-flex h-8 w-8 items-center justify-center rounded-none border-2 border-black bg-swiss-red text-white transition-all hover:bg-black hover:-translate-y-[1px]"
-                                            aria-label="Stop Sensei response"
-                                        >
-                                            <LuX className="size-3.5" />
-                                        </button>
-                                    ) : (
-                                        <button
-                                            type="submit"
-                                            disabled={!canAsk}
-                                            className="absolute right-2 top-[6px] inline-flex h-8 w-8 items-center justify-center rounded-none border-2 border-black bg-black text-white transition-all hover:bg-swiss-red hover:border-swiss-red hover:-translate-y-[1px] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
-                                            aria-label="Ask Sensei"
-                                        >
-                                            <LuSend className="size-3.5" />
-                                        </button>
-                                    )}
-                                </form>
+            {tutorMode === "review" ? (
+                <section className="shrink-0 border border-border bg-background p-5">
+                    <div className="flex items-center justify-between gap-3">
+                        <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                            Post-game review
+                        </p>
+                        {isGameOver ? (
+                            <button
+                                type="button"
+                                onClick={() => void generateReview()}
+                                disabled={isGeneratingReview}
+                                className="border border-border bg-foreground px-3 py-1.5 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-primary-foreground transition-colors hover:bg-accent hover:text-accent-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                            >
+                                {isGeneratingReview ? "Updating" : "Refresh"}
+                            </button>
+                        ) : null}
+                    </div>
+                    {!isGameOver ? (
+                        <p className="mt-4 border-l border-border pl-3 font-sans text-[14px] text-muted-foreground">
+                            Review unlocks after game end.
+                        </p>
+                    ) : (
+                        <>
+                            <p className="mt-4 border-b border-border pb-4 font-sans text-[14px] font-semibold leading-relaxed tracking-[-0.02em] text-foreground">
+                                {isGeneratingReview ? "Sensei is preparing your recap..." : reviewSummary || "Generating review..."}
+                            </p>
+                            <div className="mt-4 grid gap-2">
+                                {recentReviewMoves.map((line, index) => (
+                                    <p
+                                        key={`${line}-${index}`}
+                                        className="border-l border-foreground bg-subtle/45 px-3 py-2 font-mono text-[11px] leading-relaxed text-foreground/80"
+                                    >
+                                        {line}
+                                    </p>
+                                ))}
+                            </div>
+                        </>
+                    )}
+                </section>
+            ) : null}
+
+            <section className="relative min-h-[250px] flex-1 overflow-hidden border border-border bg-background">
+                <ScrollArea className="absolute inset-0 h-full w-full">
+                    <div className="p-5">
+                        {visibleMessages.map((message) => (
+                            <div key={message.id} className="mb-6 grid grid-cols-[36px_1fr] gap-4">
+                                <ToneIcon tone={message.tone} />
+                                <div className="min-w-0 border-b border-border pb-5">
+                                    <p className="font-sans text-[14px] font-semibold tracking-[-0.03em] text-foreground">
+                                        Sensei
+                                        <span className="ml-2 font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                                            {message.tone === "coach" ? "Coach" : message.tone}
+                                        </span>
+                                    </p>
+                                    <p className="mt-2 font-sans text-[13px] leading-relaxed text-foreground/80">
+                                        {message.text}
+                                    </p>
+                                </div>
+                            </div>
+                        ))}
+
+                        {isStreaming ? (
+                            <div className="mb-6 grid grid-cols-[36px_1fr] gap-4">
+                                <ToneIcon tone="coach" />
+                                <div className="min-w-0 border-b border-border pb-5">
+                                    <p className="font-sans text-[14px] font-semibold tracking-[-0.03em] text-foreground">
+                                        Sensei
+                                        <span className="ml-2 font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                                            Thinking
+                                        </span>
+                                    </p>
+                                    <p className="mt-2 font-sans text-[13px] leading-relaxed text-foreground/80">
+                                        {streamingReply || "..."}
+                                    </p>
+                                </div>
                             </div>
                         ) : null}
 
-                        {tutorMode === "passive" ? (
-                            <p className="w-full rounded-none border-[3px] border-white bg-white px-4 py-3 text-sm font-bold text-black/60 shadow-[4px_4px_0_0_white]">
-                                Passive mode keeps hints lightweight while you focus on play.
+                        {!visibleMessages.length && !isStreaming ? (
+                            <p className="border border-dashed border-border px-3 py-2 text-center font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                                Awaiting next move
                             </p>
                         ) : null}
-
-                        {tutorMode !== "review"
-                            ? QUICK_TIPS.map((topic) => (
-                                  <button
-                                      key={topic}
-                                      type="button"
-                                      onClick={() => requestTip(topic)}
-                                      className="inline-flex min-h-9 items-center rounded-none border-[3px] border-white bg-white px-4 text-sm font-black text-black transition-all hover:bg-black hover:text-white hover:border-white shadow-[3px_3px_0_0_white]"
-                                  >
-                                      {topic}
-                                  </button>
-                              ))
-                            : null}
                     </div>
+                </ScrollArea>
+            </section>
+
+            <div className="flex shrink-0 flex-col gap-3 pb-1">
+                {tutorMode === "active" ? (
+                    <div className="flex flex-col gap-3">
+                        <section className="border border-border bg-background p-4">
+                            <div className="flex items-center justify-between gap-3">
+                                <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                                    AI key
+                                </p>
+                                <button
+                                    type="button"
+                                    onClick={() => setShowKeyEditor((current) => !current)}
+                                    className="inline-flex items-center gap-2 border border-border bg-background px-3 py-1.5 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-foreground transition-colors hover:bg-subtle"
+                                >
+                                    <LuKeyRound className="size-3.5" />
+                                    {hasApiKey ? "Configured" : "Set key"}
+                                </button>
+                            </div>
+                            {showKeyEditor ? (
+                                <div className="mt-3 space-y-3">
+                                    <input
+                                        value={openAIApiKey}
+                                        onChange={(event) => setOpenAIApiKey(event.target.value)}
+                                        placeholder="sk-..."
+                                        type="password"
+                                        className="h-10 w-full border border-border bg-background px-3 font-mono text-[12px] font-semibold text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-foreground"
+                                    />
+                                    <div className="flex items-center justify-end gap-px bg-border p-px">
+                                        <button
+                                            type="button"
+                                            onClick={clearApiKey}
+                                            className="inline-flex h-8 items-center bg-background px-3 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-foreground transition-colors hover:bg-subtle"
+                                        >
+                                            Clear
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={saveApiKey}
+                                            className="inline-flex h-8 items-center bg-foreground px-3 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-primary-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                                        >
+                                            Save key
+                                        </button>
+                                    </div>
+                                </div>
+                            ) : (
+                                <p className="mt-3 font-sans text-[12px] leading-relaxed text-muted-foreground">
+                                    {hasApiKey
+                                        ? "Using your key through the Komi server for live tutor responses."
+                                        : "No key set. Sensei uses local fallback responses."}
+                                </p>
+                            )}
+                        </section>
+
+                        <form
+                            className="relative flex w-full items-center"
+                            onSubmit={(event) => {
+                                event.preventDefault();
+                                void handleAskSensei();
+                            }}
+                        >
+                            <input
+                                value={question}
+                                onChange={(event) => setQuestion(event.target.value)}
+                                placeholder="Ask Sensei about this position..."
+                                className="h-12 flex-1 border border-border bg-background pl-4 pr-14 font-sans text-[14px] font-semibold text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-foreground"
+                            />
+                            {isStreaming ? (
+                                <button
+                                    type="button"
+                                    onClick={cancelAskSensei}
+                                    className="absolute right-2 top-2 inline-flex size-8 items-center justify-center border border-border bg-accent text-accent-foreground transition-colors hover:bg-foreground hover:text-primary-foreground"
+                                    aria-label="Stop Sensei response"
+                                >
+                                    <LuX className="size-3.5" />
+                                </button>
+                            ) : (
+                                <button
+                                    type="submit"
+                                    disabled={!canAsk}
+                                    className="absolute right-2 top-2 inline-flex size-8 items-center justify-center border border-border bg-foreground text-primary-foreground transition-colors hover:bg-accent hover:text-accent-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                                    aria-label="Ask Sensei"
+                                >
+                                    <LuSend className="size-3.5" />
+                                </button>
+                            )}
+                        </form>
+                    </div>
+                ) : null}
+
+                {tutorMode === "passive" ? (
+                    <p className="border border-border bg-background px-4 py-3 font-sans text-[13px] leading-relaxed text-muted-foreground">
+                        Passive mode keeps hints lightweight while you focus on play.
+                    </p>
+                ) : null}
+
+                {tutorMode !== "review" ? (
+                    <div className="flex flex-wrap gap-2">
+                        {QUICK_TIPS.map((topic) => (
+                            <button
+                                key={topic}
+                                type="button"
+                                onClick={() => requestTip(topic)}
+                                className="inline-flex min-h-9 items-center border border-border bg-background px-3 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-foreground transition-colors hover:bg-subtle"
+                            >
+                                {topic}
+                            </button>
+                        ))}
+                    </div>
+                ) : null}
+            </div>
         </div>
     );
 }
