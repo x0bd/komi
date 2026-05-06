@@ -1,8 +1,16 @@
 "use client"
 
 import Link from "next/link"
+import type { ReactNode } from "react"
 import { useEffect, useMemo, useState } from "react"
-import { LuArrowRight, LuClock3, LuRefreshCw, LuTrophy, LuSearch, LuCalendar } from "react-icons/lu"
+import {
+  LuArrowRight,
+  LuCalendar,
+  LuClock3,
+  LuRefreshCw,
+  LuSearch,
+  LuTrophy,
+} from "react-icons/lu"
 import { cn } from "@/lib/utils"
 
 type GameSummary = {
@@ -33,7 +41,7 @@ const RESULT_FILTERS: Array<{
 
 function formatDate(value: string) {
   const date = new Date(value)
-  if (Number.isNaN(date.getTime())) return "—"
+  if (Number.isNaN(date.getTime())) return "--"
   return new Intl.DateTimeFormat("en-US", {
     year: "numeric",
     month: "short",
@@ -41,18 +49,18 @@ function formatDate(value: string) {
   }).format(date)
 }
 
-function outcomeBadge(outcome: GameSummary["outcome"]) {
-  if (outcome === "win")  return "bg-[var(--swiss-blue)] text-white"
-  if (outcome === "loss") return "bg-[var(--swiss-red)] text-white"
-  if (outcome === "draw") return "bg-[var(--swiss-yellow)] text-black"
-  return "bg-black text-white"
+function outcomeLabel(outcome: GameSummary["outcome"]) {
+  if (outcome === "win") return "Win"
+  if (outcome === "loss") return "Loss"
+  if (outcome === "draw") return "Draw"
+  return "Pending"
 }
 
-function avatarBg(outcome: GameSummary["outcome"]) {
-  if (outcome === "win")  return "bg-[var(--swiss-blue)] text-white"
-  if (outcome === "loss") return "bg-[var(--swiss-red)] text-white"
-  if (outcome === "draw") return "bg-[var(--swiss-yellow)] text-black"
-  return "bg-black text-white"
+function outcomeAccent(outcome: GameSummary["outcome"]) {
+  if (outcome === "win") return "bg-signal"
+  if (outcome === "loss") return "bg-accent"
+  if (outcome === "draw") return "bg-warning"
+  return "bg-foreground"
 }
 
 export function GameHistoryPageClient() {
@@ -107,54 +115,57 @@ export function GameHistoryPageClient() {
   }, [queryString, refreshTick])
 
   return (
-    <main className="min-h-svh bg-white">
-      {/* ── HERO HEADER ── */}
-      <header className="bg-black text-white border-b-[8px] border-b-swiss-red">
-        <div className="mx-auto max-w-5xl px-6 lg:px-10 py-10 lg:py-16 flex flex-wrap items-end justify-between gap-8">
-          <div>
-            <p className="text-[10px] font-black uppercase tracking-[0.35em] text-white/40 mb-3">
-              Komi / Archive
+    <main className="min-h-svh bg-background text-foreground">
+      <header className="relative overflow-hidden border-b border-border">
+        <span className="pointer-events-none absolute right-8 top-6 hidden font-sans text-[9rem] font-semibold leading-none text-foreground/10 md:block">
+          記録
+        </span>
+        <div className="mx-auto grid max-w-6xl gap-8 px-6 py-10 lg:grid-cols-[1fr_auto] lg:px-10 lg:py-14">
+          <div className="min-w-0">
+            <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.28em] text-muted-foreground">
+              Komi / Record
             </p>
-            <h1 className="font-sans text-[3.5rem] lg:text-[6rem] font-black tracking-tighter text-white leading-[0.9] uppercase">
-              Game<br />History.
+            <h1 className="mt-4 font-sans text-5xl font-semibold leading-[0.9] tracking-[-0.07em] text-foreground lg:text-7xl">
+              Game History
             </h1>
+            <p className="mt-5 max-w-xl font-sans text-[15px] leading-relaxed text-muted-foreground">
+              A match archive for replay, review, and shape memory.
+            </p>
           </div>
 
-          <div className="flex items-center gap-3 self-end">
+          <div className="flex items-end gap-px bg-border p-px self-end">
             <button
-              onClick={() => setRefreshTick((v) => v + 1)}
-              className="inline-flex items-center gap-2 h-11 px-5 rounded-none border-[3px] border-white bg-transparent text-white font-mono font-black uppercase tracking-widest text-[12px] hover:bg-white hover:text-black transition-all"
+              type="button"
+              onClick={() => setRefreshTick((value) => value + 1)}
+              className="inline-flex h-11 items-center gap-2 bg-background px-5 font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-foreground transition-colors hover:bg-subtle"
             >
               <LuRefreshCw className="size-4" />
               Refresh
             </button>
             <Link
               href="/"
-              className="inline-flex items-center gap-2 h-11 px-5 rounded-none border-[3px] border-white bg-white text-black font-mono font-black uppercase tracking-widest text-[12px] hover:bg-swiss-yellow hover:border-swiss-yellow transition-all"
+              className="inline-flex h-11 items-center gap-2 bg-foreground px-5 font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-primary-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
             >
-              ← Board
+              Board
+              <LuArrowRight className="size-4" />
             </Link>
           </div>
         </div>
       </header>
 
-      {/* ── FILTER BAR ── */}
-      <div className="border-b-[3px] border-black bg-white sticky top-0 z-10 shadow-[0_4px_0_0_rgba(0,0,0,0.08)]">
-        <div className="mx-auto max-w-5xl px-6 lg:px-10 py-4 flex flex-wrap items-center gap-4 justify-between">
-
-          {/* Outcome pills */}
-          <div className="flex items-center gap-[3px] bg-black p-[3px]">
+      <section className="sticky top-0 z-20 border-b border-border bg-background">
+        <div className="mx-auto grid max-w-6xl gap-4 px-6 py-4 lg:grid-cols-[auto_1fr] lg:px-10">
+          <div className="grid grid-cols-4 gap-px border border-border bg-border">
             {RESULT_FILTERS.map((option) => {
               const isActive = resultFilter === option.value
               return (
                 <button
                   key={option.value}
+                  type="button"
                   onClick={() => setResultFilter(option.value)}
                   className={cn(
-                    "px-5 py-2 rounded-none font-mono text-[12px] font-black tracking-widest uppercase transition-none whitespace-nowrap",
-                    isActive
-                      ? "bg-white text-black"
-                      : "text-white/50 hover:text-white"
+                    "h-10 bg-background px-4 font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground transition-colors hover:bg-subtle hover:text-foreground",
+                    isActive && "bg-foreground text-primary-foreground hover:bg-foreground hover:text-primary-foreground",
                   )}
                 >
                   {option.label}
@@ -163,136 +174,134 @@ export function GameHistoryPageClient() {
             })}
           </div>
 
-          {/* Search + Date */}
-          <div className="flex items-center gap-3 flex-wrap">
-            <div className="relative">
-              <LuSearch className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-black/40" />
+          <div className="flex flex-wrap items-center gap-3 lg:justify-end">
+            <label className="relative min-w-[13rem] flex-1 lg:flex-none">
+              <LuSearch className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
               <input
                 value={opponentFilter}
-                onChange={(e) => setOpponentFilter(e.target.value)}
-                placeholder="Search opponent…"
-                className="h-10 pl-9 pr-4 rounded-none border-[3px] border-black bg-white text-black font-mono font-bold text-[13px] placeholder:text-black/30 outline-none focus:border-swiss-blue w-44"
+                onChange={(event) => setOpponentFilter(event.target.value)}
+                placeholder="Search opponent..."
+                className="h-10 w-full border border-border bg-background pl-9 pr-3 font-mono text-[12px] font-semibold text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-foreground lg:w-56"
               />
-            </div>
+            </label>
 
-            <div className="flex items-center gap-2 border-[3px] border-black h-10 px-3">
-              <LuCalendar className="size-4 text-black/40 shrink-0" />
+            <div className="flex h-10 items-center gap-2 border border-border bg-background px-3">
+              <LuCalendar className="size-4 shrink-0 text-muted-foreground" />
               <input
                 type="date"
                 value={fromDate}
-                onChange={(e) => setFromDate(e.target.value)}
-                className="bg-transparent text-[12px] font-mono font-bold text-black outline-none w-[100px] [&::-webkit-calendar-picker-indicator]:opacity-40"
+                onChange={(event) => setFromDate(event.target.value)}
+                className="w-[100px] bg-transparent font-mono text-[11px] font-semibold text-foreground outline-none"
               />
-              <span className="text-black/30 font-bold">—</span>
+              <span className="h-4 w-px bg-border" />
               <input
                 type="date"
                 value={toDate}
-                onChange={(e) => setToDate(e.target.value)}
-                className="bg-transparent text-[12px] font-mono font-bold text-black outline-none w-[100px] [&::-webkit-calendar-picker-indicator]:opacity-40"
+                onChange={(event) => setToDate(event.target.value)}
+                className="w-[100px] bg-transparent font-mono text-[11px] font-semibold text-foreground outline-none"
               />
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* ── TABLE ── */}
-      <div className="mx-auto max-w-5xl px-6 lg:px-10 py-8">
-        {/* Table Header */}
-        <div className="grid grid-cols-[3fr_1fr_1fr_1fr_auto] gap-0 border-b-[3px] border-black pb-3 mb-1">
-          <span className="text-[10px] font-black uppercase tracking-[0.2em] text-black/40">Opponent</span>
-          <span className="text-[10px] font-black uppercase tracking-[0.2em] text-black/40">Result</span>
-          <span className="text-[10px] font-black uppercase tracking-[0.2em] text-black/40">Moves</span>
-          <span className="text-[10px] font-black uppercase tracking-[0.2em] text-black/40">Date</span>
+      <section className="mx-auto max-w-6xl px-6 py-8 lg:px-10">
+        <div className="grid grid-cols-[minmax(0,3fr)_0.8fr_0.8fr_1fr_48px] border-b border-border pb-3">
+          <TableHead>Opponent</TableHead>
+          <TableHead>Result</TableHead>
+          <TableHead>Moves</TableHead>
+          <TableHead>Date</TableHead>
           <span className="sr-only">Actions</span>
         </div>
 
-        {/* Loading */}
         {isLoading ? (
           <div className="flex items-center justify-center py-24">
-            <div className="w-10 h-10 border-[3px] border-black border-t-transparent animate-spin" />
+            <div className="size-10 animate-spin border border-border border-t-foreground" />
           </div>
         ) : null}
 
-        {/* Error */}
         {!isLoading && error ? (
-          <div className="border-[3px] border-swiss-red bg-swiss-red/5 p-8 mt-4">
-            <p className="font-mono font-black text-swiss-red text-sm uppercase tracking-wider">{error}</p>
-          </div>
-        ) : null}
-
-        {/* Empty */}
-        {!isLoading && !error && games.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-24 gap-4">
-            <LuTrophy className="size-10 text-black/20" />
-            <p className="font-mono font-black text-[13px] uppercase tracking-widest text-black/40">
-              No matches found
+          <div className="mt-4 border border-accent bg-background p-6">
+            <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-accent">
+              {error}
             </p>
           </div>
         ) : null}
 
-        {/* Rows */}
+        {!isLoading && !error && games.length === 0 ? (
+          <div className="flex flex-col items-center justify-center gap-4 border-b border-border py-24">
+            <LuTrophy className="size-9 text-foreground/20" />
+            <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+              No record yet
+            </p>
+          </div>
+        ) : null}
+
         {!isLoading && !error && games.length > 0 ? (
-          <div className="divide-y-[2px] divide-black/10">
+          <div className="divide-y divide-border">
             {games.map((game) => (
               <Link
                 key={game.id}
                 href={`/replay/${game.id}`}
-                className="group grid grid-cols-[3fr_1fr_1fr_1fr_auto] gap-0 items-center py-5 hover:bg-black hover:text-white transition-colors duration-100 -mx-2 px-2"
+                className="group grid grid-cols-[minmax(0,3fr)_0.8fr_0.8fr_1fr_48px] items-center transition-colors hover:bg-subtle"
               >
-                {/* Opponent col */}
-                <div className="flex items-center gap-4 min-w-0">
-                  <span className="flex size-9 shrink-0 items-center justify-center rounded-none font-black text-[15px] border-[2px] border-black bg-black text-white group-hover:border-white">
+                <div className="flex min-w-0 items-center gap-4 py-4 pr-4">
+                  <span className="flex size-9 shrink-0 items-center justify-center border border-border bg-background font-mono text-[12px] font-semibold uppercase text-foreground">
                     {game.opponent.label.charAt(0).toUpperCase()}
                   </span>
                   <div className="min-w-0">
-                    <p className="font-sans font-black text-[15px] tracking-tight leading-tight truncate group-hover:text-white">
+                    <p className="truncate font-sans text-[15px] font-semibold tracking-[-0.03em] text-foreground">
                       {game.opponent.label}
                     </p>
-                    <p className="font-mono text-[11px] text-black/40 group-hover:text-white/50 uppercase tracking-wider mt-0.5">
+                    <p className="mt-1 font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
                       Played as {game.myColor}
                     </p>
                   </div>
                 </div>
 
-                {/* Result col */}
-                <div>
-                  <span className="font-mono text-[12px] font-black uppercase tracking-widest text-black group-hover:text-white">
-                    {game.outcome}
+                <div className="flex items-center gap-2 py-4">
+                  <span className={cn("size-2", outcomeAccent(game.outcome))} />
+                  <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-foreground">
+                    {outcomeLabel(game.outcome)}
                   </span>
                 </div>
 
-                {/* Moves col */}
-                <div className="font-mono font-black text-[15px] text-black group-hover:text-white tabular-nums">
+                <div className="py-4 font-mono text-[15px] font-semibold tabular-nums tracking-[-0.04em] text-foreground">
                   {game.moveCount}
                 </div>
 
-                {/* Date col */}
-                <div className="font-mono text-[12px] font-bold text-black/50 group-hover:text-white/60 flex items-center gap-1.5">
+                <div className="flex items-center gap-2 py-4 font-mono text-[11px] font-semibold text-muted-foreground">
                   <LuClock3 className="size-3.5 shrink-0" />
                   {formatDate(game.startedAt)}
                 </div>
 
-                {/* Arrow col */}
-                <div className="pl-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <LuArrowRight className="size-5 text-white" />
+                <div className="flex h-full items-center justify-center border-l border-border text-muted-foreground transition-colors group-hover:bg-foreground group-hover:text-primary-foreground">
+                  <LuArrowRight className="size-4" />
                 </div>
               </Link>
             ))}
           </div>
         ) : null}
 
-        {/* Count footer */}
         {!isLoading && games.length > 0 ? (
-          <div className="mt-8 pt-4 border-t-[3px] border-black flex items-center justify-between">
-            <span className="font-mono font-black text-[11px] uppercase tracking-widest text-black/40">
+          <footer className="mt-8 flex items-center justify-between border-t border-border pt-4">
+            <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
               {games.length} match{games.length !== 1 ? "es" : ""} found
             </span>
-            <span className="font-mono font-black text-[11px] uppercase tracking-widest text-black/40">
-              Komi Archive
+            <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+              記録 / archive
             </span>
-          </div>
+          </footer>
         ) : null}
-      </div>
+      </section>
     </main>
+  )
+}
+
+function TableHead({ children }: { children: ReactNode }) {
+  return (
+    <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+      {children}
+    </span>
   )
 }
