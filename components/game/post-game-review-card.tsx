@@ -1,7 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import type { ReactNode } from "react";
 import { LuCheck, LuDownload, LuFlag, LuRotateCcw } from "react-icons/lu";
 import type { ScoreResult } from "@/lib/engine/scoring";
 
@@ -45,6 +44,11 @@ function formatOutcome({
     return `${winnerLabel} wins`;
 }
 
+function formatPoint(value: number | undefined) {
+    if (typeof value !== "number" || !Number.isFinite(value)) return "0";
+    return Number.isInteger(value) ? String(value) : value.toFixed(1);
+}
+
 export function PostGameReviewCard({
     scoreResult,
     winner,
@@ -71,187 +75,222 @@ export function PostGameReviewCard({
     onExportSgf: () => void;
 }) {
     return (
-        <div className="flex flex-col gap-6 w-full rounded-none border-2 border-border bg-card p-5 lg:p-6 shadow-[4px_4px_0_0_var(--foreground)]">
-            <div className="flex items-start justify-between gap-3 px-1">
-                <div>
-                    <h3 className="text-2xl font-display font-black uppercase tracking-tighter text-foreground">
-                        Post-game review
-                    </h3>
-                    <p className="font-mono text-[11px] font-bold uppercase text-muted-foreground mt-1">
-                        {formatOutcome({ winner, reason, scoreResult })}
-                    </p>
+        <section className="relative flex w-full flex-col overflow-hidden border border-border bg-background">
+            <span className="pointer-events-none absolute -right-5 top-6 font-sans text-[7rem] font-semibold leading-none text-foreground/10">
+                勝
+            </span>
+
+            <header className="relative border-b border-border px-5 py-5">
+                <div className="flex items-start justify-between gap-4">
+                    <div className="min-w-0">
+                        <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+                            Post-game dossier
+                        </p>
+                        <h3 className="mt-2 font-sans text-3xl font-semibold leading-none tracking-[-0.06em] text-foreground">
+                            Review Board
+                        </h3>
+                        <p className="mt-2 font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+                            {formatOutcome({ winner, reason, scoreResult })}
+                        </p>
+                    </div>
+                    <span className="inline-flex items-center gap-2 border border-border bg-background px-3 py-1.5 font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-foreground">
+                        <LuFlag className="size-3.5" />
+                        Final
+                    </span>
                 </div>
-                <Badge
-                    variant="outline"
-                    className="inline-flex items-center gap-1.5 rounded-none border-2 border-border px-3 py-1 font-mono font-bold text-[11px] uppercase tracking-widest bg-background text-foreground shadow-[2px_2px_0_0_var(--foreground)]"
-                >
-                    <LuFlag className="size-3.5" />
-                    Final
-                </Badge>
-            </div>
+            </header>
 
             {scoreResult ? (
-                <div className="flex flex-col gap-3">
-                    <div className="grid grid-cols-2 gap-4">
-                        {/* Black Stat Block */}
-                        <div className="flex flex-col bg-swiss-blue text-white border-2 border-border rounded-none p-5 shadow-[4px_4px_0_0_var(--foreground)] w-full transition-transform hover:-translate-y-1 group">
-                            <div className="flex items-center justify-between mb-6">
-                                <span className="text-[12px] font-mono font-bold uppercase tracking-widest text-white">Black</span>
-                                <div className="size-4 rounded-none bg-black border-2 border-transparent" />
-                            </div>
-                            <div className="mt-auto">
-                                <span className="text-5xl font-display font-black tracking-tighter text-white group-hover:scale-105 transition-transform origin-left inline-block">
-                                    {scoreResult.black.total.toFixed(1)}
-                                </span>
-                                <div className="flex flex-col gap-2 mt-4 pt-4 border-t border-white/20">
-                                    <div className="flex items-center justify-between text-[11px] font-bold text-white/70 uppercase tracking-wider">
-                                        <span>Territory</span>
-                                        <span className="font-mono text-white text-[13px]">{scoreResult.black.territory}</span>
-                                    </div>
-                                    <div className="flex items-center justify-between text-[11px] font-bold text-white/70 uppercase tracking-wider">
-                                        <span>Captures</span>
-                                        <span className="font-mono text-white text-[13px]">{scoreResult.black.captures}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* White Stat Block */}
-                        <div className="flex flex-col bg-swiss-red text-white border-2 border-border rounded-none p-5 shadow-[4px_4px_0_0_var(--foreground)] w-full transition-transform hover:-translate-y-1 group">
-                            <div className="flex items-center justify-between mb-6">
-                                <span className="text-[12px] font-mono font-bold uppercase tracking-widest text-white">White</span>
-                                <div className="size-4 rounded-none bg-white border-2 border-transparent" />
-                            </div>
-                            <div className="mt-auto">
-                                <span className="text-5xl font-display font-black tracking-tighter text-white group-hover:scale-105 transition-transform origin-left inline-block">
-                                    {scoreResult.white.total.toFixed(1)}
-                                </span>
-                                <div className="flex flex-col gap-2 mt-4 pt-4 border-t border-white/20">
-                                    <div className="flex items-center justify-between text-[11px] font-bold text-white/70 uppercase tracking-wider">
-                                        <span>Territory</span>
-                                        <span className="font-mono text-white text-[13px]">{scoreResult.white.territory}</span>
-                                    </div>
-                                    <div className="flex items-center justify-between text-[11px] font-bold text-white/70 uppercase tracking-wider">
-                                        <span>Komi</span>
-                                        <span className="font-mono text-white text-[13px]">+{scoreResult.white.komi?.toFixed(1) ?? "0.0"}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                <div className="border-b border-border">
+                    <div className="grid grid-cols-2 divide-x divide-border">
+                        <ScoreColumn
+                            label="Black"
+                            kanji="黒"
+                            total={scoreResult.black.total}
+                            rows={[
+                                ["Territory", formatPoint(scoreResult.black.territory)],
+                                ["Captures", formatPoint(scoreResult.black.captures)],
+                            ]}
+                        />
+                        <ScoreColumn
+                            label="White"
+                            kanji="白"
+                            total={scoreResult.white.total}
+                            rows={[
+                                ["Territory", formatPoint(scoreResult.white.territory)],
+                                ["Komi", `+${formatPoint(scoreResult.white.komi)}`],
+                            ]}
+                        />
                     </div>
+
                     {canReviewDeadStones ? (
-                        <div className="flex flex-col gap-3 border-2 border-border bg-background/80 p-3 shadow-[3px_3px_0_0_var(--foreground)]">
-                            <div className="flex items-start justify-between gap-3">
-                                <div>
-                                    <p className="font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
-                                        Dead-stone review
-                                    </p>
-                                    <p className="mt-1 text-[12px] font-semibold leading-snug text-foreground">
-                                        Select stones on the board before confirming the final score.
-                                    </p>
+                        <div className="border-t border-border p-4">
+                            <div className="border border-border bg-background">
+                                <div className="flex items-start justify-between gap-3 border-b border-border px-4 py-3">
+                                    <div>
+                                        <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                                            Dead-stone review
+                                        </p>
+                                        <p className="mt-1 font-sans text-[13px] leading-relaxed text-foreground/80">
+                                            Select stones on the board before confirming the final score.
+                                        </p>
+                                    </div>
+                                    <span className="border border-border px-2 py-1 font-mono text-[10px] font-semibold uppercase tracking-[0.12em] text-foreground">
+                                        Marked: {deadStoneCount}
+                                    </span>
                                 </div>
-                                <Badge
-                                    variant="outline"
-                                    className="rounded-none border-2 border-border bg-card px-2 py-1 font-mono text-[10px] font-bold uppercase"
-                                >
-                                    Marked: {deadStoneCount}
-                                </Badge>
-                            </div>
-                            <div className="grid grid-cols-2 gap-2">
-                                <Button
-                                    type="button"
-                                    variant="outline"
-                                    onClick={onClearDeadStones}
-                                    disabled={deadStoneCount === 0}
-                                    className="h-10 rounded-none border-2 border-border font-mono text-[11px] font-bold uppercase tracking-widest"
-                                >
-                                    <LuRotateCcw className="mr-2 size-3.5" />
-                                    Clear
-                                </Button>
-                                <Button
-                                    type="button"
-                                    onClick={onConfirmScore}
-                                    className="h-10 rounded-none border-2 border-foreground font-mono text-[11px] font-bold uppercase tracking-widest shadow-[3px_3px_0_0_var(--foreground)]"
-                                >
-                                    <LuCheck className="mr-2 size-3.5" />
-                                    {scoreReviewPending ? "Confirm" : "Confirmed"}
-                                </Button>
+                                <div className="grid grid-cols-2 divide-x divide-border">
+                                    <button
+                                        type="button"
+                                        onClick={onClearDeadStones}
+                                        disabled={deadStoneCount === 0}
+                                        className="flex h-10 items-center justify-center gap-2 bg-background font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-foreground transition-colors hover:bg-subtle disabled:cursor-not-allowed disabled:opacity-40"
+                                    >
+                                        <LuRotateCcw className="size-3.5" />
+                                        Clear
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={onConfirmScore}
+                                        disabled={!onConfirmScore}
+                                        className="flex h-10 items-center justify-center gap-2 bg-foreground font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-primary-foreground transition-colors hover:bg-accent hover:text-accent-foreground disabled:cursor-not-allowed disabled:opacity-40"
+                                    >
+                                        <LuCheck className="size-3.5" />
+                                        {scoreReviewPending ? "Confirm" : "Confirmed"}
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     ) : null}
-                    <p className="border-2 border-dashed border-border/60 bg-background/70 px-3 py-2 font-mono text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
+
+                    <p className="border-t border-border px-4 py-3 font-mono text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
                         Estimate only. Dead stones, seki, and neutral points are not manually adjudicated yet.
                     </p>
                 </div>
             ) : (
-                <div className="rounded-3xl border border-border/50 bg-secondary/30 p-6 text-center text-[13px] font-medium text-muted-foreground">
-                    No score detail for this finish.
+                <div className="border-b border-border px-5 py-6 text-center font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                    No score detail for this finish
                 </div>
             )}
 
-            <div className="flex flex-col gap-8 mt-2 px-1">
+            <div className="grid gap-6 px-5 py-5">
                 {keyMoments.length > 0 ? (
-                    <div className="flex flex-col gap-4">
-                        <h4 className="text-[11px] font-bold uppercase tracking-[0.15em] text-muted-foreground ml-2">
-                            Key Moments
-                        </h4>
-                        <div className="relative border-l-2 border-border/40 ml-4 space-y-6 pb-2">
-                            {keyMoments.map((moment) => (
-                                <div key={`${moment.moveNumber}-${moment.label}`} className="relative pl-6">
-                                    <div className="absolute -left-[5px] top-1.5 size-2.5 rounded-full bg-foreground shadow-[0_0_10px_currentColor]" />
-                                    <div className="flex flex-col">
-                                        <div className="flex items-center gap-2 mb-1.5">
-                                            <span className="px-2 py-0.5 rounded-none border-2 border-border bg-background text-muted-foreground font-mono text-[10px] font-bold">
-                                                M{moment.moveNumber}
-                                            </span>
-                                            <span className="font-semibold text-foreground text-[14px]">
-                                                {moment.label}
-                                            </span>
-                                        </div>
-                                        <p className="text-[13px] text-muted-foreground/90 font-medium leading-relaxed">
-                                            {moment.detail}
-                                        </p>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
+                    <TimelineBlock title="Key moments">
+                        {keyMoments.map((moment) => (
+                            <TimelineRow
+                                key={`${moment.moveNumber}-${moment.label}`}
+                                label={`M${moment.moveNumber}`}
+                                title={moment.label}
+                                detail={moment.detail}
+                            />
+                        ))}
+                    </TimelineBlock>
                 ) : null}
 
                 {tutorNotes.length > 0 ? (
-                    <div className="flex flex-col gap-4">
-                        <h4 className="text-[11px] font-bold uppercase tracking-[0.15em] text-tutor-accent ml-2">
-                            Sensei Notes
-                        </h4>
-                        <div className="relative border-l-2 border-tutor-accent/30 ml-4 space-y-6 pb-2">
-                            {tutorNotes.map((note) => (
-                                <div key={`tutor-${note.moveNumber}`} className="relative pl-6">
-                                    <div className="absolute -left-[5px] top-1.5 size-2.5 rounded-full bg-tutor-accent shadow-[0_0_10px_var(--color-tutor-accent)]" />
-                                    <div className="flex flex-col">
-                                        <div className="flex items-center gap-2 mb-1.5">
-                                            <span className="px-2 py-0.5 rounded-none border-2 border-tutor-accent bg-background text-tutor-accent font-mono text-[10px] font-bold shadow-[2px_2px_0_0_var(--color-tutor-accent)]">
-                                                M{note.moveNumber}
-                                            </span>
-                                        </div>
-                                        <p className="text-[13px] text-foreground font-medium leading-relaxed">
-                                            {note.note}
-                                        </p>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
+                    <TimelineBlock title="Sensei notes">
+                        {tutorNotes.map((note) => (
+                            <TimelineRow
+                                key={`tutor-${note.moveNumber}`}
+                                label={`M${note.moveNumber}`}
+                                title="Sensei"
+                                detail={note.note}
+                            />
+                        ))}
+                    </TimelineBlock>
                 ) : null}
             </div>
 
-            <Button
+            <button
                 type="button"
                 onClick={onExportSgf}
-                className="w-full h-12 rounded-none border-2 border-transparent font-mono font-bold text-[14px] uppercase tracking-widest shadow-[4px_4px_0_0_var(--foreground)] transition-all hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] active:shadow-none mt-2"
+                className="flex h-12 items-center justify-center gap-2 border-t border-border bg-foreground font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-primary-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
             >
-                <LuDownload className="size-4 mr-2" />
+                <LuDownload className="size-4" />
                 Export SGF
-            </Button>
+            </button>
+        </section>
+    );
+}
+
+function ScoreColumn({
+    label,
+    kanji,
+    total,
+    rows,
+}: {
+    label: string;
+    kanji: string;
+    total: number;
+    rows: Array<[string, string]>;
+}) {
+    return (
+        <div className="relative min-w-0 px-4 py-4">
+            <span className="pointer-events-none absolute right-3 top-3 font-sans text-5xl font-semibold leading-none text-foreground/10">
+                {kanji}
+            </span>
+            <div className="relative">
+                <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                    {label}
+                </p>
+                <p className="mt-3 font-mono text-4xl font-semibold leading-none tracking-[-0.08em] text-foreground">
+                    {formatPoint(total)}
+                </p>
+                <div className="mt-4 grid gap-2 border-t border-border pt-3">
+                    {rows.map(([rowLabel, value]) => (
+                        <div
+                            key={rowLabel}
+                            className="flex items-center justify-between gap-3 font-mono text-[10px] font-semibold uppercase tracking-[0.12em]"
+                        >
+                            <span className="text-muted-foreground">{rowLabel}</span>
+                            <span className="text-foreground">{value}</span>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </div>
+    );
+}
+
+function TimelineBlock({
+    title,
+    children,
+}: {
+    title: string;
+    children: ReactNode;
+}) {
+    return (
+        <section>
+            <h4 className="font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                {title}
+            </h4>
+            <div className="mt-3 grid gap-px bg-border p-px">{children}</div>
+        </section>
+    );
+}
+
+function TimelineRow({
+    label,
+    title,
+    detail,
+}: {
+    label: string;
+    title: string;
+    detail: string;
+}) {
+    return (
+        <div className="grid grid-cols-[56px_1fr] bg-background">
+            <div className="border-r border-border px-3 py-3 font-mono text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+                {label}
+            </div>
+            <div className="px-3 py-3">
+                <p className="font-sans text-[14px] font-semibold tracking-[-0.03em] text-foreground">
+                    {title}
+                </p>
+                <p className="mt-1 font-sans text-[13px] leading-relaxed text-muted-foreground">
+                    {detail}
+                </p>
+            </div>
         </div>
     );
 }

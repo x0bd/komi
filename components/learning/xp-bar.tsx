@@ -6,10 +6,8 @@ import {
     LuActivity,
     LuChevronDown,
     LuChevronUp,
-    LuFlame,
     LuSparkles,
 } from "react-icons/lu";
-import { Card, CardContent } from "@/components/ui/card";
 import { useLearningStore } from "@/lib/stores/learning-store";
 import { cn } from "@/lib/utils";
 
@@ -21,8 +19,8 @@ function clamp(value: number, min: number, max: number) {
 }
 
 function getMomentumTone(energy: number) {
-    if (energy >= 80) return "Burning hot";
-    if (energy >= 60) return "Charging fast";
+    if (energy >= 80) return "Sharp shape";
+    if (energy >= 60) return "Charging line";
     if (energy >= 40) return "Holding shape";
     if (energy >= 20) return "Finding rhythm";
     return "Low pressure";
@@ -43,7 +41,7 @@ export function XPBar({
     const streakPulseKey = useLearningStore((state) => state.streakPulseKey);
 
     const barRefs = useRef<Array<HTMLDivElement | null>>([]);
-    const glowRef = useRef<HTMLDivElement | null>(null);
+    const accentRef = useRef<HTMLDivElement | null>(null);
     const valueRef = useRef<HTMLDivElement | null>(null);
     const eventRef = useRef<HTMLDivElement | null>(null);
 
@@ -57,7 +55,7 @@ export function XPBar({
         return BAR_HEIGHTS.map((maxHeight, index) => {
             const fill = clamp(level - index, 0, 1);
             const height = 10 + fill * maxHeight;
-            const opacity = 0.22 + fill * 0.78;
+            const opacity = 0.18 + fill * 0.82;
             const isActive = fill > 0.03;
 
             return { height, opacity, isActive };
@@ -69,42 +67,34 @@ export function XPBar({
     useEffect(() => {
         if (collapsed) return;
 
+        const shouldReduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        if (shouldReduceMotion) return;
+
         const activeBars = barRefs.current.filter(
             (bar): bar is HTMLDivElement => Boolean(bar),
         );
         if (!activeBars.length) return;
 
-        const highlightColor =
-            lastStreakDelta >= 0
-                ? "rgba(244, 176, 58, 0.42)"
-                : "rgba(239, 68, 68, 0.22)";
-
         const timeline = gsap.timeline({
-            defaults: { duration: 0.55, ease: "power3.out" },
+            defaults: { duration: 0.48, ease: "power2.out" },
         });
 
         timeline.to(
             activeBars,
             {
                 height: (index) => bars[index]?.height ?? 10,
-                opacity: (index) => bars[index]?.opacity ?? 0.22,
+                opacity: (index) => bars[index]?.opacity ?? 0.18,
                 y: 0,
-                stagger: 0.024,
+                stagger: 0.018,
             },
             0,
         );
 
-        if (glowRef.current) {
+        if (accentRef.current) {
             timeline.fromTo(
-                glowRef.current,
-                { opacity: 0.12 },
-                {
-                    opacity: 0.34,
-                    backgroundColor: highlightColor,
-                    duration: 0.28,
-                    repeat: 1,
-                    yoyo: true,
-                },
+                accentRef.current,
+                { scaleX: 0.2, opacity: 0.45, transformOrigin: "left center" },
+                { scaleX: 1, opacity: 1, duration: 0.3 },
                 0,
             );
         }
@@ -112,22 +102,17 @@ export function XPBar({
         if (valueRef.current) {
             timeline.fromTo(
                 valueRef.current,
-                { scale: 1 },
-                {
-                    scale: lastStreakDelta >= 0 ? 1.08 : 0.96,
-                    duration: 0.2,
-                    repeat: 1,
-                    yoyo: true,
-                },
-                0.06,
+                { y: lastStreakDelta >= 0 ? 2 : -2 },
+                { y: 0, duration: 0.22 },
+                0.04,
             );
         }
 
         if (eventRef.current) {
             timeline.fromTo(
                 eventRef.current,
-                { y: 6, opacity: 0.55 },
-                { y: 0, opacity: 1, duration: 0.36 },
+                { y: 4, opacity: 0.55 },
+                { y: 0, opacity: 1, duration: 0.28 },
                 0.08,
             );
         }
@@ -144,60 +129,54 @@ export function XPBar({
                 onClick={onToggle}
                 className="group w-full text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
-                <div className="overflow-hidden rounded-none border-[3px] border-white bg-white shadow-[6px_6px_0_0_var(--swiss-red)] transition-all duration-300 hover:shadow-[8px_8px_0_0_var(--swiss-red)]">
-                    <div className="px-5 py-4">
-                        <div className="flex items-center justify-between gap-3">
-                            <div className="flex items-center gap-4 min-w-0">
-                                <div className="flex size-12 items-center justify-center rounded-none border-[3px] border-black bg-black text-swiss-yellow shadow-[3px_3px_0_0_var(--swiss-red)]">
-                                    <LuFlame className="size-[20px]" />
-                                </div>
+                <div className="grid grid-cols-[48px_1fr_auto] border border-border bg-background transition-colors hover:bg-subtle">
+                    <div className="flex items-center justify-center border-r border-border">
+                        <LuActivity className="size-4 text-foreground" />
+                    </div>
 
-                                <div className="min-w-0 flex flex-col justify-center">
-                                    <div className="flex items-center gap-2 mb-0.5">
-                                        <p className="text-[10px] font-black uppercase tracking-[0.15em] text-black/50">
-                                            Live Streak
-                                        </p>
-                                        <div className="hidden items-end gap-[3px] min-[430px]:flex">
-                                            {compactBars.map((bar, index) => (
-                                                <span
-                                                    key={index}
-                                                    className={cn(
-                                                        "w-1.5 rounded-none",
-                                                        bar.isActive
-                                                            ? "bg-black"
-                                                            : "bg-black/20",
-                                                    )}
-                                                    style={{
-                                                        height: `${Math.max(10, Math.round(bar.height * 0.4))}px`,
-                                                        opacity: Math.max(0.3, bar.opacity),
-                                                    }}
-                                                />
-                                            ))}
-                                        </div>
-                                    </div>
-                                    <p className="truncate font-display font-black text-[20px] uppercase text-black leading-tight mt-1">
-                                        {momentumTone}
-                                    </p>
-                                    <p className="truncate text-[13px] text-black/60 font-bold leading-tight mt-0.5">
-                                        {lastStreakEvent}
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div className="flex items-center gap-4 shrink-0">
-                                <div className="text-center flex flex-col items-center">
-                                    <p className="font-sans text-2xl font-black leading-none text-black">
-                                        {streak}
-                                    </p>
-                                    <p className="mt-1 text-[11px] font-bold text-black/50">
-                                        {energy}% live
-                                    </p>
-                                </div>
-                                <span className="flex size-9 items-center justify-center rounded-none border-[3px] border-black bg-black text-white transition-colors group-hover:bg-swiss-red shadow-[2px_2px_0_0_var(--swiss-blue)]">
-                                    <LuChevronDown className="size-4" />
-                                </span>
+                    <div className="min-w-0 px-4 py-3">
+                        <div className="flex items-center gap-3">
+                            <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                                形 / shape
+                            </p>
+                            <div className="hidden items-end gap-[3px] min-[430px]:flex">
+                                {compactBars.map((bar, index) => (
+                                    <span
+                                        key={index}
+                                        className={cn(
+                                            "w-1.5",
+                                            bar.isActive
+                                                ? "bg-foreground"
+                                                : "bg-foreground/15",
+                                        )}
+                                        style={{
+                                            height: `${Math.max(8, Math.round(bar.height * 0.36))}px`,
+                                            opacity: Math.max(0.28, bar.opacity),
+                                        }}
+                                    />
+                                ))}
                             </div>
                         </div>
+                        <p className="mt-1 truncate font-sans text-[17px] font-semibold leading-tight tracking-[-0.04em] text-foreground">
+                            {momentumTone}
+                        </p>
+                        <p className="mt-1 truncate font-sans text-[12px] text-muted-foreground">
+                            {lastStreakEvent}
+                        </p>
+                    </div>
+
+                    <div className="flex items-center border-l border-border">
+                        <div className="px-3 text-right">
+                            <p className="font-mono text-xl font-semibold leading-none tracking-[-0.08em] text-foreground">
+                                {streak}
+                            </p>
+                            <p className="mt-1 font-mono text-[9px] uppercase tracking-[0.12em] text-muted-foreground">
+                                {energy}% live
+                            </p>
+                        </div>
+                        <span className="flex h-full items-center border-l border-border px-3 text-muted-foreground transition-colors group-hover:text-foreground">
+                            <LuChevronDown className="size-4" />
+                        </span>
                     </div>
                 </div>
             </button>
@@ -205,54 +184,49 @@ export function XPBar({
     }
 
     return (
-        <div className="flex flex-col overflow-hidden transition-all duration-300 mt-2 border-t-[3px] border-white/20 pt-2">
-            <div className="relative px-2 py-2">
-                <div
-                    ref={glowRef}
-                    className="pointer-events-none absolute inset-x-4 bottom-3 top-3 rounded-none opacity-0 blur-2xl"
-                />
-
-                <div className="flex items-start justify-between gap-4">
-                    <div className="flex items-center gap-3">
-                        <span className="flex size-8 items-center justify-center rounded-none border-[3px] border-white bg-white text-black shadow-[3px_3px_0_0_var(--swiss-yellow)]">
-                            <LuFlame className="size-4" />
-                        </span>
-                        <div>
-                            <p className="text-[10px] font-black uppercase tracking-[0.15em] text-white/50">
-                                Live Streak
-                            </p>
-                            <p className="font-sans text-base font-black text-white">
-                                {momentumTone}
-                            </p>
-                        </div>
-                    </div>
-
-                    <div className="flex items-start gap-2">
-                        <div ref={valueRef} className="text-right">
-                            <div className="font-sans text-xl font-black leading-none text-swiss-yellow">
-                                {streak}
-                            </div>
-                            <p className="mt-1 text-[10px] font-bold text-white/50">
-                                {energy}% live
-                            </p>
-                        </div>
-                        {onToggle ? (
-                            <button
-                                type="button"
-                                onClick={onToggle}
-                                aria-label="Collapse live streak"
-                                className="flex size-7 items-center justify-center rounded-none transition-colors hover:text-white hover:bg-white/10 text-white/50 ml-1"
-                            >
-                                <LuChevronUp className="size-3.5" />
-                            </button>
-                        ) : null}
+        <section className="mt-2 flex flex-col border border-border bg-background">
+            <header className="flex items-start justify-between gap-4 border-b border-border px-4 py-3">
+                <div className="flex min-w-0 items-start gap-3">
+                    <span className="flex size-9 shrink-0 items-center justify-center border border-border">
+                        <LuActivity className="size-4" />
+                    </span>
+                    <div className="min-w-0">
+                        <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                            形 / shape rhythm
+                        </p>
+                        <p className="mt-1 font-sans text-[18px] font-semibold leading-tight tracking-[-0.04em] text-foreground">
+                            {momentumTone}
+                        </p>
                     </div>
                 </div>
 
-                <div className="mt-4 rounded-none border-[3px] border-white bg-white p-4 shadow-[6px_6px_0_0_var(--swiss-yellow)]">
+                <div className="flex items-start gap-3">
+                    <div ref={valueRef} className="text-right">
+                        <p className="font-mono text-3xl font-semibold leading-none tracking-[-0.08em] text-foreground">
+                            {streak}
+                        </p>
+                        <p className="mt-1 font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground">
+                            {energy}% live
+                        </p>
+                    </div>
+                    {onToggle ? (
+                        <button
+                            type="button"
+                            onClick={onToggle}
+                            aria-label="Collapse live streak"
+                            className="flex size-8 items-center justify-center border border-border text-muted-foreground transition-colors hover:bg-subtle hover:text-foreground"
+                        >
+                            <LuChevronUp className="size-3.5" />
+                        </button>
+                    ) : null}
+                </div>
+            </header>
+
+            <div className="p-4">
+                <div className="border border-border bg-subtle/35 p-4">
                     <div className="flex items-end justify-between gap-5">
                         <div className="min-w-0 flex-1">
-                            <div className="flex h-[60px] max-w-[220px] items-end gap-1">
+                            <div className="flex h-[68px] max-w-[240px] items-end gap-1">
                                 {bars.map((bar, index) => (
                                     <div
                                         key={index}
@@ -263,13 +237,16 @@ export function XPBar({
                                                 barRefs.current[index] = node;
                                             }}
                                             className={cn(
-                                                "w-full rounded-none shadow-none",
+                                                "w-full",
                                                 bar.isActive
-                                                    ? "bg-black"
-                                                    : "bg-black/15",
+                                                    ? "bg-foreground"
+                                                    : "bg-foreground/12",
+                                                lastStreakDelta > 0 &&
+                                                    index === Math.min(BAR_COUNT - 1, Math.floor((energy / 100) * BAR_COUNT)) &&
+                                                    "bg-accent",
                                             )}
                                             style={{
-                                                height: `${bar.height * 0.8}px`,
+                                                height: `${bar.height * 0.82}px`,
                                                 opacity: bar.opacity,
                                             }}
                                         />
@@ -280,36 +257,42 @@ export function XPBar({
                             <div
                                 ref={eventRef}
                                 className={cn(
-                                    "mt-3 inline-flex min-h-7 max-w-full items-center gap-2 rounded-none border-2 px-2.5 py-1 font-mono text-[11px] font-black shadow-[2px_2px_0_0_var(--foreground)]",
+                                    "mt-4 inline-flex min-h-8 max-w-full items-center gap-2 border px-3 py-1.5 font-mono text-[10px] font-semibold uppercase tracking-[0.12em]",
                                     lastStreakDelta > 0
-                                        ? "border-black bg-black text-swiss-yellow"
+                                        ? "border-accent bg-accent text-accent-foreground"
                                         : lastStreakDelta < 0
-                                          ? "border-swiss-red bg-swiss-red text-white"
-                                          : "border-black/20 bg-black/5 text-black/60",
+                                          ? "border-destructive bg-destructive text-destructive-foreground"
+                                          : "border-border bg-background text-muted-foreground",
                                 )}
                             >
                                 {lastStreakDelta > 0 ? (
-                                    <LuSparkles className="size-3" />
+                                    <LuSparkles className="size-3.5" />
                                 ) : (
-                                    <LuActivity className="size-3" />
+                                    <LuActivity className="size-3.5" />
                                 )}
-                                <span className="truncate">
-                                    {lastStreakEvent}
-                                </span>
+                                <span className="truncate">{lastStreakEvent}</span>
                             </div>
                         </div>
 
                         <div className="shrink-0 text-right">
-                            <p className="text-[10px] font-black uppercase tracking-[0.14em] text-black/50">
-                                Level Charge
+                            <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                                Level charge
                             </p>
-                            <p className="mt-1 font-sans text-xl font-black leading-none text-black">
+                            <p className="mt-1 font-mono text-3xl font-semibold leading-none tracking-[-0.08em] text-foreground">
                                 {levelCharge}%
                             </p>
                         </div>
                     </div>
                 </div>
+
+                <div className="mt-3 h-px overflow-hidden bg-border">
+                    <div
+                        ref={accentRef}
+                        className="h-full bg-accent"
+                        style={{ width: `${levelCharge}%` }}
+                    />
+                </div>
             </div>
-        </div>
+        </section>
     );
 }

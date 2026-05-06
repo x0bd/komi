@@ -1286,8 +1286,6 @@ export function useSidebarPanels({
     const timers = useGameStore((state) => state.timers);
     const liveScore = useGameStore((state) => state.liveScore);
     const exportSGF = useGameStore((state) => state.exportSGF);
-    const analysisOverlayEnabled = useGameStore((state) => state.analysisOverlayEnabled);
-    const setAnalysisOverlayEnabled = useGameStore((state) => state.setAnalysisOverlayEnabled);
     const roomId = useMultiplayerStore((state) => state.roomId);
     const shareUrl = useMultiplayerStore((state) => state.shareUrl);
     const multiplayerState = useMultiplayerStore((state) => state.state);
