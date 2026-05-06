@@ -153,7 +153,7 @@ export function GoBoard({
 
     return (
         <div className={cn("w-full max-w-2xl px-2", className)}>
-            <div className="relative w-full overflow-hidden rounded-[14px] border border-border bg-card p-3 md:p-5">
+            <div className="relative w-full border border-border bg-background p-3 md:p-5">
                 <div className="mb-3 flex items-center justify-between border-b border-border pb-3">
                     <div>
                         <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
@@ -168,13 +168,13 @@ export function GoBoard({
                     </div>
                 </div>
                 <div className="relative aspect-square w-full">
-                <div
-                    className="absolute inset-0 grid gap-x-2 gap-y-2"
-                    style={{
-                        gridTemplateColumns: "1.35rem 1fr",
-                        gridTemplateRows: "1.35rem 1fr",
-                    }}
-                >
+                    <div
+                        className="absolute inset-0 grid gap-x-2 gap-y-2"
+                        style={{
+                            gridTemplateColumns: "1.35rem 1fr",
+                            gridTemplateRows: "1.35rem 1fr",
+                        }}
+                    >
                     <div />
 
                     <div
@@ -208,7 +208,7 @@ export function GoBoard({
                         ))}
                     </div>
 
-                    <div className="relative h-full w-full overflow-hidden rounded-[8px] border-2 border-board-frame bg-board-surface">
+                    <div className="relative h-full w-full overflow-hidden border-2 border-board-frame bg-board-surface">
                         <GridLayer size={size} hoshiPoints={hoshiPoints} />
 
                         {showTerritoryHeatmap && territoryMap

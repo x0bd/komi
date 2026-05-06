@@ -1221,8 +1221,8 @@ function OnlineBoardView({
                 }}
             />
             {waitingForOpponent ? (
-                <div className="pointer-events-none absolute inset-0 z-30 flex items-center justify-center rounded-3xl bg-background/55 backdrop-blur-[2px]">
-                    <div className="rounded-full border border-border/80 bg-card/95 px-4 py-2 text-sm font-medium text-foreground shadow-sm">
+                <div className="pointer-events-none absolute inset-0 z-30 flex items-center justify-center bg-background/55 backdrop-blur-[2px]">
+                    <div className="border border-border bg-background px-4 py-2 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-foreground">
                         Waiting for opponent to join...
                     </div>
                 </div>
@@ -1337,7 +1337,7 @@ export function useSidebarPanels({
         : null;
 
     const rightPanel = (
-        <div className="w-[104px] overflow-hidden rounded-[14px] border border-border bg-card font-mono uppercase tracking-[0.16em] text-foreground">
+        <div className="w-[104px] overflow-hidden border border-border bg-background font-mono uppercase tracking-[0.16em] text-foreground">
             <div className="border-b border-border px-4 py-3">
                 <p className="text-[9px] font-semibold text-muted-foreground">
                     score
@@ -1406,16 +1406,16 @@ export function useSidebarPanels({
                     </div>
 
                     {winProbability !== null ? (
-                        <div className="mt-8 mb-2 px-2">
-                            <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-widest text-black mb-3">
-                                <span className="bg-white text-black px-2 py-1 tracking-widest">Engine Read</span>
-                                <span className="font-mono text-white text-base bg-black border-2 border-white px-2 py-0.5">
+                        <div className="mt-8 border border-border">
+                            <div className="flex items-center justify-between border-b border-border px-3 py-2 font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                                <span>Engine Read</span>
+                                <span className="text-foreground">
                                     {winProbability}%
                                 </span>
                             </div>
-                            <div className="h-6 rounded-none bg-white overflow-hidden relative border-[3px] border-white shadow-[4px_4px_0_0_var(--swiss-red)]">
+                            <div className="relative h-5 overflow-hidden bg-subtle">
                                 <div
-                                    className="absolute inset-y-0 left-0 bg-black transition-[width] duration-1000 ease-out border-r-[3px] border-white"
+                                    className="absolute inset-y-0 left-0 border-r border-accent bg-foreground transition-[width] duration-1000 ease-out"
                                     style={{ width: `${winProbability}%` }}
                                 />
                             </div>
@@ -1463,26 +1463,26 @@ export function useSidebarPanels({
                             onExportSgf={handleExportSgf}
                         />
                     ) : null}
-                    <div className="flex items-center justify-between bg-white p-5 border-[3px] border-white rounded-none shadow-[6px_6px_0_0_var(--swiss-blue)] transition-all group hover:translate-x-[2px] hover:-translate-y-[2px]">
+                    <div className="flex items-center justify-between border border-border bg-background p-4">
                         <div className="flex flex-col gap-1">
-                            <span className="text-[14px] font-display font-black text-black tracking-tight uppercase">
+                            <span className="font-sans text-sm font-semibold tracking-[-0.03em] text-foreground">
                                 Sensei Move Hints
                             </span>
-                            <span className="text-[12px] font-bold text-black/60 uppercase">
+                            <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
                                 Overlay optimal AI suggestions directly on the board
                             </span>
                         </div>
                         <button
                             onClick={() => setAnalysisOverlayEnabled(!analysisOverlayEnabled)}
                             className={cn(
-                                "w-14 h-8 rounded-none transition-all relative outline-none focus-visible:ring-2 focus-visible:ring-ring shrink-0 border-[3px] border-black",
-                                analysisOverlayEnabled ? "bg-black" : "bg-transparent",
+                                "relative h-8 w-14 shrink-0 border border-border bg-transparent outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring",
+                                analysisOverlayEnabled && "bg-foreground",
                             )}
                         >
                             <span
                                 className={cn(
-                                    "absolute top-[2px] left-[2px] w-5 h-5 rounded-none transition-transform shadow-[2px_2px_0_0_var(--foreground)]",
-                                    analysisOverlayEnabled ? "translate-x-7 border border-transparent bg-swiss-yellow" : "translate-x-0 border-[3px] border-black bg-white"
+                                    "absolute left-[3px] top-[3px] h-5 w-5 border border-border bg-background transition-transform",
+                                    analysisOverlayEnabled && "translate-x-6 border-accent bg-accent"
                                 )}
                             />
                         </button>
@@ -1530,8 +1530,8 @@ export function useSidebarPanels({
             icon: <LuSettings />,
             content: (
                 <div className="flex flex-col gap-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
-                <div className="flex flex-col gap-2">
-                        <span className="text-[11px] font-black uppercase tracking-widest text-white/50 ml-1 px-1">
+                    <div className="flex flex-col gap-2">
+                        <span className="ml-1 px-1 font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
                             Game Mode
                         </span>
                         <ModeToggle
