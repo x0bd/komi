@@ -78,7 +78,6 @@ export function GoBoard({
     const letters = LETTERS.slice(0, size);
     const numbers = Array.from({ length: size }, (_, i) => size - i);
 
-    // Convert 1D BoardState to 2D for rendering
     const rows = useMemo(() => {
         const result: number[][] = [];
         for (let y = 0; y < size; y++) {
@@ -154,19 +153,30 @@ export function GoBoard({
 
     return (
         <div className={cn("w-full max-w-2xl px-2", className)}>
-            <div className="relative w-full aspect-square">
-                {/* 2×2 coordinate + board grid */}
+            <div className="relative w-full overflow-hidden rounded-[14px] border border-border bg-card p-3 md:p-5">
+                <div className="mb-3 flex items-center justify-between border-b border-border pb-3">
+                    <div>
+                        <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+                            board instrument
+                        </p>
+                        <p className="mt-1 font-sans text-xl font-semibold tracking-[-0.055em] text-foreground">
+                            対局 grid
+                        </p>
+                    </div>
+                    <div className="font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                        {size} x {size}
+                    </div>
+                </div>
+                <div className="relative aspect-square w-full">
                 <div
                     className="absolute inset-0 grid gap-x-2 gap-y-2"
                     style={{
-                        gridTemplateColumns: "1.5rem 1fr",
-                        gridTemplateRows: "1.5rem 1fr",
+                        gridTemplateColumns: "1.35rem 1fr",
+                        gridTemplateRows: "1.35rem 1fr",
                     }}
                 >
-                    {/* [0,0] — empty corner */}
                     <div />
 
-                    {/* [0,1] — column letters (A B C … T) */}
                     <div
                         className="grid"
                         style={{
@@ -176,7 +186,7 @@ export function GoBoard({
                         {letters.map((letter) => (
                             <span
                                 key={letter}
-                                className="flex items-end justify-center font-mono text-[10px] font-bold tracking-widest text-foreground pb-1 uppercase"
+                                className="flex items-end justify-center pb-1 font-mono text-[9px] font-semibold uppercase tracking-[0.16em] text-muted-foreground"
                             >
                                 {letter}
                             </span>
@@ -191,16 +201,14 @@ export function GoBoard({
                         {numbers.map((number) => (
                             <span
                                 key={number}
-                                className="flex items-center justify-end font-mono text-[10px] font-bold text-foreground pr-1"
+                                className="flex items-center justify-end pr-1 font-mono text-[9px] font-semibold text-muted-foreground"
                             >
                                 {number}
                             </span>
                         ))}
                     </div>
 
-                    {/* [1,1] — the actual board */}
-                    <div className="relative w-full h-full rounded-none bg-board-surface border-4 border-board-frame shadow-[6px_6px_0_0_var(--board-frame)]">
-                        {/* SVG grid lines + hoshi */}
+                    <div className="relative h-full w-full overflow-hidden rounded-[8px] border-2 border-board-frame bg-board-surface">
                         <GridLayer size={size} hoshiPoints={hoshiPoints} />
 
                         {showTerritoryHeatmap && territoryMap
@@ -251,13 +259,13 @@ export function GoBoard({
                             >
                                 <div
                                     className={cn(
-                                        "relative flex h-[66%] w-[66%] items-center justify-center rounded-full border text-[8px] font-semibold shadow-sm md:text-[9px]",
+                                        "relative flex h-[60%] w-[60%] items-center justify-center rounded-[6px] border font-mono text-[8px] font-semibold md:text-[9px]",
                                         hint.rank === 1 &&
-                                            "border-emerald-400/80 bg-emerald-400/25 text-emerald-950 dark:text-emerald-100",
+                                            "border-success/70 bg-success/20 text-foreground",
                                         hint.rank === 2 &&
-                                            "border-amber-400/80 bg-amber-400/24 text-amber-950 dark:text-amber-100",
+                                            "border-warning/70 bg-warning/20 text-foreground",
                                         hint.rank >= 3 &&
-                                            "border-sky-400/80 bg-sky-400/24 text-sky-950 dark:text-sky-100",
+                                            "border-signal/60 bg-signal/15 text-foreground",
                                     )}
                                     title={`Engine rank ${hint.rank} (${hint.confidence}% confidence)`}
                                 >
@@ -281,7 +289,6 @@ export function GoBoard({
                             </div>
                         ))}
 
-                        {/* Intersection grid */}
                         <div
                             className="absolute inset-0 z-10 grid h-full w-full"
                             role="grid"
@@ -416,6 +423,7 @@ export function GoBoard({
                         </div>
                     </div>
                 </div>
+                </div>
             </div>
         </div>
     );
@@ -458,7 +466,7 @@ function GridLayer({
 }) {
     const cellPct = 100 / size;
     const positions = Array.from({ length: size }, (_, i) => (i + 0.5) * cellPct);
-    const hoshiR = size === 19 ? 0.9 : 1.1;
+    const hoshiR = size === 19 ? 0.72 : 0.9;
 
     return (
         <svg
@@ -475,7 +483,7 @@ function GridLayer({
                     y1="0"
                     y2="100"
                     stroke="var(--board-grid)"
-                    strokeOpacity="1"
+                    strokeOpacity="0.92"
                     strokeWidth="1"
                     vectorEffect="non-scaling-stroke"
                 />
@@ -488,7 +496,7 @@ function GridLayer({
                     y1={p}
                     y2={p}
                     stroke="var(--board-grid)"
-                    strokeOpacity="1"
+                    strokeOpacity="0.92"
                     strokeWidth="1"
                     vectorEffect="non-scaling-stroke"
                 />
@@ -500,7 +508,7 @@ function GridLayer({
                     cy={((pt.y + 0.5) / size) * 100}
                     r={hoshiR}
                     fill="var(--board-hoshi)"
-                    fillOpacity="1"
+                    fillOpacity="0.78"
                 />
             ))}
         </svg>

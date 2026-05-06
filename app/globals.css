@@ -33,6 +33,9 @@
     --color-hairline: var(--hairline);
     --color-signal: var(--signal);
     --color-signal-foreground: var(--signal-foreground);
+    --color-success: var(--success);
+    --color-warning: var(--warning);
+    --color-danger: var(--danger);
 
     --color-swiss-red: var(--swiss-red);
     --color-swiss-blue: var(--swiss-blue);
@@ -91,7 +94,11 @@
     --grid-template-rows-9: repeat(9, 1fr);
 }
 
-:root {
+:root,
+html,
+body,
+.light,
+.dark {
     color-scheme: light;
 
     --background: #d8deeb;
@@ -145,17 +152,17 @@
     --sidebar-border: #bac3d1;
     --sidebar-ring: #4037d2;
 
-    --board-surface: #e9ddcb;
-    --board-frame: #b9b2a5;
-    --board-grid: rgb(45 53 66 / 18%);
-    --board-hoshi: #7e766c;
+    --board-surface: #cfc3ad;
+    --board-frame: #9f9788;
+    --board-grid: rgb(45 53 66 / 22%);
+    --board-hoshi: #6f675d;
 
-    --stone-black: #2d3542;
-    --stone-black-highlight: #4a5361;
-    --stone-white: #f4f6fb;
-    --stone-white-highlight: #ffffff;
-    --stone-white-border: #9fa9ba;
-    --stone-shadow: rgb(45 53 66 / 16%);
+    --stone-black: #161a20;
+    --stone-black-highlight: #303744;
+    --stone-white: #f2f1ea;
+    --stone-white-highlight: #fbfaf4;
+    --stone-white-border: #8e887c;
+    --stone-shadow: rgb(45 53 66 / 18%);
 
     --status-active: #4037d2;
     --status-waiting: #6f7888;
@@ -171,6 +178,12 @@
     --xp-bar-fill-start: #f24f5f;
     --xp-bar-fill-end: #4037d2;
     --xp-streak: #f24f5f;
+}
+
+html,
+body {
+    background: var(--background) !important;
+    color: var(--foreground) !important;
 }
 
 @layer base {

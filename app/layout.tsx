@@ -30,7 +30,7 @@ export default function RootLayout({
     return (
         <html
             lang="en"
-            className={cn(geist.variable, jetBrainsMono.variable)}
+            className={cn("light", geist.variable, jetBrainsMono.variable)}
             suppressHydrationWarning
         >
             <body className="min-h-svh bg-background font-sans text-foreground antialiased">
