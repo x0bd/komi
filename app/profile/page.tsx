@@ -1,8 +1,16 @@
 import Link from "next/link"
+import {
+  LuArrowRight,
+  LuClock3,
+  LuLayoutGrid,
+  LuSettings,
+  LuSwords,
+  LuTrophy,
+  LuUserRound,
+} from "react-icons/lu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { db } from "@/lib/db"
 import { ensureDbUser } from "@/lib/auth/session"
-import { LuArrowRight, LuTrophy, LuSwords, LuMinus, LuClock3, LuStar } from "react-icons/lu"
+import { db } from "@/lib/db"
 import { cn } from "@/lib/utils"
 
 export const dynamic = "force-dynamic"
@@ -55,11 +63,18 @@ function initials(name: string, email: string) {
   return source.slice(0, 2).toUpperCase()
 }
 
-function outcomeBg(outcome: Outcome) {
-  if (outcome === "win") return "bg-[var(--swiss-blue)] text-white"
-  if (outcome === "loss") return "bg-[var(--swiss-red)] text-white"
-  if (outcome === "draw") return "bg-[var(--swiss-yellow)] text-black"
-  return "bg-black text-white"
+function outcomeLabel(outcome: Outcome) {
+  if (outcome === "win") return "Win"
+  if (outcome === "loss") return "Loss"
+  if (outcome === "draw") return "Draw"
+  return "Review"
+}
+
+function outcomeTone(outcome: Outcome) {
+  if (outcome === "win") return "bg-signal"
+  if (outcome === "loss") return "bg-accent"
+  if (outcome === "draw") return "bg-warning"
+  return "bg-foreground/45"
 }
 
 export default async function ProfilePage() {
@@ -98,190 +113,254 @@ export default async function ProfilePage() {
   const displayName = user.name?.trim() || "Komi Player"
 
   return (
-    <main className="min-h-svh bg-white">
-
-      {/* ── HERO ── */}
-      <header className="bg-black border-b-[8px] border-b-swiss-red">
-        <div className="mx-auto max-w-5xl px-6 lg:px-10 py-10 lg:py-16">
-          <p className="text-[10px] font-black uppercase tracking-[0.35em] text-white/40 mb-4">
-            Komi / Profile
-          </p>
-
-          <div className="flex flex-wrap items-end justify-between gap-8">
-            {/* Avatar + name */}
-            <div className="flex items-center gap-6">
-              <Avatar className="size-20 rounded-none border-[3px] border-white shadow-[6px_6px_0_0_var(--swiss-red)]">
-                {user.avatar ? <AvatarImage src={user.avatar} alt={displayName} /> : null}
-                <AvatarFallback className="font-black text-2xl bg-white text-black rounded-none">
-                  {initials(displayName, user.email)}
-                </AvatarFallback>
-              </Avatar>
-              <div>
-                <h1 className="font-sans text-4xl lg:text-[3.5rem] font-black tracking-tight text-white leading-none uppercase">
-                  {displayName}
-                </h1>
-                <p className="mt-2 font-mono text-[12px] text-white/40 uppercase tracking-widest">
-                  {user.email}
-                </p>
-              </div>
+    <main className="min-h-svh bg-background text-foreground">
+      <div className="mx-auto grid min-h-svh max-w-7xl border-x border-border lg:grid-cols-[132px_minmax(0,1fr)]">
+        <aside className="relative hidden border-r border-border lg:block">
+          <div className="sticky top-0 flex h-svh flex-col justify-between px-6 py-8">
+            <div>
+              <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.32em] text-foreground">
+                Komi
+              </p>
+              <p className="mt-2 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+                棋士
+              </p>
             </div>
-
-            {/* Header actions */}
-            <div className="flex items-center gap-3 self-end">
-              <Link
-                href="/account/settings"
-                className="inline-flex items-center gap-2 h-11 px-5 rounded-none border-[3px] border-white bg-transparent text-white font-mono font-black uppercase tracking-widest text-[12px] hover:bg-white hover:text-black transition-all"
-              >
-                Settings
-              </Link>
-              <Link
-                href="/"
-                className="inline-flex items-center gap-2 h-11 px-5 rounded-none border-[3px] border-white bg-white text-black font-mono font-black uppercase tracking-widest text-[12px] hover:bg-swiss-yellow hover:border-swiss-yellow transition-all"
-              >
-                ← Board
-              </Link>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {/* ── STAT ROW ── */}
-      <div className="border-b-[3px] border-black bg-white">
-        <div className="mx-auto max-w-5xl px-6 lg:px-10">
-          <div className="grid grid-cols-4 divide-x-[3px] divide-black">
-            {[
-              { label: "Wins", value: summary.wins, accent: "var(--swiss-blue)" },
-              { label: "Losses", value: summary.losses, accent: "var(--swiss-red)" },
-              { label: "Draws", value: summary.draws, accent: "black" },
-              { label: "Win Rate", value: `${winRate}%`, accent: "var(--swiss-yellow)" },
-            ].map((stat) => (
-              <div key={stat.label} className="flex flex-col gap-1 py-6 px-6 first:pl-0 last:pr-0">
-                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-black/40">
-                  {stat.label}
-                </span>
-                <span
-                  className="text-4xl font-mono font-black tabular-nums leading-none mt-1"
-                  style={{ color: stat.accent }}
-                >
-                  {stat.value}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* ── META PILLS ── */}
-      <div className="border-b-[2px] border-black/10 bg-white">
-        <div className="mx-auto max-w-5xl px-6 lg:px-10 py-4 flex items-center gap-4 flex-wrap">
-          <div className="inline-flex items-center gap-2 border-[2px] border-black px-3 py-1.5">
-            <LuStar className="size-3.5 text-black" />
-            <span className="font-mono text-[11px] font-black uppercase tracking-widest text-black">
-              Rating {user.rating}
+            <span className="pointer-events-none font-sans text-[7.5rem] font-semibold leading-none text-foreground/10 [writing-mode:vertical-rl]">
+              棋士
             </span>
-          </div>
-          <div className="inline-flex items-center gap-2 border-[2px] border-black px-3 py-1.5">
-            <LuSwords className="size-3.5 text-black" />
-            <span className="font-mono text-[11px] font-black uppercase tracking-widest text-black">
-              {games.length} games played
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {/* ── RECENT GAMES ── */}
-      <div className="mx-auto max-w-5xl px-6 lg:px-10 py-10">
-        <div className="flex items-center justify-between mb-2">
-          <h2 className="font-sans text-[11px] font-black uppercase tracking-[0.25em] text-black/40">
-            Recent Games
-          </h2>
-          <Link
-            href="/games"
-            className="inline-flex items-center gap-1 font-mono text-[11px] font-black uppercase tracking-widest text-black hover:text-swiss-red transition-colors"
-          >
-            View all <LuArrowRight className="size-3.5" />
-          </Link>
-        </div>
-
-        {/* Table header */}
-        <div className="grid grid-cols-[3fr_1fr_1fr_1fr] border-b-[3px] border-black pb-3 mt-4 mb-1">
-          {["Opponent", "Result", "Color", "Date"].map((col) => (
-            <span key={col} className="text-[10px] font-black uppercase tracking-[0.2em] text-black/40">
-              {col}
-            </span>
-          ))}
-        </div>
-
-        {games.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 gap-4">
-            <LuTrophy className="size-8 text-black/20" />
-            <p className="font-mono font-black text-[12px] uppercase tracking-widest text-black/40">
-              No saved games yet
+            <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground [writing-mode:vertical-rl]">
+              player dossier
             </p>
           </div>
-        ) : (
-          <div className="divide-y-[2px] divide-black/10">
-            {games.map((game) => {
-              const isBlack = game.blackPlayerId === user.id
-              const myColor = isBlack ? "black" : "white"
-              const opponent = isBlack ? game.whitePlayer : game.blackPlayer
-              const isSelfPlay = game.blackPlayerId === game.whitePlayerId
-              const opponentLabel =
-                opponent.email === user.email
-                  ? "Self play"
-                  : opponent.name?.trim() || opponent.email
-              const outcome = getOutcome({
-                result: game.result,
-                winner: game.winner,
-                myColor,
-                isSelfPlay,
-              })
+        </aside>
 
-              return (
-                <Link
-                  key={game.id}
-                  href={`/replay/${game.id}`}
-                  className="group grid grid-cols-[3fr_1fr_1fr_1fr] items-center py-5 hover:bg-black -mx-2 px-2 transition-colors duration-100"
+        <section className="min-w-0">
+          <header className="grid border-b border-border lg:grid-cols-[minmax(0,1fr)_320px]">
+            <div className="relative overflow-hidden px-6 py-10 lg:px-10 lg:py-14">
+              <span className="pointer-events-none absolute right-6 top-4 font-sans text-[8rem] font-semibold leading-none text-foreground/10">
+                記録
+              </span>
+              <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.28em] text-muted-foreground">
+                Komi / Player
+              </p>
+              <div className="mt-8 flex flex-wrap items-end gap-6">
+                <Avatar className="size-20 border border-border bg-subtle after:border-border">
+                  {user.avatar ? <AvatarImage src={user.avatar} alt={displayName} /> : null}
+                  <AvatarFallback className="bg-subtle font-mono text-xl font-semibold text-foreground">
+                    {initials(displayName, user.email)}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="min-w-0">
+                  <h1 className="max-w-2xl truncate font-sans text-5xl font-semibold leading-[0.9] tracking-[-0.07em] lg:text-7xl">
+                    {displayName}
+                  </h1>
+                  <p className="mt-4 truncate font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                    {user.email}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid border-t border-border lg:border-l lg:border-t-0">
+              <DossierMetric label="Rating" value={user.rating} mark="級" />
+              <DossierMetric label="Games" value={games.length} mark="局" />
+            </div>
+          </header>
+
+          <nav className="grid border-b border-border sm:grid-cols-2">
+            <Link
+              href="/account/settings"
+              className="group flex items-center justify-between border-b border-border px-6 py-5 transition-colors hover:bg-subtle sm:border-b-0 sm:border-r lg:px-10"
+            >
+              <span className="flex items-center gap-3 font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground group-hover:text-foreground">
+                <LuSettings className="size-4" />
+                Context & settings
+              </span>
+              <LuArrowRight className="size-4 text-muted-foreground transition-transform group-hover:translate-x-1 group-hover:text-foreground" />
+            </Link>
+            <Link
+              href="/"
+              className="group flex items-center justify-between px-6 py-5 transition-colors hover:bg-subtle lg:px-10"
+            >
+              <span className="flex items-center gap-3 font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground group-hover:text-foreground">
+                <LuLayoutGrid className="size-4" />
+                Return to board
+              </span>
+              <LuArrowRight className="size-4 text-muted-foreground transition-transform group-hover:translate-x-1 group-hover:text-foreground" />
+            </Link>
+          </nav>
+
+          <section className="grid border-b border-border lg:grid-cols-4">
+            <StatCell label="Wins" value={summary.wins} kanji="勝" accent="bg-signal" />
+            <StatCell label="Losses" value={summary.losses} kanji="敗" accent="bg-accent" />
+            <StatCell label="Draws" value={summary.draws} kanji="和" accent="bg-warning" />
+            <StatCell label="Win rate" value={`${winRate}%`} kanji="形" accent="bg-foreground" />
+          </section>
+
+          <section className="px-6 py-8 lg:px-10 lg:py-10">
+            <div className="mb-5 flex flex-wrap items-end justify-between gap-4">
+              <div>
+                <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.24em] text-muted-foreground">
+                  Recent record
+                </p>
+                <h2 className="mt-2 font-sans text-3xl font-semibold tracking-[-0.06em]">
+                  Match itinerary
+                </h2>
+              </div>
+              <Link
+                href="/games"
+                className="inline-flex h-10 items-center gap-2 border border-border bg-background px-4 font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-foreground transition-colors hover:bg-foreground hover:text-primary-foreground"
+              >
+                View all
+                <LuArrowRight className="size-4" />
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-[minmax(0,2.4fr)_0.75fr_0.75fr_1fr_42px] border-b border-border pb-3">
+              {["Opponent", "Result", "Color", "Date"].map((col) => (
+                <span
+                  key={col}
+                  className="font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground"
                 >
-                  {/* Opponent */}
-                  <div className="flex items-center gap-3 min-w-0">
-                    <span className="flex size-8 shrink-0 items-center justify-center font-black text-[13px] bg-black text-white border-[2px] border-black group-hover:border-white">
-                      {opponentLabel.charAt(0).toUpperCase()}
-                    </span>
-                    <div className="min-w-0">
-                      <p className="font-sans font-black text-[14px] tracking-tight truncate text-black group-hover:text-white">
-                        {opponentLabel}
-                      </p>
-                    </div>
-                  </div>
+                  {col}
+                </span>
+              ))}
+              <span className="sr-only">Open replay</span>
+            </div>
 
-                  {/* Result */}
-                  <span className="font-mono text-[12px] font-black uppercase tracking-widest text-black group-hover:text-white">
-                    {outcome}
-                  </span>
+            {games.length === 0 ? (
+              <div className="flex flex-col items-center justify-center gap-4 border-b border-border py-24">
+                <LuTrophy className="size-9 text-foreground/20" />
+                <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                  No record yet
+                </p>
+              </div>
+            ) : (
+              <div className="divide-y divide-border">
+                {games.map((game) => {
+                  const isBlack = game.blackPlayerId === user.id
+                  const myColor = isBlack ? "black" : "white"
+                  const opponent = isBlack ? game.whitePlayer : game.blackPlayer
+                  const isSelfPlay = game.blackPlayerId === game.whitePlayerId
+                  const opponentLabel =
+                    opponent.email === user.email
+                      ? "Self play"
+                      : opponent.name?.trim() || opponent.email
+                  const outcome = getOutcome({
+                    result: game.result,
+                    winner: game.winner,
+                    myColor,
+                    isSelfPlay,
+                  })
 
-                  {/* Color */}
-                  <div className="flex items-center gap-2">
-                    <div className={cn(
-                      "size-3 border-[2px] border-black group-hover:border-white",
-                      myColor === "black" ? "bg-black group-hover:bg-white" : "bg-white"
-                    )} />
-                    <span className="font-mono text-[11px] font-bold text-black/50 group-hover:text-white/60 capitalize">
-                      {myColor}
-                    </span>
-                  </div>
+                  return (
+                    <Link
+                      key={game.id}
+                      href={`/replay/${game.id}`}
+                      className="group grid grid-cols-[minmax(0,2.4fr)_0.75fr_0.75fr_1fr_42px] items-center transition-colors hover:bg-subtle"
+                    >
+                      <div className="flex min-w-0 items-center gap-4 py-4 pr-4">
+                        <span className="flex size-9 shrink-0 items-center justify-center border border-border bg-background font-mono text-[12px] font-semibold uppercase text-foreground">
+                          {opponentLabel.charAt(0).toUpperCase()}
+                        </span>
+                        <div className="min-w-0">
+                          <p className="truncate font-sans text-[15px] font-semibold tracking-[-0.03em] text-foreground">
+                            {opponentLabel}
+                          </p>
+                          <p className="mt-1 font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
+                            replay / {game.id.slice(0, 8)}
+                          </p>
+                        </div>
+                      </div>
 
-                  {/* Date */}
-                  <div className="flex items-center gap-1.5 font-mono text-[11px] font-bold text-black/40 group-hover:text-white/50">
-                    <LuClock3 className="size-3 shrink-0" />
-                    {formatDate(game.startedAt)}
-                  </div>
-                </Link>
-              )
-            })}
-          </div>
-        )}
+                      <div className="flex items-center gap-2 py-4">
+                        <span className={cn("size-2", outcomeTone(outcome))} />
+                        <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-foreground">
+                          {outcomeLabel(outcome)}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center gap-2 py-4">
+                        <span
+                          className={cn(
+                            "size-3 border border-border",
+                            myColor === "black" ? "bg-stone-black" : "bg-stone-white"
+                          )}
+                        />
+                        <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                          {myColor === "black" ? "黒" : "白"}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center gap-2 py-4 font-mono text-[11px] font-semibold text-muted-foreground">
+                        <LuClock3 className="size-3.5 shrink-0" />
+                        {formatDate(game.startedAt)}
+                      </div>
+
+                      <div className="flex h-full items-center justify-center border-l border-border text-muted-foreground transition-colors group-hover:bg-foreground group-hover:text-primary-foreground">
+                        <LuArrowRight className="size-4" />
+                      </div>
+                    </Link>
+                  )
+                })}
+              </div>
+            )}
+          </section>
+        </section>
       </div>
     </main>
+  )
+}
+
+function DossierMetric({
+  label,
+  value,
+  mark,
+}: {
+  label: string
+  value: string | number
+  mark: string
+}) {
+  return (
+    <div className="grid min-h-32 grid-cols-[1fr_auto] border-b border-border p-6 last:border-b-0">
+      <div>
+        <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+          {label}
+        </p>
+        <p className="mt-3 font-mono text-4xl font-semibold leading-none tracking-[-0.06em] tabular-nums">
+          {value}
+        </p>
+      </div>
+      <span className="self-end font-sans text-5xl font-semibold leading-none text-foreground/10">
+        {mark}
+      </span>
+    </div>
+  )
+}
+
+function StatCell({
+  label,
+  value,
+  kanji,
+  accent,
+}: {
+  label: string
+  value: string | number
+  kanji: string
+  accent: string
+}) {
+  return (
+    <div className="relative min-h-36 overflow-hidden border-b border-border p-6 last:border-b-0 sm:border-r lg:border-b-0 lg:last:border-r-0">
+      <span className="absolute right-4 top-3 font-sans text-6xl font-semibold leading-none text-foreground/10">
+        {kanji}
+      </span>
+      <span className={cn("mb-5 block size-2", accent)} />
+      <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+        {label}
+      </p>
+      <p className="mt-3 font-mono text-4xl font-semibold leading-none tracking-[-0.06em] tabular-nums">
+        {value}
+      </p>
+    </div>
   )
 }
