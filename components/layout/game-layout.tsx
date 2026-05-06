@@ -2,10 +2,15 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { LuUser, LuX } from "react-icons/lu";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { LuX, LuUser } from "react-icons/lu";
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export type DockPanel = {
     id: string;
@@ -46,65 +51,84 @@ export function GameLayout({
         <TooltipProvider>
             <div
                 className={cn(
-                    "relative flex min-h-svh overflow-hidden bg-background text-foreground font-sans",
+                    "relative flex min-h-svh overflow-hidden bg-background font-sans text-foreground",
                     className,
                 )}
             >
-                <header className="absolute inset-x-0 top-0 z-50 flex items-center justify-end px-6 py-4 pointer-events-none">
-                    <div className="flex items-center gap-2 pointer-events-auto">
+                <header className="pointer-events-none absolute inset-x-0 top-0 z-50 flex h-16 items-center justify-between border-b border-hairline bg-background/80 px-5 md:px-8">
+                    <div className="pointer-events-auto flex items-center gap-4">
+                        <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.28em] text-muted-foreground">
+                            KOMI
+                        </span>
+                        <span className="hidden h-4 w-px bg-border md:block" />
+                        <span className="hidden font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground md:inline">
+                            対局 / live board
+                        </span>
+                    </div>
+
+                    <div className="pointer-events-auto flex items-center gap-2">
                         <Button
                             render={<Link href="/games" />}
                             variant="outline"
                             size="sm"
-                            className="rounded-none hidden sm:inline-flex border-2 border-black bg-white text-black hover:bg-black hover:text-white font-mono font-bold tracking-widest uppercase text-xs px-6 py-5 shadow-[4px_4px_0_0_var(--foreground)] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none"
+                            className="hidden h-9 rounded-[6px] border-border bg-transparent px-4 font-mono text-[10px] uppercase tracking-[0.18em] text-foreground hover:border-border-strong hover:bg-subtle/70 sm:inline-flex"
                         >
-                            History
+                            Record
                         </Button>
                     </div>
                 </header>
 
-                {/* Main Workspace */}
                 <div
                     className={cn(
-                        "relative z-10 flex flex-1 w-full mx-auto h-svh items-center justify-center px-6 pb-24 pointer-events-none transition-[padding] duration-300 ease-out lg:pb-0",
-                        isExpanded ? "lg:pl-[680px]" : "lg:pl-32",
-                        rightPanel ? "lg:pr-40 xl:pr-56" : "lg:pr-6",
+                        "pointer-events-none relative z-10 mx-auto flex h-svh w-full flex-1 items-center justify-center px-5 pb-28 pt-16 transition-[padding] duration-300 ease-out lg:pb-8",
+                        isExpanded ? "lg:pl-[660px]" : "lg:pl-[144px]",
+                        rightPanel ? "lg:pr-36 xl:pr-48" : "lg:pr-8",
                     )}
                 >
-                    {/* Board Area */}
-                    <main className="flex items-center justify-center h-full pointer-events-auto max-w-2xl 2xl:max-w-3xl w-full">
+                    <main className="pointer-events-auto flex h-full w-full max-w-2xl items-center justify-center 2xl:max-w-3xl">
                         {board}
                     </main>
 
-                    {/* Right Floating Dashboard */}
-                    {rightPanel && (
-                        <aside className="absolute right-0 top-1/2 -translate-y-1/2 shrink-0 pointer-events-auto flex flex-col justify-center px-4 md:px-8 lg:px-12 xl:px-16">
+                    {rightPanel ? (
+                        <aside className="pointer-events-auto absolute right-4 top-1/2 hidden -translate-y-1/2 flex-col justify-center lg:flex xl:right-8">
                             {rightPanel}
                         </aside>
-                    )}
+                    ) : null}
                 </div>
 
-                {/* Left Dock */}
                 <div
                     className={cn(
-                        "fixed inset-x-3 bottom-3 z-40 pointer-events-auto lg:inset-x-auto lg:left-4 lg:top-4 lg:bottom-4",
+                        "pointer-events-auto fixed inset-x-3 bottom-3 z-40 lg:inset-x-auto lg:left-4 lg:top-20 lg:bottom-4",
                         "transition-[width,height] duration-300 ease-out",
                         isExpanded
-                            ? "h-[min(76svh,640px)] lg:h-auto lg:w-[min(620px,calc(100vw-2rem))]"
-                            : "h-[72px] lg:h-auto lg:w-[76px]",
+                            ? "h-[min(74svh,650px)] lg:h-auto lg:w-[min(620px,calc(100vw-2rem))]"
+                            : "h-[76px] lg:h-auto lg:w-[92px]",
                     )}
                 >
-                    <div className="relative flex h-full flex-col overflow-hidden rounded-none border-2 border-border bg-black shadow-[4px_4px_0_0_var(--foreground)] text-white lg:flex-row">
-                        <nav className="relative flex h-[72px] w-full shrink-0 flex-row items-center gap-2 border-b border-white/20 px-3 py-2 lg:h-full lg:w-[76px] lg:flex-col lg:border-b-0 lg:border-r lg:px-0 lg:py-6">
-                            <div className="mr-2 flex items-center justify-center lg:mb-8 lg:mr-0 lg:mt-4">
-                                <span className="font-display text-lg font-black tracking-tighter uppercase text-white select-none lg:text-2xl">
-                                    Komi
-                                </span>
+                    <div className="relative flex h-full flex-col overflow-hidden rounded-[14px] border border-border bg-card text-foreground lg:flex-row">
+                        <nav className="relative flex h-[76px] w-full shrink-0 flex-row items-center gap-2 overflow-hidden border-b border-border bg-background/45 px-3 py-2 lg:h-full lg:w-[92px] lg:flex-col lg:border-b-0 lg:border-r lg:px-0 lg:py-5">
+                            <span
+                                aria-hidden="true"
+                                className="pointer-events-none absolute -left-3 top-20 hidden select-none font-sans text-[7rem] font-semibold leading-none text-foreground/[0.08] lg:block"
+                            >
+                                碁
+                            </span>
+
+                            <div className="mr-2 flex items-center justify-center lg:mr-0 lg:h-20 lg:w-full">
+                                <div className="flex flex-col items-start leading-none lg:items-center">
+                                    <span className="font-sans text-base font-semibold tracking-[-0.04em] text-foreground lg:text-lg">
+                                        Komi
+                                    </span>
+                                    <span className="mt-1 font-mono text-[9px] uppercase tracking-[0.18em] text-muted-foreground">
+                                        対局
+                                    </span>
+                                </div>
                             </div>
 
-                            <div className="flex flex-1 flex-row items-center justify-center gap-2 lg:mt-4 lg:w-full lg:flex-col lg:gap-6 lg:px-3">
-                                {panels.map((panel) => {
+                            <div className="flex flex-1 flex-row items-center justify-center gap-2 lg:mt-5 lg:w-full lg:flex-col lg:gap-3 lg:px-3">
+                                {panels.map((panel, index) => {
                                     const isActive = activePanelId === panel.id;
+
                                     return (
                                         <Tooltip key={panel.id}>
                                             <TooltipTrigger
@@ -112,19 +136,37 @@ export function GameLayout({
                                                     <button
                                                         aria-label={panel.label}
                                                         aria-pressed={isActive}
-                                                        onClick={() => setActivePanelId(isActive ? null : panel.id)}
+                                                        onClick={() =>
+                                                            setActivePanelId(
+                                                                isActive
+                                                                    ? null
+                                                                    : panel.id,
+                                                            )
+                                                        }
                                                         className={cn(
-                                                            "relative flex size-12 items-center justify-center rounded-none transition-all duration-200 group border border-transparent lg:w-full",
+                                                            "group relative flex size-12 items-center justify-center rounded-[10px] border transition-[background-color,border-color,color,transform] duration-150 lg:w-full",
                                                             isActive
-                                                                ? "bg-white text-black border-white"
-                                                                : "text-white/50 hover:bg-white hover:text-black",
+                                                                ? "border-primary bg-primary text-primary-foreground"
+                                                                : "border-transparent text-muted-foreground hover:border-border-strong hover:bg-subtle/70 hover:text-foreground",
                                                         )}
                                                     />
                                                 }
                                             >
-                                                <span className="[&>svg]:size-5">{panel.icon}</span>
+                                                <span className="[&>svg]:size-5">
+                                                    {panel.icon}
+                                                </span>
+                                                <span className="absolute -right-1 -top-1 hidden rounded-full border border-border bg-card px-1 font-mono text-[8px] text-muted-foreground lg:block">
+                                                    {String(index + 1).padStart(
+                                                        2,
+                                                        "0",
+                                                    )}
+                                                </span>
                                             </TooltipTrigger>
-                                            <TooltipContent side="right" sideOffset={16} className="font-semibold text-xs tracking-wide">
+                                            <TooltipContent
+                                                side="right"
+                                                sideOffset={14}
+                                                className="font-mono text-[10px] uppercase tracking-[0.16em]"
+                                            >
                                                 {panel.label}
                                             </TooltipContent>
                                         </Tooltip>
@@ -132,59 +174,76 @@ export function GameLayout({
                                 })}
                             </div>
 
-                            <div className="ml-2 flex items-center gap-3 lg:mt-auto lg:ml-0 lg:w-full lg:flex-col lg:px-3">
+                            <div className="ml-2 flex items-center gap-3 lg:ml-0 lg:mt-auto lg:w-full lg:flex-col lg:px-3">
                                 <Tooltip>
                                     <TooltipTrigger
                                         render={
                                             <Link
                                                 href="/profile"
                                                 aria-label="Open profile"
-                                                className="relative flex size-12 items-center justify-center rounded-none transition-all duration-200 group text-white/50 hover:bg-white hover:text-black lg:w-full"
+                                                className="relative flex size-12 items-center justify-center rounded-[10px] border border-transparent text-muted-foreground transition-[background-color,border-color,color] duration-150 hover:border-border-strong hover:bg-subtle/70 hover:text-foreground lg:w-full"
                                             />
                                         }
                                     >
                                         <LuUser className="size-5" />
                                     </TooltipTrigger>
-                                    <TooltipContent side="right" sideOffset={16} className="font-semibold text-xs tracking-wide">
+                                    <TooltipContent
+                                        side="right"
+                                        sideOffset={14}
+                                        className="font-mono text-[10px] uppercase tracking-[0.16em]"
+                                    >
                                         Profile
                                     </TooltipContent>
                                 </Tooltip>
                             </div>
+
+                            <span className="pointer-events-none absolute bottom-5 left-1/2 hidden -translate-x-1/2 font-mono text-[9px] uppercase tracking-[0.18em] text-muted-foreground [writing-mode:vertical-rl] lg:block">
+                                match rail
+                            </span>
                         </nav>
 
-                        <div
+                        <section
                             className={cn(
-                                "relative min-w-0 flex-1 transition-[opacity,transform] duration-250 ease-out",
-                                isExpanded ? "opacity-100 translate-y-0 lg:translate-x-0" : "pointer-events-none opacity-0 translate-y-4 lg:translate-x-4 lg:translate-y-0",
+                                "relative min-w-0 flex-1 border-border transition-[opacity,transform] duration-300 ease-out lg:border-l-0",
+                                isExpanded
+                                    ? "opacity-100 translate-y-0 lg:translate-x-0"
+                                    : "pointer-events-none opacity-0 translate-y-4 lg:translate-x-4 lg:translate-y-0",
                             )}
                             aria-hidden={!isExpanded}
                         >
                             {activePanel ? (
-                                <div className="flex h-full flex-col bg-black text-white">
-                                    <div className="flex items-center justify-between gap-4 border-b-2 border-white/20 bg-black px-4 py-4 lg:px-7 lg:py-5">
-                                        <h2 className="flex items-center gap-3 font-display font-black text-xl tracking-tighter text-white uppercase lg:text-2xl">
-                                            <span className="flex size-9 items-center justify-center rounded-none border-2 border-border bg-foreground text-card [&>svg]:size-4 lg:size-10 lg:[&>svg]:size-5">
+                                <div className="flex h-full flex-col bg-card text-foreground">
+                                    <div className="flex items-center justify-between gap-4 border-b border-border bg-background/35 px-4 py-4 lg:px-7 lg:py-5">
+                                        <div className="flex min-w-0 items-center gap-3">
+                                            <span className="flex size-10 shrink-0 items-center justify-center rounded-[10px] border border-border bg-subtle text-foreground [&>svg]:size-5">
                                                 {activePanel.icon}
                                             </span>
-                                            <span>{activePanel.label}</span>
-                                        </h2>
+                                            <div className="min-w-0">
+                                                <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                                                    active dossier
+                                                </p>
+                                                <h2 className="truncate font-sans text-2xl font-semibold tracking-[-0.055em] text-foreground lg:text-3xl">
+                                                    {activePanel.label}
+                                                </h2>
+                                            </div>
+                                        </div>
                                         <button
                                             aria-label="Close panel"
                                             onClick={() => setActivePanelId(null)}
-                                            className="flex size-11 items-center justify-center rounded-none border-2 border-transparent text-muted-foreground transition-all hover:border-border hover:bg-foreground hover:text-primary-foreground focus:outline-none"
+                                            className="flex size-10 shrink-0 items-center justify-center rounded-[10px] border border-border bg-transparent text-muted-foreground transition-[background-color,border-color,color] duration-150 hover:border-border-strong hover:bg-subtle/70 hover:text-foreground focus:outline-none"
                                         >
-                                            <LuX className="size-6" />
+                                            <LuX className="size-5" />
                                         </button>
                                     </div>
 
-                                    <div className="min-h-0 flex-1 overflow-y-auto px-4 py-5 lg:px-8 lg:py-7 scrollbar-none">
+                                    <div className="min-h-0 flex-1 overflow-y-auto px-4 py-5 scrollbar-none lg:px-7 lg:py-6">
                                         <div className="mx-auto flex min-h-full w-full max-w-[30rem] flex-col">
                                             {activePanel.content}
                                         </div>
                                     </div>
                                 </div>
                             ) : null}
-                        </div>
+                        </section>
                     </div>
                 </div>
             </div>

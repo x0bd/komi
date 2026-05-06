@@ -1337,14 +1337,32 @@ export function useSidebarPanels({
         : null;
 
     const rightPanel = (
-        <div className="flex flex-col gap-0 w-24 border-4 border-black bg-black shadow-[6px_6px_0_0_var(--foreground)] uppercase font-display font-black tracking-widest text-[10px]">
-            <div className="flex flex-col items-center bg-black text-white py-4 border-b-2 border-white/20">
-                <span className="text-white/50 mb-2">BLK</span>
-                <span className="text-3xl">{liveScore.black.total}</span>
+        <div className="w-[104px] overflow-hidden rounded-[14px] border border-border bg-card font-mono uppercase tracking-[0.16em] text-foreground">
+            <div className="border-b border-border px-4 py-3">
+                <p className="text-[9px] font-semibold text-muted-foreground">
+                    score
+                </p>
+                <p className="mt-1 font-sans text-sm font-semibold tracking-[-0.04em]">
+                    形
+                </p>
             </div>
-            <div className="flex flex-col items-center bg-white text-black py-4">
-                <span className="text-black/50 mb-2">WHT</span>
-                <span className="text-3xl font-bold">{Math.floor(liveScore.white.total)}</span>
+            <div className="grid divide-y divide-border">
+                <div className="px-4 py-4">
+                    <span className="text-[9px] font-semibold text-muted-foreground">
+                        BLK
+                    </span>
+                    <span className="mt-1 block font-mono text-2xl font-semibold tracking-[-0.08em] text-foreground">
+                        {liveScore.black.total}
+                    </span>
+                </div>
+                <div className="px-4 py-4">
+                    <span className="text-[9px] font-semibold text-muted-foreground">
+                        WHT
+                    </span>
+                    <span className="mt-1 block font-mono text-2xl font-semibold tracking-[-0.08em] text-foreground">
+                        {Math.floor(liveScore.white.total)}
+                    </span>
+                </div>
             </div>
         </div>
     );

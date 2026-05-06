@@ -220,11 +220,11 @@ Files:
 
 Tasks:
 
-- [ ] Replace current token palette with fixed Kanji Grid tokens.
-- [ ] Remove theme switching and dark token dependency.
-- [ ] Load `Geist` and `JetBrains Mono`.
-- [ ] Set body background to mist blue-gray.
-- [ ] Remove default shadows from primitives where possible.
+- [x] Replace current token palette with fixed Kanji Grid tokens.
+- [x] Remove theme switching and dark token dependency.
+- [x] Load `Geist` and `JetBrains Mono`.
+- [x] Set body background to mist blue-gray.
+- [x] Remove default shadows from primitives where possible.
 
 ### Game Layout / Dock
 
@@ -235,11 +235,11 @@ Files:
 
 Tasks:
 
-- [ ] Replace black brutalist dock with pale line-based rail.
-- [ ] Add ghost `碁` or `対局` to the rail at low opacity.
-- [ ] Make expanded panes extend from the rail as one continuous grid.
-- [ ] Use vertical metadata labels for secondary nav text.
-- [ ] Keep the board visually central with generous negative space.
+- [x] Replace black brutalist dock with pale line-based rail.
+- [x] Add ghost `碁` or `対局` to the rail at low opacity.
+- [x] Make expanded panes extend from the rail as one continuous grid.
+- [x] Use vertical metadata labels for secondary nav text.
+- [x] Keep the board visually central with generous negative space.
 
 ### Board
 
@@ -375,8 +375,8 @@ The final icon system should be thin-line and quiet.
 
 Follow this exact sequence so we do not restyle ourselves into chaos.
 
-1. [ ] Foundation: fonts, tokens, body, primitives.
-2. [ ] Main shell: `GameLayout` and global game route composition.
+1. [x] Foundation: fonts, tokens, body, primitives.
+2. [x] Main shell: `GameLayout` and global game route composition.
 3. [ ] Board: frame, stones, coordinates, hover, last move.
 4. [ ] Right/dock panels: players, history, controls, mode, score.
 5. [ ] Sensei: chat, annotation, mobile trigger.
@@ -390,15 +390,15 @@ Follow this exact sequence so we do not restyle ourselves into chaos.
 
 ## 11. Acceptance Checklist
 
-- [ ] One fixed theme only.
-- [ ] Geist and JetBrains Mono loaded and mapped.
+- [x] One fixed theme only.
+- [x] Geist and JetBrains Mono loaded and mapped.
 - [ ] No purple/default AI gradients.
 - [ ] No heavy black brutalist blocks unless deliberately retained as board data.
-- [ ] No big shadows in UI chrome.
-- [ ] Lines and grid structure define the layout.
-- [ ] Kanji appears as atmosphere, not as untranslated UX.
-- [ ] Board remains the primary object.
-- [ ] Dock and panels feel connected, not floating.
+- [x] No big shadows in UI chrome.
+- [x] Lines and grid structure define the layout.
+- [x] Kanji appears as atmosphere, not as untranslated UX.
+- [x] Board remains the primary object.
+- [x] Dock and panels feel connected, not floating.
 - [ ] Mobile uses the same visual grammar, not a simplified unrelated UI.
 - [ ] Empty states are terse.
 - [ ] Motion is mechanical and reduced-motion aware.
