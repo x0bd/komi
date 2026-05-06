@@ -32,47 +32,47 @@ export function LiveScoreCard({
     return (
         <div
             className={cn(
-                "flex flex-col w-full p-5 rounded-none border-[3px] border-white bg-white/95 shadow-[6px_6px_0_0_var(--swiss-blue)] transition-all duration-300",
+                "flex w-full flex-col border border-border bg-background",
                 className,
             )}
         >
-            <div className="flex items-center justify-between gap-4 mb-4">
-                <div className="flex flex-col gap-1 text-[11px] font-bold uppercase tracking-widest text-black/60">
+            <div className="flex items-center justify-between gap-4 border-b border-border px-4 py-3">
+                <div className="flex flex-col gap-1 font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
                     <span>LIVE SCORE</span>
-                    <span className="font-sans text-[15px] font-semibold text-black tracking-normal normal-case leading-tight">
+                    <span className="font-sans text-[15px] font-semibold normal-case leading-tight tracking-[-0.03em] text-foreground">
                         {leadText}
                     </span>
                 </div>
-                <div className="flex items-center justify-center text-[10px] font-mono font-bold text-white border border-black bg-black px-2.5 py-1 rounded-none uppercase tracking-wider">
+                <div className="border border-border px-2.5 py-1 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-foreground">
                     {isGameOver ? "Final" : `${moveCount} moves`}
                 </div>
             </div>
 
-            <div className="relative w-full h-4 rounded-none border-2 border-black overflow-hidden flex bg-white">
+            <div className="relative flex h-4 w-full overflow-hidden border-b border-border bg-subtle">
                 <div
-                    className="h-full bg-black transition-[width] duration-500 border-r-2 border-black"
+                    className="h-full border-r border-border bg-foreground transition-[width] duration-500"
                     style={{ width: `${blackShare}%` }}
                 />
                 <div
-                    className="h-full bg-swiss-red transition-[width] duration-500"
+                    className="h-full bg-accent transition-[width] duration-500"
                     style={{ width: `${whiteShare}%` }}
                 />
             </div>
 
-            <div className="flex items-center justify-between mt-3 px-1">
+            <div className="grid grid-cols-2 divide-x divide-border">
                 <div className="flex flex-col">
-                    <span className="text-[12px] font-semibold text-black/50 uppercase tracking-widest mb-0.5">
+                    <span className="border-b border-border px-4 py-2 font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
                         Black
                     </span>
-                    <span className="text-[16px] font-mono font-semibold text-black tracking-tight">
+                    <span className="px-4 py-3 font-mono text-[16px] font-semibold tracking-[-0.06em] text-foreground">
                         {formatPoints(blackTotal)}
                     </span>
                 </div>
                 <div className="flex flex-col text-right">
-                    <span className="text-[12px] font-semibold text-black/50 uppercase tracking-widest mb-0.5">
+                    <span className="border-b border-border px-4 py-2 font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
                         White
                     </span>
-                    <span className="text-[16px] font-mono font-semibold text-black tracking-tight">
+                    <span className="px-4 py-3 font-mono text-[16px] font-semibold tracking-[-0.06em] text-foreground">
                         {formatPoints(whiteTotal)}
                     </span>
                 </div>

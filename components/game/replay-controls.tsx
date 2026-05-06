@@ -37,32 +37,34 @@ export function ReplayControls({
     onSpeedChange,
 }: ReplayControlsProps) {
     return (
-        <div className="rounded-none border-2 border-border bg-card p-4 shadow-[4px_4px_0_0_var(--foreground)]">
+        <div className="border border-border bg-background">
             <div className="flex items-center justify-between gap-3">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                <p className="border-r border-border px-3 py-2 font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
                     Replay
                 </p>
-                <p className="font-mono text-xs text-muted-foreground">
+                <p className="px-3 py-2 font-mono text-xs text-muted-foreground">
                     {currentMove}/{maxMove}
                 </p>
             </div>
 
-            <input
-                type="range"
-                min={0}
-                max={Math.max(0, maxMove)}
-                value={Math.max(0, Math.min(currentMove, maxMove))}
-                onChange={(event) =>
-                    onSeek(Number.parseInt(event.target.value, 10) || 0)
-                }
-                className="mt-3 h-2 w-full cursor-pointer appearance-none rounded-none border border-border bg-background"
-            />
+            <div className="border-t border-border px-3 py-3">
+                <input
+                    type="range"
+                    min={0}
+                    max={Math.max(0, maxMove)}
+                    value={Math.max(0, Math.min(currentMove, maxMove))}
+                    onChange={(event) =>
+                        onSeek(Number.parseInt(event.target.value, 10) || 0)
+                    }
+                    className="h-2 w-full cursor-pointer appearance-none border border-border bg-background"
+                />
+            </div>
 
-            <div className="mt-3 flex items-center justify-between gap-2">
+            <div className="grid grid-cols-5 border-y border-border">
                 <button
                     type="button"
                     onClick={onSkipStart}
-                    className="inline-flex size-8 items-center justify-center rounded-none border-2 border-border bg-background text-foreground transition-colors hover:bg-foreground hover:text-primary-foreground shadow-[2px_2px_0_0_var(--foreground)] active:shadow-none active:translate-x-[2px] active:translate-y-[2px]"
+                    className="inline-flex h-10 items-center justify-center border-r border-border bg-background text-foreground transition-colors hover:bg-foreground hover:text-primary-foreground"
                     aria-label="Skip to start"
                 >
                     <LuSkipBack className="size-4" />
@@ -70,7 +72,7 @@ export function ReplayControls({
                 <button
                     type="button"
                     onClick={onStepBack}
-                    className="inline-flex size-8 items-center justify-center rounded-none border-2 border-border bg-background text-foreground transition-colors hover:bg-foreground hover:text-primary-foreground shadow-[2px_2px_0_0_var(--foreground)] active:shadow-none active:translate-x-[2px] active:translate-y-[2px]"
+                    className="inline-flex h-10 items-center justify-center border-r border-border bg-background text-foreground transition-colors hover:bg-foreground hover:text-primary-foreground"
                     aria-label="Step backward"
                 >
                     <LuStepBack className="size-4" />
@@ -78,7 +80,7 @@ export function ReplayControls({
                 <button
                     type="button"
                     onClick={onTogglePlay}
-                    className="inline-flex size-9 items-center justify-center rounded-none border-2 border-border bg-background text-foreground transition-colors hover:bg-foreground hover:text-primary-foreground shadow-[2px_2px_0_0_var(--foreground)] active:shadow-none active:translate-x-[2px] active:translate-y-[2px]"
+                    className="inline-flex h-10 items-center justify-center border-r border-border bg-background text-foreground transition-colors hover:bg-foreground hover:text-primary-foreground"
                     aria-label={isPlaying ? "Pause replay" : "Play replay"}
                 >
                     {isPlaying ? (
@@ -90,7 +92,7 @@ export function ReplayControls({
                 <button
                     type="button"
                     onClick={onStepForward}
-                    className="inline-flex size-8 items-center justify-center rounded-none border-2 border-border bg-background text-foreground transition-colors hover:bg-foreground hover:text-primary-foreground shadow-[2px_2px_0_0_var(--foreground)] active:shadow-none active:translate-x-[2px] active:translate-y-[2px]"
+                    className="inline-flex h-10 items-center justify-center border-r border-border bg-background text-foreground transition-colors hover:bg-foreground hover:text-primary-foreground"
                     aria-label="Step forward"
                 >
                     <LuStepForward className="size-4" />
@@ -98,21 +100,23 @@ export function ReplayControls({
                 <button
                     type="button"
                     onClick={onSkipEnd}
-                    className="inline-flex size-8 items-center justify-center rounded-none border-2 border-border bg-background text-foreground transition-colors hover:bg-foreground hover:text-primary-foreground shadow-[2px_2px_0_0_var(--foreground)] active:shadow-none active:translate-x-[2px] active:translate-y-[2px]"
+                    className="inline-flex h-10 items-center justify-center bg-background text-foreground transition-colors hover:bg-foreground hover:text-primary-foreground"
                     aria-label="Skip to end"
                 >
                     <LuSkipForward className="size-4" />
                 </button>
             </div>
 
-            <div className="mt-3 flex items-center justify-between">
-                <p className="text-[11px] text-muted-foreground">Speed</p>
+            <div className="flex items-center justify-between px-3 py-3">
+                <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
+                    Speed
+                </p>
                 <select
                     value={String(playbackSpeed)}
                     onChange={(event) =>
                         onSpeedChange(Number.parseFloat(event.target.value) || 1)
                     }
-                    className="h-8 rounded-none border-2 border-border bg-background px-2.5 font-mono text-xs font-bold text-foreground shadow-[2px_2px_0_0_var(--foreground)] cursor-pointer"
+                    className="h-8 cursor-pointer border border-border bg-background px-2.5 font-mono text-xs font-semibold text-foreground"
                 >
                     <option value="0.5">0.5x</option>
                     <option value="1">1x</option>

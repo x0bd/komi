@@ -31,20 +31,20 @@ export function AIDifficultySelector({
     return (
         <div
             className={cn(
-                "flex flex-col gap-5 rounded-none border-[3px] border-white bg-white shadow-[6px_6px_0_0_var(--swiss-blue)] p-6",
+                "flex flex-col border border-border bg-background",
                 className,
             )}
         >
-            <div className="flex flex-col gap-1 px-1">
-                <span className="text-[11px] font-black uppercase tracking-[0.15em] text-black/50">
-                    AI Engine · Sensei
+            <div className="flex flex-col gap-1 border-b border-border px-4 py-3">
+                <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                    AI Engine / Sensei
                 </span>
-                <p className="font-sans text-[15px] font-black text-black leading-tight">
+                <p className="font-sans text-[15px] font-semibold leading-tight tracking-[-0.03em] text-foreground">
                     {descMap[value ?? "easy"]}
                 </p>
             </div>
 
-            <div className="flex bg-black rounded-none p-[3px] border-[3px] border-black">
+            <div className="grid grid-cols-3 divide-x divide-border">
                 {OPTIONS.map((option) => {
                     const active = option.value === value;
 
@@ -59,10 +59,10 @@ export function AIDifficultySelector({
                                 }
                             }}
                             className={cn(
-                                "flex-1 px-3 py-2 rounded-none text-[13px] font-mono font-black tracking-wide uppercase transition-all duration-300 border border-transparent",
+                                "px-3 py-3 font-mono text-[10px] font-semibold uppercase tracking-[0.16em] transition-colors",
                                 active
-                                    ? "bg-white text-black border-black/20 shadow-[2px_2px_0_0_var(--swiss-red)]"
-                                    : "text-white/50 hover:text-white",
+                                    ? "bg-foreground text-primary-foreground"
+                                    : "text-muted-foreground hover:bg-subtle hover:text-foreground",
                                 !option.enabled && "cursor-not-allowed opacity-40",
                             )}
                             aria-pressed={active}

@@ -1,15 +1,8 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import {
-    LuChevronDown,
-    LuChevronUp,
-    LuHistory,
-    LuSparkles,
-} from "react-icons/lu";
+import { LuChevronDown, LuChevronUp, LuHistory } from "react-icons/lu";
 
 export type MoveEntry = {
     moveNumber: number;
@@ -43,7 +36,7 @@ export function MoveHistory({
     const summaryText = lastMove
         ? lastMove.isPass
             ? `Last move: ${lastMove.player === "black" ? "Black" : "White"} passed`
-            : `Last move: ${lastMove.coordinate ?? "—"}`
+            : `Last move: ${lastMove.coordinate ?? "--"}`
         : "Opening ready";
 
     if (collapsed && !isEmbedded) {
@@ -51,25 +44,27 @@ export function MoveHistory({
             <button
                 type="button"
                 onClick={onToggle}
-                className="group w-full text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-lg mt-2"
+                className="group mt-2 w-full text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
-                <div className="px-2 py-3 flex items-center justify-between border-t-2 border-t-border transition-colors hover:bg-foreground hover:text-primary-foreground rounded-none group-focus-visible:border-border">
-                    <div className="flex items-center gap-3 min-w-0">
+                <div className="flex items-center justify-between border border-border bg-background transition-colors hover:bg-subtle">
+                    <div className="flex min-w-0 items-center gap-3 px-3 py-3">
                         <LuHistory className="size-4 opacity-70" />
                         <div className="min-w-0">
-                            <p className="font-mono text-[13px] font-bold uppercase tracking-widest text-inherit">
+                            <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-foreground">
                                 History
                             </p>
-                            <p className="truncate text-[11px] opacity-70 font-sans">
+                            <p className="truncate font-sans text-[12px] text-muted-foreground">
                                 {summaryText}
                             </p>
                         </div>
                     </div>
-                    <div className="flex items-center gap-2 shrink-0 opacity-70">
-                        <span className="font-mono text-[10px] border border-inherit px-2 py-0.5 rounded-none">
+                    <div className="flex shrink-0 items-center border-l border-border">
+                        <span className="border-r border-border px-3 py-4 font-mono text-[10px] text-muted-foreground">
                             {moveCount}
                         </span>
-                        <LuChevronDown className="size-4" />
+                        <span className="flex px-3 py-4">
+                            <LuChevronDown className="size-4 text-muted-foreground" />
+                        </span>
                     </div>
                 </div>
             </button>
@@ -79,21 +74,20 @@ export function MoveHistory({
     return (
         <div
             className={cn(
-                "flex flex-col overflow-hidden transition-all duration-300 mt-2",
-                !isEmbedded && "border-t border-border/50",
+                "mt-2 flex flex-col overflow-hidden border border-border bg-background transition-all duration-300",
                 className,
             )}
         >
             {!isEmbedded && (
-                <div className="shrink-0 px-2 pb-2 pt-4 flex items-center justify-between">
+                <div className="flex shrink-0 items-center justify-between border-b border-border px-3 py-3">
                     <div className="flex items-center gap-2.5">
                         <LuHistory className="size-4 text-foreground/70" />
-                        <span className="font-sans text-sm font-semibold text-foreground">
+                        <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-foreground">
                             Replay Log
                         </span>
                     </div>
                     <div className="flex items-center gap-2 text-muted-foreground">
-                        <span className="font-mono text-[10px] border border-border px-2 py-0.5 rounded-none">
+                        <span className="border border-border px-2 py-0.5 font-mono text-[10px]">
                             {moveCount}
                         </span>
                         {onToggle && (
@@ -101,7 +95,7 @@ export function MoveHistory({
                                 type="button"
                                 onClick={onToggle}
                                 aria-label="Collapse history"
-                                className="flex size-6 items-center justify-center rounded-none border border-transparent transition-colors hover:border-border hover:bg-foreground hover:text-primary-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                                className="flex size-6 items-center justify-center border border-border transition-colors hover:bg-foreground hover:text-primary-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                             >
                                 <LuChevronUp className="size-3.5" />
                             </button>
@@ -110,7 +104,7 @@ export function MoveHistory({
                 </div>
             )}
 
-            <div className={cn("min-h-0 flex-1 p-0", !isEmbedded && "pt-0")}>
+            <div className="min-h-0 flex-1">
                 <ScrollArea
                     className={cn(
                         isEmbedded
@@ -118,12 +112,7 @@ export function MoveHistory({
                             : "h-[200px] lg:h-full lg:min-h-[260px]",
                     )}
                 >
-                    <div
-                        className={cn(
-                            "flex flex-col gap-1",
-                            isEmbedded ? "px-4 pb-6 pt-4" : "p-2",
-                        )}
-                    >
+                    <div className={cn("flex flex-col gap-1", isEmbedded ? "p-4" : "p-3")}>
                         {hasMoves ? (
                             moves.map((m) => (
                                 <button
@@ -131,54 +120,40 @@ export function MoveHistory({
                                     type="button"
                                     onClick={() => onMoveSelect?.(m.moveNumber)}
                                     disabled={!onMoveSelect}
-                                    aria-pressed={
-                                        highlightedMoveNumber === m.moveNumber
-                                    }
+                                    aria-pressed={highlightedMoveNumber === m.moveNumber}
                                     className={cn(
-                                        "flex w-full items-center justify-between rounded-none px-3 py-1.5 text-left transition-colors border-2 border-transparent",
-                                        onMoveSelect &&
-                                            "cursor-pointer hover:border-border hover:bg-foreground hover:text-primary-foreground",
-                                        highlightedMoveNumber ===
-                                            m.moveNumber &&
-                                            "border-border bg-foreground text-primary-foreground font-bold",
+                                        "grid w-full grid-cols-[32px_16px_1fr_auto] items-center gap-3 border border-transparent px-3 py-2 text-left transition-colors",
+                                        onMoveSelect && "cursor-pointer hover:border-border hover:bg-subtle",
+                                        highlightedMoveNumber === m.moveNumber &&
+                                            "border-border bg-foreground text-primary-foreground",
                                     )}
                                 >
-                                    <div className="flex items-center gap-3">
-                                        <span className="w-5 text-right font-mono text-[11px] text-muted-foreground/70">
-                                            {m.moveNumber}
-                                        </span>
-                                        <span
-                                            className={cn(
-                                                "inline-block size-2 rounded-full",
-                                                m.player === "black"
-                                                    ? "bg-stone-black"
-                                                    : "bg-stone-white border border-border/50",
-                                            )}
-                                        />
-                                        <span className="text-[13px] font-medium text-foreground">
-                                            {m.player === "black"
-                                                ? "Black"
-                                                : "White"}
-                                        </span>
-                                    </div>
+                                    <span className="text-right font-mono text-[11px] text-muted-foreground/70">
+                                        {m.moveNumber}
+                                    </span>
+                                    <span
+                                        className={cn(
+                                            "inline-block size-2 border border-border",
+                                            m.player === "black" ? "bg-stone-black" : "bg-stone-white",
+                                        )}
+                                    />
+                                    <span className="font-sans text-[13px] font-medium text-inherit">
+                                        {m.player === "black" ? "Black" : "White"}
+                                    </span>
                                     <span
                                         className={cn(
                                             "font-mono text-[12px]",
-                                            m.isPass
-                                                ? "text-muted-foreground italic"
-                                                : "text-foreground",
+                                            m.isPass ? "italic text-muted-foreground" : "text-inherit",
                                         )}
                                     >
-                                        {m.isPass
-                                            ? "pass"
-                                            : (m.coordinate ?? "—")}
+                                        {m.isPass ? "pass" : (m.coordinate ?? "--")}
                                     </span>
                                 </button>
                             ))
                         ) : (
-                            <div className="mt-4 flex flex-col items-center justify-center text-center opacity-60">
-                                <p className="text-xs text-muted-foreground italic">
-                                    No moves yet
+                            <div className="mt-2 border border-dashed border-border px-3 py-2 text-center">
+                                <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
+                                    Awaiting first move
                                 </p>
                             </div>
                         )}

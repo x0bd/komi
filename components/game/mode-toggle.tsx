@@ -19,25 +19,25 @@ export function ModeToggle({
             value={value ? [value] : []}
             onValueChange={(v) => v?.[0] && onValueChange?.(v[0] as GameMode)}
             className={cn(
-                "w-full rounded-none border-[3px] border-white bg-black p-[3px] shadow-[6px_6px_0_0_var(--swiss-red)]",
+                "grid w-full grid-cols-3 border border-border bg-background [border-radius:0]",
                 className,
             )}
         >
             <ToggleGroupItem
                 value="local"
-                className="flex-1 rounded-none h-10 font-mono font-black uppercase tracking-widest text-[12px] border border-transparent data-[state=on]:border-black/20 data-[state=on]:bg-white data-[state=on]:text-black transition-all duration-300 text-white/50 hover:text-white"
+                className="h-10 min-w-0 border-r border-border font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground transition-colors [border-radius:0] hover:bg-subtle hover:text-foreground data-[state=on]:bg-foreground data-[state=on]:text-primary-foreground"
             >
                 Local
             </ToggleGroupItem>
             <ToggleGroupItem
                 value="versus-ai"
-                className="flex-1 rounded-none h-10 font-mono font-black uppercase tracking-widest text-[12px] border border-transparent data-[state=on]:border-black/20 data-[state=on]:bg-white data-[state=on]:text-black transition-all duration-300 text-white/50 hover:text-white"
+                className="h-10 min-w-0 border-r border-border font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground transition-colors [border-radius:0] hover:bg-subtle hover:text-foreground data-[state=on]:bg-foreground data-[state=on]:text-primary-foreground"
             >
                 Versus AI
             </ToggleGroupItem>
             <ToggleGroupItem
                 value="online"
-                className="flex-1 rounded-none h-10 font-mono font-black uppercase tracking-widest text-[12px] border border-transparent data-[state=on]:border-black/20 data-[state=on]:bg-white data-[state=on]:text-black transition-all duration-300 text-white/50 hover:text-white"
+                className="h-10 min-w-0 font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground transition-colors [border-radius:0] hover:bg-subtle hover:text-foreground data-[state=on]:bg-foreground data-[state=on]:text-primary-foreground"
             >
                 Online
             </ToggleGroupItem>

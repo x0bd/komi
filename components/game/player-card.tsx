@@ -1,7 +1,6 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Timer } from "@/components/game/timer";
 import { cn } from "@/lib/utils";
 
@@ -30,80 +29,54 @@ export function PlayerCard({
     isLowTime?: boolean;
     className?: string;
 }) {
+    const stoneLabel = stoneColor === "black" ? "黒" : "白";
+
     return (
         <div
             className={cn(
-                "flex items-center gap-4 py-3 px-4 rounded-none transition-all duration-300 w-full border-[3px]",
-                isActive 
-                    ? "bg-white border-white text-black shadow-[4px_4px_0_0_var(--swiss-red)] scale-[1.02]" 
-                    : "bg-white/90 border-transparent text-black/50 grayscale-[0.2]",
+                "grid w-full grid-cols-[3px_52px_1fr_auto] items-center border border-border bg-background transition-colors",
+                isActive ? "border-border-strong bg-subtle/45" : "opacity-70",
                 className,
             )}
         >
-            <div className={cn(
-                "relative shrink-0 rounded-full transition-all duration-500",
-                isActive ? "shadow-[0_0_20px_rgba(0,0,0,0.08)] scale-105" : ""
-            )}>
-                {isActive && (
-                    <div className="absolute -inset-1.5 rounded-full border-2 border-foreground/15 animate-ping duration-[3s] opacity-20" />
-                )}
-                <Avatar
-                    className={cn(
-                        "relative z-10 size-14 rounded-full",
-                        stoneColor === "white" && "border border-border/60 bg-transparent"
-                    )}
-                >
-                    <AvatarFallback
+            <div className={cn("h-full bg-transparent", isActive && "bg-accent")} />
+
+            <div className="flex h-full min-h-20 items-center justify-center border-r border-border">
+                <div className="relative flex size-9 items-center justify-center border border-border bg-background">
+                    <span
                         className={cn(
-                            "font-sans text-[16px] font-medium tracking-tight",
-                            stoneColor === "black"
-                                ? "bg-black text-white"
-                                : "bg-white border border-black/40 text-black",
+                            "absolute -right-1 -top-1 size-2 border border-border",
+                            stoneColor === "black" ? "bg-stone-black" : "bg-stone-white",
                         )}
-                    >
-                        {avatarIcon ? (
-                            <span className="flex items-center justify-center text-xl">
-                                {avatarIcon}
-                            </span>
-                        ) : (
-                            initial
-                        )}
-                    </AvatarFallback>
-                </Avatar>
+                    />
+                    <span className="font-mono text-[11px] font-semibold uppercase tracking-[-0.04em] text-foreground">
+                        {avatarIcon ?? initial}
+                    </span>
+                </div>
             </div>
 
-            <div className="min-w-0 flex-1 flex items-center justify-between">
-                <div className="flex flex-col gap-1">
-                    <p className={cn("font-sans text-[16px] font-semibold tracking-tight truncate", isActive ? "text-black" : "text-black/60")}>
+            <div className="min-w-0 px-4 py-3">
+                <div className="flex items-center gap-2">
+                    <p className="truncate font-sans text-[16px] font-semibold tracking-[-0.04em] text-foreground">
                         {name}
                     </p>
-                    <div className={cn("flex items-center gap-2 text-[12px] font-medium", isActive ? "text-black/80" : "text-black/40")}>
-                        <div className="flex items-center gap-1.5 uppercase tracking-widest font-bold">
-                            <div
-                                className={cn(
-                                    "size-2 rounded-full",
-                                    stoneColor === "black"
-                                        ? "bg-black"
-                                        : "bg-transparent border border-black/50",
-                                )}
-                            />
-                            <span>{stoneColor}</span>
-                        </div>
-                        <div className="size-1 rounded-full bg-black/20 shrink-0" />
-                        <p className="truncate">
-                            <span className="font-bold mr-1.5">
-                                {captures}
-                            </span>
-                            captures
-                        </p>
-                    </div>
+                    <span className="font-mono text-[10px] text-muted-foreground">
+                        {stoneLabel}
+                    </span>
                 </div>
+                <div className="mt-2 flex items-center gap-3 font-mono text-[9px] uppercase tracking-[0.16em] text-muted-foreground">
+                    <span>{stoneColor}</span>
+                    <span className="h-3 w-px bg-border" />
+                    <span>{captures} cap</span>
+                </div>
+            </div>
 
+            <div className="flex h-full min-h-20 items-center border-l border-border px-4">
                 <Timer
                     minutes={minutes}
                     seconds={seconds}
                     isLowTime={isLowTime}
-                    className={cn("text-right text-2xl font-mono tracking-tighter", isActive ? "text-black" : "text-black/50")}
+                    className={cn("text-right text-2xl", !isActive && "text-muted-foreground")}
                 />
             </div>
         </div>
