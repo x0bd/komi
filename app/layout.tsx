@@ -1,22 +1,16 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Inter } from "next/font/google";
+import { Geist, JetBrains_Mono } from "next/font/google";
 import { cn } from "@/lib/utils";
 import { Providers } from "@/components/providers";
 import "./globals.css";
 
-const interDisplay = Inter({
+const geist = Geist({
     subsets: ["latin"],
-    variable: "--font-display",
+    variable: "--font-geist",
     display: "swap",
 });
 
-const geistBody = Geist({
-    subsets: ["latin"],
-    variable: "--font-body",
-    display: "swap",
-});
-
-const geistMono = Geist_Mono({
+const jetBrainsMono = JetBrains_Mono({
     subsets: ["latin"],
     variable: "--font-mono",
     display: "swap",
@@ -36,14 +30,10 @@ export default function RootLayout({
     return (
         <html
             lang="en"
-            className={cn(
-                interDisplay.variable,
-                geistBody.variable,
-                geistMono.variable,
-            )}
+            className={cn(geist.variable, jetBrainsMono.variable)}
             suppressHydrationWarning
         >
-            <body className="min-h-svh antialiased">
+            <body className="min-h-svh bg-background font-sans text-foreground antialiased">
                 <Providers>{children}</Providers>
             </body>
         </html>

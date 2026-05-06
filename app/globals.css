@@ -5,17 +5,11 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* ══════════════════════════════════════════════
-   Theme Tokens
-   ══════════════════════════════════════════════ */
-
 @theme inline {
-    /* ── Font Families ── */
-    --font-sans: var(--font-body);
-    --font-display: var(--font-display);
+    --font-sans: var(--font-geist);
+    --font-display: var(--font-geist);
     --font-mono: var(--font-mono);
 
-    /* ── Semantic Color Mapping ── */
     --color-background: var(--background);
     --color-foreground: var(--foreground);
     --color-card: var(--card);
@@ -28,19 +22,22 @@
     --color-secondary-foreground: var(--secondary-foreground);
     --color-muted: var(--muted);
     --color-muted-foreground: var(--muted-foreground);
+    --color-subtle: var(--subtle);
     --color-accent: var(--accent);
     --color-accent-foreground: var(--accent-foreground);
     --color-destructive: var(--destructive);
     --color-border: var(--border);
+    --color-border-strong: var(--border-strong);
     --color-input: var(--input);
     --color-ring: var(--ring);
+    --color-hairline: var(--hairline);
+    --color-signal: var(--signal);
+    --color-signal-foreground: var(--signal-foreground);
 
-    /* ── Swiss Primary Colors ── */
     --color-swiss-red: var(--swiss-red);
     --color-swiss-blue: var(--swiss-blue);
     --color-swiss-yellow: var(--swiss-yellow);
 
-    /* ── Game-Specific Colors ── */
     --color-board-surface: var(--board-surface);
     --color-board-frame: var(--board-frame);
     --color-board-grid: var(--board-grid);
@@ -57,7 +54,6 @@
     --color-tutor-foreground: var(--tutor-foreground);
     --color-xp-streak: var(--xp-streak);
 
-    /* ── Sidebar ── */
     --color-sidebar-ring: var(--sidebar-ring);
     --color-sidebar-border: var(--sidebar-border);
     --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -67,30 +63,26 @@
     --color-sidebar-foreground: var(--sidebar-foreground);
     --color-sidebar: var(--sidebar);
 
-    /* ── Chart ── */
     --color-chart-1: var(--chart-1);
     --color-chart-2: var(--chart-2);
     --color-chart-3: var(--chart-3);
     --color-chart-4: var(--chart-4);
     --color-chart-5: var(--chart-5);
 
-    /* ── Radius Scale ── */
     --radius-sm: calc(var(--radius) * 0.6);
     --radius-md: calc(var(--radius) * 0.8);
     --radius-lg: var(--radius);
-    --radius-xl: calc(var(--radius) * 1.4);
-    --radius-2xl: calc(var(--radius) * 1.8);
-    --radius-3xl: calc(var(--radius) * 2.2);
-    --radius-4xl: calc(var(--radius) * 2.6);
+    --radius-xl: calc(var(--radius) * 1.35);
+    --radius-2xl: calc(var(--radius) * 1.6);
+    --radius-3xl: calc(var(--radius) * 1.8);
+    --radius-4xl: calc(var(--radius) * 2);
 
-    /* ── Shadows ── */
-    --shadow-sm: 2px 2px 0 var(--foreground);
-    --shadow-md: 4px 4px 0 var(--foreground);
-    --shadow-lg: 8px 8px 0 var(--foreground);
-    --shadow-board: 12px 12px 0 var(--foreground);
-    --shadow-offset: 4px 4px 0 var(--foreground);
+    --shadow-sm: none;
+    --shadow-md: none;
+    --shadow-lg: none;
+    --shadow-board: none;
+    --shadow-offset: none;
 
-    /* ── Grid Extensions ── */
     --grid-template-columns-19: repeat(19, 1fr);
     --grid-template-rows-19: repeat(19, 1fr);
     --grid-template-columns-13: repeat(13, 1fr);
@@ -99,226 +91,125 @@
     --grid-template-rows-9: repeat(9, 1fr);
 }
 
-/* ══════════════════════════════════════════════
-   Light Theme — Vercel Clean
-   Crisp whites, neutral grays, subtle borders
-   ══════════════════════════════════════════════ */
-
 :root {
-    /* ── Surface Hierarchy ── */
-    --background: oklch(0.96 0 0); /* Flat light gray */
-    --foreground: oklch(0 0 0); /* Pure black text */
-    --card: oklch(1 0 0); /* Pure white card */
-    --card-foreground: oklch(0 0 0);
-    --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0 0 0);
+    color-scheme: light;
 
-    /* ── Primary ── */
-    --primary: oklch(0 0 0);
-    --primary-foreground: oklch(1 0 0);
+    --background: #d8deeb;
+    --foreground: #2d3542;
+    --card: #d8deeb;
+    --card-foreground: #2d3542;
+    --popover: #e2e7f1;
+    --popover-foreground: #2d3542;
 
-    /* ── Secondary ── */
-    --secondary: oklch(0.92 0 0);
-    --secondary-foreground: oklch(0 0 0);
+    --primary: #2d3542;
+    --primary-foreground: #f4f6fb;
+    --secondary: #cfd6e3;
+    --secondary-foreground: #2d3542;
+    --muted: #cfd6e3;
+    --muted-foreground: #6f7888;
+    --subtle: #e2e7f1;
 
-    /* ── Muted ── */
-    --muted: oklch(0.92 0 0);
-    --muted-foreground: oklch(0.4 0 0);
+    --accent: #f24f5f;
+    --accent-foreground: #11151c;
+    --destructive: #d84a57;
+    --border: #bac3d1;
+    --border-strong: #9fa9ba;
+    --input: #bac3d1;
+    --ring: #4037d2;
+    --hairline: rgb(45 53 66 / 18%);
+    --radius: 10px;
 
-    /* ── Swiss Primary Accents ── */
-    --swiss-red: #DA291C;
-    --swiss-blue: #0033A0;
-    --swiss-yellow: #FFD100;
+    --signal: #4037d2;
+    --signal-foreground: #f4f6fb;
+    --success: #4f8f72;
+    --warning: #b98635;
+    --danger: #d84a57;
 
-    /* ── Accent (Swiss Red) ── */
-    --accent: var(--swiss-red);
-    --accent-foreground: oklch(1 0 0); /* White text on orange */
+    /* Legacy aliases kept so old components do not snap while we migrate them. */
+    --swiss-red: var(--accent);
+    --swiss-blue: var(--signal);
+    --swiss-yellow: #e6b85c;
 
-    /* ── Destructive (Solid Red) ── */
-    --destructive: var(--swiss-red);
+    --chart-1: #4037d2;
+    --chart-2: #f24f5f;
+    --chart-3: #e6b85c;
+    --chart-4: #4f8f72;
+    --chart-5: #6f7888;
 
-    /* ── Borders & Focus ── */
-    --border: oklch(0 0 0); /* PURE BLACK BORDERS */
-    --input: oklch(0 0 0);
-    --ring: oklch(0 0 0);
-    --radius: 0rem; /* BRUTALIST SHARP */
+    --sidebar: #d8deeb;
+    --sidebar-foreground: #2d3542;
+    --sidebar-primary: #2d3542;
+    --sidebar-primary-foreground: #f4f6fb;
+    --sidebar-accent: #cfd6e3;
+    --sidebar-accent-foreground: #2d3542;
+    --sidebar-border: #bac3d1;
+    --sidebar-ring: #4037d2;
 
-    /* ── Chart ── */
-    --chart-1: var(--swiss-blue);
-    --chart-2: var(--swiss-red);
-    --chart-3: var(--swiss-yellow);
-    --chart-4: var(--swiss-red);
-    --chart-5: var(--swiss-blue);
+    --board-surface: #e9ddcb;
+    --board-frame: #b9b2a5;
+    --board-grid: rgb(45 53 66 / 18%);
+    --board-hoshi: #7e766c;
 
-    /* ── Sidebar ── */
-    --sidebar: oklch(0.96 0 0);
-    --sidebar-foreground: oklch(0 0 0);
-    --sidebar-primary: oklch(0 0 0);
-    --sidebar-primary-foreground: oklch(1 0 0);
-    --sidebar-accent: oklch(1 0 0);
-    --sidebar-accent-foreground: oklch(0 0 0);
-    --sidebar-border: oklch(0 0 0);
-    --sidebar-ring: oklch(0 0 0);
+    --stone-black: #2d3542;
+    --stone-black-highlight: #4a5361;
+    --stone-white: #f4f6fb;
+    --stone-white-highlight: #ffffff;
+    --stone-white-border: #9fa9ba;
+    --stone-shadow: rgb(45 53 66 / 16%);
 
-    /* ── Board ── */
-    --board-surface: oklch(1 0 0); /* Pure white board */
-    --board-frame: oklch(0 0 0); /* Pure black frame */
-    --board-grid: oklch(0 0 0); /* Pure black grid lines */
-    --board-hoshi: oklch(0 0 0); /* Black hoshi */
+    --status-active: #4037d2;
+    --status-waiting: #6f7888;
+    --status-capture: #f24f5f;
+    --status-territory: rgb(64 55 210 / 14%);
+    --status-danger: #d84a57;
 
-    /* ── Stones ── */
-    --stone-black: oklch(0 0 0); /* Solid black */
-    --stone-black-highlight: oklch(0 0 0); /* No highlight */
-    --stone-white: oklch(1 0 0); /* Solid white */
-    --stone-white-highlight: oklch(1 0 0);
-    --stone-white-border: oklch(0 0 0); /* Pure black border */
-    --stone-shadow: oklch(0 0 0); /* Solid offset shadow */
+    --tutor-surface: #e2e7f1;
+    --tutor-accent: #4037d2;
+    --tutor-foreground: #2d3542;
 
-    /* ── Status ── */
-    --status-active: oklch(0.85 0.1 230);
-    --status-waiting: oklch(0.6 0 0);
-    --status-capture: oklch(0.6 0.2 20);
-    --status-territory: oklch(0.85 0.1 230 / 30%);
-    --status-danger: oklch(0.6 0.2 20);
-
-    /* ── AI Tutor ── */
-    --tutor-surface: oklch(1 0 0); /* White popovers */
-    --tutor-accent: oklch(0.8 0.1 320); /* Purple Pink */
-    --tutor-foreground: oklch(0 0 0);
-
-    /* ── XP / Gamification ── */
-    --xp-bar-bg: oklch(1 0 0); /* White background for track */
-    --xp-bar-fill-start: oklch(0.65 0.2 45); /* Orange */
-    --xp-bar-fill-end: oklch(0.65 0.2 45); /* Flat fill */
-    --xp-streak: oklch(0.65 0.2 45);
+    --xp-bar-bg: #cfd6e3;
+    --xp-bar-fill-start: #f24f5f;
+    --xp-bar-fill-end: #4037d2;
+    --xp-streak: #f24f5f;
 }
-
-/* ══════════════════════════════════════════════
-   Dark Theme — Vercel Dark Mode
-   Pure black #000, high contrast, subtle borders
-   ══════════════════════════════════════════════ */
-
-.dark {
-    /* ── Surface Hierarchy ── */
-    --background: oklch(0.05 0 0); /* Almost black */
-    --foreground: oklch(1 0 0); /* Pure white text */
-    --card: oklch(0 0 0); /* Pure black card */
-    --card-foreground: oklch(1 0 0);
-    --popover: oklch(0 0 0);
-    --popover-foreground: oklch(1 0 0);
-
-    /* ── Primary ── */
-    --primary: oklch(1 0 0);
-    --primary-foreground: oklch(0 0 0);
-
-    /* ── Secondary ── */
-    --secondary: oklch(0.1 0 0);
-    --secondary-foreground: oklch(1 0 0);
-
-    /* ── Muted ── */
-    --muted: oklch(0.1 0 0);
-    --muted-foreground: oklch(0.6 0 0);
-
-    /* ── Swiss Primary Accents ── */
-    --swiss-red: #DA291C;
-    --swiss-blue: #0033A0;
-    --swiss-yellow: #FFD100;
-
-    /* ── Accent ── */
-    --accent: var(--swiss-yellow); /* Yellow */
-    --accent-foreground: oklch(0 0 0);
-
-    /* ── Destructive ── */
-    --destructive: var(--swiss-red);
-
-    /* ── Borders & Focus ── */
-    --border: oklch(1 0 0); /* PURE WHITE BORDERS */
-    --input: oklch(1 0 0);
-    --ring: oklch(1 0 0);
-
-    /* ── Chart ── */
-    --chart-1: var(--swiss-blue);
-    --chart-2: var(--swiss-red);
-    --chart-3: var(--swiss-yellow);
-    --chart-4: var(--swiss-red);
-    --chart-5: var(--swiss-blue);
-
-    /* ── Sidebar ── */
-    --sidebar: oklch(0.05 0 0);
-    --sidebar-foreground: oklch(1 0 0);
-    --sidebar-primary: oklch(1 0 0);
-    --sidebar-primary-foreground: oklch(0 0 0);
-    --sidebar-accent: oklch(1 0 0);
-    --sidebar-accent-foreground: oklch(0 0 0);
-    --sidebar-border: oklch(1 0 0); /* White borders */
-    --sidebar-ring: oklch(1 0 0);
-
-    /* ── Board ── */
-    --board-surface: oklch(0 0 0); /* Pure black board */
-    --board-frame: oklch(1 0 0); /* Pure white frame */
-    --board-grid: oklch(1 0 0); /* Pure white grid lines */
-    --board-hoshi: oklch(1 0 0); /* White hoshi */
-
-    /* ── Stones ── */
-    --stone-black: oklch(0 0 0); /* Solid black */
-    --stone-black-highlight: oklch(0 0 0);
-    --stone-white: oklch(1 0 0); /* Solid white */
-    --stone-white-highlight: oklch(1 0 0);
-    --stone-white-border: oklch(1 0 0); /* White border */
-    --stone-shadow: oklch(1 0 0); /* Pure white shadow */
-
-    /* ── Status ── */
-    --status-active: oklch(0.85 0.1 230);
-    --status-waiting: oklch(0.6 0 0);
-    --status-capture: oklch(0.6 0.2 20);
-    --status-territory: oklch(0.85 0.1 230 / 30%);
-    --status-danger: oklch(0.6 0.2 20);
-
-    /* ── AI Tutor ── */
-    --tutor-surface: oklch(0 0 0);
-    --tutor-accent: oklch(0.8 0.1 320);
-    --tutor-foreground: oklch(1 0 0);
-
-    /* ── XP / Gamification ── */
-    --xp-bar-bg: oklch(0 0 0);
-    --xp-bar-fill-start: oklch(0.65 0.2 45); /* Orange */
-    --xp-bar-fill-end: oklch(0.65 0.2 45);
-    --xp-streak: oklch(0.65 0.2 45);
-}
-
-/* ══════════════════════════════════════════════
-   Base Styles
-   ══════════════════════════════════════════════ */
 
 @layer base {
     * {
         @apply border-border outline-ring/50;
     }
-    body {
-        @apply bg-background text-foreground font-sans;
-        font-family: var(--font-sans), system-ui, sans-serif !important;
-    }
+
     html {
         @apply font-sans;
-        font-family: var(--font-sans), system-ui, sans-serif !important;
+        background: var(--background);
+        font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+        text-rendering: geometricPrecision;
+    }
+
+    body {
+        @apply bg-background font-sans text-foreground;
+        min-height: 100svh;
+        font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+    }
+
+    ::selection {
+        background: color-mix(in srgb, var(--accent) 38%, transparent);
+        color: var(--foreground);
+    }
+
+    :focus-visible {
+        outline: 1px solid var(--ring);
+        outline-offset: 3px;
     }
 }
-/* ══════════════════════════════════════════════
-   Game Animations
-   ══════════════════════════════════════════════ */
 
-/* Apple-like spring animations */
 @keyframes stone-place {
     0% {
-        transform: scale(0.5);
+        transform: scale(0.72);
         opacity: 0;
-    }
-    70% {
-        transform: scale(1.05);
-        opacity: 1;
     }
     100% {
         transform: scale(1);
+        opacity: 1;
     }
 }
 
@@ -328,7 +219,7 @@
         opacity: 1;
     }
     100% {
-        transform: scale(0);
+        transform: scale(0.7);
         opacity: 0;
     }
 }
@@ -339,13 +230,13 @@
         opacity: 1;
     }
     50% {
-        opacity: 0.7;
+        opacity: 0.72;
     }
 }
 
 @keyframes marker-appear {
     0% {
-        transform: translate(-50%, -50%) scale(0);
+        transform: translate(-50%, -50%) scale(0.8);
         opacity: 0;
     }
     100% {
@@ -355,34 +246,24 @@
 }
 
 .animate-stone-place {
-    animation: stone-place 250ms cubic-bezier(0.175, 0.885, 0.32, 1.275)
-        forwards;
+    animation: stone-place 180ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 .animate-stone-capture {
-    animation: stone-capture 150ms ease-out forwards;
+    animation: stone-capture 140ms ease-out forwards;
 }
 
 .animate-pulse-gentle {
-    animation: pulse-gentle 2s ease-in-out infinite;
+    animation: pulse-gentle 2.4s ease-in-out infinite;
 }
 
 .animate-marker-appear {
-    animation: marker-appear 150ms ease-out forwards;
+    animation: marker-appear 130ms ease-out forwards;
 }
-
-/* ══════════════════════════════════════════════
-   Utility Classes
-   ══════════════════════════════════════════════ */
 
 .tabular-nums {
     font-variant-numeric: tabular-nums;
 }
-
-/* ══════════════════════════════════════════════
-   Account Surface
-   Scoped refinements for Neon account UI
-   ══════════════════════════════════════════════ */
 
 .account-page {
     position: relative;
@@ -391,39 +272,7 @@
 }
 
 .account-page__glow {
-    pointer-events: none;
-    position: absolute;
-    border-radius: 9999px;
-    filter: blur(72px);
-    opacity: 0.5;
-}
-
-.account-page__glow--primary {
-    top: 3rem;
-    right: -4rem;
-    height: 18rem;
-    width: 18rem;
-    background:
-        radial-gradient(circle, oklch(0.78 0.08 55 / 0.22) 0%, transparent 72%);
-}
-
-.account-page__glow--secondary {
-    left: -7rem;
-    top: 18rem;
-    height: 24rem;
-    width: 24rem;
-    background:
-        radial-gradient(circle, oklch(0.92 0.03 80 / 0.65) 0%, transparent 72%);
-}
-
-.dark .account-page__glow--primary {
-    background:
-        radial-gradient(circle, oklch(0.68 0.1 45 / 0.12) 0%, transparent 72%);
-}
-
-.dark .account-page__glow--secondary {
-    background:
-        radial-gradient(circle, oklch(0.3 0.01 80 / 0.2) 0%, transparent 72%);
+    display: none;
 }
 
 .account-hero,
@@ -438,109 +287,78 @@
 }
 
 .account-aesthetic :is(h1, h2, h3, h4) {
-    letter-spacing: -0.03em;
+    letter-spacing: -0.045em;
 }
 
 .account-aesthetic [data-slot="card"],
 .account-aesthetic .card,
 .account-aesthetic section {
-    border-radius: 1.75rem;
+    border-radius: 14px;
 }
 
 .account-aesthetic :is(button, a[role="button"], [role="tab"], input, select, textarea) {
     transition:
-        border-color 180ms ease,
-        background-color 180ms ease,
-        box-shadow 180ms ease,
-        color 180ms ease,
-        transform 180ms ease;
+        border-color 150ms ease,
+        background-color 150ms ease,
+        color 150ms ease,
+        transform 150ms ease;
 }
 
 .account-aesthetic :is(input, select, textarea) {
     min-height: 3rem;
-    border-radius: 9999px;
-    border: 1px solid color-mix(in srgb, var(--border) 88%, transparent);
-    background: color-mix(in srgb, var(--background) 86%, transparent);
-    box-shadow: inset 0 1px 0 color-mix(in srgb, var(--foreground) 3%, transparent);
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: color-mix(in srgb, var(--subtle) 54%, transparent);
+    box-shadow: none;
 }
 
 .account-aesthetic textarea {
     min-height: 8rem;
-    border-radius: 1.5rem;
-}
-
-.account-aesthetic :is(input, select, textarea):focus-visible {
-    box-shadow:
-        0 0 0 4px color-mix(in srgb, var(--secondary) 85%, transparent),
-        inset 0 1px 0 color-mix(in srgb, var(--foreground) 5%, transparent);
+    border-radius: 14px;
 }
 
 .account-aesthetic :is(button, a[role="button"], [role="tab"]) {
-    border-radius: 9999px;
+    border-radius: 10px;
 }
 
 .account-aesthetic button:not([data-variant="ghost"]),
-.account-aesthetic a[role="button"] {
-    box-shadow: 0 10px 30px -20px color-mix(in srgb, var(--foreground) 28%, transparent);
+.account-aesthetic a[role="button"],
+.account-aesthetic [class*="shadow"] {
+    box-shadow: none;
 }
 
 .account-aesthetic [role="tablist"] {
-    border-radius: 9999px;
-    border: 1px solid color-mix(in srgb, var(--border) 80%, transparent);
-    background: color-mix(in srgb, var(--secondary) 68%, transparent);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: color-mix(in srgb, var(--secondary) 74%, transparent);
     padding: 0.35rem;
 }
 
 .account-aesthetic [role="tab"] {
     min-height: 2.9rem;
     padding-inline: 1rem;
-    font-size: 0.8rem;
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-size: 0.78rem;
     font-weight: 700;
     letter-spacing: 0.04em;
 }
 
-.account-aesthetic [role="tab"][data-state="active"] {
-    background: var(--card);
-    color: var(--foreground);
-    box-shadow:
-        0 1px 0 color-mix(in srgb, var(--foreground) 4%, transparent),
-        0 12px 24px -20px color-mix(in srgb, var(--foreground) 20%, transparent);
-}
-
+.account-aesthetic [role="tab"][data-state="active"],
 .account-aesthetic [data-state="active"][role="tab"] {
     background: var(--card);
     color: var(--foreground);
 }
 
 .account-aesthetic [role="tabpanel"] {
-    border-radius: 1.9rem;
+    border-radius: 14px;
 }
 
 .account-aesthetic hr,
 .account-aesthetic [role="separator"] {
-    border-color: color-mix(in srgb, var(--border) 88%, transparent);
+    border-color: var(--border);
 }
 
 .account-aesthetic :is(table, [role="table"]) {
-    border-radius: 1.5rem;
+    border-radius: 12px;
     overflow: hidden;
-}
-
-.account-aesthetic [class*="shadow"] {
-    box-shadow:
-        0 20px 50px -36px color-mix(in srgb, var(--foreground) 30%, transparent);
-}
-
-.dark .account-aesthetic :is(input, select, textarea) {
-    background: color-mix(in srgb, var(--secondary) 48%, transparent);
-    border-color: color-mix(in srgb, var(--border) 92%, transparent);
-}
-
-.dark .account-aesthetic [role="tablist"] {
-    background: color-mix(in srgb, var(--secondary) 55%, transparent);
-}
-
-.dark .account-aesthetic [role="tab"][data-state="active"],
-.dark .account-aesthetic [data-state="active"][role="tab"] {
-    background: color-mix(in srgb, var(--card) 94%, transparent);
 }
