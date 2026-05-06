@@ -7,7 +7,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
 export function GameOverDialog({
@@ -69,94 +68,102 @@ export function GameOverDialog({
             ? "Casual"
             : "Ready"
 
+  const ghostMark =
+    result === "black-wins" || result === "white-wins" ? "勝" : "形"
+
+  const actionClass =
+    "h-11 border border-border bg-background px-3 font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-foreground transition-colors hover:bg-subtle disabled:cursor-not-allowed disabled:opacity-35"
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         showCloseButton={true}
         className={cn(
-          "overflow-hidden rounded-none border-4 border-black bg-black p-0 text-white shadow-[8px_8px_0_0_var(--swiss-red)] sm:max-w-xl",
-          className
+          "overflow-hidden border border-border bg-background p-0 text-foreground [border-radius:0] sm:max-w-2xl",
+          className,
         )}
       >
-        <DialogHeader className="gap-0 border-b-2 border-white/20 px-6 pb-5 pt-7">
-          <div className="mb-4 flex items-center justify-between gap-4">
-            <span className="border-2 border-white bg-white px-3 py-1 font-mono text-[11px] font-black uppercase tracking-[0.18em] text-black">
-              Game Over
+        <span className="pointer-events-none absolute -right-4 top-8 font-sans text-[9rem] font-semibold leading-none text-foreground/10">
+          {ghostMark}
+        </span>
+
+        <DialogHeader className="gap-0 border-b border-border px-6 pb-6 pt-7 text-left">
+          <div className="mb-5 flex items-center justify-between gap-4">
+            <span className="border border-border px-3 py-1 font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+              Match dossier
             </span>
-            <span className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-white/50">
+            <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
               {moveCount} moves
             </span>
           </div>
-          <DialogTitle className="font-display text-4xl font-black uppercase leading-[0.95] tracking-tighter text-white sm:text-5xl">
+          <DialogTitle className="max-w-lg font-sans text-4xl font-semibold leading-[0.95] tracking-[-0.06em] text-foreground sm:text-5xl">
             {resultText}
           </DialogTitle>
-          <DialogDescription className="mt-3 max-w-sm text-sm font-semibold text-white/60">
-            Choose the next read: review the finish, replay the shape, export the SGF, or reset the board.
+          <DialogDescription className="mt-4 max-w-md font-sans text-sm leading-relaxed text-muted-foreground">
+            Review the finish, replay the shape, export the SGF, or reset the board.
           </DialogDescription>
         </DialogHeader>
 
-        <div className="grid grid-cols-3 border-b-2 border-white/20 text-center font-mono text-[11px] font-black uppercase tracking-[0.14em]">
-          <div className="border-r-2 border-white/20 px-3 py-4">
-            <span className="block text-white/40">Finish</span>
-            <span className="mt-1 block text-white">{reasonLabel}</span>
-          </div>
-          <div className="border-r-2 border-white/20 px-3 py-4">
-            <span className="block text-white/40">Record</span>
-            <span className="mt-1 block text-white">{saveLabel}</span>
-          </div>
-          <div className="px-3 py-4">
-            <span className="block text-white/40">Replay</span>
-            <span className="mt-1 block text-white">
-              {moveCount > 0 ? "Ready" : "Empty"}
-            </span>
-          </div>
+        <div className="grid grid-cols-3 divide-x divide-border border-b border-border">
+          <DossierMetric label="Finish" value={reasonLabel} />
+          <DossierMetric label="Record" value={saveLabel} />
+          <DossierMetric label="Replay" value={moveCount > 0 ? "Ready" : "Empty"} />
         </div>
 
-        <div className="grid gap-3 p-5 sm:grid-cols-2">
-          <Button
-            variant="outline"
+        <div className="grid gap-px bg-border p-px sm:grid-cols-2">
+          <button
+            type="button"
             onClick={onReview ?? (() => onOpenChange?.(false))}
-            className="h-12 rounded-none border-2 border-white bg-transparent font-display font-black uppercase text-white hover:bg-white hover:text-black"
+            className={actionClass}
           >
             Review Board
-          </Button>
-
-          <Button
-            variant="outline"
+          </button>
+          <button
+            type="button"
             onClick={onReplay}
             disabled={!onReplay || moveCount === 0}
-            className="h-12 rounded-none border-2 border-white bg-transparent font-display font-black uppercase text-white hover:bg-white hover:text-black disabled:cursor-not-allowed disabled:border-white/20 disabled:text-white/30"
+            className={actionClass}
           >
             Watch Replay
-          </Button>
-
-          <Button
-            variant="outline"
+          </button>
+          <button
+            type="button"
             onClick={onExportSgf}
             disabled={!onExportSgf || moveCount === 0}
-            className="h-12 rounded-none border-2 border-white bg-transparent font-display font-black uppercase text-white hover:bg-white hover:text-black disabled:cursor-not-allowed disabled:border-white/20 disabled:text-white/30"
+            className={actionClass}
           >
             Export SGF
-          </Button>
-
-          <Button
-            variant="outline"
+          </button>
+          <button
+            type="button"
             onClick={onShare}
             disabled={!onShare}
-            className="h-12 rounded-none border-2 border-white bg-transparent font-display font-black uppercase text-white hover:bg-white hover:text-black disabled:cursor-not-allowed disabled:border-white/20 disabled:text-white/30"
+            className={actionClass}
           >
             Copy Link
-          </Button>
-
-          <Button
-            variant="accent"
+          </button>
+          <button
+            type="button"
             onClick={onPlayAgain}
-            className="h-12 rounded-none border-2 border-white font-display font-black uppercase shadow-[4px_4px_0_0_var(--swiss-red)] sm:col-span-2"
+            className="h-12 border border-border bg-accent px-3 font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-accent-foreground transition-colors hover:bg-foreground hover:text-primary-foreground sm:col-span-2"
           >
             Play Again
-          </Button>
+          </button>
         </div>
       </DialogContent>
     </Dialog>
+  )
+}
+
+function DossierMetric({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="px-4 py-4">
+      <span className="block font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+        {label}
+      </span>
+      <span className="mt-1 block font-sans text-[15px] font-semibold tracking-[-0.03em] text-foreground">
+        {value}
+      </span>
+    </div>
   )
 }

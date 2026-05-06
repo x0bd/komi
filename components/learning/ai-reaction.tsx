@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { gsap } from "gsap";
+import { LuBot, LuSparkles, LuTarget, LuTriangleAlert } from "react-icons/lu";
 import { useLearningStore } from "@/lib/stores/learning-store";
 import { cn } from "@/lib/utils";
-import { LuBot, LuSparkles, LuFlame, LuTriangleAlert } from "react-icons/lu";
-import { gsap } from "gsap";
 
 export function AIReaction({ className }: { className?: string }) {
     const chatMessages = useLearningStore((state) => state.chatMessages);
@@ -17,8 +17,7 @@ export function AIReaction({ className }: { className?: string }) {
     const [displayMessage, setDisplayMessage] = useState<typeof latestMessage>();
     const [displayMood, setDisplayMood] = useState(tutorMood);
 
-    const glowRef = useRef<HTMLDivElement | null>(null);
-    const iconRef = useRef<HTMLDivElement | null>(null);
+    const cardRef = useRef<HTMLDivElement | null>(null);
     const progressRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
@@ -46,96 +45,60 @@ export function AIReaction({ className }: { className?: string }) {
         const shouldReduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
         if (shouldReduceMotion) return;
 
-        let timeline: gsap.core.Timeline | null = null;
-
-        if (iconRef.current) {
-            timeline = gsap.timeline({
-                defaults: { ease: "power2.inOut" },
-            });
-
-            timeline.fromTo(
-                iconRef.current,
-                { y: 0, rotate: 0, scale: 1 },
-                {
-                    y: -1.5,
-                    rotate: 3,
-                    scale: 1.04,
-                    duration: 1.2,
-                    repeat: -1,
-                    yoyo: true,
-                },
-                0,
+        if (cardRef.current) {
+            gsap.fromTo(
+                cardRef.current,
+                { y: 10, opacity: 0 },
+                { y: 0, opacity: 1, duration: 0.24, ease: "power2.out" },
             );
-
-            if (glowRef.current) {
-                timeline.fromTo(
-                    glowRef.current,
-                    { opacity: 0.05, scale: 0.92 },
-                    {
-                        opacity: 0.14,
-                        scale: 1.04,
-                        duration: 1.4,
-                        repeat: -1,
-                        yoyo: true,
-                    },
-                    0,
-                );
-            }
         }
 
         if (progressRef.current) {
             gsap.fromTo(
                 progressRef.current,
-                { width: "100%" },
-                { width: "0%", duration: 6, ease: "none" },
+                { scaleX: 1, transformOrigin: "left center" },
+                { scaleX: 0, duration: 6, ease: "none" },
             );
         }
 
         return () => {
-            if (timeline) timeline.kill();
+            gsap.killTweensOf(cardRef.current);
             gsap.killTweensOf(progressRef.current);
         };
     }, [visible]);
 
     if (!displayMessage) return null;
 
-    let iconColorClass = "text-primary";
-    let Icon = LuBot;
-    let title = "Sensei note";
-    let accentClass = "bg-primary/10 text-primary";
-    let borderClass = "border-border/70";
-    let iconSurfaceClass = "bg-primary/10 text-primary";
-    let glowColor = "var(--primary)";
-    let progressColor = "bg-primary/30";
+    const tone =
+        displayMood === "celebrate"
+            ? {
+                  Icon: LuSparkles,
+                  label: "[STRONG]",
+                  title: "Strong move",
+                  accent: "bg-status-active",
+              }
+            : displayMood === "warning"
+              ? {
+                    Icon: LuTriangleAlert,
+                    label: "[REVIEW]",
+                    title: "Sensei is concerned",
+                    accent: "bg-destructive",
+                }
+              : displayMood === "focus"
+                ? {
+                      Icon: LuTarget,
+                      label: "[FOCUS]",
+                      title: "Focus cue",
+                      accent: "bg-accent",
+                  }
+                : {
+                      Icon: LuBot,
+                      label: "[LIVE]",
+                      title: "Sensei note",
+                      accent: "bg-signal",
+                  };
 
-    if (displayMood === "celebrate") {
-        iconColorClass = "text-status-active";
-        Icon = LuSparkles;
-        title = "Strong move";
-        accentClass = "bg-status-active/10 text-status-active";
-        borderClass = "border-status-active/20";
-        iconSurfaceClass = "bg-status-active/12 text-status-active";
-        glowColor = "var(--status-active)";
-        progressColor = "bg-status-active/40";
-    } else if (displayMood === "warning") {
-        iconColorClass = "text-destructive";
-        Icon = LuTriangleAlert;
-        title = "Sensei note";
-        accentClass = "bg-destructive/10 text-destructive";
-        borderClass = "border-destructive/20";
-        iconSurfaceClass = "bg-destructive/10 text-destructive";
-        glowColor = "var(--destructive)";
-        progressColor = "bg-destructive/35";
-    } else if (displayMood === "focus") {
-        iconColorClass = "text-amber-600 dark:text-amber-400";
-        Icon = LuFlame;
-        title = "Focus cue";
-        accentClass = "bg-amber-500/10 text-amber-600 dark:text-amber-400";
-        borderClass = "border-amber-500/20";
-        iconSurfaceClass = "bg-amber-500/10 text-amber-600 dark:text-amber-400";
-        glowColor = "var(--accent)";
-        progressColor = "bg-amber-500/35";
-    }
+    const Icon = tone.Icon;
 
     return (
         <div
@@ -145,68 +108,35 @@ export function AIReaction({ className }: { className?: string }) {
             )}
         >
             <div
+                ref={cardRef}
                 className={cn(
-                    "pointer-events-auto w-full max-w-[22rem] transition-all duration-500 ease-out",
-                    visible
-                        ? "translate-y-0 opacity-100"
-                        : "translate-y-4 opacity-0",
+                    "pointer-events-auto w-[min(24rem,calc(100vw-2.5rem))] border border-border bg-background transition-opacity duration-200",
+                    visible ? "opacity-100" : "translate-y-3 opacity-0",
                 )}
             >
-                <div
-                    className={cn(
-                        "relative overflow-hidden rounded-none border-[3px] border-border bg-background shadow-[8px_8px_0_0_var(--foreground)]",
-                        borderClass,
-                    )}
-                >
-                    <div
-                        ref={glowRef}
-                        className="absolute inset-0 pointer-events-none opacity-[0.05] blur-3xl transition-colors duration-500"
-                        style={{ backgroundColor: glowColor }}
-                    />
-                    <div className="pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-foreground/10 to-transparent" />
-
-                    <div className="relative p-3.5">
-                        <div className="flex items-start gap-3.5">
-                            <div
-                                ref={iconRef}
-                                className={cn(
-                                    "relative mt-0.5 flex size-11 shrink-0 items-center justify-center rounded-none border-2 border-border shadow-[2px_2px_0_0_var(--foreground)]",
-                                    iconSurfaceClass,
-                                )}
-                            >
-                                <div className="absolute inset-[4px] rounded-none bg-background/90" />
-                                <Icon
-                                    className={cn(
-                                        "relative z-10 size-4.5",
-                                        iconColorClass,
-                                    )}
-                                />
-                            </div>
-
-                            <div className="min-w-0 flex-1">
-                                <div className="flex items-center gap-2.5">
-                                    <span
-                                        className={cn(
-                                            "inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.18em]",
-                                            accentClass,
-                                        )}
-                                    >
-                                        {title}
-                                    </span>
-                                </div>
-                                <p className="mt-2 text-[13.5px] font-semibold leading-[1.5] text-foreground text-balance">
-                                    {displayMessage.text}
-                                </p>
-                            </div>
-                        </div>
-
-                        <div className="mt-3 h-[2px] w-full overflow-hidden rounded-full bg-secondary/50">
-                            <div
-                                ref={progressRef}
-                                className={cn("h-full rounded-full", progressColor)}
-                            />
-                        </div>
+                <div className="grid grid-cols-[48px_1fr] border-b border-border">
+                    <div className="flex items-center justify-center border-r border-border">
+                        <Icon className="size-4 text-foreground" />
                     </div>
+                    <div className="min-w-0 px-4 py-3">
+                        <div className="flex items-center gap-2">
+                            <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                                {tone.label}
+                            </span>
+                            <span className={cn("h-2 w-2", tone.accent)} />
+                        </div>
+                        <p className="mt-1 font-sans text-[15px] font-semibold leading-tight tracking-[-0.03em] text-foreground">
+                            {tone.title}
+                        </p>
+                    </div>
+                </div>
+
+                <p className="px-4 py-3 font-sans text-[13px] leading-relaxed text-foreground">
+                    {displayMessage.text}
+                </p>
+
+                <div className="h-px overflow-hidden bg-border">
+                    <div ref={progressRef} className={cn("h-full w-full", tone.accent)} />
                 </div>
             </div>
         </div>

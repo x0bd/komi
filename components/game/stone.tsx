@@ -32,8 +32,8 @@ export function Stone({
         >
             {markedDead ? (
                 <span className="pointer-events-none absolute inset-0 flex items-center justify-center">
-                    <span className="absolute h-[2px] w-[70%] rotate-45 rounded-full bg-swiss-red" />
-                    <span className="absolute h-[2px] w-[70%] -rotate-45 rounded-full bg-swiss-red" />
+                    <span className="absolute h-px w-[70%] rotate-45 bg-accent" />
+                    <span className="absolute h-px w-[70%] -rotate-45 bg-accent" />
                 </span>
             ) : null}
             {isLastMove && <LastMoveMarker />}
