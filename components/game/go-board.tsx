@@ -153,8 +153,14 @@ export function GoBoard({
 
     return (
         <div className={cn("w-full max-w-2xl px-2", className)}>
-            <div className="relative w-full border border-border bg-background p-3 md:p-5">
-                <div className="mb-3 flex items-center justify-between border-b border-border pb-3">
+            <div className="relative w-full border border-border bg-background p-2 md:p-4">
+                <span
+                    aria-hidden="true"
+                    className="pointer-events-none absolute -right-3 -top-5 hidden font-sans text-8xl font-semibold leading-none text-foreground/10 md:block"
+                >
+                    碁
+                </span>
+                <div className="relative z-10 mb-3 grid grid-cols-[1fr_auto] border-b border-border pb-3">
                     <div>
                         <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
                             board instrument
@@ -167,7 +173,7 @@ export function GoBoard({
                         {size} x {size}
                     </div>
                 </div>
-                <div className="relative aspect-square w-full">
+                <div className="relative z-10 aspect-square w-full">
                     <div
                         className="absolute inset-0 grid gap-x-2 gap-y-2"
                         style={{
@@ -208,7 +214,7 @@ export function GoBoard({
                         ))}
                     </div>
 
-                    <div className="relative h-full w-full overflow-hidden border-2 border-board-frame bg-board-surface">
+                    <div className="relative h-full w-full overflow-hidden border border-border-strong bg-board-surface">
                         <GridLayer size={size} hoshiPoints={hoshiPoints} />
 
                         {showTerritoryHeatmap && territoryMap

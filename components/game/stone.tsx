@@ -21,12 +21,12 @@ export function Stone({
     return (
         <div
             className={cn(
-                "relative h-[86%] w-[86%] rounded-full transition-opacity duration-150",
+                "relative h-[82%] w-[82%] rounded-full transition-opacity duration-150",
                 capture ? "animate-stone-capture" : "animate-stone-place",
                 color === "black"
                     ? "border border-stone-black bg-stone-black"
-                    : "border border-stone-white-border bg-stone-white",
-                ghost && "opacity-35",
+                    : "border border-stone-white-border bg-stone-white ring-1 ring-background/55",
+                ghost && "opacity-30",
                 markedDead && "opacity-45 grayscale",
             )}
         >

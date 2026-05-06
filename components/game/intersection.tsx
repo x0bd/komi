@@ -32,13 +32,13 @@ export function Intersection({
       )}
     >
       {isFocused ? (
-        <div className="pointer-events-none absolute inset-[20%] border border-signal/55" />
+        <div className="pointer-events-none absolute inset-[24%] border border-signal/45" />
       ) : null}
       {!stone && hovered && ghostColor ? (
-        <div className="pointer-events-none absolute size-[32%] border border-foreground/25 bg-foreground/10" />
+        <div className="pointer-events-none absolute size-[28%] border border-foreground/25 bg-foreground/[0.06]" />
       ) : null}
       {!stone && remoteHovered && remoteGhostColor ? (
-        <div className="pointer-events-none absolute size-[32%] border border-signal/45 bg-signal/10" />
+        <div className="pointer-events-none absolute size-[28%] border border-signal/45 bg-signal/[0.07]" />
       ) : null}
       {!stone && remoteHovered && remoteGhostColor ? (
         <Stone color={remoteGhostColor} ghost />

@@ -251,11 +251,11 @@ Files:
 
 Tasks:
 
-- [ ] Board frame becomes a quiet technical object, not a heavy toy block.
-- [ ] Use desaturated board wood against the pale UI.
-- [ ] Keep stones physical, but reduce glossy decoration.
-- [ ] Last move marker should be a thin ring or small red/signal dot.
-- [ ] Hover state should be a faint technical preview, not a glowing effect.
+- [x] Board frame becomes a quiet technical object, not a heavy toy block.
+- [x] Use desaturated board wood against the pale UI.
+- [x] Keep stones physical, but reduce glossy decoration.
+- [x] Last move marker should be a thin ring or small red/signal dot.
+- [x] Hover state should be a faint technical preview, not a glowing effect.
 
 ### Player Cards
 
@@ -342,8 +342,8 @@ Tasks:
 
 - [x] Use the same pale grid shell.
 - [x] Profile stats become technical dossier metrics.
-- [ ] Account/settings should feel like a control panel.
-- [ ] Auth should not look provider-default; wrap in Komi grid frame.
+- [x] Account/settings should feel like a control panel.
+- [x] Auth should not look provider-default; wrap in Komi grid frame.
 
 ## 8. Motion Rules
 
@@ -377,7 +377,7 @@ Follow this exact sequence so we do not restyle ourselves into chaos.
 
 1. [x] Foundation: fonts, tokens, body, primitives.
 2. [x] Main shell: `GameLayout` and global game route composition.
-3. [ ] Board: frame, stones, coordinates, hover, last move.
+3. [x] Board: frame, stones, coordinates, hover, last move.
 4. [ ] Right/dock panels: players, history, controls, mode, score.
 5. [ ] Sensei: chat, annotation, mobile trigger.
 6. [ ] Streak/progression: technical energy instrument.
@@ -385,7 +385,7 @@ Follow this exact sequence so we do not restyle ourselves into chaos.
 8. [ ] Game-over and replay surfaces.
 9. [x] History archive page.
 10. [x] Profile page.
-11. [ ] Account/settings/auth pages.
+11. [x] Account/settings/auth pages.
 12. [ ] Final audit: responsive, spacing, icons, motion, empty states.
 
 ## 11. Acceptance Checklist
