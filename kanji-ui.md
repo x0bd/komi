@@ -281,7 +281,7 @@ Files:
 Tasks:
 
 - [ ] Rename visual language around `記録`.
-- [ ] Use thin rows with date/move metadata like the reference itinerary list.
+- [x] Use thin rows with date/move metadata like the reference itinerary list.
 - [ ] Empty state is one terse line: `NO RECORD YET`.
 - [ ] Move list should feel like a timetable, not chat bubbles.
 
@@ -340,8 +340,8 @@ Files:
 
 Tasks:
 
-- [ ] Use the same pale grid shell.
-- [ ] Profile stats become technical dossier metrics.
+- [x] Use the same pale grid shell.
+- [x] Profile stats become technical dossier metrics.
 - [ ] Account/settings should feel like a control panel.
 - [ ] Auth should not look provider-default; wrap in Komi grid frame.
 
@@ -383,8 +383,8 @@ Follow this exact sequence so we do not restyle ourselves into chaos.
 6. [ ] Streak/progression: technical energy instrument.
 7. [ ] Online room UI and presence.
 8. [ ] Game-over and replay surfaces.
-9. [ ] History archive page.
-10. [ ] Profile page.
+9. [x] History archive page.
+10. [x] Profile page.
 11. [ ] Account/settings/auth pages.
 12. [ ] Final audit: responsive, spacing, icons, motion, empty states.
 

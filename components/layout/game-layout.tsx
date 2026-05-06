@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { LuUser, LuX } from "react-icons/lu";
+import { LuCircleUserRound, LuX } from "react-icons/lu";
 import { cn } from "@/lib/utils";
 import {
     Tooltip,
@@ -181,6 +181,12 @@ export function GameLayout({
                                 })}
                             </div>
 
+                            <div className="mt-auto hidden shrink-0 border-t border-border lg:block">
+                                <p className="mx-auto flex h-28 items-center justify-center font-mono text-[9px] uppercase tracking-[0.22em] text-muted-foreground [writing-mode:vertical-rl]">
+                                    account
+                                </p>
+                            </div>
+
                             <div className="flex shrink-0 border-l border-border lg:border-l-0 lg:border-t">
                                 <Tooltip>
                                     <TooltipTrigger
@@ -188,11 +194,11 @@ export function GameLayout({
                                             <Link
                                                 href="/profile"
                                                 aria-label="Open profile"
-                                                className="relative flex h-full w-20 items-center justify-center text-muted-foreground transition-colors hover:bg-subtle hover:text-foreground lg:h-24 lg:w-full"
+                                                className="group relative flex h-full w-20 items-center justify-center bg-background text-muted-foreground transition-colors hover:bg-subtle hover:text-foreground lg:h-24 lg:w-full"
                                             />
                                         }
                                     >
-                                        <LuUser className="size-5" />
+                                        <LuCircleUserRound className="size-5 transition-transform group-hover:scale-105" />
                                     </TooltipTrigger>
                                     <TooltipContent
                                         side="right"
@@ -203,10 +209,6 @@ export function GameLayout({
                                     </TooltipContent>
                                 </Tooltip>
                             </div>
-
-                            <span className="pointer-events-none absolute bottom-6 left-1/2 hidden -translate-x-1/2 font-mono text-[9px] uppercase tracking-[0.2em] text-muted-foreground [writing-mode:vertical-rl] lg:block">
-                                match rail
-                            </span>
                         </nav>
 
                         <section
