@@ -4,9 +4,7 @@ import {
   LuClock3,
   LuLayoutGrid,
   LuSettings,
-  LuSwords,
   LuTrophy,
-  LuUserRound,
 } from "react-icons/lu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ensureDbUser } from "@/lib/auth/session"
@@ -216,95 +214,99 @@ export default async function ProfilePage() {
               </Link>
             </div>
 
-            <div className="grid grid-cols-[minmax(0,2.4fr)_0.75fr_0.75fr_1fr_42px] border-b border-border pb-3">
-              {["Opponent", "Result", "Color", "Date"].map((col) => (
-                <span
-                  key={col}
-                  className="font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground"
-                >
-                  {col}
-                </span>
-              ))}
-              <span className="sr-only">Open replay</span>
-            </div>
-
-            {games.length === 0 ? (
-              <div className="flex flex-col items-center justify-center gap-4 border-b border-border py-24">
-                <LuTrophy className="size-9 text-foreground/20" />
-                <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                  No record yet
-                </p>
-              </div>
-            ) : (
-              <div className="divide-y divide-border">
-                {games.map((game) => {
-                  const isBlack = game.blackPlayerId === user.id
-                  const myColor = isBlack ? "black" : "white"
-                  const opponent = isBlack ? game.whitePlayer : game.blackPlayer
-                  const isSelfPlay = game.blackPlayerId === game.whitePlayerId
-                  const opponentLabel =
-                    opponent.email === user.email
-                      ? "Self play"
-                      : opponent.name?.trim() || opponent.email
-                  const outcome = getOutcome({
-                    result: game.result,
-                    winner: game.winner,
-                    myColor,
-                    isSelfPlay,
-                  })
-
-                  return (
-                    <Link
-                      key={game.id}
-                      href={`/replay/${game.id}`}
-                      className="group grid grid-cols-[minmax(0,2.4fr)_0.75fr_0.75fr_1fr_42px] items-center transition-colors hover:bg-subtle"
+            <div className="-mx-6 overflow-x-auto px-6 lg:-mx-10 lg:px-10">
+              <div className="min-w-[720px]">
+                <div className="grid grid-cols-[minmax(0,2.4fr)_0.75fr_0.75fr_1fr_42px] border-b border-border pb-3">
+                  {["Opponent", "Result", "Color", "Date"].map((col) => (
+                    <span
+                      key={col}
+                      className="font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground"
                     >
-                      <div className="flex min-w-0 items-center gap-4 py-4 pr-4">
-                        <span className="flex size-9 shrink-0 items-center justify-center border border-border bg-background font-mono text-[12px] font-semibold uppercase text-foreground">
-                          {opponentLabel.charAt(0).toUpperCase()}
-                        </span>
-                        <div className="min-w-0">
-                          <p className="truncate font-sans text-[15px] font-semibold tracking-[-0.03em] text-foreground">
-                            {opponentLabel}
-                          </p>
-                          <p className="mt-1 font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
-                            replay / {game.id.slice(0, 8)}
-                          </p>
-                        </div>
-                      </div>
+                      {col}
+                    </span>
+                  ))}
+                  <span className="sr-only">Open replay</span>
+                </div>
 
-                      <div className="flex items-center gap-2 py-4">
-                        <span className={cn("size-2", outcomeTone(outcome))} />
-                        <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-foreground">
-                          {outcomeLabel(outcome)}
-                        </span>
-                      </div>
+                {games.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center gap-4 border-b border-border py-24">
+                    <LuTrophy className="size-9 text-foreground/20" />
+                    <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                      No record yet
+                    </p>
+                  </div>
+                ) : (
+                  <div className="divide-y divide-border">
+                    {games.map((game) => {
+                      const isBlack = game.blackPlayerId === user.id
+                      const myColor = isBlack ? "black" : "white"
+                      const opponent = isBlack ? game.whitePlayer : game.blackPlayer
+                      const isSelfPlay = game.blackPlayerId === game.whitePlayerId
+                      const opponentLabel =
+                        opponent.email === user.email
+                          ? "Self play"
+                          : opponent.name?.trim() || opponent.email
+                      const outcome = getOutcome({
+                        result: game.result,
+                        winner: game.winner,
+                        myColor,
+                        isSelfPlay,
+                      })
 
-                      <div className="flex items-center gap-2 py-4">
-                        <span
-                          className={cn(
-                            "size-3 border border-border",
-                            myColor === "black" ? "bg-stone-black" : "bg-stone-white"
-                          )}
-                        />
-                        <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-                          {myColor === "black" ? "黒" : "白"}
-                        </span>
-                      </div>
+                      return (
+                        <Link
+                          key={game.id}
+                          href={`/replay/${game.id}`}
+                          className="group grid grid-cols-[minmax(0,2.4fr)_0.75fr_0.75fr_1fr_42px] items-center transition-colors hover:bg-subtle"
+                        >
+                          <div className="flex min-w-0 items-center gap-4 py-4 pr-4">
+                            <span className="flex size-9 shrink-0 items-center justify-center border border-border bg-background font-mono text-[12px] font-semibold uppercase text-foreground">
+                              {opponentLabel.charAt(0).toUpperCase()}
+                            </span>
+                            <div className="min-w-0">
+                              <p className="truncate font-sans text-[15px] font-semibold tracking-[-0.03em] text-foreground">
+                                {opponentLabel}
+                              </p>
+                              <p className="mt-1 font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
+                                replay / {game.id.slice(0, 8)}
+                              </p>
+                            </div>
+                          </div>
 
-                      <div className="flex items-center gap-2 py-4 font-mono text-[11px] font-semibold text-muted-foreground">
-                        <LuClock3 className="size-3.5 shrink-0" />
-                        {formatDate(game.startedAt)}
-                      </div>
+                          <div className="flex items-center gap-2 py-4">
+                            <span className={cn("size-2", outcomeTone(outcome))} />
+                            <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-foreground">
+                              {outcomeLabel(outcome)}
+                            </span>
+                          </div>
 
-                      <div className="flex h-full items-center justify-center border-l border-border text-muted-foreground transition-colors group-hover:bg-foreground group-hover:text-primary-foreground">
-                        <LuArrowRight className="size-4" />
-                      </div>
-                    </Link>
-                  )
-                })}
+                          <div className="flex items-center gap-2 py-4">
+                            <span
+                              className={cn(
+                                "size-3 border border-border",
+                                myColor === "black" ? "bg-stone-black" : "bg-stone-white"
+                              )}
+                            />
+                            <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                              {myColor === "black" ? "黒" : "白"}
+                            </span>
+                          </div>
+
+                          <div className="flex items-center gap-2 py-4 font-mono text-[11px] font-semibold text-muted-foreground">
+                            <LuClock3 className="size-3.5 shrink-0" />
+                            {formatDate(game.startedAt)}
+                          </div>
+
+                          <div className="flex h-full items-center justify-center border-l border-border text-muted-foreground transition-colors group-hover:bg-foreground group-hover:text-primary-foreground">
+                            <LuArrowRight className="size-4" />
+                          </div>
+                        </Link>
+                      )
+                    })}
+                  </div>
+                )}
               </div>
-            )}
+            </div>
           </section>
         </section>
       </div>
