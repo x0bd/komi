@@ -57,7 +57,7 @@ const LETTERS = "ABCDEFGHJKLMNOPQRST".split("");
 
 function getAssignedOnlineColor(
     selfConnectionId: number | null,
-    otherConnectionIds: number[],
+    otherConnectionIds: readonly number[],
 ): StoneColor | null {
     if (selfConnectionId === null) {
         return null;

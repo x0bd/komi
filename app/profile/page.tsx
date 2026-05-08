@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { redirect } from "next/navigation"
 import {
   LuArrowRight,
   LuClock3,
@@ -77,6 +78,7 @@ function outcomeTone(outcome: Outcome) {
 
 export default async function ProfilePage() {
   const user = await ensureDbUser()
+  if (!user) redirect("/")
 
   const games = await db.game.findMany({
     where: {

@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const liveblocksRoom = await liveblocks.getRoom(room)
-    const access = liveblocksRoom.usersAccesses[user.id]
+    const access = liveblocksRoom.usersAccesses[user.id] as string[] | null | undefined
 
     if (!access?.includes("room:write")) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 })

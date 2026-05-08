@@ -90,14 +90,14 @@ export async function POST(request: NextRequest) {
 
     try {
       const room = await liveblocks.getRoom(roomId)
-      const currentAccess = room.usersAccesses[user.id]
+      const currentAccess = room.usersAccesses[user.id] as string[] | null | undefined
 
       if (currentAccess?.includes("room:write")) {
         return NextResponse.json({ roomId, role: roomRole(room, user.id) })
       }
 
       const memberIds = Object.entries(room.usersAccesses)
-        .filter(([, access]) => access.includes("room:write"))
+        .filter(([, access]) => (access as string[] | null)?.includes("room:write"))
         .map(([memberId]) => memberId)
 
       if (memberIds.length >= 2) {
