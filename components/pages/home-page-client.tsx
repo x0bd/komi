@@ -277,17 +277,16 @@ function getMascotName(mascot: MascotId) {
 function formatMascotSignalLabel(
     source: MascotSignalSource,
     intensity: 0 | 1 | 2 | 3,
+    eventLabel?: string,
 ) {
-    const sourceLabel =
-        source === "llm"
-            ? "sensei read"
-            : source === "analysis"
-              ? "ai read"
-              : source === "logic"
-                ? "board logic"
-                : "system";
+    const sourceLabel: Record<MascotSignalSource, string> = {
+        llm: "sensei read",
+        analysis: "ai read",
+        logic: "board logic",
+        system: "system",
+    };
 
-    return `${sourceLabel} / lv ${Math.max(1, intensity)}`;
+    return `${eventLabel ?? sourceLabel[source]} / lv ${Math.max(1, intensity)}`;
 }
 
 function getKoStageState({
@@ -305,6 +304,7 @@ function getKoStageState({
     mascotMessage,
     mascotSource,
     mascotIntensity,
+    mascotEventLabel,
 }: {
     isGameOver: boolean;
     replayEnabled?: boolean;
@@ -320,6 +320,7 @@ function getKoStageState({
     mascotMessage?: string;
     mascotSource?: MascotSignalSource;
     mascotIntensity?: 0 | 1 | 2 | 3;
+    mascotEventLabel?: string;
 }): { mood: KoMood; message: string; signalLabel?: string } {
     if (waitingForOpponent) {
         return {
@@ -354,7 +355,7 @@ function getKoStageState({
             message: mascotMessage,
             signalLabel:
                 mascotSource && typeof mascotIntensity === "number"
-                    ? formatMascotSignalLabel(mascotSource, mascotIntensity)
+                    ? formatMascotSignalLabel(mascotSource, mascotIntensity, mascotEventLabel)
                     : undefined,
         };
     }
@@ -1179,6 +1180,7 @@ function LocalBoardView({
     const mascotMessage = useLearningStore((state) => state.mascotMessage);
     const mascotSource = useLearningStore((state) => state.mascotSource);
     const mascotIntensity = useLearningStore((state) => state.mascotIntensity);
+    const mascotEventLabel = useLearningStore((state) => state.mascotEventLabel);
     const mascotPulseKey = useLearningStore((state) => state.mascotPulseKey);
     const liveLastMove = useGameStore((state) => {
         const history = state.moveHistory;
@@ -1206,6 +1208,7 @@ function LocalBoardView({
         mascotMessage,
         mascotSource,
         mascotIntensity,
+        mascotEventLabel,
     });
     const pointsLabel =
         moveHistory.length === 0
@@ -1325,6 +1328,7 @@ function OnlineBoardView({
     const mascotMessage = useLearningStore((state) => state.mascotMessage);
     const mascotSource = useLearningStore((state) => state.mascotSource);
     const mascotIntensity = useLearningStore((state) => state.mascotIntensity);
+    const mascotEventLabel = useLearningStore((state) => state.mascotEventLabel);
     const mascotPulseKey = useLearningStore((state) => state.mascotPulseKey);
     const lastMove = useGameStore((state) => {
         const history = state.moveHistory;
@@ -1359,6 +1363,7 @@ function OnlineBoardView({
         mascotMessage,
         mascotSource,
         mascotIntensity,
+        mascotEventLabel,
     });
     const pointsLabel =
         moveHistory.length === 0

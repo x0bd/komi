@@ -69,6 +69,7 @@ interface LearningStore {
   mascotMessage: string
   mascotSource: MascotSignalSource
   mascotIntensity: 0 | 1 | 2 | 3
+  mascotEventLabel: string
   mascotPulseKey: number
   tutorPulseKey: number
   tutorEventCount: number
@@ -89,6 +90,7 @@ interface LearningStore {
   registerStreakEvent: (event: StreakEvent) => void
   registerTutorEvent: (event: TutorEvent) => void
   claimTutorNarrationSlot: (now?: number) => boolean
+  setMascotSignal: (signal: MascotSignal) => void
   setSelectedMascot: (mascot: MascotId) => void
   resetLiveStreak: () => void
   addMessage: (text: string, tone?: ChatMessageTone) => void
@@ -315,7 +317,7 @@ function getMascotSignal(
   switch (event.type) {
     case "analysis": {
       const winRate = Math.round(Math.max(0, Math.min(1, event.winRate)) * 100)
-      const source = event.summary ? "analysis" : "logic"
+      const source: MascotSignalSource = event.summary ? "analysis" : "logic"
 
       if (event.actor === "player") {
         if (event.quality === "best") {
@@ -494,6 +496,7 @@ export const useLearningStore = create<LearningStore>()(
       mascotMessage: "Start clean. Corners first, shape always.",
       mascotSource: "system",
       mascotIntensity: 1,
+      mascotEventLabel: "new board",
       mascotPulseKey: 0,
       tutorPulseKey: 0,
       tutorEventCount: 0,
@@ -557,6 +560,7 @@ export const useLearningStore = create<LearningStore>()(
             mascotMessage: mascotSignal.message,
             mascotSource: mascotSignal.source,
             mascotIntensity: mascotSignal.intensity,
+            mascotEventLabel: mascotSignal.eventLabel,
             mascotPulseKey: state.mascotPulseKey + 1,
             latestAnalysis:
               event.type === "analysis"
@@ -592,6 +596,16 @@ export const useLearningStore = create<LearningStore>()(
         return true
       },
 
+      setMascotSignal: (signal) =>
+        set((state) => ({
+          mascotMood: signal.mood,
+          mascotMessage: signal.message,
+          mascotSource: signal.source,
+          mascotIntensity: signal.intensity,
+          mascotEventLabel: signal.eventLabel,
+          mascotPulseKey: state.mascotPulseKey + 1,
+        })),
+
       setSelectedMascot: (selectedMascot) => set({ selectedMascot }),
 
       resetLiveStreak: () =>
@@ -608,6 +622,7 @@ export const useLearningStore = create<LearningStore>()(
           mascotMessage: "Fresh board. Corners first, shape always.",
           mascotSource: "system",
           mascotIntensity: 1,
+          mascotEventLabel: "new board",
           mascotPulseKey: 0,
           tutorPulseKey: 0,
           tutorEventCount: 0,

@@ -8,6 +8,7 @@ import { useLearningStore } from "./learning-store"
 import type { StoneColor } from "@/components/game/stone"
 import { getActiveEngineProvider } from "../ai"
 import type { EngineDifficulty, EngineSearchBudget } from "../ai/engine-provider"
+import type { MascotMood } from "@/lib/mascot"
 
 export type GameMode = "local" | "versus-ai" | "online"
 export type AIDifficulty = "easy" | "medium" | "hard"
@@ -182,6 +183,19 @@ function getCandidateReason(candidate: {
   return "pressure point"
 }
 
+function getTutorMascotMood(quality: MoveQuality): MascotMood {
+  if (quality === "best") return "happy"
+  if (quality === "strong") return "praise"
+  if (quality === "mistake") return "warning"
+  return "teaching"
+}
+
+function getTutorMascotIntensity(quality: MoveQuality): 0 | 1 | 2 | 3 {
+  if (quality === "best" || quality === "mistake") return 3
+  if (quality === "strong") return 2
+  return 1
+}
+
 async function requestTutorMessage(payload: {
   moveNumber: number
   moveCoordinate: string
@@ -231,9 +245,21 @@ async function requestTutorMessage(payload: {
 
     const json = (await response.json().catch(() => ({}))) as {
       message?: unknown
+      source?: unknown
     }
     if (typeof json.message === "string" && json.message.trim().length > 0) {
-      learningStore.addMessage(json.message)
+      const message = json.message.trim()
+      learningStore.addMessage(message)
+
+      if (json.source === "openai-user-key") {
+        learningStore.setMascotSignal({
+          mood: getTutorMascotMood(payload.analysis.quality),
+          message,
+          source: "llm",
+          intensity: getTutorMascotIntensity(payload.analysis.quality),
+          eventLabel: "llm tutor",
+        })
+      }
     }
   } catch {
     // Ignore transient network errors for tutor narration.
