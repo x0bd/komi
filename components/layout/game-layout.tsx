@@ -50,11 +50,11 @@ export function GameLayout({
         <TooltipProvider>
             <div
                 className={cn(
-                    "relative min-h-svh overflow-hidden bg-background font-sans text-foreground",
+                    "relative h-svh overflow-hidden bg-background font-sans text-foreground",
                     className,
                 )}
             >
-                <header className="pointer-events-none absolute inset-x-0 top-0 z-50 grid h-16 grid-cols-[104px_1fr_auto] border-b border-border bg-background">
+                <header className="pointer-events-none absolute inset-x-0 top-0 z-50 grid h-14 grid-cols-[96px_1fr_auto] border-b border-border bg-background">
                     <div className="hidden border-r border-border px-5 py-4 lg:block">
                         <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.28em] text-muted-foreground">
                             KOMI
@@ -81,12 +81,12 @@ export function GameLayout({
 
                 <div
                     className={cn(
-                        "pointer-events-none relative z-10 flex h-svh w-full items-center justify-center px-5 pb-24 pt-16 transition-[padding] duration-300 ease-out lg:pb-8",
-                        isExpanded ? "lg:pl-[620px]" : "lg:pl-[128px]",
+                        "pointer-events-none relative z-10 flex h-svh w-full items-center justify-center px-4 pb-20 pt-14 transition-[padding] duration-300 ease-out lg:pb-4",
+                        isExpanded ? "lg:pl-[584px]" : "lg:pl-[112px]",
                         rightPanel ? "lg:pr-36 xl:pr-48" : "lg:pr-8",
                     )}
                 >
-                    <main className="pointer-events-auto flex h-full w-full max-w-2xl items-center justify-center 2xl:max-w-3xl">
+                    <main className="pointer-events-auto flex h-full min-h-0 w-full max-w-[46rem] items-center justify-center">
                         {board}
                     </main>
 
@@ -99,15 +99,15 @@ export function GameLayout({
 
                 <aside
                     className={cn(
-                        "pointer-events-auto fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background lg:inset-x-auto lg:left-0 lg:top-16 lg:bottom-0 lg:border-r lg:border-t-0",
+                        "pointer-events-auto fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background lg:inset-x-auto lg:left-0 lg:top-14 lg:bottom-0 lg:border-r lg:border-t-0",
                         "transition-[width,height] duration-300 ease-out",
                         isExpanded
-                            ? "h-[min(72svh,660px)] lg:h-auto lg:w-[560px]"
-                            : "h-[76px] lg:h-auto lg:w-[104px]",
+                            ? "h-[min(72svh,660px)] lg:h-auto lg:w-[528px]"
+                            : "h-[68px] lg:h-auto lg:w-[96px]",
                     )}
                 >
                     <div className="flex h-full min-h-0 flex-col lg:flex-row">
-                        <nav className="relative flex h-[76px] w-full shrink-0 flex-row items-stretch overflow-hidden bg-background lg:h-full lg:w-[104px] lg:flex-col">
+                        <nav className="relative flex h-[68px] w-full shrink-0 flex-row items-stretch overflow-hidden bg-background lg:h-full lg:w-[96px] lg:flex-col">
                             <span
                                 aria-hidden="true"
                                 className="pointer-events-none absolute -left-4 top-20 hidden select-none font-sans text-[8rem] font-semibold leading-none text-foreground/[0.08] lg:block"
@@ -115,9 +115,9 @@ export function GameLayout({
                                 碁
                             </span>
 
-                            <div className="flex w-24 shrink-0 items-center border-r border-border px-4 lg:h-32 lg:w-full lg:border-b lg:border-r-0">
+                            <div className="flex w-20 shrink-0 items-center border-r border-border px-4 lg:h-24 lg:w-full lg:border-b lg:border-r-0">
                                 <div>
-                                    <p className="font-sans text-lg font-semibold tracking-[-0.055em] text-foreground">
+                                    <p className="font-sans text-base font-semibold tracking-[-0.055em] text-foreground">
                                         Komi
                                     </p>
                                     <p className="mt-2 font-mono text-[9px] uppercase tracking-[0.18em] text-muted-foreground">
@@ -181,12 +181,6 @@ export function GameLayout({
                                 })}
                             </div>
 
-                            <div className="mt-auto hidden shrink-0 border-t border-border lg:block">
-                                <p className="mx-auto flex h-28 items-center justify-center font-mono text-[9px] uppercase tracking-[0.22em] text-muted-foreground [writing-mode:vertical-rl]">
-                                    account
-                                </p>
-                            </div>
-
                             <div className="flex shrink-0 border-l border-border lg:border-l-0 lg:border-t">
                                 <Tooltip>
                                     <TooltipTrigger
@@ -194,7 +188,7 @@ export function GameLayout({
                                             <Link
                                                 href="/profile"
                                                 aria-label="Open profile"
-                                                className="group relative flex h-full w-20 items-center justify-center bg-background text-muted-foreground transition-colors hover:bg-subtle hover:text-foreground lg:h-24 lg:w-full"
+                                                className="group relative flex h-full w-16 items-center justify-center bg-background text-muted-foreground transition-colors hover:bg-subtle hover:text-foreground lg:h-20 lg:w-full"
                                             />
                                         }
                                     >

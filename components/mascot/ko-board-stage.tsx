@@ -29,7 +29,7 @@ export function KoBoardStage({
   return (
     <section
       className={cn(
-        "relative flex h-full w-full min-w-0 flex-col justify-center overflow-hidden py-3",
+        "relative flex h-full min-h-0 w-full min-w-0 flex-col justify-center overflow-hidden py-2",
         className
       )}
     >
@@ -43,7 +43,7 @@ export function KoBoardStage({
         }}
       />
 
-      <div className="relative z-10 mx-auto flex w-full max-w-[42rem] flex-col gap-3">
+      <div className="relative z-10 mx-auto flex h-full min-h-0 w-full max-w-[42rem] flex-col justify-center gap-2">
         <div className="grid grid-cols-2 border border-border bg-background">
           <HudCell
             icon={<LuSparkles className="size-4 text-signal" />}
@@ -56,36 +56,38 @@ export function KoBoardStage({
           />
         </div>
 
-        <div className="grid gap-1">
+        <div className="grid shrink-0 gap-1">
           <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.24em] text-muted-foreground">
             {subtitle}
           </p>
-          <h1 className="font-sans text-3xl font-semibold leading-none tracking-[-0.06em] text-foreground md:text-4xl">
+          <h1 className="font-sans text-2xl font-semibold leading-none tracking-[-0.06em] text-foreground md:text-3xl">
             {title}
           </h1>
         </div>
 
-        <div className="grid items-end gap-3 sm:grid-cols-[auto_minmax(0,1fr)]">
+        <div className="grid shrink-0 items-end gap-2 sm:grid-cols-[auto_minmax(0,1fr)]">
           <div className="justify-self-center sm:justify-self-end">
-            <KoMascot mood={mood} size="lg" />
+            <KoMascot mood={mood} size="md" className="sm:size-28" />
           </div>
 
-          <div className="relative mb-2 border border-border bg-background px-4 py-3 sm:max-w-[24rem]">
+          <div className="relative mb-1 border border-border bg-background px-4 py-3 sm:max-w-[24rem]">
             <span
               aria-hidden="true"
               className="absolute -left-2 bottom-6 hidden size-4 rotate-45 border-b border-l border-border bg-background sm:block"
             />
-            <p className="font-sans text-[14px] font-semibold leading-relaxed tracking-[-0.02em] text-foreground">
+            <p className="max-h-14 overflow-hidden font-sans text-[13px] font-semibold leading-relaxed tracking-[-0.02em] text-foreground md:text-[14px]">
               {message}
             </p>
           </div>
         </div>
 
-        <div className="relative border border-border bg-background p-2">
+        <div className="relative min-h-0 shrink border border-border bg-background p-2">
           <span className="pointer-events-none absolute -right-3 -top-6 hidden font-sans text-8xl font-semibold leading-none text-foreground/10 md:block">
             碁
           </span>
-          <div className="relative z-10">{children}</div>
+          <div className="relative z-10 mx-auto w-[min(100%,calc(100svh_-_18rem))] max-w-[38rem] lg:w-[min(100%,calc(100svh_-_14rem))]">
+            {children}
+          </div>
         </div>
       </div>
     </section>
@@ -104,7 +106,7 @@ function HudCell({
   return (
     <div
       className={cn(
-        "flex h-10 items-center justify-center gap-2 px-3 font-mono text-[10px] font-semibold uppercase tracking-[0.16em]",
+        "flex h-9 items-center justify-center gap-2 px-3 font-mono text-[10px] font-semibold uppercase tracking-[0.16em]",
         className
       )}
     >

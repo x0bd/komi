@@ -152,27 +152,8 @@ export function GoBoard({
     }
 
     return (
-        <div className={cn("w-full max-w-2xl px-2", className)}>
-            <div className="relative w-full border border-border bg-background p-2 md:p-4">
-                <span
-                    aria-hidden="true"
-                    className="pointer-events-none absolute -right-3 -top-5 hidden font-sans text-8xl font-semibold leading-none text-foreground/10 md:block"
-                >
-                    碁
-                </span>
-                <div className="relative z-10 mb-3 grid grid-cols-[1fr_auto] border-b border-border pb-3">
-                    <div>
-                        <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
-                            board instrument
-                        </p>
-                        <p className="mt-1 font-sans text-xl font-semibold tracking-[-0.055em] text-foreground">
-                            対局 grid
-                        </p>
-                    </div>
-                    <div className="font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                        {size} x {size}
-                    </div>
-                </div>
+        <div className={cn("w-full max-w-2xl", className)}>
+            <div className="relative w-full bg-background">
                 <div className="relative z-10 aspect-square w-full">
                     <div
                         className="absolute inset-0 grid gap-x-2 gap-y-2"
