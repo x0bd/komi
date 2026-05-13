@@ -46,7 +46,10 @@ import {
     isGameOver as getIsGameOver,
 } from "@/lib/engine/game";
 import { useMultiplayerStore } from "@/lib/stores/multiplayer-store";
-import { useLearningStore } from "@/lib/stores/learning-store";
+import {
+    useLearningStore,
+    type TutorAnalysisSnapshot,
+} from "@/lib/stores/learning-store";
 import { LuBot } from "react-icons/lu";
 import { OnlineRoomSync } from "@/components/game/online-room-sync";
 import type { StoneColor } from "@/components/game/stone";
@@ -267,6 +270,7 @@ function getKoStageState({
     mode,
     winner,
     moveCount,
+    size,
     latestAnalysis,
     lastMove,
 }: {
@@ -277,7 +281,8 @@ function getKoStageState({
     mode: GameMode;
     winner?: "black" | "white" | "draw" | null;
     moveCount: number;
-    latestAnalysis?: { summary?: string; topMoves?: Array<{ coordinate: string }> } | null;
+    size: 9 | 13 | 19;
+    latestAnalysis?: TutorAnalysisSnapshot | null;
     lastMove?: Move;
 }): { mood: KoMood; message: string } {
     if (waitingForOpponent) {
@@ -305,7 +310,7 @@ function getKoStageState({
     }
 
     if (lastMove && !lastMove.isPass) {
-        const coordinate = toCoordinate(lastMove, 19 as 9 | 13 | 19);
+        const coordinate = toCoordinate(lastMove, size);
         return {
             mood: "teaching",
             message: `Last move: ${coordinate}. Check liberties before chasing.`,
@@ -763,8 +768,6 @@ export default function HomePageClient() {
                     rightPanel={rightPanel}
                 />
             )}
-            <AIReaction />
-            <MobileSenseiFab />
             <GameOverDialog
                 open={isGameOver && !gameOverDialogDismissed}
                 onOpenChange={(open) => {
@@ -1104,6 +1107,10 @@ function LocalBoardView({
     const liveValidMoves = useGameStore((state) => state.validMoves);
     const liveRecentCaptures = useGameStore((state) => state.recentCaptures);
     const liveScore = useGameStore((state) => state.liveScore);
+    const timers = useGameStore((state) => state.timers);
+    const mode = useGameStore((state) => state.mode);
+    const moveHistory = useGameStore((state) => state.moveHistory);
+    const winner = useGameStore((state) => state.winner);
     const isGameOver = useGameStore((state) => state.isGameOver);
     const gameOverReason = useGameStore((state) => state.gameOverReason);
     const deadStones = useGameStore((state) => state.deadStones);
@@ -1120,6 +1127,26 @@ function LocalBoardView({
     const board = replayEnabled && replayFrame ? replayFrame.board : liveBoard;
     const currentPlayer =
         replayEnabled && replayFrame ? replayFrame.turn : liveCurrentPlayer;
+    const stageLastMove =
+        replayEnabled && replayFrame
+            ? replayFrame.lastMove ?? undefined
+            : liveLastMove;
+    const koStage = getKoStageState({
+        isGameOver,
+        replayEnabled,
+        currentPlayer,
+        mode,
+        winner,
+        moveCount: moveHistory.length,
+        size,
+        latestAnalysis,
+        lastMove: stageLastMove,
+    });
+    const pointsLabel =
+        moveHistory.length === 0
+            ? "fresh board"
+            : `${moveHistory.length} move${moveHistory.length === 1 ? "" : "s"}`;
+    const timeLabel = formatStageClock(timers[currentPlayer]);
     const deadStoneMarkingEnabled =
         !replayEnabled && isGameOver && gameOverReason === "score";
     const validMoves =
@@ -1164,30 +1191,39 @@ function LocalBoardView({
     );
 
     return (
-        <GoBoard
-            board={board}
-            size={size}
-            currentPlayer={currentPlayer}
-            validMoves={validMoves}
-            capturedStones={capturedStones}
-            lastMove={displayLastMove}
-            analysisHints={analysisHints}
-            territoryMap={
-                replayEnabled && replayScore
-                    ? replayScore.territoryMap
-                    : liveScore.territoryMap
-            }
-            showTerritoryHeatmap={
-                (analysisOverlayEnabled || deadStoneMarkingEnabled) &&
-                !replayEnabled
-            }
-            deadStoneMarkingEnabled={deadStoneMarkingEnabled}
-            markedDeadStones={deadStones}
-            onDeadStoneToggle={toggleDeadStone}
-            onIntersectionClick={
-                replayEnabled ? undefined : (x, y) => placeStone(x, y)
-            }
-        />
+        <KoBoardStage
+            mood={koStage.mood}
+            message={koStage.message}
+            title={mode === "versus-ai" ? "Play Kō" : "Play Go"}
+            subtitle={replayEnabled ? "先生 / replay" : "先生 / live board"}
+            pointsLabel={pointsLabel}
+            timeLabel={timeLabel}
+        >
+            <GoBoard
+                board={board}
+                size={size}
+                currentPlayer={currentPlayer}
+                validMoves={validMoves}
+                capturedStones={capturedStones}
+                lastMove={displayLastMove}
+                analysisHints={analysisHints}
+                territoryMap={
+                    replayEnabled && replayScore
+                        ? replayScore.territoryMap
+                        : liveScore.territoryMap
+                }
+                showTerritoryHeatmap={
+                    (analysisOverlayEnabled || deadStoneMarkingEnabled) &&
+                    !replayEnabled
+                }
+                deadStoneMarkingEnabled={deadStoneMarkingEnabled}
+                markedDeadStones={deadStones}
+                onDeadStoneToggle={toggleDeadStone}
+                onIntersectionClick={
+                    replayEnabled ? undefined : (x, y) => placeStone(x, y)
+                }
+            />
+        </KoBoardStage>
     );
 }
 
@@ -1207,6 +1243,10 @@ function OnlineBoardView({
     const validMoves = useGameStore((state) => state.validMoves);
     const recentCaptures = useGameStore((state) => state.recentCaptures);
     const liveScore = useGameStore((state) => state.liveScore);
+    const timers = useGameStore((state) => state.timers);
+    const moveHistory = useGameStore((state) => state.moveHistory);
+    const isGameOver = useGameStore((state) => state.isGameOver);
+    const winner = useGameStore((state) => state.winner);
     const analysisOverlayEnabled = useGameStore(
         (state) => state.analysisOverlayEnabled,
     );
@@ -1230,6 +1270,22 @@ function OnlineBoardView({
     const status = useStatus();
     const updateMyPresence = useUpdateMyPresence();
     const canPlay = !waitingForOpponent && assignedColor === currentPlayer;
+    const koStage = getKoStageState({
+        isGameOver,
+        waitingForOpponent,
+        currentPlayer,
+        mode: "online",
+        winner,
+        moveCount: moveHistory.length,
+        size,
+        latestAnalysis,
+        lastMove,
+    });
+    const pointsLabel =
+        moveHistory.length === 0
+            ? "fresh board"
+            : `${moveHistory.length} move${moveHistory.length === 1 ? "" : "s"}`;
+    const timeLabel = formatStageClock(timers[currentPlayer]);
 
     const opponentHover = useMemo(() => {
         const hovered = others.find(
@@ -1273,44 +1329,53 @@ function OnlineBoardView({
     );
 
     return (
-        <div className="relative">
-            <GoBoard
-                board={board}
-                size={size}
-                currentPlayer={currentPlayer}
-                validMoves={canPlay ? validMoves : []}
-                capturedStones={recentCaptures}
-                opponentHover={opponentHover}
-                lastMove={
-                    lastMove && !lastMove.isPass
-                        ? { x: lastMove.x, y: lastMove.y }
-                        : undefined
-                }
-                analysisHints={analysisHints}
-                territoryMap={liveScore.territoryMap}
-                showTerritoryHeatmap={analysisOverlayEnabled}
-                onHoverIntersectionChange={(next) => {
-                    updateMyPresence({ hoveredIntersection: next });
-                }}
-                onIntersectionClick={(x, y) => {
-                    if (!canPlay) {
-                        return;
+        <KoBoardStage
+            mood={koStage.mood}
+            message={koStage.message}
+            title="Play Online"
+            subtitle="先生 / online board"
+            pointsLabel={pointsLabel}
+            timeLabel={timeLabel}
+        >
+            <div className="relative">
+                <GoBoard
+                    board={board}
+                    size={size}
+                    currentPlayer={currentPlayer}
+                    validMoves={canPlay ? validMoves : []}
+                    capturedStones={recentCaptures}
+                    opponentHover={opponentHover}
+                    lastMove={
+                        lastMove && !lastMove.isPass
+                            ? { x: lastMove.x, y: lastMove.y }
+                            : undefined
                     }
-                    if (onIntersectionClick) {
-                        onIntersectionClick(x, y);
-                        return;
-                    }
-                    placeStone(x, y);
-                }}
-            />
-            {waitingForOpponent ? (
-                <div className="pointer-events-none absolute inset-0 z-30 flex items-center justify-center bg-background/55 backdrop-blur-[2px]">
-                    <div className="border border-border bg-background px-4 py-2 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-foreground">
-                        Waiting for opponent to join...
+                    analysisHints={analysisHints}
+                    territoryMap={liveScore.territoryMap}
+                    showTerritoryHeatmap={analysisOverlayEnabled}
+                    onHoverIntersectionChange={(next) => {
+                        updateMyPresence({ hoveredIntersection: next });
+                    }}
+                    onIntersectionClick={(x, y) => {
+                        if (!canPlay) {
+                            return;
+                        }
+                        if (onIntersectionClick) {
+                            onIntersectionClick(x, y);
+                            return;
+                        }
+                        placeStone(x, y);
+                    }}
+                />
+                {waitingForOpponent ? (
+                    <div className="pointer-events-none absolute inset-0 z-30 flex items-center justify-center bg-background/55 backdrop-blur-[2px]">
+                        <div className="border border-border bg-background px-4 py-2 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-foreground">
+                            Waiting for opponent to join...
+                        </div>
                     </div>
-                </div>
-            ) : null}
-        </div>
+                ) : null}
+            </div>
+        </KoBoardStage>
     );
 }
 
