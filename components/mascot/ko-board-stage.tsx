@@ -3,11 +3,16 @@
 import type { ReactNode } from "react"
 import { LuClock3, LuSparkles } from "react-icons/lu"
 import { cn } from "@/lib/utils"
-import { KoMascot, type KoMood } from "@/components/mascot/ko-mascot"
+import {
+  MascotAvatar,
+  type MascotId,
+  type MascotMood,
+} from "@/components/mascot/mascot-avatar"
 
 export type KoBoardStageProps = {
   children: ReactNode
-  mood?: KoMood
+  mascot?: MascotId
+  mood?: MascotMood
   message?: string
   title?: string
   subtitle?: string
@@ -18,6 +23,7 @@ export type KoBoardStageProps = {
 
 export function KoBoardStage({
   children,
+  mascot = "ko",
   mood = "idle",
   message = "Shape first. Attack second.",
   title = "Play Go",
@@ -73,7 +79,12 @@ export function KoBoardStage({
         <div className="relative grid min-h-0 grid-rows-[auto_minmax(0,1fr)] gap-2">
           <div className="grid shrink-0 items-end gap-2 sm:grid-cols-[auto_minmax(0,1fr)]">
             <div className="justify-self-center sm:justify-self-end">
-              <KoMascot mood={mood} size="sm" className="sm:size-24" />
+              <MascotAvatar
+                mascot={mascot}
+                mood={mood}
+                size="sm"
+                className="sm:size-24"
+              />
             </div>
 
             <div className="relative mb-1 border border-border bg-background px-4 py-2.5 sm:max-w-[23rem]">

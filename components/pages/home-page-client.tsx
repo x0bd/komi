@@ -36,7 +36,13 @@ import { splitClock, useGameClock } from "@/hooks/use-timer";
 import { useAITurn } from "@/hooks/use-ai-turn";
 import { AIChatPanel } from "@/components/learning/ai-chat-panel";
 import { XPBar } from "@/components/learning/xp-bar";
-import { KoBoardStage, type KoMood } from "@/components/mascot";
+import {
+    KoBoardStage,
+    MascotAvatar,
+    MASCOT_OPTIONS,
+    type KoMood,
+    type MascotId,
+} from "@/components/mascot";
 import type { ScoreResult } from "@/lib/engine/scoring";
 import { calculateScore } from "@/lib/engine/scoring";
 import type { GameState, Move } from "@/lib/engine/types";
@@ -53,6 +59,7 @@ import {
 import { LuBot } from "react-icons/lu";
 import { OnlineRoomSync } from "@/components/game/online-room-sync";
 import type { StoneColor } from "@/components/game/stone";
+import { cn } from "@/lib/utils";
 
 const LETTERS = "ABCDEFGHJKLMNOPQRST".split("");
 
@@ -260,6 +267,10 @@ function buildKeyMoments(moves: Move[], size: 9 | 13 | 19): KeyMoment[] {
 function formatStageClock(totalSeconds: number) {
     const clock = splitClock(totalSeconds);
     return `${String(clock.minutes).padStart(2, "0")}:${String(clock.seconds).padStart(2, "0")}`;
+}
+
+function getMascotName(mascot: MascotId) {
+    return MASCOT_OPTIONS.find((option) => option.id === mascot)?.name ?? "Kō";
 }
 
 function getKoStageState({
@@ -1119,6 +1130,7 @@ function LocalBoardView({
         (state) => state.analysisOverlayEnabled,
     );
     const latestAnalysis = useLearningStore((state) => state.latestAnalysis);
+    const selectedMascot = useLearningStore((state) => state.selectedMascot);
     const liveLastMove = useGameStore((state) => {
         const history = state.moveHistory;
         return history.length > 0 ? history[history.length - 1] : undefined;
@@ -1147,6 +1159,7 @@ function LocalBoardView({
             ? "fresh board"
             : `${moveHistory.length} move${moveHistory.length === 1 ? "" : "s"}`;
     const timeLabel = formatStageClock(timers[currentPlayer]);
+    const mascotName = getMascotName(selectedMascot);
     const deadStoneMarkingEnabled =
         !replayEnabled && isGameOver && gameOverReason === "score";
     const validMoves =
@@ -1192,10 +1205,11 @@ function LocalBoardView({
 
     return (
         <KoBoardStage
+            mascot={selectedMascot}
             mood={koStage.mood}
             message={koStage.message}
-            title={mode === "versus-ai" ? "Play Kō" : "Play Go"}
-            subtitle={replayEnabled ? "先生 / replay" : "先生 / live board"}
+            title={mode === "versus-ai" ? `Train with ${mascotName}` : "Play Go"}
+            subtitle={replayEnabled ? `${mascotName} / replay` : `${mascotName} / live board`}
             pointsLabel={pointsLabel}
             timeLabel={timeLabel}
         >
@@ -1251,6 +1265,7 @@ function OnlineBoardView({
         (state) => state.analysisOverlayEnabled,
     );
     const latestAnalysis = useLearningStore((state) => state.latestAnalysis);
+    const selectedMascot = useLearningStore((state) => state.selectedMascot);
     const lastMove = useGameStore((state) => {
         const history = state.moveHistory;
         return history.length > 0 ? history[history.length - 1] : undefined;
@@ -1286,6 +1301,7 @@ function OnlineBoardView({
             ? "fresh board"
             : `${moveHistory.length} move${moveHistory.length === 1 ? "" : "s"}`;
     const timeLabel = formatStageClock(timers[currentPlayer]);
+    const mascotName = getMascotName(selectedMascot);
 
     const opponentHover = useMemo(() => {
         const hovered = others.find(
@@ -1330,10 +1346,11 @@ function OnlineBoardView({
 
     return (
         <KoBoardStage
+            mascot={selectedMascot}
             mood={koStage.mood}
             message={koStage.message}
             title="Play Online"
-            subtitle="先生 / online board"
+            subtitle={`${mascotName} / online board`}
             pointsLabel={pointsLabel}
             timeLabel={timeLabel}
         >
@@ -1442,6 +1459,10 @@ export function useSidebarPanels({
     const joinRoom = useMultiplayerStore((state) => state.joinRoom);
     const leaveRoom = useMultiplayerStore((state) => state.leaveRoom);
     const latestAnalysis = useLearningStore((state) => state.latestAnalysis);
+    const selectedMascot = useLearningStore((state) => state.selectedMascot);
+    const setSelectedMascot = useLearningStore(
+        (state) => state.setSelectedMascot,
+    );
 
     const blackTimer = splitClock(timers.black);
     const whiteTimer = splitClock(timers.white);
@@ -1661,6 +1682,11 @@ export function useSidebarPanels({
                         />
                     </div>
 
+                    <MascotSelector
+                        value={selectedMascot}
+                        onValueChange={setSelectedMascot}
+                    />
+
                     {mode === "versus-ai" && (
                         <div className="animate-in fade-in slide-in-from-bottom-1 duration-300">
                             <AIDifficultySelector
@@ -1700,4 +1726,62 @@ export function useSidebarPanels({
     ];
 
     return { panels, rightPanel };
+}
+
+function MascotSelector({
+    value,
+    onValueChange,
+}: {
+    value: MascotId;
+    onValueChange: (value: MascotId) => void;
+}) {
+    return (
+        <div className="flex flex-col gap-2">
+            <span className="ml-1 px-1 font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                Mascot
+            </span>
+            <div className="grid gap-px border border-border bg-border">
+                {MASCOT_OPTIONS.map((option) => {
+                    const isActive = value === option.id;
+
+                    return (
+                        <button
+                            key={option.id}
+                            type="button"
+                            onClick={() => onValueChange(option.id)}
+                            className="group grid grid-cols-[4.5rem_minmax(0,1fr)_auto] items-center bg-background text-left transition-colors hover:bg-subtle"
+                            aria-pressed={isActive}
+                        >
+                            <span className="flex h-20 items-center justify-center border-r border-border">
+                                <MascotAvatar
+                                    mascot={option.id}
+                                    mood={isActive ? "happy" : "idle"}
+                                    size="sm"
+                                />
+                            </span>
+                            <span className="min-w-0 px-4 py-3">
+                                <span className="block font-sans text-lg font-semibold leading-none tracking-[-0.055em] text-foreground">
+                                    {option.name}
+                                </span>
+                                <span className="mt-1 block font-mono text-[9px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                                    {option.role}
+                                </span>
+                                <span className="mt-2 block text-[12px] font-medium leading-snug text-muted-foreground">
+                                    {option.description}
+                                </span>
+                            </span>
+                            <span className="flex h-full w-10 items-center justify-center border-l border-border">
+                                <span
+                                    className={cn(
+                                        "size-2 bg-muted-foreground transition-colors",
+                                        isActive && "bg-accent",
+                                    )}
+                                />
+                            </span>
+                        </button>
+                    );
+                })}
+            </div>
+        </div>
+    );
 }

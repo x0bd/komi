@@ -1,6 +1,7 @@
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
 import { type ChatMessage, type ChatMessageTone } from "@/components/learning/ai-chat-panel"
+import type { MascotId } from "@/components/mascot"
 
 type TutorAnalysisMove = {
   coordinate: string
@@ -68,6 +69,7 @@ interface LearningStore {
   tutorEventCount: number
   tutorNextRequestAt: number
   tutorRequestCount: number
+  selectedMascot: MascotId
   tipFlags: {
     opening: boolean
     firstCapture: boolean
@@ -82,6 +84,7 @@ interface LearningStore {
   registerStreakEvent: (event: StreakEvent) => void
   registerTutorEvent: (event: TutorEvent) => void
   claimTutorNarrationSlot: (now?: number) => boolean
+  setSelectedMascot: (mascot: MascotId) => void
   resetLiveStreak: () => void
   addMessage: (text: string, tone?: ChatMessageTone) => void
   requestTip: (topic: string) => void
@@ -317,6 +320,7 @@ export const useLearningStore = create<LearningStore>()(
       tutorEventCount: 0,
       tutorNextRequestAt: 0,
       tutorRequestCount: 0,
+      selectedMascot: "ko",
       tipFlags: {
         opening: false,
         firstCapture: false,
@@ -403,6 +407,8 @@ export const useLearningStore = create<LearningStore>()(
         return true
       },
 
+      setSelectedMascot: (selectedMascot) => set({ selectedMascot }),
+
       resetLiveStreak: () =>
         set({
           liveStreak: LIVE_STREAK_BASELINE,
@@ -460,7 +466,12 @@ export const useLearningStore = create<LearningStore>()(
     }),
     {
       name: "komi-learning-storage",
-      partialize: (state) => ({ xp: state.xp, streak: state.streak, level: state.level }) // Only persist gamification stats
+      partialize: (state) => ({
+        xp: state.xp,
+        streak: state.streak,
+        level: state.level,
+        selectedMascot: state.selectedMascot,
+      })
     }
   )
 )

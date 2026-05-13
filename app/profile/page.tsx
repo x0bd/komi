@@ -10,7 +10,6 @@ import {
   LuTrophy,
 } from "react-icons/lu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { KoMascot } from "@/components/mascot"
 import { ensureDbUser } from "@/lib/auth/session"
 import { db } from "@/lib/db"
 import { cn } from "@/lib/utils"
@@ -79,13 +78,6 @@ function outcomeTone(outcome: Outcome) {
   return "bg-foreground/45"
 }
 
-function coachLine(winRate: number, totalGames: number) {
-  if (totalGames === 0) return "Start with one calm game. I will keep the record tidy."
-  if (winRate >= 60) return "Strong rhythm. Protect shape, then press advantage."
-  if (winRate >= 40) return "Balanced record. One clean review can shift the next match."
-  return "We rebuild from fundamentals: shape, liberties, timing."
-}
-
 export default async function ProfilePage() {
   const user = await ensureDbUser()
   if (!user) redirect("/")
@@ -135,7 +127,7 @@ export default async function ProfilePage() {
             </span>
             <span className="h-4 w-px bg-border" />
             <span className="truncate font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
-              棋士 / player passport
+              player passport
             </span>
           </div>
           <Link
@@ -147,11 +139,13 @@ export default async function ProfilePage() {
           </Link>
         </header>
 
-        <section className="relative grid border-b border-border lg:grid-cols-[minmax(0,1fr)_22rem]">
-          <span className="pointer-events-none absolute right-6 top-5 hidden font-sans text-[9rem] font-semibold leading-none text-foreground/10 md:block">
+        <section className="relative grid border-b border-border lg:grid-cols-[minmax(0,1fr)_20rem]">
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute right-6 top-5 hidden font-sans text-[8rem] font-semibold leading-none text-foreground/10 md:block"
+          >
             棋士
           </span>
-
           <div className="relative min-w-0 px-6 py-8 lg:px-10 lg:py-12">
             <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.28em] text-muted-foreground">
               Profile
@@ -174,26 +168,17 @@ export default async function ProfilePage() {
             </div>
 
             <div className="mt-8 grid max-w-3xl border border-border bg-background sm:grid-cols-3">
-              <PassportCell label="Rating" value={user.rating} mark="級" />
-              <PassportCell label="Games" value={games.length} mark="局" />
-              <PassportCell label="Win rate" value={`${winRate}%`} mark="形" />
+              <PassportCell label="Rating" value={user.rating} />
+              <PassportCell label="Games" value={games.length} />
+              <PassportCell label="Win rate" value={`${winRate}%`} />
             </div>
           </div>
 
           <aside className="relative border-t border-border px-6 py-7 lg:border-l lg:border-t-0 lg:px-7">
-            <div className="flex items-end gap-4">
-              <KoMascot mood={games.length > 0 ? "review" : "bow"} size="md" />
-              <div className="min-w-0 border border-border bg-background px-4 py-3">
-                <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
-                  Ko note
-                </p>
-                <p className="mt-2 font-sans text-[15px] font-semibold leading-snug tracking-[-0.035em]">
-                  {coachLine(winRate, games.length)}
-                </p>
-              </div>
-            </div>
-
-            <div className="mt-7 grid gap-px border border-border bg-border">
+            <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+              Shortcuts
+            </p>
+            <div className="mt-4 grid gap-px border border-border bg-border">
               <ActionLink href="/" icon={<LuLayoutGrid className="size-4" />} label="Play board" />
               <ActionLink
                 href="/games"
@@ -210,19 +195,24 @@ export default async function ProfilePage() {
         </section>
 
         <section className="grid border-b border-border md:grid-cols-4">
-          <StatCell label="Wins" value={summary.wins} kanji="勝" accent="bg-signal" />
-          <StatCell label="Losses" value={summary.losses} kanji="敗" accent="bg-accent" />
-          <StatCell label="Draws" value={summary.draws} kanji="和" accent="bg-warning" />
+          <StatCell label="Wins" value={summary.wins} accent="bg-signal" />
+          <StatCell label="Losses" value={summary.losses} accent="bg-accent" />
+          <StatCell label="Draws" value={summary.draws} accent="bg-warning" />
           <StatCell
             label="Last played"
             value={latestGame ? formatDate(latestGame.startedAt) : "None"}
-            kanji="今"
             accent="bg-foreground"
             compact
           />
         </section>
 
-        <section className="grid lg:grid-cols-[minmax(0,1fr)_22rem]">
+        <section className="relative grid lg:grid-cols-[minmax(0,1fr)_22rem]">
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute bottom-8 right-8 hidden font-sans text-[7rem] font-semibold leading-none text-foreground/[0.07] lg:block"
+          >
+            記録
+          </span>
           <div className="min-w-0 border-b border-border px-6 py-8 lg:border-b-0 lg:px-10 lg:py-10">
             <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
               <div>
@@ -320,25 +310,18 @@ export default async function ProfilePage() {
 function PassportCell({
   label,
   value,
-  mark,
 }: {
   label: string
   value: string | number
-  mark: string
 }) {
   return (
-    <div className="grid min-h-24 grid-cols-[1fr_auto] border-b border-border p-4 last:border-b-0 sm:border-b-0 sm:border-r sm:last:border-r-0">
-      <div>
-        <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-          {label}
-        </p>
-        <p className="mt-3 font-mono text-3xl font-semibold leading-none tracking-[-0.06em] tabular-nums">
-          {value}
-        </p>
-      </div>
-      <span className="self-end font-sans text-4xl font-semibold leading-none text-foreground/10">
-        {mark}
-      </span>
+    <div className="min-h-24 border-b border-border p-4 last:border-b-0 sm:border-b-0 sm:border-r sm:last:border-r-0">
+      <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+        {label}
+      </p>
+      <p className="mt-3 font-mono text-3xl font-semibold leading-none tracking-[-0.06em] tabular-nums">
+        {value}
+      </p>
     </div>
   )
 }
@@ -346,21 +329,16 @@ function PassportCell({
 function StatCell({
   label,
   value,
-  kanji,
   accent,
   compact,
 }: {
   label: string
   value: string | number
-  kanji: string
   accent: string
   compact?: boolean
 }) {
   return (
-    <div className="relative min-h-32 overflow-hidden border-b border-border p-5 last:border-b-0 md:border-b-0 md:border-r md:last:border-r-0">
-      <span className="absolute right-4 top-3 font-sans text-6xl font-semibold leading-none text-foreground/10">
-        {kanji}
-      </span>
+    <div className="relative min-h-28 overflow-hidden border-b border-border p-5 last:border-b-0 md:border-b-0 md:border-r md:last:border-r-0">
       <span className={cn("mb-5 block size-2", accent)} />
       <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
         {label}
