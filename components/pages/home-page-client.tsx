@@ -34,10 +34,9 @@ import {
 } from "@/lib/stores/game-store";
 import { splitClock, useGameClock } from "@/hooks/use-timer";
 import { useAITurn } from "@/hooks/use-ai-turn";
-import { AIReaction } from "@/components/learning/ai-reaction";
 import { AIChatPanel } from "@/components/learning/ai-chat-panel";
 import { XPBar } from "@/components/learning/xp-bar";
-import { MobileSenseiFab } from "@/components/learning/mobile-sensei-fab";
+import { KoBoardStage, type KoMood } from "@/components/mascot";
 import type { ScoreResult } from "@/lib/engine/scoring";
 import { calculateScore } from "@/lib/engine/scoring";
 import type { GameState, Move } from "@/lib/engine/types";
@@ -48,10 +47,9 @@ import {
 } from "@/lib/engine/game";
 import { useMultiplayerStore } from "@/lib/stores/multiplayer-store";
 import { useLearningStore } from "@/lib/stores/learning-store";
-import { LuBot, LuSparkles } from "react-icons/lu";
+import { LuBot } from "react-icons/lu";
 import { OnlineRoomSync } from "@/components/game/online-room-sync";
 import type { StoneColor } from "@/components/game/stone";
-import { cn } from "@/lib/utils";
 
 const LETTERS = "ABCDEFGHJKLMNOPQRST".split("");
 
@@ -254,6 +252,91 @@ function buildKeyMoments(moves: Move[], size: 9 | 13 | 19): KeyMoment[] {
         .slice(0, 4)
         .sort((a, b) => a.moveNumber - b.moveNumber)
         .map(({ weight: _weight, ...moment }) => moment);
+}
+
+function formatStageClock(totalSeconds: number) {
+    const clock = splitClock(totalSeconds);
+    return `${String(clock.minutes).padStart(2, "0")}:${String(clock.seconds).padStart(2, "0")}`;
+}
+
+function getKoStageState({
+    isGameOver,
+    replayEnabled,
+    waitingForOpponent = false,
+    currentPlayer,
+    mode,
+    winner,
+    moveCount,
+    latestAnalysis,
+    lastMove,
+}: {
+    isGameOver: boolean;
+    replayEnabled?: boolean;
+    waitingForOpponent?: boolean;
+    currentPlayer: StoneColor;
+    mode: GameMode;
+    winner?: "black" | "white" | "draw" | null;
+    moveCount: number;
+    latestAnalysis?: { summary?: string; topMoves?: Array<{ coordinate: string }> } | null;
+    lastMove?: Move;
+}): { mood: KoMood; message: string } {
+    if (waitingForOpponent) {
+        return {
+            mood: "thinking",
+            message: "Waiting for the second stone. I will keep the board warm.",
+        };
+    }
+
+    if (replayEnabled) {
+        return {
+            mood: "review",
+            message: "Replay slowly. The shape usually tells the truth before the score does.",
+        };
+    }
+
+    if (isGameOver) {
+        return {
+            mood: winner === "draw" ? "bow" : "praise",
+            message:
+                winner === "draw"
+                    ? "Even board. Good discipline. Now we review the shape."
+                    : `${winner === "black" ? "Black" : "White"} wins. Bow, then learn the decisive turn.`,
+        };
+    }
+
+    if (lastMove && !lastMove.isPass) {
+        const coordinate = toCoordinate(lastMove, 19 as 9 | 13 | 19);
+        return {
+            mood: "teaching",
+            message: `Last move: ${coordinate}. Check liberties before chasing.`,
+        };
+    }
+
+    if (latestAnalysis?.summary) {
+        return {
+            mood: "thinking",
+            message: latestAnalysis.summary,
+        };
+    }
+
+    if (mode === "versus-ai" && currentPlayer === "white") {
+        return {
+            mood: "thinking",
+            message: "Kō is reading the board. Watch for shape, not noise.",
+        };
+    }
+
+    if (moveCount === 0) {
+        return {
+            mood: "idle",
+            message: "Start clean. Corners first, shape always.",
+        };
+    }
+
+    return {
+        mood: currentPlayer === "black" ? "focused" : "idle",
+        message: `${currentPlayer === "black" ? "Black" : "White"} to play. Build shape before contact.`,
+    };
 }
 
 function buildReplayFrame(

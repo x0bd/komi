@@ -292,9 +292,15 @@ Files:
 - [components/learning/ai-chat-panel.tsx](C:\Users\HP\dev\experiments\komi\components\learning\ai-chat-panel.tsx)
 - [components/learning/ai-reaction.tsx](C:\Users\HP\dev\experiments\komi\components\learning\ai-reaction.tsx)
 - [components/learning/mobile-sensei-fab.tsx](C:\Users\HP\dev\experiments\komi\components\learning\mobile-sensei-fab.tsx)
+- [components/mascot/ko-mascot.tsx](C:\Users\HP\dev\experiments\komi\components\mascot\ko-mascot.tsx)
+- [components/mascot/ko-coach-stage.tsx](C:\Users\HP\dev\experiments\komi\components\mascot\ko-coach-stage.tsx)
+- [components/mascot/sprite-animator.tsx](C:\Users\HP\dev\experiments\komi\components\mascot\sprite-animator.tsx)
 
 Tasks:
 
+- [x] Add a reusable sprite animator for Kō with stepped 2D-game frame playback.
+- [x] Create a Kō mascot wrapper with game moods: idle, thinking, praise, warning, teaching, review.
+- [x] Add a coach-stage layout where Kō can sit above the board with a speech card and HUD.
 - [ ] Sensei panel title uses `先生`.
 - [ ] Remove cartoon/chatbot feeling.
 - [ ] Treat tutor output like a match note or coach annotation.
