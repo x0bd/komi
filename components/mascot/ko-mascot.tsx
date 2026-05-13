@@ -5,20 +5,9 @@ import {
   SpriteAnimator,
   type SpriteAnimationMap,
 } from "@/components/mascot/sprite-animator"
+import type { MascotMood } from "@/lib/mascot"
 
-export type KoMood =
-  | "idle"
-  | "blink"
-  | "thinking"
-  | "praise"
-  | "warning"
-  | "teaching"
-  | "confused"
-  | "focused"
-  | "happy"
-  | "review"
-  | "sleep"
-  | "bow"
+export type KoMood = MascotMood
 
 export const KO_SPRITE_SHEET = {
   src: "/mascots/ko-sprite-sheet.png",
@@ -46,6 +35,7 @@ export type KoMascotProps = {
   mood?: KoMood
   size?: "sm" | "md" | "lg" | "hero"
   play?: boolean
+  animationKey?: string | number
   className?: string
 }
 
@@ -60,6 +50,7 @@ export function KoMascot({
   mood = "idle",
   size = "md",
   play = true,
+  animationKey,
   className,
 }: KoMascotProps) {
   return (
@@ -68,6 +59,7 @@ export function KoMascot({
       animation={mood}
       animations={KO_ANIMATIONS}
       play={play}
+      animationKey={animationKey}
       label={`Ko mascot, ${mood}`}
       className={cn(KO_SIZE_CLASS[size], "select-none", className)}
       spriteClassName="[image-rendering:auto]"

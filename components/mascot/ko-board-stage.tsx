@@ -14,6 +14,8 @@ export type KoBoardStageProps = {
   mascot?: MascotId
   mood?: MascotMood
   message?: string
+  signalLabel?: string
+  mascotPulseKey?: string | number
   title?: string
   subtitle?: string
   pointsLabel?: string
@@ -26,6 +28,8 @@ export function KoBoardStage({
   mascot = "ko",
   mood = "idle",
   message = "Shape first. Attack second.",
+  signalLabel,
+  mascotPulseKey,
   title = "Play Go",
   subtitle = "先生 / live board",
   pointsLabel = "6 points",
@@ -83,6 +87,7 @@ export function KoBoardStage({
                 mascot={mascot}
                 mood={mood}
                 size="sm"
+                animationKey={mascotPulseKey}
                 className="sm:size-24"
               />
             </div>
@@ -92,6 +97,11 @@ export function KoBoardStage({
                 aria-hidden="true"
                 className="absolute -left-2 bottom-6 hidden size-4 rotate-45 border-b border-l border-border bg-background sm:block"
               />
+              {signalLabel ? (
+                <p className="mb-1 font-mono text-[9px] font-semibold uppercase tracking-[0.24em] text-muted-foreground">
+                  {signalLabel}
+                </p>
+              ) : null}
               <p className="max-h-12 overflow-hidden font-sans text-[13px] font-semibold leading-relaxed tracking-[-0.02em] text-foreground">
                 {message}
               </p>

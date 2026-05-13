@@ -5,9 +5,9 @@ import {
   SpriteAnimator,
   type SpriteAnimationMap,
 } from "@/components/mascot/sprite-animator"
-import type { KoMood } from "@/components/mascot/ko-mascot"
+import type { MascotMood } from "@/lib/mascot"
 
-export type MokuMood = KoMood
+export type MokuMood = MascotMood
 
 export const MOKU_SPRITE_SHEET = {
   src: "/mascots/moku-sprite-sheet.png",
@@ -35,6 +35,7 @@ export type MokuMascotProps = {
   mood?: MokuMood
   size?: "sm" | "md" | "lg" | "hero"
   play?: boolean
+  animationKey?: string | number
   className?: string
 }
 
@@ -49,6 +50,7 @@ export function MokuMascot({
   mood = "idle",
   size = "md",
   play = true,
+  animationKey,
   className,
 }: MokuMascotProps) {
   return (
@@ -57,6 +59,7 @@ export function MokuMascot({
       animation={mood}
       animations={MOKU_ANIMATIONS}
       play={play}
+      animationKey={animationKey}
       label={`Moku board fox, ${mood}`}
       className={cn(MOKU_SIZE_CLASS[size], "select-none", className)}
       spriteClassName="[image-rendering:auto]"

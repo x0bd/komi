@@ -22,6 +22,7 @@ export type SpriteAnimatorProps = {
   fps?: number
   loop?: boolean
   play?: boolean
+  animationKey?: string | number
   label?: string
   className?: string
   spriteClassName?: string
@@ -38,6 +39,7 @@ export function SpriteAnimator({
   fps = 8,
   loop = true,
   play = true,
+  animationKey,
   label,
   className,
   spriteClassName,
@@ -63,7 +65,7 @@ export function SpriteAnimator({
 
   useEffect(() => {
     setStep(0)
-  }, [animation, frame])
+  }, [animation, animationKey, frame])
 
   useEffect(() => {
     if (!play || prefersReducedMotion || sequence.length <= 1 || effectiveFps <= 0) {

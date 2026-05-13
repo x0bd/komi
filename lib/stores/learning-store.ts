@@ -1,7 +1,7 @@
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
 import { type ChatMessage, type ChatMessageTone } from "@/components/learning/ai-chat-panel"
-import type { MascotId } from "@/components/mascot"
+import type { MascotId, MascotMood, MascotSignal, MascotSignalSource } from "@/lib/mascot"
 
 type TutorAnalysisMove = {
   coordinate: string
@@ -65,6 +65,11 @@ interface LearningStore {
   tutorGoal: string
   tutorCue: string
   latestAnalysis: TutorAnalysisSnapshot | null
+  mascotMood: MascotMood
+  mascotMessage: string
+  mascotSource: MascotSignalSource
+  mascotIntensity: 0 | 1 | 2 | 3
+  mascotPulseKey: number
   tutorPulseKey: number
   tutorEventCount: number
   tutorNextRequestAt: number
@@ -302,6 +307,175 @@ function getTutorMeta(event: TutorEvent, eventCount: number) {
   }
 }
 
+function getMascotSignal(
+  event: TutorEvent,
+  fallbackMessage: string,
+  eventCount: number
+): MascotSignal {
+  switch (event.type) {
+    case "analysis": {
+      const winRate = Math.round(Math.max(0, Math.min(1, event.winRate)) * 100)
+      const source = event.summary ? "analysis" : "logic"
+
+      if (event.actor === "player") {
+        if (event.quality === "best") {
+          return {
+            mood: eventCount % 2 === 0 ? "happy" : "praise",
+            message: event.summary || `Perfect shape at ${event.moveCoordinate}. Keep this rhythm.`,
+            source,
+            intensity: 3,
+            eventLabel: `AI read / ${winRate}%`,
+          }
+        }
+
+        if (event.quality === "strong") {
+          return {
+            mood: "praise",
+            message: event.summary || `${event.moveCoordinate} keeps pressure clean. Convert it calmly.`,
+            source,
+            intensity: 2,
+            eventLabel: `AI read / ${winRate}%`,
+          }
+        }
+
+        if (event.quality === "mistake") {
+          return {
+            mood: "warning",
+            message:
+              event.summary ||
+              (event.suggestedCoordinate
+                ? `${event.moveCoordinate} got thin. ${event.suggestedCoordinate} was cleaner.`
+                : `${event.moveCoordinate} weakened tempo. Reconnect before fighting.`),
+            source,
+            intensity: 3,
+            eventLabel: `AI concern / ${winRate}%`,
+          }
+        }
+
+        return {
+          mood: eventCount % 3 === 0 ? "teaching" : "focused",
+          message: event.summary || `${event.moveCoordinate} is playable. Count liberties before contact.`,
+          source,
+          intensity: 1,
+          eventLabel: `AI read / ${winRate}%`,
+        }
+      }
+
+      if (event.quality === "mistake") {
+        return {
+          mood: "happy",
+          message: event.summary || `Opponent drifted at ${event.moveCoordinate}. Look for sente.`,
+          source,
+          intensity: 3,
+          eventLabel: `punish window / ${winRate}%`,
+        }
+      }
+
+      if (event.quality === "best") {
+        return {
+          mood: "warning",
+          message: event.summary || `Opponent found shape at ${event.moveCoordinate}. Defend weak groups.`,
+          source,
+          intensity: 2,
+          eventLabel: `opponent read / ${winRate}%`,
+        }
+      }
+
+      return {
+        mood: "thinking",
+        message: event.summary || `Opponent played ${event.moveCoordinate}. Read cuts before answering.`,
+        source,
+        intensity: 1,
+        eventLabel: `opponent read / ${winRate}%`,
+      }
+    }
+    case "player-capture":
+      return {
+        mood: event.count > 1 ? "happy" : "praise",
+        message:
+          event.count > 1
+            ? `Big capture at ${event.coordinate}. Now make the wall useful.`
+            : `Clean capture at ${event.coordinate}. Secure the shape before chasing.`,
+        source: "logic",
+        intensity: event.count > 1 ? 3 : 2,
+        eventLabel: event.count > 1 ? "capture swing" : "capture",
+      }
+    case "opponent-capture":
+      return {
+        mood: event.count > 1 ? "warning" : "confused",
+        message:
+          event.count > 1
+            ? `${event.count} stones fell near ${event.coordinate}. Breathe, connect, then counter.`
+            : `Stone lost near ${event.coordinate}. Fix liberties first.`,
+        source: "logic",
+        intensity: event.count > 1 ? 3 : 2,
+        eventLabel: "pressure spike",
+      }
+    case "player-pass":
+      return {
+        mood: "confused",
+        message: "A pass is only calm when the board is settled. Check the biggest point.",
+        source: "logic",
+        intensity: 2,
+        eventLabel: "tempo check",
+      }
+    case "opponent-pass":
+      return {
+        mood: "focused",
+        message: "Opponent blinked. Take the biggest point with clean shape.",
+        source: "logic",
+        intensity: 2,
+        eventLabel: "tempo window",
+      }
+    case "player-win":
+      return {
+        mood: "happy",
+        message: "Board secured. We review the turning point, then run it back sharper.",
+        source: "logic",
+        intensity: 3,
+        eventLabel: "win",
+      }
+    case "player-loss":
+      return {
+        mood: "bow",
+        message: "Bow first. Then rebuild from shape, liberties, and timing.",
+        source: "logic",
+        intensity: 2,
+        eventLabel: "review",
+      }
+    case "reset":
+      return {
+        mood: "idle",
+        message: "Fresh board. Corners first, shape always.",
+        source: "system",
+        intensity: 1,
+        eventLabel: "new board",
+      }
+    case "player-stone":
+      return {
+        mood: eventCount % 4 === 0 ? "teaching" : "focused",
+        message:
+          eventCount % 4 === 0
+            ? `Move ${event.coordinate}: good rhythm. Now count liberties.`
+            : fallbackMessage,
+        source: "logic",
+        intensity: 1,
+        eventLabel: "local read",
+      }
+    case "opponent-stone":
+      return {
+        mood: eventCount % 5 === 0 ? "thinking" : "focused",
+        message:
+          eventCount % 5 === 0
+            ? `Opponent probes ${event.coordinate}. Look for cuts before contact.`
+            : fallbackMessage,
+        source: "logic",
+        intensity: 1,
+        eventLabel: "opponent intent",
+      }
+  }
+}
+
 export const useLearningStore = create<LearningStore>()(
   persist(
     (set, get) => ({
@@ -316,6 +490,11 @@ export const useLearningStore = create<LearningStore>()(
       tutorGoal: "Open from the corners and keep groups connected.",
       tutorCue: "Play shape first, then attack.",
       latestAnalysis: null,
+      mascotMood: "idle",
+      mascotMessage: "Start clean. Corners first, shape always.",
+      mascotSource: "system",
+      mascotIntensity: 1,
+      mascotPulseKey: 0,
       tutorPulseKey: 0,
       tutorEventCount: 0,
       tutorNextRequestAt: 0,
@@ -364,6 +543,7 @@ export const useLearningStore = create<LearningStore>()(
         set((state) => {
           const nextEventCount = state.tutorEventCount + 1
           const meta = getTutorMeta(event, nextEventCount)
+          const mascotSignal = getMascotSignal(event, meta.cue, nextEventCount)
           const nextMessages =
             meta.message === null
               ? state.chatMessages
@@ -373,6 +553,11 @@ export const useLearningStore = create<LearningStore>()(
             tutorMood: meta.mood,
             tutorGoal: meta.goal,
             tutorCue: meta.cue,
+            mascotMood: mascotSignal.mood,
+            mascotMessage: mascotSignal.message,
+            mascotSource: mascotSignal.source,
+            mascotIntensity: mascotSignal.intensity,
+            mascotPulseKey: state.mascotPulseKey + 1,
             latestAnalysis:
               event.type === "analysis"
                 ? {
@@ -419,6 +604,11 @@ export const useLearningStore = create<LearningStore>()(
           tutorGoal: "Open from the corners and keep groups connected.",
           tutorCue: "Play shape first, then attack.",
           latestAnalysis: null,
+          mascotMood: "idle",
+          mascotMessage: "Fresh board. Corners first, shape always.",
+          mascotSource: "system",
+          mascotIntensity: 1,
+          mascotPulseKey: 0,
           tutorPulseKey: 0,
           tutorEventCount: 0,
           tutorNextRequestAt: 0,

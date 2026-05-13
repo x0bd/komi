@@ -60,6 +60,7 @@ import { LuBot } from "react-icons/lu";
 import { OnlineRoomSync } from "@/components/game/online-room-sync";
 import type { StoneColor } from "@/components/game/stone";
 import { cn } from "@/lib/utils";
+import type { MascotSignalSource } from "@/lib/mascot";
 
 const LETTERS = "ABCDEFGHJKLMNOPQRST".split("");
 
@@ -273,6 +274,22 @@ function getMascotName(mascot: MascotId) {
     return MASCOT_OPTIONS.find((option) => option.id === mascot)?.name ?? "Kō";
 }
 
+function formatMascotSignalLabel(
+    source: MascotSignalSource,
+    intensity: 0 | 1 | 2 | 3,
+) {
+    const sourceLabel =
+        source === "llm"
+            ? "sensei read"
+            : source === "analysis"
+              ? "ai read"
+              : source === "logic"
+                ? "board logic"
+                : "system";
+
+    return `${sourceLabel} / lv ${Math.max(1, intensity)}`;
+}
+
 function getKoStageState({
     isGameOver,
     replayEnabled,
@@ -284,6 +301,10 @@ function getKoStageState({
     size,
     latestAnalysis,
     lastMove,
+    mascotMood,
+    mascotMessage,
+    mascotSource,
+    mascotIntensity,
 }: {
     isGameOver: boolean;
     replayEnabled?: boolean;
@@ -295,11 +316,16 @@ function getKoStageState({
     size: 9 | 13 | 19;
     latestAnalysis?: TutorAnalysisSnapshot | null;
     lastMove?: Move;
-}): { mood: KoMood; message: string } {
+    mascotMood?: KoMood;
+    mascotMessage?: string;
+    mascotSource?: MascotSignalSource;
+    mascotIntensity?: 0 | 1 | 2 | 3;
+}): { mood: KoMood; message: string; signalLabel?: string } {
     if (waitingForOpponent) {
         return {
             mood: "thinking",
             message: "Waiting for the second stone. I will keep the board warm.",
+            signalLabel: "online / pending",
         };
     }
 
@@ -307,6 +333,7 @@ function getKoStageState({
         return {
             mood: "review",
             message: "Replay slowly. The shape usually tells the truth before the score does.",
+            signalLabel: "review / lv 2",
         };
     }
 
@@ -317,6 +344,26 @@ function getKoStageState({
                 winner === "draw"
                     ? "Even board. Good discipline. Now we review the shape."
                     : `${winner === "black" ? "Black" : "White"} wins. Bow, then learn the decisive turn.`,
+            signalLabel: "result / lv 3",
+        };
+    }
+
+    if (mascotMessage && moveCount > 0) {
+        return {
+            mood: mascotMood ?? "focused",
+            message: mascotMessage,
+            signalLabel:
+                mascotSource && typeof mascotIntensity === "number"
+                    ? formatMascotSignalLabel(mascotSource, mascotIntensity)
+                    : undefined,
+        };
+    }
+
+    if (latestAnalysis?.summary) {
+        return {
+            mood: "thinking",
+            message: latestAnalysis.summary,
+            signalLabel: "ai read / lv 2",
         };
     }
 
@@ -325,13 +372,7 @@ function getKoStageState({
         return {
             mood: "teaching",
             message: `Last move: ${coordinate}. Check liberties before chasing.`,
-        };
-    }
-
-    if (latestAnalysis?.summary) {
-        return {
-            mood: "thinking",
-            message: latestAnalysis.summary,
+            signalLabel: "board logic / lv 1",
         };
     }
 
@@ -339,6 +380,7 @@ function getKoStageState({
         return {
             mood: "thinking",
             message: "Kō is reading the board. Watch for shape, not noise.",
+            signalLabel: "ai turn / lv 2",
         };
     }
 
@@ -346,12 +388,14 @@ function getKoStageState({
         return {
             mood: "idle",
             message: "Start clean. Corners first, shape always.",
+            signalLabel: "system / lv 1",
         };
     }
 
     return {
         mood: currentPlayer === "black" ? "focused" : "idle",
         message: `${currentPlayer === "black" ? "Black" : "White"} to play. Build shape before contact.`,
+        signalLabel: "board logic / lv 1",
     };
 }
 
@@ -1131,6 +1175,11 @@ function LocalBoardView({
     );
     const latestAnalysis = useLearningStore((state) => state.latestAnalysis);
     const selectedMascot = useLearningStore((state) => state.selectedMascot);
+    const mascotMood = useLearningStore((state) => state.mascotMood);
+    const mascotMessage = useLearningStore((state) => state.mascotMessage);
+    const mascotSource = useLearningStore((state) => state.mascotSource);
+    const mascotIntensity = useLearningStore((state) => state.mascotIntensity);
+    const mascotPulseKey = useLearningStore((state) => state.mascotPulseKey);
     const liveLastMove = useGameStore((state) => {
         const history = state.moveHistory;
         return history.length > 0 ? history[history.length - 1] : undefined;
@@ -1153,6 +1202,10 @@ function LocalBoardView({
         size,
         latestAnalysis,
         lastMove: stageLastMove,
+        mascotMood,
+        mascotMessage,
+        mascotSource,
+        mascotIntensity,
     });
     const pointsLabel =
         moveHistory.length === 0
@@ -1208,6 +1261,8 @@ function LocalBoardView({
             mascot={selectedMascot}
             mood={koStage.mood}
             message={koStage.message}
+            signalLabel={koStage.signalLabel}
+            mascotPulseKey={mascotPulseKey}
             title={mode === "versus-ai" ? `Train with ${mascotName}` : "Play Go"}
             subtitle={replayEnabled ? `${mascotName} / replay` : `${mascotName} / live board`}
             pointsLabel={pointsLabel}
@@ -1266,6 +1321,11 @@ function OnlineBoardView({
     );
     const latestAnalysis = useLearningStore((state) => state.latestAnalysis);
     const selectedMascot = useLearningStore((state) => state.selectedMascot);
+    const mascotMood = useLearningStore((state) => state.mascotMood);
+    const mascotMessage = useLearningStore((state) => state.mascotMessage);
+    const mascotSource = useLearningStore((state) => state.mascotSource);
+    const mascotIntensity = useLearningStore((state) => state.mascotIntensity);
+    const mascotPulseKey = useLearningStore((state) => state.mascotPulseKey);
     const lastMove = useGameStore((state) => {
         const history = state.moveHistory;
         return history.length > 0 ? history[history.length - 1] : undefined;
@@ -1295,6 +1355,10 @@ function OnlineBoardView({
         size,
         latestAnalysis,
         lastMove,
+        mascotMood,
+        mascotMessage,
+        mascotSource,
+        mascotIntensity,
     });
     const pointsLabel =
         moveHistory.length === 0
@@ -1349,6 +1413,8 @@ function OnlineBoardView({
             mascot={selectedMascot}
             mood={koStage.mood}
             message={koStage.message}
+            signalLabel={koStage.signalLabel}
+            mascotPulseKey={mascotPulseKey}
             title="Play Online"
             subtitle={`${mascotName} / online board`}
             pointsLabel={pointsLabel}
