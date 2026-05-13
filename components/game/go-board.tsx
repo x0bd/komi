@@ -162,7 +162,7 @@ export function GoBoard({
                             gridTemplateRows: "1.35rem 1fr",
                         }}
                     >
-                    <div />
+                        <div />
 
                     <div
                         className="grid"

@@ -54,8 +54,8 @@ export function GameLayout({
                     className,
                 )}
             >
-                <header className="pointer-events-none absolute inset-x-0 top-0 z-50 grid h-14 grid-cols-[96px_1fr_auto] border-b border-border bg-background">
-                    <div className="hidden border-r border-border px-5 py-4 lg:block">
+                <header className="pointer-events-none absolute inset-x-0 top-0 z-50 grid h-12 grid-cols-[72px_1fr_auto] border-b border-border bg-background">
+                    <div className="hidden border-r border-border px-4 py-3.5 lg:block">
                         <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.28em] text-muted-foreground">
                             KOMI
                         </span>
@@ -81,12 +81,12 @@ export function GameLayout({
 
                 <div
                     className={cn(
-                        "pointer-events-none relative z-10 flex h-svh w-full items-center justify-center px-4 pb-20 pt-14 transition-[padding] duration-300 ease-out lg:pb-4",
-                        isExpanded ? "lg:pl-[584px]" : "lg:pl-[112px]",
+                        "pointer-events-none relative z-10 flex h-svh w-full items-center justify-center px-3 pb-16 pt-12 transition-[padding] duration-300 ease-out lg:pb-3",
+                        isExpanded ? "lg:pl-[532px]" : "lg:pl-[88px]",
                         rightPanel ? "lg:pr-36 xl:pr-48" : "lg:pr-8",
                     )}
                 >
-                    <main className="pointer-events-auto flex h-full min-h-0 w-full max-w-[46rem] items-center justify-center">
+                    <main className="pointer-events-auto flex h-full min-h-0 w-full max-w-[44rem] items-center justify-center">
                         {board}
                     </main>
 
@@ -99,15 +99,15 @@ export function GameLayout({
 
                 <aside
                     className={cn(
-                        "pointer-events-auto fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background lg:inset-x-auto lg:left-0 lg:top-14 lg:bottom-0 lg:border-r lg:border-t-0",
+                        "pointer-events-auto fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background lg:inset-x-auto lg:left-0 lg:top-12 lg:bottom-0 lg:border-r lg:border-t-0",
                         "transition-[width,height] duration-300 ease-out",
                         isExpanded
-                            ? "h-[min(72svh,660px)] lg:h-auto lg:w-[528px]"
-                            : "h-[68px] lg:h-auto lg:w-[96px]",
+                            ? "h-[min(72svh,660px)] lg:h-auto lg:w-[500px]"
+                            : "h-14 lg:h-auto lg:w-[72px]",
                     )}
                 >
                     <div className="flex h-full min-h-0 flex-col lg:flex-row">
-                        <nav className="relative flex h-[68px] w-full shrink-0 flex-row items-stretch overflow-hidden bg-background lg:h-full lg:w-[96px] lg:flex-col">
+                        <nav className="relative flex h-14 w-full shrink-0 flex-row items-stretch overflow-hidden bg-background lg:h-full lg:w-[72px] lg:flex-col">
                             <span
                                 aria-hidden="true"
                                 className="pointer-events-none absolute -left-4 top-20 hidden select-none font-sans text-[8rem] font-semibold leading-none text-foreground/[0.08] lg:block"
@@ -115,9 +115,9 @@ export function GameLayout({
                                 碁
                             </span>
 
-                            <div className="flex w-20 shrink-0 items-center border-r border-border px-4 lg:h-24 lg:w-full lg:border-b lg:border-r-0">
+                            <div className="flex w-20 shrink-0 items-center border-r border-border px-4 lg:h-20 lg:w-full lg:border-b lg:border-r-0">
                                 <div>
-                                    <p className="font-sans text-base font-semibold tracking-[-0.055em] text-foreground">
+                                    <p className="font-sans text-sm font-semibold tracking-[-0.055em] text-foreground">
                                         Komi
                                     </p>
                                     <p className="mt-2 font-mono text-[9px] uppercase tracking-[0.18em] text-muted-foreground">
@@ -145,7 +145,7 @@ export function GameLayout({
                                                             )
                                                         }
                                                         className={cn(
-                                                            "group relative flex h-full min-w-16 flex-1 items-center justify-center border-r border-border bg-background text-muted-foreground transition-colors hover:bg-subtle hover:text-foreground lg:h-24 lg:w-full lg:min-w-0 lg:flex-none lg:border-b lg:border-r-0",
+                                                            "group relative flex h-full min-w-14 flex-1 items-center justify-center border-r border-border bg-background text-muted-foreground transition-colors hover:bg-subtle hover:text-foreground lg:h-20 lg:w-full lg:min-w-0 lg:flex-none lg:border-b lg:border-r-0",
                                                             isActive &&
                                                                 "bg-subtle text-foreground",
                                                         )}
@@ -188,7 +188,7 @@ export function GameLayout({
                                             <Link
                                                 href="/profile"
                                                 aria-label="Open profile"
-                                                className="group relative flex h-full w-16 items-center justify-center bg-background text-muted-foreground transition-colors hover:bg-subtle hover:text-foreground lg:h-20 lg:w-full"
+                                                className="group relative flex h-full w-14 items-center justify-center bg-background text-muted-foreground transition-colors hover:bg-subtle hover:text-foreground lg:h-16 lg:w-full"
                                             />
                                         }
                                     >
